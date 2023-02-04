@@ -16,7 +16,9 @@ fun BackIcon() {
             .size(24.dp),
         onClick = {},
     ) {
-        Icon(painter = painterResource(id = R.drawable.ic_baseline_arrow_back_ios_new_24),
-            contentDescription = "IC_BASELINE_ARROW_BACK")
+        Icon(
+            painter = painterResource(id = R.drawable.ic_arrow),
+            contentDescription = "IC_ARROW"
+        )
     }
 }
