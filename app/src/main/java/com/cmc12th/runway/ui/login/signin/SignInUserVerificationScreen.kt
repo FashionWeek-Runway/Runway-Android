@@ -36,7 +36,11 @@ import com.cmc12th.runway.ui.theme.*
 
 @Composable
 fun SignInUserInfoVerifyScreen() {
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .systemBarsPadding()
+    ) {
         Box(modifier = Modifier.padding(20.dp)) {
             BackIcon()
         }
