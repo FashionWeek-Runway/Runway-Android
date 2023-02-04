@@ -50,7 +50,7 @@ fun SignInUserInfoVerifyScreen() {
             verticalArrangement = Arrangement.spacedBy(30.dp)
         ) {
             /** 본인인증 텍스트 */
-            Row {
+            Row(modifier = Modifier.padding(top = 20.dp)) {
                 Text(text = "본인인증", style = HeadLine3)
                 Text(text = "이 필요해요.", fontSize = 20.sp, fontWeight = FontWeight.Normal)
             }
