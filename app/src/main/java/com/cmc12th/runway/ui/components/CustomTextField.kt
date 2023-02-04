@@ -18,7 +18,9 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -35,6 +37,7 @@ fun CustomTextField(
     keyboardActions: KeyboardActions? = null,
     value: TextFieldValue,
     onvalueChanged: (TextFieldValue) -> Unit,
+    passwordVisible: Boolean = true
 ) {
     BasicTextField(
         modifier = modifier,
@@ -72,5 +75,6 @@ fun CustomTextField(
                 if (trailingIcon != null) trailingIcon()
             }
         },
+        visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
     )
 }
