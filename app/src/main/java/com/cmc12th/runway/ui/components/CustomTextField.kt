@@ -58,8 +58,8 @@ fun CustomTextField(
                     bottomLineColor.value = Gray600
                 }
             }
-            .bottomBorder(1.dp, bottomLineColor.value),
-//            .focusRequester(focusRequest ?: return),
+            .bottomBorder(1.dp, bottomLineColor.value)
+            .focusRequester(focusRequest ?: FocusRequester()),
         value = value,
         onValueChange = {
             if (it.selection.length <= 25) onvalueChanged(it)
@@ -93,6 +93,7 @@ fun CustomTextField(
                 if (trailingIcon != null) trailingIcon()
             }
         },
-        visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+        visualTransformation =
+        if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
     )
 }
