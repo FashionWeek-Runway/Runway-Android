@@ -28,7 +28,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cmc12th.runway.R
@@ -36,8 +35,6 @@ import com.cmc12th.runway.ui.components.BackIcon
 import com.cmc12th.runway.ui.components.CustomTextField
 import com.cmc12th.runway.ui.components.HeightSpacer
 import com.cmc12th.runway.ui.components.util.bottomBorder
-import com.cmc12th.runway.ui.theme.Gray200
-import com.cmc12th.runway.ui.theme.Gray300
 import com.cmc12th.runway.ui.theme.Gray600
 import com.cmc12th.runway.ui.theme.HeadLine1
 
@@ -83,21 +80,10 @@ fun LoginIdPasswdScreen() {
 
 @Composable
 private fun PhoneTextField(phoneTextFieldValue: MutableState<TextFieldValue>) {
-    val bottomLineColor = remember {
-        mutableStateOf(Gray600)
-    }
+
     CustomTextField(
         modifier = Modifier
-            .fillMaxWidth()
-            .bottomBorder(1.dp, Gray300)
-            .onFocusChanged {
-                if (it.isFocused) {
-                    bottomLineColor.value = Color.Black
-                } else {
-                    bottomLineColor.value = Gray600
-                }
-            }
-            .bottomBorder(1.dp, bottomLineColor.value),
+            .fillMaxWidth(),
         fontSize = 16.sp,
         value = phoneTextFieldValue.value,
         placeholderText = "전화번호 입력",
@@ -113,9 +99,6 @@ private fun PhoneTextField(phoneTextFieldValue: MutableState<TextFieldValue>) {
 
 @Composable
 private fun PasswordTextField(passWdTextFieldValue: MutableState<TextFieldValue>) {
-    val bottomLineColor = remember {
-        mutableStateOf(Gray600)
-    }
     val pswdVisible = remember {
         mutableStateOf(false)
     }
@@ -146,15 +129,7 @@ private fun PasswordTextField(passWdTextFieldValue: MutableState<TextFieldValue>
             }
         },
         modifier = Modifier
-            .fillMaxWidth()
-            .onFocusChanged {
-                if (it.isFocused) {
-                    bottomLineColor.value = Color.Black
-                } else {
-                    bottomLineColor.value = Gray600
-                }
-            }
-            .bottomBorder(1.dp, bottomLineColor.value),
+            .fillMaxWidth(),
         fontSize = 16.sp,
         value = passWdTextFieldValue.value,
         placeholderText = "비밀번호 입력",

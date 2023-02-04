@@ -11,10 +11,13 @@ import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.font.FontWeight
@@ -24,6 +27,9 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.cmc12th.runway.ui.components.util.bottomBorder
+import com.cmc12th.runway.ui.theme.Gray300
+import com.cmc12th.runway.ui.theme.Gray600
 
 @Composable
 fun CustomTextField(
@@ -39,8 +45,20 @@ fun CustomTextField(
     onvalueChanged: (TextFieldValue) -> Unit,
     passwordVisible: Boolean = true
 ) {
+    val bottomLineColor = remember {
+        mutableStateOf(Gray600)
+    }
     BasicTextField(
-        modifier = modifier,
+        modifier = modifier
+            .bottomBorder(1.dp, Gray300)
+            .onFocusChanged {
+                if (it.isFocused) {
+                    bottomLineColor.value = Color.Black
+                } else {
+                    bottomLineColor.value = Gray600
+                }
+            }
+            .bottomBorder(1.dp, bottomLineColor.value),
 //            .focusRequester(focusRequest ?: return),
         value = value,
         onValueChange = {
