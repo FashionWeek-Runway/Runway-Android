@@ -18,6 +18,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
@@ -38,7 +39,6 @@ fun SignInAgreementScreen() {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .systemBarsPadding()
     ) {
         Box(modifier = Modifier.padding(20.dp)) {
             BackIcon()
@@ -98,7 +98,21 @@ fun AgreementComponent() {
     ) {
         AgreementCheckBox()
         WidthSpacer(width = 20.dp)
-        Text(text = "이용약관 동의(필수)", style = Body2)
+        Row(
+            modifier = Modifier.clickable {
+                // TODO 약관 디테일로 이동
+            }
+        ) {
+            Text(text = "이용약관 동의(필수)", style = Body2)
+            Spacer(modifier = Modifier.weight(1f))
+            Icon(
+                painter = painterResource(id = R.drawable.ic_arrow),
+                contentDescription = "IC_ARROW",
+                modifier = Modifier
+                    .rotate(180f)
+                    .size(18.dp), tint = Gray400
+            )
+        }
     }
 }
 
