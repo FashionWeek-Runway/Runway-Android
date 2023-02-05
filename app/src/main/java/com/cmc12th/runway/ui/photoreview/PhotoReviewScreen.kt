@@ -35,12 +35,14 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.rememberAsyncImagePainter
 import coil.compose.rememberImagePainter
 import com.cmc12th.runway.R
 import com.cmc12th.runway.ui.components.BackIcon
 import com.cmc12th.runway.ui.components.HeightSpacer
 import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.utils.Constants.PHOTO_REVIEW_RESULT_ROUTE
+import com.cmc12th.runway.utils.captureView
 import kotlin.math.roundToInt
 
 @Composable
@@ -94,36 +96,6 @@ fun PhotoReviewScreen(appState: ApplicationState) {
     }
 }
 
-fun captureView(view: View, window: Window, bitmapCallback: (Bitmap) -> Unit) {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-        // Above Android O, use PixelCopy
-        val bitmap = Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
-        val location = IntArray(2)
-        view.getLocationInWindow(location)
-        PixelCopy.request(
-            window,
-            Rect(
-                location[0], location[1],
-                (location[0] + view.width), (location[1] + view.height)
-            ),
-            bitmap,
-            { it ->
-                if (it == PixelCopy.SUCCESS) {
-                    bitmapCallback.invoke(bitmap)
-                }
-            },
-            Handler(Looper.getMainLooper())
-        )
-    } else {
-        val tBitmap = Bitmap.createBitmap(
-            view.width, view.height, Bitmap.Config.RGB_565
-        )
-        val canvas = Canvas(tBitmap)
-        view.draw(canvas)
-        canvas.setBitmap(null)
-        bitmapCallback.invoke(tBitmap)
-    }
-}
 
 @Composable
 private fun ColumnScope.ModifyImage(
@@ -149,7 +121,7 @@ private fun ColumnScope.ModifyImage(
     ) {
         Image(
             modifier = Modifier.fillMaxSize(),
-            painter = rememberImagePainter(selectImages),
+            painter = rememberAsyncImagePainter(selectImages),
             contentScale = ContentScale.Crop,
             contentDescription = null,
         )
