@@ -71,4 +71,13 @@ dependencies {
     // Coil
     implementation "io.coil-kt:coil-compose:2.2.2"
 
+    // Naver Map
+    implementation 'io.github.fornewid:naver-map-compose:1.2.3'
+    implementation 'androidx.appcompat:appcompat:1.6.0'
+    implementation('com.naver.maps:map-sdk:3.16.1') {
+        exclude group: 'com.android.support'
+    }
+    // MarkerClusting
+    implementation 'io.github.ParkSangGwon:tedclustering-naver:1.0.2'
+
 }
