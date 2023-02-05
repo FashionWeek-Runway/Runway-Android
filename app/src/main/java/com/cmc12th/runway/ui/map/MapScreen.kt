@@ -26,7 +26,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
-import com.cmc12th.domain.model.NaverItem
+import com.cmc12th.runway.domain.model.NaverItem
 import com.cmc12th.runway.R
 import com.cmc12th.runway.ui.components.CustomTextField
 import com.cmc12th.runway.ui.components.WidthSpacer

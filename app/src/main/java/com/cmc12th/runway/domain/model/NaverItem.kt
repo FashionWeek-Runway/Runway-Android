@@ -1,4 +1,4 @@
-package com.cmc12th.domain.model
+package com.cmc12th.runway.domain.model
 
 import com.naver.maps.geometry.LatLng
 import ted.gun0912.clustering.clustering.TedClusterItem
