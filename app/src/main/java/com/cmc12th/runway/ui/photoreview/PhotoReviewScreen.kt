@@ -64,7 +64,7 @@ fun PhotoReviewScreen(appState: ApplicationState) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .scrollable(rememberScrollState(), Orientation.Vertical)
+//            .scrollable(rememberScrollState(), Orientation.Vertical)
     ) {
         Row(
             modifier = Modifier
@@ -75,7 +75,9 @@ fun PhotoReviewScreen(appState: ApplicationState) {
         ) {
             BackIcon()
             Text(text = "포토 후기 작성하기")
-            Text(text = "작성 완료")
+            Button(onClick = { event.value = !event.value }) {
+                Text(text = "리뷰 작성완료")
+            }
         }
 
         selectImages.value?.let {
@@ -87,10 +89,6 @@ fun PhotoReviewScreen(appState: ApplicationState) {
                 appState.navController.navigate(PHOTO_REVIEW_RESULT_ROUTE)
                 croppedImage.value = it
             }
-        }
-        HeightSpacer(height = 20.dp)
-        Button(modifier = Modifier.fillMaxWidth(), onClick = { event.value = !event.value }) {
-            Text(text = "리뷰 작성완료")
         }
 
     }
@@ -147,7 +145,6 @@ private fun ColumnScope.ModifyImage(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(0.dp, 20.dp)
             .weight(1f)
     ) {
         Image(

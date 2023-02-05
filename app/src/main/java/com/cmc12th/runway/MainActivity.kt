@@ -25,6 +25,7 @@ import androidx.navigation.compose.rememberNavController
 import com.cmc12th.runway.ui.Screen
 import com.cmc12th.runway.ui.detail.PhotoReviewResultScreen
 import com.cmc12th.runway.ui.domain.model.ApplicationState
+import com.cmc12th.runway.ui.login.signin.SignInProfileImage
 import com.cmc12th.runway.ui.loginGraph
 import com.cmc12th.runway.ui.mainGraph
 import com.cmc12th.runway.ui.photoreview.PhotoReviewScreen
@@ -37,6 +38,7 @@ import com.cmc12th.runway.utils.Constants.MAP_ROUTE
 import com.cmc12th.runway.utils.Constants.MYPAGE_ROUTE
 import com.cmc12th.runway.utils.Constants.PHOTO_REVIEW_RESULT_ROUTE
 import com.cmc12th.runway.utils.Constants.PHOTO_REVIEW_ROUTE
+import com.cmc12th.runway.utils.Constants.SIGNIN_PROFILE_IMAGE_ROUTE
 import com.cmc12th.runway.utils.Constants.SPLASH_ROUTE
 
 class MainActivity : ComponentActivity() {
@@ -45,15 +47,23 @@ class MainActivity : ComponentActivity() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
         setContent {
             RunwayTheme {
-                // A surface container using the 'background' color from the theme
+                val appState = rememberApplicationState()
+                val navBackStackEntry by appState.navController.currentBackStackEntryAsState()
+                ManageBottomBarState(navBackStackEntry, appState)
                 Surface(
-                    modifier = Modifier
+                    modifier = if (appState.imePaddingState.value) Modifier
                         .statusBarsPadding()
+                        .imePadding()
                         .navigationBarsPadding()
+                        .fillMaxSize()
+                    else Modifier
+                        .statusBarsPadding()
                         .fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    RootIndex()
+//                    SignInPhoneVerifyScreen()
+//                    SignInProfileImage()
+                    RootIndex(appState)
                 }
             }
         }
@@ -66,11 +76,13 @@ private fun rememberApplicationState(
     bottomBarState: MutableState<Boolean> = mutableStateOf(false),
     navController: NavHostController = rememberNavController(),
     scaffoldState: ScaffoldState = rememberScaffoldState(),
+    imePaddingState: MutableState<Boolean> = mutableStateOf(false),
 ) = remember(bottomBarState, navController) {
     ApplicationState(
         bottomBarState,
         navController,
         scaffoldState,
+        imePaddingState
     )
 }
 
@@ -78,21 +90,25 @@ private fun rememberApplicationState(
 @Composable
 private fun ManageBottomBarState(
     navBackStackEntry: NavBackStackEntry?,
-    bottomBarState: MutableState<Boolean>,
+    applicationState: ApplicationState,
 ) {
     when (navBackStackEntry?.destination?.route) {
-        HOME_ROUTE, MAP_ROUTE, MYPAGE_ROUTE -> bottomBarState.value = true
-        else -> bottomBarState.value = false
+        HOME_ROUTE, MAP_ROUTE, MYPAGE_ROUTE -> applicationState.bottomBarState.value = true
+        else -> applicationState.bottomBarState.value = false
+    }
+    when (navBackStackEntry?.destination?.route) {
+        PHOTO_REVIEW_ROUTE -> applicationState.imePaddingState.value = false
+        else -> applicationState.imePaddingState.value = true
     }
 }
 
 
 /** State값들을 정의한 Composable */
 @Composable
-private fun RootIndex() {
-    val appState = rememberApplicationState()
-    val navBackStackEntry by appState.navController.currentBackStackEntryAsState()
-    ManageBottomBarState(navBackStackEntry, appState.bottomBarState)
+private fun RootIndex(appState: ApplicationState) {
+//    val appState = rememberApplicationState()
+//    val navBackStackEntry by appState.navController.currentBackStackEntryAsState()
+//    ManageBottomBarState(navBackStackEntry, appState)
     Surface(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -123,6 +139,9 @@ private fun RootNavhost(
             }
             composable(PHOTO_REVIEW_ROUTE) {
                 PhotoReviewScreen(appState)
+            }
+            composable(SIGNIN_PROFILE_IMAGE_ROUTE) {
+                SignInProfileImage()
             }
             composable(PHOTO_REVIEW_RESULT_ROUTE) {
                 val userObject =
