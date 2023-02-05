@@ -2,7 +2,6 @@ package com.cmc12th.runway
 
 import android.graphics.Bitmap
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.*
@@ -26,19 +25,19 @@ import androidx.navigation.compose.rememberNavController
 import com.cmc12th.runway.ui.Screen
 import com.cmc12th.runway.ui.detail.PhotoReviewResultScreen
 import com.cmc12th.runway.ui.domain.model.ApplicationState
+import com.cmc12th.runway.ui.loginGraph
 import com.cmc12th.runway.ui.mainGraph
 import com.cmc12th.runway.ui.photoreview.PhotoReviewScreen
 import com.cmc12th.runway.ui.splash.SplashScreen
-import com.cmc12th.runway.ui.theme.Gray600
 import com.cmc12th.runway.ui.theme.RunwayTheme
 import com.cmc12th.runway.utils.Constants.BOTTOM_NAV_ITEMS
-import com.cmc12th.runway.utils.Constants.HOME_ROOT
+import com.cmc12th.runway.utils.Constants.HOME_ROUTE
 import com.cmc12th.runway.utils.Constants.MAIN_GRAPH
-import com.cmc12th.runway.utils.Constants.MAP_ROOT
-import com.cmc12th.runway.utils.Constants.MYPAGE_ROOT
-import com.cmc12th.runway.utils.Constants.PHOTO_REVIEW_RESULT_ROOT
-import com.cmc12th.runway.utils.Constants.PHOTO_REVIEW_ROOT
-import com.cmc12th.runway.utils.Constants.SPLASH
+import com.cmc12th.runway.utils.Constants.MAP_ROUTE
+import com.cmc12th.runway.utils.Constants.MYPAGE_ROUTE
+import com.cmc12th.runway.utils.Constants.PHOTO_REVIEW_RESULT_ROUTE
+import com.cmc12th.runway.utils.Constants.PHOTO_REVIEW_ROUTE
+import com.cmc12th.runway.utils.Constants.SPLASH_ROUTE
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -82,7 +81,7 @@ private fun ManageBottomBarState(
     bottomBarState: MutableState<Boolean>,
 ) {
     when (navBackStackEntry?.destination?.route) {
-        HOME_ROOT, MAP_ROOT, MYPAGE_ROOT -> bottomBarState.value = true
+        HOME_ROUTE, MAP_ROUTE, MYPAGE_ROUTE -> bottomBarState.value = true
         else -> bottomBarState.value = false
     }
 }
@@ -114,18 +113,18 @@ private fun RootNavhost(
     ) { innerPadding ->
         NavHost(
             appState.navController,
-            startDestination = SPLASH,
+            startDestination = SPLASH_ROUTE,
             Modifier
                 .padding(innerPadding)
                 .background(color = Color.White),
         ) {
-            composable(SPLASH) {
+            composable(SPLASH_ROUTE) {
                 SplashScreen(appState)
             }
-            composable(PHOTO_REVIEW_ROOT) {
+            composable(PHOTO_REVIEW_ROUTE) {
                 PhotoReviewScreen(appState)
             }
-            composable(PHOTO_REVIEW_RESULT_ROOT) {
+            composable(PHOTO_REVIEW_RESULT_ROUTE) {
                 val userObject =
                     appState.navController.previousBackStackEntry?.arguments?.getParcelable<Bitmap>(
                         "bitmap"
@@ -133,6 +132,7 @@ private fun RootNavhost(
                 PhotoReviewResultScreen(appState, userObject!!)
             }
             mainGraph(appState)
+            loginGraph(appState)
         }
     }
 }

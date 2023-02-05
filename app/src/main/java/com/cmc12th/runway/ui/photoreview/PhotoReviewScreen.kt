@@ -3,15 +3,11 @@ package com.cmc12th.runway.ui.photoreview
 import android.app.Activity
 import android.graphics.Bitmap
 import android.graphics.Canvas
-import android.graphics.ImageDecoder
 import android.graphics.Rect
-import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
-import android.provider.MediaStore
-import android.util.Log
 import android.view.PixelCopy
 import android.view.View
 import android.view.Window
@@ -32,28 +28,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.boundsInRoot
-import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
-import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.graphics.applyCanvas
-import androidx.core.graphics.createBitmap
-import androidx.core.view.drawToBitmap
-import coil.compose.rememberAsyncImagePainter
 import coil.compose.rememberImagePainter
 import com.cmc12th.runway.R
 import com.cmc12th.runway.ui.components.BackIcon
 import com.cmc12th.runway.ui.components.HeightSpacer
 import com.cmc12th.runway.ui.domain.model.ApplicationState
-import com.cmc12th.runway.utils.Constants
-import com.cmc12th.runway.utils.Constants.PHOTO_REVIEW_RESULT_ROOT
-import com.cmc12th.runway.utils.Constants.PHOTO_REVIEW_ROOT
+import com.cmc12th.runway.utils.Constants.PHOTO_REVIEW_RESULT_ROUTE
 import kotlin.math.roundToInt
 
 @Composable
@@ -97,7 +84,7 @@ fun PhotoReviewScreen(appState: ApplicationState) {
                     "bitmap",
                     it
                 )
-                appState.navController.navigate(PHOTO_REVIEW_RESULT_ROOT)
+                appState.navController.navigate(PHOTO_REVIEW_RESULT_ROUTE)
                 croppedImage.value = it
             }
         }

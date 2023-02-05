@@ -18,7 +18,7 @@ fun MypageScreen(appState: ApplicationState) {
             .fillMaxSize()
     ) {
         Text(text = "Mypage Screen")
-        Button(onClick = { appState.navController.navigate(Constants.PHOTO_REVIEW_ROOT) }) {
+        Button(onClick = { appState.navController.navigate(Constants.PHOTO_REVIEW_ROUTE) }) {
             Text(text = "리뷰작성하러 가기")
         }
     }

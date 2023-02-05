@@ -1,11 +1,10 @@
 package com.cmc12th.runway.ui
 
 import androidx.annotation.DrawableRes
-import androidx.annotation.StringRes
 import com.cmc12th.runway.R
-import com.cmc12th.runway.utils.Constants.HOME_ROOT
-import com.cmc12th.runway.utils.Constants.MAP_ROOT
-import com.cmc12th.runway.utils.Constants.MYPAGE_ROOT
+import com.cmc12th.runway.utils.Constants.HOME_ROUTE
+import com.cmc12th.runway.utils.Constants.MAP_ROUTE
+import com.cmc12th.runway.utils.Constants.MYPAGE_ROUTE
 
 sealed class Screen(
     val route: String,
@@ -15,21 +14,21 @@ sealed class Screen(
 ) {
     object Home :
         Screen(
-            HOME_ROOT,
+            HOME_ROUTE,
             R.drawable.ic_nav_home_off,
             R.drawable.ic_nav_home_on,
         )
 
     object Map :
         Screen(
-            MAP_ROOT,
+            MAP_ROUTE,
             R.drawable.ic_nav_map_off,
             R.drawable.ic_nav_map_on,
         )
 
     object Mypage :
         Screen(
-            MYPAGE_ROOT,
+            MYPAGE_ROUTE,
             R.drawable.ic_nav_mypage_off,
             R.drawable.ic_nav_mypage_on,
         )
