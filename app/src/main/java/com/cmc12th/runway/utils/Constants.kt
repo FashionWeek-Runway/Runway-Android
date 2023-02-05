@@ -17,7 +17,8 @@ object Constants {
     const val LOGIN_BASE_ROUTE = "nav-login"
     const val LOGIN_ID_PW_ROUTE = "nav-login_id_pw"
     const val SPLASH_ROUTE = "nav-splash"
-    
+    const val SIGNIN_PROFILE_IMAGE_ROUTE = "nav-profile-image"
+    const val SIGNIN_AGREEMENT_DETAIL = "nav-signin-agreement-detail"
 
     /** Graph Id */
     const val MAIN_GRAPH = "main-graph"
