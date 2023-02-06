@@ -21,7 +21,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cmc12th.runway.R
@@ -31,11 +30,12 @@ import com.cmc12th.runway.ui.components.HeightSpacer
 import com.cmc12th.runway.ui.components.WidthSpacer
 import com.cmc12th.runway.ui.components.onboard.OnBoardStep
 import com.cmc12th.runway.ui.components.util.bottomBorder
+import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.domain.model.MobileCarrier
 import com.cmc12th.runway.ui.theme.*
 
 @Composable
-fun SignInUserInfoVerifyScreen() {
+fun SignInUserInfoVerifyScreen(appState: ApplicationState) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -335,9 +335,3 @@ private fun NameContainter() {
     }
 }
 
-
-@Preview(showBackground = true)
-@Composable
-fun SignInUserVerificationScreenPreview() {
-    SignInUserInfoVerifyScreen()
-}

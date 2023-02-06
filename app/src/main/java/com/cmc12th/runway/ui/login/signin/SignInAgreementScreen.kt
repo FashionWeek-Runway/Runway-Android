@@ -3,8 +3,6 @@
 package com.cmc12th.runway.ui.login.signin
 
 import androidx.compose.animation.*
-import androidx.compose.animation.core.keyframes
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.*
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.scrollable
@@ -23,8 +21,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cmc12th.runway.R
@@ -32,10 +28,11 @@ import com.cmc12th.runway.ui.components.BackIcon
 import com.cmc12th.runway.ui.components.HeightSpacer
 import com.cmc12th.runway.ui.components.WidthSpacer
 import com.cmc12th.runway.ui.components.onboard.OnBoardStep
+import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.theme.*
 
 @Composable
-fun SignInAgreementScreen() {
+fun SignInAgreementScreen(appState: ApplicationState) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -161,10 +158,4 @@ fun AgreementCheckBox() {
             }
         }
     }
-}
-
-@Preview
-@Composable
-fun SignInAgreementScreenPreview() {
-    SignInAgreementScreen()
 }

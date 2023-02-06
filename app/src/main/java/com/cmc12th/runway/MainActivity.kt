@@ -23,12 +23,14 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.cmc12th.runway.ui.Screen
+import com.cmc12th.runway.ui.components.BottomBar
 import com.cmc12th.runway.ui.detail.PhotoReviewResultScreen
 import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.login.signin.SignInProfileImage
 import com.cmc12th.runway.ui.loginGraph
 import com.cmc12th.runway.ui.mainGraph
 import com.cmc12th.runway.ui.photoreview.PhotoReviewScreen
+import com.cmc12th.runway.ui.signInGraph
 import com.cmc12th.runway.ui.splash.SplashScreen
 import com.cmc12th.runway.ui.theme.RunwayTheme
 import com.cmc12th.runway.utils.Constants.BOTTOM_NAV_ITEMS
@@ -63,7 +65,7 @@ class MainActivity : ComponentActivity() {
                 ) {
 //                    SignInPhoneVerifyScreen()
 //                    SignInProfileImage()
-                    RootIndex(appState)
+                    RootNavhost(appState)
                 }
             }
         }
@@ -103,26 +105,11 @@ private fun ManageBottomBarState(
 }
 
 
-/** State값들을 정의한 Composable */
-@Composable
-private fun RootIndex(appState: ApplicationState) {
-//    val appState = rememberApplicationState()
-//    val navBackStackEntry by appState.navController.currentBackStackEntryAsState()
-//    ManageBottomBarState(navBackStackEntry, appState)
-    Surface(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        RootNavhost(appState)
-    }
-}
-
-
 /** NavHost를 정의하여 Navigation을 관리한다. */
 @Composable
 private fun RootNavhost(
     appState: ApplicationState,
 ) {
-
     Scaffold(
         scaffoldState = appState.scaffoldState,
         bottomBar = { BottomBar(appState) },
@@ -140,9 +127,6 @@ private fun RootNavhost(
             composable(PHOTO_REVIEW_ROUTE) {
                 PhotoReviewScreen(appState)
             }
-            composable(SIGNIN_PROFILE_IMAGE_ROUTE) {
-                SignInProfileImage()
-            }
             composable(PHOTO_REVIEW_RESULT_ROUTE) {
                 val userObject =
                     appState.navController.previousBackStackEntry?.arguments?.getParcelable<Bitmap>(
@@ -152,66 +136,7 @@ private fun RootNavhost(
             }
             mainGraph(appState)
             loginGraph(appState)
-        }
-    }
-}
-
-
-/** BottomNavigation Bar를 정의한다. */
-@Composable
-private fun BottomBar(
-    appState: ApplicationState,
-    bottomNavItems: List<Screen> = BOTTOM_NAV_ITEMS,
-) {
-    AnimatedVisibility(
-        visible = appState.bottomBarState.value,
-        enter = fadeIn() + expandVertically(),
-        exit = fadeOut() + shrinkVertically(),
-        modifier = Modifier.background(color = Color.White),
-    ) {
-        BottomNavigation(
-//            modifier = Modifier
-//                .clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp)),
-            backgroundColor = Color.White,
-        ) {
-            val navBackStackEntry by appState.navController.currentBackStackEntryAsState()
-            val currentDestination = navBackStackEntry?.destination
-            bottomNavItems.forEachIndexed { _, screen ->
-                val isSelected =
-                    currentDestination?.hierarchy?.any { it.route == screen.route } == true
-                BottomNavigationItem(
-                    icon = {
-                        Surface {
-                            Icon(
-                                painter = painterResource(
-                                    id =
-                                    (if (isSelected) screen.selecteddrawableResId else screen.drawableResId),
-                                ),
-                                contentDescription = null,
-                            )
-                        }
-                    },
-                    label = null,
-                    /** 타이틀 달것이면 여기 */
-//                    if (isSelected) {
-//                        { Text(text = stringResource(screen.stringResId), color = Color.White) }
-//                    } else {
-//                        null
-//                    },
-                    selected = isSelected,
-                    onClick = {
-                        appState.navController.navigate(screen.route) {
-                            popUpTo(MAIN_GRAPH) {
-                                saveState = true
-                            }
-                            launchSingleTop = true
-                            restoreState = true
-                        }
-                    },
-                    selectedContentColor = Color.Unspecified,
-                    unselectedContentColor = Color.Unspecified,
-                )
-            }
+            signInGraph(appState)
         }
     }
 }

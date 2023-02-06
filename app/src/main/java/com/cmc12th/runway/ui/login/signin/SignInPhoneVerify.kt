@@ -2,15 +2,10 @@
 
 package com.cmc12th.runway.ui.login.signin
 
-import android.view.ViewTreeObserver
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
@@ -20,29 +15,25 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.view.WindowCompat
 import com.cmc12th.runway.ui.components.BackIcon
 import com.cmc12th.runway.ui.components.CustomTextField
 import com.cmc12th.runway.ui.components.HeightSpacer
 import com.cmc12th.runway.ui.components.WidthSpacer
 import com.cmc12th.runway.ui.components.onboard.OnBoardStep
+import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.theme.Error_Color
 import com.cmc12th.runway.ui.theme.Gray300
 import com.cmc12th.runway.ui.theme.HeadLine3
-import kotlinx.coroutines.launch
 
 @Composable
-fun SignInPhoneVerifyScreen() {
+fun SignInPhoneVerifyScreen(appState: ApplicationState) {
 
     Column(
         modifier = Modifier
@@ -131,10 +122,4 @@ private fun InputVerificationCode() {
         }
     }
 
-}
-
-@Preview(showBackground = true)
-@Composable
-fun SignInPhoneVerifyScreenPreview() {
-    SignInPhoneVerifyScreen()
 }

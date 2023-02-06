@@ -15,7 +15,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cmc12th.runway.ui.components.BackIcon
@@ -24,11 +23,11 @@ import com.cmc12th.runway.ui.components.HeightSpacer
 import com.cmc12th.runway.ui.components.onboard.OnBoardStep
 import com.cmc12th.runway.ui.theme.HeadLine3
 import com.cmc12th.runway.R
-import com.cmc12th.runway.ui.theme.Gray50
+import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.theme.Gray500
 
 @Composable
-fun SingInPasswordScreen() {
+fun SignInPasswordScreen(appState: ApplicationState) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -146,8 +145,3 @@ fun InputPassword() {
     }
 }
 
-@Preview
-@Composable
-fun SingInPasswordScreenPreview() {
-    SingInPasswordScreen()
-}

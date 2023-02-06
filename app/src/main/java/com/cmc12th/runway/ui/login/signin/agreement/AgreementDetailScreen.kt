@@ -7,20 +7,16 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.cmc12th.runway.ui.components.BackIcon
 import com.cmc12th.runway.ui.components.HeightSpacer
 import com.cmc12th.runway.ui.components.WidthSpacer
-import com.cmc12th.runway.ui.components.onboard.OnBoardStep
+import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.theme.Body1
-import com.cmc12th.runway.ui.theme.HeadLine3
 import com.cmc12th.runway.ui.theme.HeadLine4
 
 @Composable
-fun AgreementDetailScreen() {
+fun AgreementDetailScreen(appState: ApplicationState) {
 
     Column(
         modifier = Modifier
@@ -53,8 +49,3 @@ fun AgreementDetailScreen() {
     }
 }
 
-@Preview
-@Composable
-fun AgreementDetailScreenPreview() {
-    AgreementDetailScreen()
-}

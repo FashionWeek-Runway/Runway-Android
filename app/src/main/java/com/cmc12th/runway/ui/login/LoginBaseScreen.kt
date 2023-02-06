@@ -17,6 +17,7 @@ import com.cmc12th.runway.R
 import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.theme.HeadLine1
 import com.cmc12th.runway.utils.Constants.LOGIN_ID_PW_ROUTE
+import com.cmc12th.runway.utils.Constants.SIGNIN_GRAPH
 import com.cmc12th.runway.utils.Constants.SIGNIN_PROFILE_IMAGE_ROUTE
 
 @Composable
@@ -28,9 +29,6 @@ fun LoginBaseScreen(appState: ApplicationState) {
                 .align(Alignment.TopCenter)
                 .fillMaxWidth()
                 .fillMaxHeight(0.9f),
-//            contentScale = ContentScale.Crop,
-//            painter = painterResource(Color.White),
-//            contentDescription = "IMG_LOGIN_BACKGROUND"
         )
 
         /** 왼쪽 위 런웨이 설명 */
@@ -60,14 +58,15 @@ fun LoginBaseScreen(appState: ApplicationState) {
                 .fillMaxHeight(0.2f),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(text = "간편하게 가입하기", fontSize = 14.sp, style = HeadLine1)
+            Text(modifier = Modifier.clickable {
+                appState.navController.navigate(SIGNIN_GRAPH)
+            }, text = "간편하게 가입하기", fontSize = 14.sp, style = HeadLine1)
             Spacer(modifier = Modifier.height(20.dp))
             Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                 Image(
                     modifier = Modifier
                         .size(60.dp)
                         .clickable {
-                            appState.navController.navigate(SIGNIN_PROFILE_IMAGE_ROUTE)
                         },
                     painter = painterResource(id = R.drawable.img_kakao_btn),
                     contentDescription = "IMG_KAKAO_BTN"

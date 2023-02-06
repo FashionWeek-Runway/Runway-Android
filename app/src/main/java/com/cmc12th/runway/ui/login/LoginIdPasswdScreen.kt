@@ -18,7 +18,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cmc12th.runway.R
@@ -29,6 +28,7 @@ import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.theme.Gray600
 import com.cmc12th.runway.ui.theme.HeadLine1
 import com.cmc12th.runway.utils.Constants.MAIN_GRAPH
+import com.cmc12th.runway.utils.Constants.SIGNIN_GRAPH
 
 @Composable
 fun LoginIdPasswdScreen(appState: ApplicationState) {
@@ -69,6 +69,9 @@ fun LoginIdPasswdScreen(appState: ApplicationState) {
         BottomButtons(
             onLogin = {
                 appState.navController.navigate(MAIN_GRAPH)
+            },
+            onSignin = {
+                appState.navController.navigate(SIGNIN_GRAPH)
             }
         )
     }
@@ -141,7 +144,7 @@ private fun PasswordTextField(passWdTextFieldValue: MutableState<TextFieldValue>
 
 
 @Composable
-private fun BottomButtons(onLogin: () -> Unit) {
+private fun BottomButtons(onLogin: () -> Unit, onSignin: () -> Unit) {
     Column(
         verticalArrangement = Arrangement.spacedBy(10.dp),
         modifier = Modifier.padding(bottom = 30.dp)
@@ -150,9 +153,7 @@ private fun BottomButtons(onLogin: () -> Unit) {
             modifier = Modifier
                 .fillMaxWidth()
                 .background(Color.Black),
-            onClick = {
-                onLogin()
-            },
+            onClick = onLogin,
             colors = ButtonDefaults.buttonColors(Color.Black)
         )
         {
@@ -163,7 +164,7 @@ private fun BottomButtons(onLogin: () -> Unit) {
                 .fillMaxWidth()
                 .background(Color.White)
                 .border(1.dp, Color.Black),
-            onClick = { /*TODO*/ },
+            onClick = onSignin,
             colors = ButtonDefaults.buttonColors(Color.Transparent)
         ) {
             Text(text = "회원가입", color = Color.Black, fontSize = 16.sp)
@@ -171,9 +172,3 @@ private fun BottomButtons(onLogin: () -> Unit) {
     }
 }
 
-//
-//@Preview(backgroundColor = 1)
-//@Composable
-//fun LoginIdPasswdScreenPreview() {
-//    LoginIdPasswdScreen(appState)
-//}

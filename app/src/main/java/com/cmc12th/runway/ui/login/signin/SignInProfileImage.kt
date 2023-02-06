@@ -33,7 +33,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
@@ -42,10 +41,11 @@ import com.cmc12th.runway.ui.components.BackIcon
 import com.cmc12th.runway.ui.components.CustomTextField
 import com.cmc12th.runway.ui.components.HeightSpacer
 import com.cmc12th.runway.ui.components.onboard.OnBoardStep
+import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.theme.*
 
 @Composable
-fun SignInProfileImage() {
+fun SignInProfileImage(appState: ApplicationState) {
     val onkeyboardFocus = remember {
         mutableStateOf(false)
     }
@@ -286,10 +286,4 @@ private fun DefaultProfileImage(galleryLauncher: ManagedActivityResultLauncher<S
         }
 
     }
-}
-
-@Preview
-@Composable
-fun SignInProfileImagePreview() {
-    SignInProfileImage()
 }

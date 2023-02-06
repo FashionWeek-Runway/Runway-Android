@@ -16,8 +16,7 @@ fun OnBoardStep(step: Int) {
     Row(
         modifier = Modifier
             .fillMaxWidth(1f)
-            .background(Color.White),
-        horizontalArrangement = Arrangement.spacedBy(5.dp)
+            .background(Gray100),
     ) {
         steps.forEachIndexed { index, now ->
             Spacer(
