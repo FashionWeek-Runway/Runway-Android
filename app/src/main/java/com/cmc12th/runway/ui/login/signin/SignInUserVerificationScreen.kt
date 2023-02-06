@@ -33,13 +33,14 @@ import com.cmc12th.runway.ui.components.util.bottomBorder
 import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.domain.model.MobileCarrier
 import com.cmc12th.runway.ui.theme.*
+import com.cmc12th.runway.utils.Constants.SIGNIN_PHONE_VERIFY_ROUTE
 
 @Composable
 fun SignInUserInfoVerifyScreen(appState: ApplicationState) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .systemBarsPadding()
+            .verticalScroll(rememberScrollState(), reverseScrolling = true),
     ) {
         Box(modifier = Modifier.padding(20.dp)) {
             BackIcon()
@@ -48,9 +49,8 @@ fun SignInUserInfoVerifyScreen(appState: ApplicationState) {
 
         Column(
             modifier = Modifier
-                .weight(1f)
                 .padding(20.dp)
-                .scrollable(rememberScrollState(), orientation = Orientation.Vertical),
+                .weight(1f),
             verticalArrangement = Arrangement.spacedBy(30.dp)
         ) {
             /** 본인인증 텍스트 */
@@ -71,21 +71,23 @@ fun SignInUserInfoVerifyScreen(appState: ApplicationState) {
             /** 휴대전화 입력 */
             PhoneContainer()
 
-            /** 인증 요청 */
-            Button(modifier = Modifier
-                .fillMaxWidth(),
-                shape = RectangleShape,
-                colors = ButtonDefaults.buttonColors(Gray300), onClick = { /*TODO*/ }) {
-                Text(
-                    modifier = Modifier.padding(0.dp, 5.dp),
-                    text = "인증 요청",
-                    fontSize = 16.sp,
-                    color = Color.White
-                )
-            }
         }
 
-
+        /** 인증 요청 */
+        Button(modifier = Modifier
+            .fillMaxWidth(),
+            shape = RectangleShape,
+            colors = ButtonDefaults.buttonColors(Gray300),
+            onClick = {
+                appState.navController.navigate(SIGNIN_PHONE_VERIFY_ROUTE)
+            }) {
+            Text(
+                modifier = Modifier.padding(0.dp, 5.dp),
+                text = "인증 요청",
+                fontSize = 16.sp,
+                color = Color.White
+            )
+        }
     }
 }
 
@@ -158,7 +160,7 @@ fun PhoneContainer() {
                 onvalueChanged = { if (it.text.length <= 11) phoneNumber.value = it },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Phone,
-                    imeAction = ImeAction.Next
+                    imeAction = ImeAction.Done
                 ),
                 keyboardActions = KeyboardActions(onDone = {
                 }),

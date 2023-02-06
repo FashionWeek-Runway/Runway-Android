@@ -2,6 +2,7 @@ package com.cmc12th.runway
 
 import android.graphics.Bitmap
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.*
@@ -40,7 +41,9 @@ import com.cmc12th.runway.utils.Constants.MAP_ROUTE
 import com.cmc12th.runway.utils.Constants.MYPAGE_ROUTE
 import com.cmc12th.runway.utils.Constants.PHOTO_REVIEW_RESULT_ROUTE
 import com.cmc12th.runway.utils.Constants.PHOTO_REVIEW_ROUTE
+import com.cmc12th.runway.utils.Constants.SIGNIN_PHONE_VERIFY_ROUTE
 import com.cmc12th.runway.utils.Constants.SIGNIN_PROFILE_IMAGE_ROUTE
+import com.cmc12th.runway.utils.Constants.SIGNIN_USER_VERIFICATION_ROUTE
 import com.cmc12th.runway.utils.Constants.SPLASH_ROUTE
 
 class MainActivity : ComponentActivity() {
@@ -48,10 +51,11 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
         setContent {
+            val appState = rememberApplicationState()
+            val navBackStackEntry by appState.navController.currentBackStackEntryAsState()
             RunwayTheme {
-                val appState = rememberApplicationState()
-                val navBackStackEntry by appState.navController.currentBackStackEntryAsState()
                 ManageBottomBarState(navBackStackEntry, appState)
+                Log.i("dlgocks1", appState.imePaddingState.value.toString())
                 Surface(
                     modifier = if (appState.imePaddingState.value) Modifier
                         .statusBarsPadding()
@@ -60,11 +64,10 @@ class MainActivity : ComponentActivity() {
                         .fillMaxSize()
                     else Modifier
                         .statusBarsPadding()
+                        .navigationBarsPadding()
                         .fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-//                    SignInPhoneVerifyScreen()
-//                    SignInProfileImage()
                     RootNavhost(appState)
                 }
             }
@@ -94,13 +97,17 @@ private fun ManageBottomBarState(
     navBackStackEntry: NavBackStackEntry?,
     applicationState: ApplicationState,
 ) {
+    Log.i("dlgocks1", navBackStackEntry?.destination?.route.toString())
     when (navBackStackEntry?.destination?.route) {
         HOME_ROUTE, MAP_ROUTE, MYPAGE_ROUTE -> applicationState.bottomBarState.value = true
         else -> applicationState.bottomBarState.value = false
     }
     when (navBackStackEntry?.destination?.route) {
-        PHOTO_REVIEW_ROUTE -> applicationState.imePaddingState.value = false
-        else -> applicationState.imePaddingState.value = true
+//        SIGNIN_USER_VERIFICATION_ROUTE,
+        PHOTO_REVIEW_ROUTE, SIGNIN_PHONE_VERIFY_ROUTE -> {
+            applicationState.imePaddingState.value = true
+        }
+        else -> applicationState.imePaddingState.value = false
     }
 }
 

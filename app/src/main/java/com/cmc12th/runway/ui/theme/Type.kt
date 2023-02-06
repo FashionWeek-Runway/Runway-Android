@@ -48,7 +48,7 @@ val Body1 = TextStyle(
 
 val Body2 = TextStyle(
     fontFamily = SpoqaHansSansNeo,
-    fontWeight = FontWeight.Bold,
+    fontWeight = FontWeight.Medium,
     fontSize = 14.sp,
 )
 

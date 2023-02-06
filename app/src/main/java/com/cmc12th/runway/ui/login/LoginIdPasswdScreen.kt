@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
@@ -13,6 +14,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
@@ -25,6 +27,7 @@ import com.cmc12th.runway.ui.components.BackIcon
 import com.cmc12th.runway.ui.components.CustomTextField
 import com.cmc12th.runway.ui.components.HeightSpacer
 import com.cmc12th.runway.ui.domain.model.ApplicationState
+import com.cmc12th.runway.ui.theme.Body2
 import com.cmc12th.runway.ui.theme.Gray600
 import com.cmc12th.runway.ui.theme.HeadLine1
 import com.cmc12th.runway.utils.Constants.MAIN_GRAPH
@@ -62,7 +65,7 @@ fun LoginIdPasswdScreen(appState: ApplicationState) {
             PasswordTextField(passWdTextFieldValue)
             // Text(text = "error Message", color = Color.Red)
             HeightSpacer(30.dp)
-            Text(text = "비밀번호 찾기", modifier = Modifier.align(Alignment.End))
+            Text(text = "비밀번호 찾기", style = Body2, modifier = Modifier.align(Alignment.End))
         }
 
         /** 하단 로그인, 회원가입 */
@@ -152,6 +155,7 @@ private fun BottomButtons(onLogin: () -> Unit, onSignin: () -> Unit) {
         Button(
             modifier = Modifier
                 .fillMaxWidth()
+                .clip(shape = RoundedCornerShape(5.dp))
                 .background(Color.Black),
             onClick = onLogin,
             colors = ButtonDefaults.buttonColors(Color.Black)
@@ -162,8 +166,9 @@ private fun BottomButtons(onLogin: () -> Unit, onSignin: () -> Unit) {
         Button(
             modifier = Modifier
                 .fillMaxWidth()
+                .clip(shape = RoundedCornerShape(5.dp))
                 .background(Color.White)
-                .border(1.dp, Color.Black),
+                .border(1.dp, Color.Black, shape = RoundedCornerShape(5.dp)),
             onClick = onSignin,
             colors = ButtonDefaults.buttonColors(Color.Transparent)
         ) {

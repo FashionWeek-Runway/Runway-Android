@@ -31,6 +31,7 @@ import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.theme.Error_Color
 import com.cmc12th.runway.ui.theme.Gray300
 import com.cmc12th.runway.ui.theme.HeadLine3
+import com.cmc12th.runway.utils.Constants.SIGNIN_PASSWORD_ROUTE
 
 @Composable
 fun SignInPhoneVerifyScreen(appState: ApplicationState) {
@@ -38,6 +39,7 @@ fun SignInPhoneVerifyScreen(appState: ApplicationState) {
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .imePadding()
     ) {
         Box(modifier = Modifier.padding(20.dp)) {
             BackIcon()
@@ -59,7 +61,9 @@ fun SignInPhoneVerifyScreen(appState: ApplicationState) {
             InputVerificationCode()
         }
         Button(
-            onClick = { /*TODO*/ },
+            onClick = {
+                appState.navController.navigate(SIGNIN_PASSWORD_ROUTE)
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(50.dp),
