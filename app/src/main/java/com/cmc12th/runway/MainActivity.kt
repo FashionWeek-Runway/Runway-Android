@@ -82,7 +82,8 @@ private fun rememberApplicationState(
     navController: NavHostController = rememberNavController(),
     scaffoldState: ScaffoldState = rememberScaffoldState(),
     imePaddingState: MutableState<Boolean> = mutableStateOf(false),
-) = remember(bottomBarState, navController) {
+//) = remember(bottomBarState, navController, scaffoldState, imePaddingState) {
+) = remember(Unit) {
     ApplicationState(
         bottomBarState,
         navController,
