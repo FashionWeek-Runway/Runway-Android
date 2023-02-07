@@ -68,6 +68,8 @@ fun SignInProfileImage(appState: ApplicationState) {
         rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { url ->
             selectImage.value = url
         }
+    
+
 
     Column(
         modifier = Modifier
@@ -180,7 +182,7 @@ fun keyboardAsState(): State<Keyboard> {
 fun ProfileImageIcon(
     selectedImage: Uri?,
     profileSize: Float,
-    galleryLauncher: ManagedActivityResultLauncher<String, Uri?>
+    galleryLauncher: ManagedActivityResultLauncher<String, Uri?>,
 ) {
 
     Box(
@@ -209,7 +211,7 @@ fun ProfileImageIcon(
 @Composable
 private fun SelectedProfileImage(
     selectedImage: Uri,
-    galleryLauncher: ManagedActivityResultLauncher<String, Uri?>
+    galleryLauncher: ManagedActivityResultLauncher<String, Uri?>,
 ) {
     Box {
         Image(
@@ -233,7 +235,7 @@ private fun SelectedProfileImage(
                 drawRect(color = Color(0x600A0A0A))
             }
             Text(
-                text = "편집", style = Body1, color = Color.White,
+                text = "편집", style = Body1M, color = Color.White,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 8.dp),
@@ -276,7 +278,7 @@ private fun DefaultProfileImage(galleryLauncher: ManagedActivityResultLauncher<S
                     drawRect(color = Gray600)
                 }
                 Text(
-                    text = "편집", style = Body1, color = Color.White,
+                    text = "편집", style = Body1M, color = Color.White,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 8.dp),

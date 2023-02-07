@@ -11,7 +11,9 @@ import com.cmc12th.runway.R
 
 val SpoqaHansSansNeo = FontFamily(
     Font(R.font.spoqa_han_sans_neo_bold, FontWeight.Bold, FontStyle.Normal),
-    Font(R.font.spoqa_han_sans_neo_regular, FontWeight.Normal, FontStyle.Normal),
+    Font(R.font.spoqa_han_sans_neo_regular,
+        FontWeight.Normal,
+        FontStyle.Normal), // Regular을 Normal로 취급
     Font(R.font.spoqa_han_sans_neo_medium, FontWeight.Medium, FontStyle.Normal),
     Font(R.font.spoqa_han_sans_neo_light, FontWeight.Light, FontStyle.Normal),
 )
@@ -40,15 +42,45 @@ val HeadLine4 = TextStyle(
     fontSize = 18.sp,
 )
 
+val SubHeadline1 = TextStyle(
+    fontFamily = SpoqaHansSansNeo,
+    fontWeight = FontWeight.Medium,
+    fontSize = 20.sp,
+)
+
+val SubHeadline1B = TextStyle(
+    fontFamily = SpoqaHansSansNeo,
+    fontWeight = FontWeight.Bold,
+    fontSize = 20.sp,
+)
+
 val Body1 = TextStyle(
+    fontFamily = SpoqaHansSansNeo,
+    fontWeight = FontWeight.Normal,
+    fontSize = 16.sp,
+)
+
+val Body1B = TextStyle(
+    fontFamily = SpoqaHansSansNeo,
+    fontWeight = FontWeight.Bold,
+    fontSize = 16.sp,
+)
+
+val Body1M = TextStyle(
     fontFamily = SpoqaHansSansNeo,
     fontWeight = FontWeight.Medium,
     fontSize = 16.sp,
 )
 
-val Body2 = TextStyle(
+val Body2M = TextStyle(
     fontFamily = SpoqaHansSansNeo,
     fontWeight = FontWeight.Medium,
+    fontSize = 14.sp,
+)
+
+val Body2 = TextStyle(
+    fontFamily = SpoqaHansSansNeo,
+    fontWeight = FontWeight.Normal,
     fontSize = 14.sp,
 )
 

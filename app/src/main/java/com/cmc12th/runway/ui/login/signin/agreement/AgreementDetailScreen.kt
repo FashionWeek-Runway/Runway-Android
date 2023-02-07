@@ -12,7 +12,7 @@ import com.cmc12th.runway.ui.components.BackIcon
 import com.cmc12th.runway.ui.components.HeightSpacer
 import com.cmc12th.runway.ui.components.WidthSpacer
 import com.cmc12th.runway.ui.domain.model.ApplicationState
-import com.cmc12th.runway.ui.theme.Body1
+import com.cmc12th.runway.ui.theme.Body1M
 import com.cmc12th.runway.ui.theme.HeadLine4
 
 @Composable
@@ -26,7 +26,7 @@ fun AgreementDetailScreen(appState: ApplicationState) {
             Row {
                 BackIcon()
                 WidthSpacer(width = 20.dp)
-                Text(text = "이용약관 동의(필수)", style = Body1)
+                Text(text = "이용약관 동의(필수)", style = Body1M)
             }
         }
         Column(
@@ -43,7 +43,7 @@ fun AgreementDetailScreen(appState: ApplicationState) {
             ) {
                 Text(text = "타이틀", style = HeadLine4)
                 HeightSpacer(height = 20.dp)
-                Text(text = "내용", style = Body1)
+                Text(text = "내용", style = Body1M)
             }
         }
     }
