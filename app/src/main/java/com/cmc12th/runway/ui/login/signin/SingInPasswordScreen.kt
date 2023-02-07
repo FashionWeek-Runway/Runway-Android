@@ -4,17 +4,24 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cmc12th.runway.ui.components.BackIcon
@@ -24,7 +31,9 @@ import com.cmc12th.runway.ui.components.onboard.OnBoardStep
 import com.cmc12th.runway.ui.theme.HeadLine3
 import com.cmc12th.runway.R
 import com.cmc12th.runway.ui.domain.model.ApplicationState
+import com.cmc12th.runway.ui.theme.Gray300
 import com.cmc12th.runway.ui.theme.Gray500
+import com.cmc12th.runway.utils.Constants
 
 @Composable
 fun SignInPasswordScreen(appState: ApplicationState) {
@@ -55,6 +64,23 @@ fun SignInPasswordScreen(appState: ApplicationState) {
             /** 패스워드 확인 */
             HeightSpacer(height = 30.dp)
             CheckPassword()
+        }
+        Button(
+            onClick = {
+                appState.navController.navigate(Constants.SIGNIN_AGREEMENT_ROUTE)
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp),
+            shape = RectangleShape,
+            colors = ButtonDefaults.buttonColors(Gray300)
+        ) {
+            Text(
+                text = "다음",
+                textAlign = TextAlign.Center,
+                color = Color.White,
+                fontSize = 16.sp
+            )
         }
     }
 }
@@ -108,12 +134,20 @@ fun InputPassword() {
     val passwdTextField = remember {
         mutableStateOf(TextFieldValue(""))
     }
+    val focusRequester = remember {
+        FocusRequester()
+    }
 
+    LaunchedEffect(key1 = Unit) {
+        focusRequester.requestFocus()
+    }
+    
     Column {
         CustomTextField(
             modifier = Modifier.fillMaxWidth(),
             fontSize = 16.sp,
             value = passwdTextField.value,
+            focusRequest = focusRequester,
             placeholderText = "영문, 숫자, 조합 8~16자",
             onvalueChanged = { passwdTextField.value = it },
             keyboardOptions = KeyboardOptions(

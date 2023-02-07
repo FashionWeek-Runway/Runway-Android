@@ -30,6 +30,7 @@ import com.cmc12th.runway.ui.components.WidthSpacer
 import com.cmc12th.runway.ui.components.onboard.OnBoardStep
 import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.theme.*
+import com.cmc12th.runway.utils.Constants.SIGNIN_PROFILE_IMAGE_ROUTE
 
 @Composable
 fun SignInAgreementScreen(appState: ApplicationState) {
@@ -78,7 +79,9 @@ fun SignInAgreementScreen(appState: ApplicationState) {
                     modifier = Modifier.fillMaxWidth(),
                     shape = RectangleShape,
                     colors = ButtonDefaults.buttonColors(Gray300),
-                    onClick = { /*TODO*/ }) {
+                    onClick = {
+                        appState.navController.navigate(SIGNIN_PROFILE_IMAGE_ROUTE)
+                    }) {
                     Text(text = "다음", modifier = Modifier.padding(0.dp, 5.dp), fontSize = 16.sp)
                 }
             }
