@@ -1,15 +1,18 @@
+@file:OptIn(ExperimentalMaterialApi::class, ExperimentalMaterialApi::class)
+
 package com.cmc12th.runway.ui.login.signin
 
 import androidx.compose.foundation.*
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
@@ -24,19 +27,65 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cmc12th.runway.R
-import com.cmc12th.runway.ui.components.BackIcon
-import com.cmc12th.runway.ui.components.CustomTextField
-import com.cmc12th.runway.ui.components.HeightSpacer
-import com.cmc12th.runway.ui.components.WidthSpacer
+import com.cmc12th.runway.ui.components.*
 import com.cmc12th.runway.ui.components.onboard.OnBoardStep
 import com.cmc12th.runway.ui.components.util.bottomBorder
-import com.cmc12th.runway.ui.domain.model.ApplicationState
-import com.cmc12th.runway.ui.domain.model.MobileCarrier
+import com.cmc12th.runway.ui.domain.model.*
+import com.cmc12th.runway.ui.domain.model.BottomSheetState
 import com.cmc12th.runway.ui.theme.*
 import com.cmc12th.runway.utils.Constants.SIGNIN_PHONE_VERIFY_ROUTE
+import kotlinx.coroutines.launch
+
+@Composable
+fun rememberBottomSheet(
+    modalSheetState: ModalBottomSheetState = rememberModalBottomSheetState(
+        initialValue = ModalBottomSheetValue.Hidden,
+        confirmStateChange = { it != ModalBottomSheetValue.HalfExpanded },
+        skipHalfExpanded = true,
+    ),
+    bottomsheetContent: MutableState<BottomSheetContent> = mutableStateOf(BottomSheetContent()),
+) = remember(modalSheetState, bottomsheetContent) {
+    BottomSheetState(
+        modalSheetState,
+        bottomsheetContent
+    )
+}
 
 @Composable
 fun SignInUserInfoVerifyScreen(appState: ApplicationState) {
+
+    val coroutineScope = rememberCoroutineScope()
+    val bottomsheetState = rememberBottomSheet()
+
+    // BottomSheet 내용을 바꾸는 State
+    val showBottomSheet: (BottomSheetContent) -> Unit = {
+        coroutineScope.launch {
+            bottomsheetState.bottomsheetContent.value = it
+            bottomsheetState.modalSheetState.animateTo(ModalBottomSheetValue.Expanded)
+        }
+    }
+
+    // TODO ViewModel 추출
+    val userMobileCarrier = remember {
+        mutableStateOf(MobileCarrier.SKT)
+    }
+    val userNationality = remember {
+        mutableStateOf(Nationality.LOCAL)
+    }
+    CustomBottomSheet(
+        bottomsheetState
+    ) {
+        UserVerificationContents(appState, showBottomSheet, userMobileCarrier, userNationality)
+    }
+}
+
+@Composable
+private fun UserVerificationContents(
+    appState: ApplicationState,
+    showBottomSheet: (BottomSheetContent) -> Unit,
+    selectedMobileCarrier: MutableState<MobileCarrier>,
+    userNationality: MutableState<Nationality>,
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -60,7 +109,11 @@ fun SignInUserInfoVerifyScreen(appState: ApplicationState) {
             }
 
             /** 이름 입력 */
-            NameContainter()
+            NameContainter(showBottomSheet,
+                userNationality.value
+            ) {
+                userNationality.value = it
+            }
 
             /** 성별 입력 */
             GenderContainer()
@@ -69,7 +122,9 @@ fun SignInUserInfoVerifyScreen(appState: ApplicationState) {
             BirthContainer()
 
             /** 휴대전화 입력 */
-            PhoneContainer()
+            PhoneContainer(showBottomSheet,
+                selectedMobileCarrier.value
+            ) { selectedMobileCarrier.value = it }
 
         }
 
@@ -92,7 +147,11 @@ fun SignInUserInfoVerifyScreen(appState: ApplicationState) {
 }
 
 @Composable
-fun PhoneContainer() {
+fun PhoneContainer(
+    showBottomSheet: (BottomSheetContent) -> Unit,
+    selectedMobileCarrier: MobileCarrier,
+    updateMobildeCarrier: (MobileCarrier) -> Unit,
+) {
     // TODO ViewModel로 추출
     val phoneCategory = remember {
         mutableStateOf(MobileCarrier.SKT)
@@ -103,6 +162,7 @@ fun PhoneContainer() {
     val isDropDownMenuExpanded = remember {
         mutableStateOf(false)
     }
+
     Column {
         Text(text = "휴대폰 인증", fontSize = 12.sp, color = Gray700)
         HeightSpacer(height = 10.dp)
@@ -115,13 +175,24 @@ fun PhoneContainer() {
                             .bottomBorder(
                                 1.dp, if (isDropDownMenuExpanded.value) Color.Black else Gray600
                             ),
-                        onClick = { isDropDownMenuExpanded.value = true },
+                        onClick = {
+                            showBottomSheet(BottomSheetContent(
+                                title = "통신사",
+                                itemList = MobileCarrier.values().map {
+                                    BottomSheetContentItem(
+                                        itemName = it.getName(),
+                                        onItemClick = { updateMobildeCarrier(it) },
+                                        isSeleceted = it == selectedMobileCarrier
+                                    )
+                                }
+                            ))
+                        },
                         colors = ButtonDefaults.buttonColors(Color.White)
                     ) {
                     }
                     Text(
                         modifier = Modifier.align(Alignment.CenterStart),
-                        text = phoneCategory.value.getName(), color = Color.Black,
+                        text = selectedMobileCarrier.getName(), color = Color.Black,
                         textAlign = TextAlign.Start
                     )
                     Icon(
@@ -134,38 +205,22 @@ fun PhoneContainer() {
                             .align(Alignment.CenterEnd),
                     )
                 }
-
-                DropdownMenu(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(20.dp, 0.dp),
-                    expanded = isDropDownMenuExpanded.value,
-                    onDismissRequest = { !isDropDownMenuExpanded.value }) {
-                    MobileCarrier.values().forEach {
-                        DropdownMenuItem(
-                            text = { Text(modifier = Modifier, text = it.getName()) },
-                            onClick = {
-                                phoneCategory.value = it
-                                isDropDownMenuExpanded.value = false
-                            })
-                    }
-                }
             }
-            HeightSpacer(height = 10.dp)
-            CustomTextField(
-                modifier = Modifier.fillMaxWidth(),
-                fontSize = 16.sp,
-                value = phoneNumber.value,
-                placeholderText = "휴대폰 번호 입력('-' 제외)",
-                onvalueChanged = { if (it.text.length <= 11) phoneNumber.value = it },
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Phone,
-                    imeAction = ImeAction.Done
-                ),
-                keyboardActions = KeyboardActions(onDone = {
-                }),
-            )
         }
+        HeightSpacer(height = 10.dp)
+        CustomTextField(
+            modifier = Modifier.fillMaxWidth(),
+            fontSize = 16.sp,
+            value = phoneNumber.value,
+            placeholderText = "휴대폰 번호 입력('-' 제외)",
+            onvalueChanged = { if (it.text.length <= 11) phoneNumber.value = it },
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Phone,
+                imeAction = ImeAction.Done
+            ),
+            keyboardActions = KeyboardActions(onDone = {
+            }),
+        )
     }
 }
 
@@ -216,7 +271,7 @@ private fun GenderContainer() {
                             Primary
                         ) else BorderStroke(1.dp, Gray300)
                     )
-                    .background(if (genderValue.value == "Male") Primary_20 else Color.White)
+                    .background(if (genderValue.value == "Male") Primary20 else Color.White)
                     .clickable {
                         genderValue.value = "Male"
                     }
@@ -238,7 +293,7 @@ private fun GenderContainer() {
                             Primary
                         ) else BorderStroke(1.dp, Gray300)
                     )
-                    .background(if (genderValue.value == "Female") Primary_20 else Color.White)
+                    .background(if (genderValue.value == "Female") Primary20 else Color.White)
                     .clickable {
                         genderValue.value = "Female"
                     }
@@ -255,16 +310,14 @@ private fun GenderContainer() {
 }
 
 @Composable
-private fun NameContainter() {
+private fun NameContainter(
+    showBottomSheet: (BottomSheetContent) -> Unit,
+    userNationality: Nationality,
+    changeUserNationality: (Nationality) -> Unit,
+) {
     // TODO 뷰모델로 추출
     val nameTextField = remember {
         mutableStateOf(TextFieldValue(""))
-    }
-    val isDropDownMenuExpanded = remember {
-        mutableStateOf(false)
-    }
-    val countryTextField = remember {
-        mutableStateOf(TextFieldValue("내국인"))
     }
 
     Column {
@@ -293,15 +346,28 @@ private fun NameContainter() {
                             .fillMaxWidth()
                             .bottomBorder(
                                 1.dp,
-                                if (isDropDownMenuExpanded.value) Color.Black else Gray600
+                                Gray600
                             ),
-                        onClick = { isDropDownMenuExpanded.value = true },
+                        onClick = {
+                            showBottomSheet(
+                                BottomSheetContent(
+                                    title = "국가",
+                                    itemList = Nationality.values().map {
+                                        BottomSheetContentItem(
+                                            itemName = it.getString(),
+                                            onItemClick = { changeUserNationality(it) },
+                                            isSeleceted = userNationality == it
+                                        )
+                                    }
+                                )
+                            )
+                        },
                         colors = ButtonDefaults.buttonColors(Color.White)
                     ) {
                     }
                     Text(
                         modifier = Modifier.align(Alignment.CenterStart),
-                        text = countryTextField.value.text, color = Color.Black,
+                        text = userNationality.getString(), color = Color.Black,
                         textAlign = TextAlign.Start
                     )
                     Icon(
@@ -315,23 +381,6 @@ private fun NameContainter() {
                     )
                 }
 
-                DropdownMenu(
-                    modifier = Modifier.wrapContentSize(),
-                    expanded = isDropDownMenuExpanded.value,
-                    onDismissRequest = { !isDropDownMenuExpanded.value }) {
-                    DropdownMenuItem(
-                        text = { Text(text = "내국인") },
-                        onClick = {
-                            countryTextField.value = TextFieldValue("내국인")
-                            isDropDownMenuExpanded.value = false
-                        })
-                    DropdownMenuItem(
-                        text = { Text(text = "외국인") },
-                        onClick = {
-                            countryTextField.value = TextFieldValue("외국인")
-                            isDropDownMenuExpanded.value = false
-                        })
-                }
             }
         }
     }
