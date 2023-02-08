@@ -18,6 +18,8 @@ import com.cmc12th.runway.utils.Constants.LOGIN_ID_PW_ROUTE
 import com.cmc12th.runway.utils.Constants.MAIN_GRAPH
 import com.cmc12th.runway.utils.Constants.SIGNIN_AGREEMENT_DETAIL_ROUTE
 import com.cmc12th.runway.utils.Constants.SIGNIN_AGREEMENT_ROUTE
+import com.cmc12th.runway.utils.Constants.SIGNIN_CATEGORY_ROUTE
+import com.cmc12th.runway.utils.Constants.SIGNIN_COMPLETE_ROUTE
 import com.cmc12th.runway.utils.Constants.SIGNIN_GRAPH
 import com.cmc12th.runway.utils.Constants.SIGNIN_PASSWORD_ROUTE
 import com.cmc12th.runway.utils.Constants.SIGNIN_PHONE_VERIFY_ROUTE
@@ -84,8 +86,18 @@ fun NavGraphBuilder.signInGraph(
             }
             AgreementDetailScreen(appState, hiltViewModel(backStackEntry))
         }
-//        composable(SIGNIN_CATEOGRY_ROUTE) {
-//        }
+        composable(SIGNIN_CATEGORY_ROUTE) { entry ->
+            val backStackEntry = remember(entry) {
+                appState.navController.getBackStackEntry(SIGNIN_GRAPH)
+            }
+            SignInCategoryScreen(appState, hiltViewModel(backStackEntry))
+        }
+        composable(SIGNIN_COMPLETE_ROUTE) { entry ->
+            val backStackEntry = remember(entry) {
+                appState.navController.getBackStackEntry(SIGNIN_GRAPH)
+            }
+            SignInCompleteScreen()
+        }
     }
 }
 

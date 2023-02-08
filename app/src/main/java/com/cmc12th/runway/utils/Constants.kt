@@ -3,7 +3,9 @@ package com.cmc12th.runway.utils
 import com.cmc12th.runway.ui.Screen
 
 object Constants {
+    const val MAX_NICKNAME_LENGTH = 10
     val BOTTOM_NAV_ITEMS = listOf<Screen>(Screen.Home, Screen.Map, Screen.Mypage)
+    val CATEGORYS = listOf("미니멀", "캐주얼", "스트릿", "빈티지", "페미닌", "시티보이")
 
     /** navigation id */
     // HomeNavigation
@@ -22,8 +24,10 @@ object Constants {
     const val SIGNIN_PHONE_VERIFY_ROUTE = "nav-signin-phone-verify"
     const val SIGNIN_USER_VERIFICATION_ROUTE = "nav-signin-user-verification"
     const val SIGNIN_PASSWORD_ROUTE = "nav-signin-password"
-    const val SIGNIN_PROFILE_IMAGE_ROUTE = "nav-signin-profile-image"
     const val SIGNIN_AGREEMENT_DETAIL_ROUTE = "nav-signin-agreement-detail"
+    const val SIGNIN_PROFILE_IMAGE_ROUTE = "nav-signin-profile-image"
+    const val SIGNIN_CATEGORY_ROUTE = "nav-signin-category"
+    const val SIGNIN_COMPLETE_ROUTE = "nav-signin-complete"
 
     /** Graph Id */
     const val MAIN_GRAPH = "main-graph"

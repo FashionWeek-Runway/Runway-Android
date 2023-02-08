@@ -19,6 +19,7 @@ import com.cmc12th.runway.ui.signin.components.OnBoardStep
 import com.cmc12th.runway.ui.signin.components.StyleCategoryCheckBox
 import com.cmc12th.runway.ui.signin.model.CategoryTag
 import com.cmc12th.runway.ui.theme.*
+import com.cmc12th.runway.utils.Constants.SIGNIN_COMPLETE_ROUTE
 
 @Composable
 fun SignInCategoryScreen(
@@ -63,7 +64,9 @@ fun SignInCategoryScreen(
                 .padding(20.dp),
             shape = RectangleShape,
             colors = ButtonDefaults.buttonColors(Gray300),
-            onClick = {}
+            onClick = {
+                appState.navController.navigate(SIGNIN_COMPLETE_ROUTE)
+            }
         ) {
             Text(text = "다음", modifier = Modifier.padding(0.dp, 5.dp), fontSize = 16.sp)
         }
