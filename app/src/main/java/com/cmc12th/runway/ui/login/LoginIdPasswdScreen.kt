@@ -12,7 +12,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
@@ -25,8 +24,8 @@ import com.cmc12th.runway.ui.components.BackIcon
 import com.cmc12th.runway.ui.components.CustomTextField
 import com.cmc12th.runway.ui.components.HeightSpacer
 import com.cmc12th.runway.ui.domain.model.ApplicationState
-import com.cmc12th.runway.ui.signin.Keyboard
-import com.cmc12th.runway.ui.signin.keyboardAsState
+import com.cmc12th.runway.ui.signin.view.Keyboard
+import com.cmc12th.runway.ui.signin.view.keyboardAsState
 import com.cmc12th.runway.ui.theme.Body2
 import com.cmc12th.runway.ui.theme.Gray600
 import com.cmc12th.runway.ui.theme.HeadLine1
@@ -97,8 +96,10 @@ private fun BottomButtons(
         Button(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = if (!onLoginFocused) 20.dp else 0.dp,
-                    vertical = if (!onLoginFocused) 10.dp else 0.dp)
+                .padding(
+                    horizontal = if (!onLoginFocused) 20.dp else 0.dp,
+                    vertical = if (!onLoginFocused) 10.dp else 0.dp
+                )
                 .clip(shape = RoundedCornerShape(if (!onLoginFocused) 5.dp else 0.dp))
                 .background(Color.Black),
             onClick = onLogin,
