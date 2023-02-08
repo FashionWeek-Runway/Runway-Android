@@ -1,4 +1,4 @@
-package com.cmc12th.runway.ui.signin
+package com.cmc12th.runway.ui.signin.view
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -32,7 +32,8 @@ fun SignInCompleteScreen() {
             colors = ButtonDefaults.buttonColors(Point),
             onClick = {}
         ) {
-            Text(text = "홈으로",
+            Text(
+                text = "홈으로",
                 modifier = Modifier.padding(0.dp, 5.dp),
                 fontSize = 16.sp
             )

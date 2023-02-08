@@ -1,4 +1,4 @@
-package com.cmc12th.runway.ui.domain.model
+package com.cmc12th.runway.ui.signin.model
 
 enum class MobileCarrier(private val krName: String) {
     SKT("SKT"), KT("KT"), LG("LG+"),

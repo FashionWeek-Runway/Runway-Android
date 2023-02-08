@@ -1,4 +1,4 @@
-package com.cmc12th.runway.ui.signin
+package com.cmc12th.runway.ui.signin.view
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -28,10 +28,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.cmc12th.runway.ui.components.BackIcon
 import com.cmc12th.runway.ui.components.CustomTextField
 import com.cmc12th.runway.ui.components.HeightSpacer
-import com.cmc12th.runway.ui.components.onboard.OnBoardStep
+import com.cmc12th.runway.ui.signin.components.OnBoardStep
 import com.cmc12th.runway.ui.theme.HeadLine3
 import com.cmc12th.runway.R
 import com.cmc12th.runway.ui.domain.model.ApplicationState
+import com.cmc12th.runway.ui.signin.SignInViewModel
+import com.cmc12th.runway.ui.signin.components.OnBoardHeadLine
 import com.cmc12th.runway.ui.theme.Gray300
 import com.cmc12th.runway.ui.theme.Gray500
 import com.cmc12th.runway.utils.Constants
@@ -57,10 +59,7 @@ fun SignInPasswordScreen(
                 .padding(20.dp)
         ) {
             HeightSpacer(height = 20.dp)
-            Row {
-                Text(text = "비밀번호", style = HeadLine3)
-                Text(text = "를 입력해주세요.", fontSize = 20.sp, fontWeight = FontWeight.Normal)
-            }
+            OnBoardHeadLine(main = "비밀번호", sub = "를 입력해주세요.")
             /** 패스워드 입력 */
             HeightSpacer(height = 30.dp)
             InputPassword()
@@ -135,9 +134,11 @@ fun CheckPassword() {
 @Composable
 fun InputPassword() {
 
+    // TODO 추출
     val passwdTextField = remember {
         mutableStateOf(TextFieldValue(""))
     }
+    
     val focusRequester = remember {
         FocusRequester()
     }

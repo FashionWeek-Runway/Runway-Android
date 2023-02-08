@@ -1,6 +1,5 @@
-package com.cmc12th.runway.ui.components.onboard
+package com.cmc12th.runway.ui.signin.components
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
@@ -26,23 +25,29 @@ fun StyleCategoryCheckBox(
     onSelecte: () -> Unit,
     title: String,
 ) {
-    Box(modifier = Modifier
-        .clip(RoundedCornerShape(5.dp))
-        .border(1.dp, if (isSelected) Primary else Gray600, RoundedCornerShape(5.dp))
-        .background(if (isSelected) Primary else Gray50)
+    Box(
+        modifier = Modifier
+            .clip(RoundedCornerShape(5.dp))
+            .border(1.dp, if (isSelected) Primary else Gray600, RoundedCornerShape(5.dp))
+            .background(if (isSelected) Primary else Gray50)
     ) {
-        Row(modifier = Modifier.padding(15.dp, 10.dp),
+        Row(
+            modifier = Modifier.padding(15.dp, 10.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(painter = painterResource(id = R.drawable.ic_check),
+            Icon(
+                painter = painterResource(id = R.drawable.ic_check),
                 contentDescription = "IC_CHECK",
                 modifier = Modifier.size(18.dp),
-                tint = if (isSelected) Point else Gray300)
+                tint = if (isSelected) Point else Gray300
+            )
 
             WidthSpacer(width = 10.dp)
-            Text(text = "미니멀",
+            Text(
+                text = "미니멀",
                 style = if (isSelected) Body1B else Body1,
-                color = if (isSelected) White else Gray600)
+                color = if (isSelected) White else Gray600
+            )
         }
 
     }

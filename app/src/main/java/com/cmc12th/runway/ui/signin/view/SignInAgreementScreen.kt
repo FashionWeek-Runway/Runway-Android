@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalAnimationApi::class)
 
-package com.cmc12th.runway.ui.signin
+package com.cmc12th.runway.ui.signin.view
 
 import androidx.compose.animation.*
 import androidx.compose.foundation.*
@@ -28,8 +28,9 @@ import com.cmc12th.runway.R
 import com.cmc12th.runway.ui.components.BackIcon
 import com.cmc12th.runway.ui.components.HeightSpacer
 import com.cmc12th.runway.ui.components.WidthSpacer
-import com.cmc12th.runway.ui.components.onboard.OnBoardStep
+import com.cmc12th.runway.ui.signin.components.OnBoardStep
 import com.cmc12th.runway.ui.domain.model.ApplicationState
+import com.cmc12th.runway.ui.signin.SignInViewModel
 import com.cmc12th.runway.ui.theme.*
 import com.cmc12th.runway.utils.Constants.SIGNIN_PROFILE_IMAGE_ROUTE
 

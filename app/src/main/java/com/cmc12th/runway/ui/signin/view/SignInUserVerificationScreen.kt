@@ -1,10 +1,13 @@
-@file:OptIn(ExperimentalMaterialApi::class, ExperimentalMaterialApi::class)
+@file:OptIn(
+    ExperimentalMaterialApi::class, ExperimentalMaterialApi::class,
+    ExperimentalComposeUiApi::class
+)
 
-package com.cmc12th.runway.ui.signin
+package com.cmc12th.runway.ui.signin.view
 
-import android.util.Log
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
@@ -14,71 +17,59 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.cmc12th.runway.R
 import com.cmc12th.runway.ui.components.*
-import com.cmc12th.runway.ui.components.onboard.OnBoardStep
+import com.cmc12th.runway.ui.signin.components.OnBoardStep
 import com.cmc12th.runway.ui.components.util.bottomBorder
 import com.cmc12th.runway.ui.domain.model.*
-import com.cmc12th.runway.ui.domain.model.BottomSheetState
+import com.cmc12th.runway.ui.domain.rememberBottomSheet
+import com.cmc12th.runway.ui.signin.SignInViewModel
+import com.cmc12th.runway.ui.signin.components.OnBoardHeadLine
+import com.cmc12th.runway.ui.signin.model.*
+import com.cmc12th.runway.ui.signin.model.Birth.Companion.BIRTH_LENGTH
+import com.cmc12th.runway.ui.signin.model.Phone.Companion.PHONE_NUMBER_LENGTH
 import com.cmc12th.runway.ui.theme.*
 import com.cmc12th.runway.utils.Constants.SIGNIN_PHONE_VERIFY_ROUTE
 import kotlinx.coroutines.launch
-
-@Composable
-fun rememberBottomSheet(
-    modalSheetState: ModalBottomSheetState = rememberModalBottomSheetState(
-        initialValue = ModalBottomSheetValue.Hidden,
-        confirmStateChange = { it != ModalBottomSheetValue.HalfExpanded },
-        skipHalfExpanded = true,
-    ),
-    bottomsheetContent: MutableState<BottomSheetContent> = mutableStateOf(BottomSheetContent()),
-) = remember(modalSheetState, bottomsheetContent) {
-    BottomSheetState(
-        modalSheetState,
-        bottomsheetContent
-    )
-}
 
 @Composable
 fun SignInUserInfoVerifyScreen(
     appState: ApplicationState,
     signInViewModel: SignInViewModel = hiltViewModel()
 ) {
-
     val coroutineScope = rememberCoroutineScope()
     val bottomsheetState = rememberBottomSheet()
+    val keyboardController = LocalSoftwareKeyboardController.current
     val showBottomSheet: (BottomSheetContent) -> Unit = {
+        keyboardController?.hide()
         coroutineScope.launch {
             bottomsheetState.bottomsheetContent.value = it
             bottomsheetState.modalSheetState.animateTo(ModalBottomSheetValue.Expanded)
         }
     }
 
-    // TODO ViewModel 추출
-    val userMobileCarrier = remember {
-        mutableStateOf(MobileCarrier.SKT)
-    }
-    val userNationality = remember {
-        mutableStateOf(Nationality.LOCAL)
-    }
     CustomBottomSheet(
         bottomsheetState
     ) {
-        UserVerificationContents(appState, showBottomSheet, userMobileCarrier, userNationality)
+        UserVerificationContents(
+            appState,
+            showBottomSheet,
+            signInViewModel,
+        )
     }
 }
 
@@ -86,11 +77,11 @@ fun SignInUserInfoVerifyScreen(
 private fun UserVerificationContents(
     appState: ApplicationState,
     showBottomSheet: (BottomSheetContent) -> Unit,
-    selectedMobileCarrier: MutableState<MobileCarrier>,
-    userNationality: MutableState<Nationality>,
+    viewmodel: SignInViewModel,
 ) {
-
     val keyboardState by keyboardAsState()
+
+    /** 핸드폰 TextField가 포커스일 때 로그인 버튼이 올라오게 하기위해 */
     val isPhoneFocused = remember {
         mutableStateOf(false)
     }
@@ -113,31 +104,35 @@ private fun UserVerificationContents(
             verticalArrangement = Arrangement.spacedBy(30.dp)
         ) {
             /** 본인인증 텍스트 */
-            Row(modifier = Modifier.padding(top = 20.dp)) {
-                Text(text = "본인인증", style = HeadLine3)
-                Text(text = "이 필요해요.", fontSize = 20.sp, fontWeight = FontWeight.Normal)
-            }
+            OnBoardHeadLine("본인인증", "이 필요해요.")
 
             /** 이름 입력 */
             NameContainter(
                 showBottomSheet,
-                userNationality.value
-            ) {
-                userNationality.value = it
-            }
-
+                nameAndNationality = viewmodel.nameAndNationality.value,
+                updateName = { viewmodel.updateName(it) },
+                updateNationality = { viewmodel.updateNationality(it) }
+            )
             /** 성별 입력 */
-            GenderContainer()
+            GenderContainer(
+                gender = viewmodel.gender.value,
+                updateGender = { viewmodel.updateGender(it) }
+            )
 
             /** 생년 입력 */
-            BirthContainer()
+            BirthContainer(
+                birth = viewmodel.birth.value,
+                updateBirth = { viewmodel.updateBirth(it) }
+            )
 
             /** 휴대전화 입력 */
             PhoneContainer(
-                { isPhoneFocused.value = it },
-                showBottomSheet,
-                selectedMobileCarrier.value
-            ) { selectedMobileCarrier.value = it }
+                changeFocus = { isPhoneFocused.value = it },
+                showBottomSheet = showBottomSheet,
+                phone = viewmodel.phone.value,
+                updateMobildeCarrier = { viewmodel.updateMobileCarrier(it) },
+                updatePhoneNumber = { viewmodel.updatePhoneNumber(it) }
+            )
 
         }
 
@@ -148,7 +143,10 @@ private fun UserVerificationContents(
             Button(modifier = Modifier
                 .fillMaxWidth(),
                 shape = RectangleShape,
-                colors = ButtonDefaults.buttonColors(Gray300),
+//                enabled = viewmodel.userVerificationStatus.value,
+                colors = ButtonDefaults.buttonColors(
+                    if (viewmodel.userVerificationStatus.value) Color.Black else Gray300
+                ),
                 onClick = {
                     appState.navController.navigate(SIGNIN_PHONE_VERIFY_ROUTE)
                 }) {
@@ -163,26 +161,22 @@ private fun UserVerificationContents(
     }
 }
 
+
 @Composable
 fun PhoneContainer(
     changeFocus: (Boolean) -> Unit,
     showBottomSheet: (BottomSheetContent) -> Unit,
-    selectedMobileCarrier: MobileCarrier,
+    phone: Phone,
     updateMobildeCarrier: (MobileCarrier) -> Unit,
+    updatePhoneNumber: (String) -> Unit,
 ) {
-    // TODO ViewModel로 추출
-    val phoneCategory = remember {
-        mutableStateOf(MobileCarrier.SKT)
-    }
-    val phoneNumber = remember {
-        mutableStateOf(TextFieldValue(""))
-    }
+
     val isDropDownMenuExpanded = remember {
         mutableStateOf(false)
     }
 
     Column {
-        Text(text = "휴대폰 인증", fontSize = 12.sp, color = Gray700)
+        Text(text = "휴대폰 인증", style = Caption, color = Gray700)
         HeightSpacer(height = 10.dp)
         Column(modifier = Modifier.fillMaxWidth()) {
             Box(modifier = Modifier.fillMaxWidth()) {
@@ -200,7 +194,7 @@ fun PhoneContainer(
                                     BottomSheetContentItem(
                                         itemName = it.getName(),
                                         onItemClick = { updateMobildeCarrier(it) },
-                                        isSeleceted = it == selectedMobileCarrier
+                                        isSeleceted = it == phone.mobileCarrier
                                     )
                                 }
                             ))
@@ -210,7 +204,7 @@ fun PhoneContainer(
                     }
                     Text(
                         modifier = Modifier.align(Alignment.CenterStart),
-                        text = selectedMobileCarrier.getName(), color = Color.Black,
+                        text = phone.mobileCarrier.getName(), color = Color.Black,
                         textAlign = TextAlign.Start
                     )
                     Icon(
@@ -233,9 +227,9 @@ fun PhoneContainer(
                     changeFocus(it.hasFocus)
                 },
             fontSize = 16.sp,
-            value = phoneNumber.value,
+            value = phone.number,
             placeholderText = "휴대폰 번호 입력('-' 제외)",
-            onvalueChanged = { if (it.text.length <= 11) phoneNumber.value = it },
+            onvalueChanged = { if (it.length <= PHONE_NUMBER_LENGTH) updatePhoneNumber(it) },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Phone,
                 imeAction = ImeAction.Done
@@ -248,111 +242,103 @@ fun PhoneContainer(
 
 
 @Composable
-fun BirthContainer() {
-    // TODO ViewModel로 추출
-    val birthValue = remember {
-        mutableStateOf(TextFieldValue(""))
-    }
-
+fun BirthContainer(
+    birth: Birth,
+    updateBirth: (Birth) -> Unit,
+) {
     Column {
-        Text(text = "생년월일", fontSize = 12.sp, color = Gray700)
+        Text(text = "생년월일", style = Caption, color = Gray700)
         HeightSpacer(height = 10.dp)
         CustomTextField(
             modifier = Modifier.fillMaxWidth(),
             fontSize = 16.sp,
-            value = birthValue.value,
+            value = birth.date,
             placeholderText = "19990101",
-            onvalueChanged = { if (it.text.length <= 8) birthValue.value = it },
+            onvalueChanged = { if (it.length <= BIRTH_LENGTH) updateBirth(Birth(it)) },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Phone,
                 imeAction = ImeAction.Next
             ),
-            keyboardActions = KeyboardActions(onDone = {
-            }),
         )
+        // ErrorMessage()
     }
 }
 
 @Composable
-private fun GenderContainer() {
-    // TODO 뷰모델로 추출
-    val genderValue = remember {
-        mutableStateOf("")
-    }
+private fun ErrorMessage() {
+    Text(
+        text = "생년월일은 8자로 입력해주세요.",
+        modifier = Modifier.offset(y = 5.dp), color = Error_Color, fontSize = 14.sp
+    )
+}
 
+@Composable
+private fun GenderContainer(
+    gender: Gender,
+    updateGender: (Gender) -> Unit,
+) {
     Column {
-        Text(text = "성별", fontSize = 12.sp, color = Gray700)
+        Text(text = "성별", style = Caption, color = Gray700)
         HeightSpacer(height = 10.dp)
         Row(modifier = Modifier.fillMaxWidth()) {
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .border(
-                        if (genderValue.value == "Male") BorderStroke(
-                            1.dp,
-                            Primary
-                        ) else BorderStroke(1.dp, Gray300)
-                    )
-                    .background(if (genderValue.value == "Male") Primary20 else Color.White)
-                    .clickable {
-                        genderValue.value = "Male"
-                    }
-            ) {
-                Text(
-                    text = "남",
-                    fontSize = 14.sp,
-                    modifier = Modifier
-                        .align(Alignment.Center)
-                        .padding(0.dp, 15.dp)
-                )
+            GenderRadioButton(Gender.Male, gender.isMale()) {
+                updateGender(Gender.Male)
             }
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .border(
-                        if (genderValue.value == "Female") BorderStroke(
-                            1.dp,
-                            Primary
-                        ) else BorderStroke(1.dp, Gray300)
-                    )
-                    .background(if (genderValue.value == "Female") Primary20 else Color.White)
-                    .clickable {
-                        genderValue.value = "Female"
-                    }
-            ) {
-                Text(
-                    text = "여", fontSize = 14.sp,
-                    modifier = Modifier
-                        .align(Alignment.Center)
-                        .padding(0.dp, 15.dp)
-                )
+            GenderRadioButton(Gender.FeMale, gender.isFemale()) {
+                updateGender(Gender.FeMale)
             }
         }
     }
 }
 
 @Composable
+private fun RowScope.GenderRadioButton(
+    gender: Gender,
+    checkGender: Boolean,
+    updateGender: () -> Unit
+) {
+    val strokeShape = if (gender.isMale()) RoundedCornerShape(5.dp, 0.dp, 0.dp, 5.dp)
+    else RoundedCornerShape(0.dp, 5.dp, 5.dp, 0.dp)
+    Box(
+        modifier = Modifier.Companion
+            .weight(1f)
+            .border(
+                if (checkGender) BorderStroke(1.dp, Primary) else BorderStroke(1.dp, Gray300),
+                shape = strokeShape
+            )
+            .background(if (checkGender) Primary20 else Color.White)
+            .clickable {
+                updateGender()
+            }
+    ) {
+        Text(
+            text = gender.getText(),
+            fontSize = 14.sp,
+            modifier = Modifier
+                .align(Alignment.Center)
+                .padding(0.dp, 15.dp)
+        )
+    }
+}
+
+@Composable
 private fun NameContainter(
     showBottomSheet: (BottomSheetContent) -> Unit,
-    userNationality: Nationality,
-    changeUserNationality: (Nationality) -> Unit,
+    nameAndNationality: NameAndNationality,
+    updateName: (String) -> Unit,
+    updateNationality: (Nationality) -> Unit,
 ) {
-    // TODO 뷰모델로 추출
-    val nameTextField = remember {
-        mutableStateOf(TextFieldValue(""))
-    }
-
     Column {
-        Text(text = "이름", fontSize = 12.sp, color = Gray700)
+        Text(text = "이름", style = Caption, color = Gray700)
         HeightSpacer(height = 10.dp)
         Row(verticalAlignment = Alignment.Bottom) {
             CustomTextField(
                 modifier = Modifier
                     .weight(3f),
                 fontSize = 16.sp,
-                value = nameTextField.value,
+                value = nameAndNationality.name,
                 placeholderText = "이름",
-                onvalueChanged = { nameTextField.value = it },
+                onvalueChanged = { updateName(it) },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Text,
                     imeAction = ImeAction.Next
@@ -377,8 +363,8 @@ private fun NameContainter(
                                     itemList = Nationality.values().map {
                                         BottomSheetContentItem(
                                             itemName = it.getString(),
-                                            onItemClick = { changeUserNationality(it) },
-                                            isSeleceted = userNationality == it
+                                            onItemClick = { updateNationality(it) },
+                                            isSeleceted = nameAndNationality.nationality == it
                                         )
                                     }
                                 )
@@ -389,7 +375,7 @@ private fun NameContainter(
                     }
                     Text(
                         modifier = Modifier.align(Alignment.CenterStart),
-                        text = userNationality.getString(), color = Color.Black,
+                        text = nameAndNationality.nationality.getString(), color = Color.Black,
                         textAlign = TextAlign.Start
                     )
                     Icon(

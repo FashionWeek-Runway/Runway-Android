@@ -1,14 +1,12 @@
-package com.cmc12th.runway.ui.components.onboard
+package com.cmc12th.runway.ui.signin.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.cmc12th.runway.ui.theme.Gray100
 import com.cmc12th.runway.ui.theme.Point
-import com.cmc12th.runway.ui.theme.Primary
 
 @Composable
 fun OnBoardStep(step: Int) {

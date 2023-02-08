@@ -1,18 +1,17 @@
 @file:OptIn(ExperimentalFoundationApi::class, ExperimentalLayoutApi::class)
 
-package com.cmc12th.runway.ui.signin
+package com.cmc12th.runway.ui.signin.view
 
-import android.util.Log
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.border
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
@@ -28,11 +27,11 @@ import com.cmc12th.runway.ui.components.BackIcon
 import com.cmc12th.runway.ui.components.CustomTextField
 import com.cmc12th.runway.ui.components.HeightSpacer
 import com.cmc12th.runway.ui.components.WidthSpacer
-import com.cmc12th.runway.ui.components.onboard.OnBoardStep
+import com.cmc12th.runway.ui.signin.components.OnBoardStep
 import com.cmc12th.runway.ui.domain.model.ApplicationState
-import com.cmc12th.runway.ui.theme.Error_Color
-import com.cmc12th.runway.ui.theme.Gray300
-import com.cmc12th.runway.ui.theme.HeadLine3
+import com.cmc12th.runway.ui.signin.SignInViewModel
+import com.cmc12th.runway.ui.signin.components.OnBoardHeadLine
+import com.cmc12th.runway.ui.theme.*
 import com.cmc12th.runway.utils.Constants.SIGNIN_PASSWORD_ROUTE
 
 @Composable
@@ -56,10 +55,7 @@ fun SignInPhoneVerifyScreen(
                 .padding(20.dp)
         ) {
             HeightSpacer(height = 20.dp)
-            Row {
-                Text(text = "인증번호", style = HeadLine3)
-                Text(text = "를 입력해주세요.", fontSize = 20.sp, fontWeight = FontWeight.Normal)
-            }
+            OnBoardHeadLine(main = "인증번호", sub = "를 입력해주세요.")
             HeightSpacer(height = 40.dp)
             /** 인증번호 입력 */
             InputVerificationCode()
@@ -100,10 +96,10 @@ private fun InputVerificationCode() {
     }
 
     Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.Bottom) {
-        Box(Modifier.weight(2f)) {
+        Box(Modifier.weight(1f)) {
             CustomTextField(
                 trailingIcon = {
-                    Text(text = "3:00", color = Error_Color)
+
                 },
                 modifier = Modifier,
                 fontSize = 16.sp,
@@ -118,16 +114,30 @@ private fun InputVerificationCode() {
                 keyboardActions = KeyboardActions(onDone = {
                 }),
             )
-        }
-        WidthSpacer(15.dp)
-        Button(
-            colors = ButtonDefaults.buttonColors(Color.White),
-            modifier = Modifier
-                .weight(1f)
-                .border(BorderStroke(1.dp, Color.Black)),
-            onClick = { /*TODO*/ }) {
-            Text(text = "재요청", fontSize = 16.sp, color = Color.Black)
+            RetryContainer()
         }
     }
-
 }
+
+@Composable
+private fun BoxScope.RetryContainer() {
+    Row(
+        modifier = Modifier.Companion.align(Alignment.CenterEnd),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(text = "3:00", color = Error_Color, fontSize = 14.sp)
+        WidthSpacer(width = 15.dp)
+        Box(modifier = Modifier
+            .clip(RoundedCornerShape(5.dp))
+            .background(Blue100)
+            .clickable {}) {
+            Text(
+                text = "재요청",
+                modifier = Modifier.padding(14.dp, 7.dp),
+                style = Body2M,
+                color = Primary
+            )
+        }
+    }
+}
+
