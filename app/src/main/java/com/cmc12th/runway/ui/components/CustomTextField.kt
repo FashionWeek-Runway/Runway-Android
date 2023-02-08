@@ -97,3 +97,71 @@ fun CustomTextField(
         if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
     )
 }
+
+
+@Composable
+fun CustomTextField(
+    modifier: Modifier = Modifier,
+    leadingIcon: @Composable() (() -> Unit)? = null,
+    trailingIcon: @Composable() (() -> Unit)? = null,
+    placeholderText: String = "",
+    fontSize: TextUnit = 16.sp,
+    focusRequest: FocusRequester? = null,
+    keyboardOptions: KeyboardOptions? = null,
+    keyboardActions: KeyboardActions? = null,
+    value: String,
+    onvalueChanged: (String) -> Unit,
+    passwordVisible: Boolean = true
+) {
+    val bottomLineColor = remember {
+        mutableStateOf(Gray600)
+    }
+    BasicTextField(
+        modifier = modifier
+            .bottomBorder(1.dp, Gray300)
+            .onFocusChanged {
+                if (it.isFocused) {
+                    bottomLineColor.value = Color.Black
+                } else {
+                    bottomLineColor.value = Gray600
+                }
+            }
+            .bottomBorder(1.dp, bottomLineColor.value)
+            .focusRequester(focusRequest ?: FocusRequester()),
+        value = value,
+        onValueChange = {
+            if (it.length <= 25) onvalueChanged(it)
+        },
+        singleLine = true,
+        cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
+        textStyle = LocalTextStyle.current.copy(
+            color = Color.Black,
+            fontSize = fontSize,
+        ),
+        keyboardOptions = keyboardOptions ?: KeyboardOptions(),
+        keyboardActions = keyboardActions ?: KeyboardActions(),
+        decorationBox = { innerTextField ->
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(0.dp, 15.dp)
+            ) {
+                if (leadingIcon != null) leadingIcon()
+                Box(Modifier.weight(1f)) {
+                    if (value.isEmpty()) {
+                        Text(
+                            placeholderText,
+                            style = LocalTextStyle.current.copy(
+                                color = Color.Black.copy(alpha = 0.3f),
+                                fontSize = fontSize,
+                            ),
+                        )
+                    }
+                    innerTextField()
+                }
+                if (trailingIcon != null) trailingIcon()
+            }
+        },
+        visualTransformation =
+        if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+    )
+}
