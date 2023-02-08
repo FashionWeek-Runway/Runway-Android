@@ -33,6 +33,7 @@ import com.cmc12th.runway.ui.signin.SignInViewModel
 import com.cmc12th.runway.ui.signin.components.OnBoardHeadLine
 import com.cmc12th.runway.ui.theme.*
 import com.cmc12th.runway.utils.Constants.SIGNIN_PASSWORD_ROUTE
+import kotlin.math.sign
 
 @Composable
 fun SignInPhoneVerifyScreen(
@@ -58,7 +59,10 @@ fun SignInPhoneVerifyScreen(
             OnBoardHeadLine(main = "인증번호", sub = "를 입력해주세요.")
             HeightSpacer(height = 40.dp)
             /** 인증번호 입력 */
-            InputVerificationCode()
+            InputVerificationCode(
+                verifyCode = signInViewModel.verifyCode.value,
+                updateVerifyCode = { signInViewModel.updateVerifyCode(it) }
+            )
         }
         Button(
             onClick = {
@@ -68,7 +72,8 @@ fun SignInPhoneVerifyScreen(
                 .fillMaxWidth()
                 .height(50.dp),
             shape = RectangleShape,
-            colors = ButtonDefaults.buttonColors(Gray300)
+            // TODO 로직수정
+            colors = ButtonDefaults.buttonColors(if (signInViewModel.verifyCode.value.length == 6) Color.Black else Gray300)
         ) {
             Text(
                 text = "인증 확인",
@@ -82,11 +87,11 @@ fun SignInPhoneVerifyScreen(
 }
 
 @Composable
-private fun InputVerificationCode() {
-    // TODO ViewModel 추출
-    val verificationCode = remember {
-        mutableStateOf(TextFieldValue(""))
-    }
+private fun InputVerificationCode(
+    verifyCode: String,
+    updateVerifyCode: (String) -> Unit,
+) {
+
     val focusRequester = remember {
         FocusRequester()
     }
@@ -104,9 +109,9 @@ private fun InputVerificationCode() {
                 modifier = Modifier,
                 fontSize = 16.sp,
                 focusRequest = focusRequester,
-                value = verificationCode.value,
+                value = verifyCode,
                 placeholderText = "숫자 6자리 입력",
-                onvalueChanged = { if (it.text.length <= 6) verificationCode.value = it },
+                onvalueChanged = { if (it.length <= 6) updateVerifyCode(it) },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Number,
                     imeAction = ImeAction.Done
