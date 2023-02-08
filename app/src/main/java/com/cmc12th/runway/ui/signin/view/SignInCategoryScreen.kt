@@ -5,19 +5,26 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.cmc12th.runway.ui.components.BackIcon
 import com.cmc12th.runway.ui.components.HeightSpacer
+import com.cmc12th.runway.ui.domain.model.ApplicationState
+import com.cmc12th.runway.ui.signin.SignInViewModel
 import com.cmc12th.runway.ui.signin.components.OnBoardStep
 import com.cmc12th.runway.ui.signin.components.StyleCategoryCheckBox
+import com.cmc12th.runway.ui.signin.model.CategoryTag
 import com.cmc12th.runway.ui.theme.*
 
 @Composable
-fun SignInCategoryScreen() {
+fun SignInCategoryScreen(
+    appState: ApplicationState,
+    signInViewModel: SignInViewModel = hiltViewModel()
+) {
 
     Column(
         modifier = Modifier
@@ -46,7 +53,9 @@ fun SignInCategoryScreen() {
 
             HeightSpacer(height = 20.dp)
             /** 카테고리 입력 */
-            CategoryGroup()
+            CategoryGroup(
+                signInViewModel.categoryTags
+            ) { signInViewModel.updateCategoryTags(it) }
         }
         Button(
             modifier = Modifier
@@ -62,17 +71,22 @@ fun SignInCategoryScreen() {
 }
 
 @Composable
-fun CategoryGroup() {
-    Row() {
-        StyleCategoryCheckBox(isSelected = false, onSelecte = { /*TODO*/ }, title = "미니멀")
-        StyleCategoryCheckBox(isSelected = true, onSelecte = { /*TODO*/ }, title = "캐주얼")
+fun CategoryGroup(
+    categoryTags: SnapshotStateList<CategoryTag>,
+    updateCategoryTag: (CategoryTag) -> Unit
+) {
+    Column(verticalArrangement = Arrangement.spacedBy(15.dp)) {
+        categoryTags.chunked(2).forEach { item ->
+            Row(horizontalArrangement = Arrangement.spacedBy(15.dp)) {
+                item.forEach { categoryTag ->
+                    StyleCategoryCheckBox(
+                        isSelected = categoryTag.isSelected,
+                        onClicked = { updateCategoryTag(categoryTag) },
+                        title = categoryTag.name
+                    )
+                }
+            }
+        }
     }
-}
-
-
-@Preview
-@Composable
-fun SignInCategoryScreenPrview() {
-    SignInCategoryScreen()
 }
 

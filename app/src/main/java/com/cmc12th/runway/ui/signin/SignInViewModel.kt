@@ -3,9 +3,12 @@ package com.cmc12th.runway.ui.signin
 import android.net.Uri
 import android.provider.ContactsContract.CommonDataKinds.Nickname
 import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.ViewModel
 import com.cmc12th.runway.ui.signin.model.*
+import com.cmc12th.runway.utils.Constants.CATEGORYS
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -43,6 +46,24 @@ class SignInViewModel @Inject constructor(
 
     private val _profileImage = mutableStateOf<Uri?>(null)
     val profileImage: State<Uri?> = _profileImage
+
+    val categoryTags = mutableStateListOf(
+        CategoryTag("미니멀"),
+        CategoryTag("캐주얼"),
+        CategoryTag("스트릿"),
+        CategoryTag("빈티지"),
+        CategoryTag("페미닌"),
+        CategoryTag("시티보이"),
+    )
+
+    fun updateCategoryTags(categoryTag: CategoryTag) {
+        for (index in 0 until categoryTags.size)
+            if (categoryTags[index].name == categoryTag.name) {
+                categoryTags[index] = categoryTags[index].copy(
+                    isSelected = !categoryTags[index].isSelected
+                )
+            }
+    }
 
     fun updateProfileImage(profileImage: Uri?) {
         _profileImage.value = profileImage
@@ -91,7 +112,6 @@ class SignInViewModel @Inject constructor(
         _phone.value = _phone.value.copy(number = phoneNumber)
         checkUserVerificationStatus()
     }
-
 
     private fun checkUserVerificationStatus() {
         val isVerified =
