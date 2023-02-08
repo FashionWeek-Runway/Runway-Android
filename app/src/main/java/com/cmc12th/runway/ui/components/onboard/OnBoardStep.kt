@@ -7,6 +7,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.cmc12th.runway.ui.theme.Gray100
+import com.cmc12th.runway.ui.theme.Point
 import com.cmc12th.runway.ui.theme.Primary
 
 @Composable
@@ -23,7 +24,7 @@ fun OnBoardStep(step: Int) {
                 modifier = Modifier
                     .weight(1f)
                     .height(5.dp)
-                    .background(if (now) Primary else Gray100)
+                    .background(if (now) Point else Gray100)
             )
         }
     }
