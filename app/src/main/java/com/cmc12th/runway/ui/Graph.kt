@@ -8,9 +8,10 @@ import com.cmc12th.runway.ui.home.HomeScreen
 import com.cmc12th.runway.ui.login.LoginBaseScreen
 import com.cmc12th.runway.ui.login.LoginIdPasswdScreen
 import com.cmc12th.runway.ui.login.signin.*
-import com.cmc12th.runway.ui.login.signin.agreement.AgreementDetailScreen
+import com.cmc12th.runway.ui.signin.agreement.AgreementDetailScreen
 import com.cmc12th.runway.ui.map.MapScreen
 import com.cmc12th.runway.ui.mypage.MypageScreen
+import com.cmc12th.runway.ui.signin.*
 import com.cmc12th.runway.utils.Constants.LOGIN_BASE_ROUTE
 import com.cmc12th.runway.utils.Constants.LOGIN_GRAPH
 import com.cmc12th.runway.utils.Constants.LOGIN_ID_PW_ROUTE

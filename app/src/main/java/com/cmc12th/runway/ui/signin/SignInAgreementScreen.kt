@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalAnimationApi::class)
 
-package com.cmc12th.runway.ui.login.signin
+package com.cmc12th.runway.ui.signin
 
 import androidx.compose.animation.*
 import androidx.compose.foundation.*

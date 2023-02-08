@@ -1,4 +1,4 @@
-package com.cmc12th.runway.ui.login.signin.agreement
+package com.cmc12th.runway.ui.signin.agreement
 
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.scrollable

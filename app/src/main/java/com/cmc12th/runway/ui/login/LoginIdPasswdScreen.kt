@@ -25,8 +25,8 @@ import com.cmc12th.runway.ui.components.BackIcon
 import com.cmc12th.runway.ui.components.CustomTextField
 import com.cmc12th.runway.ui.components.HeightSpacer
 import com.cmc12th.runway.ui.domain.model.ApplicationState
-import com.cmc12th.runway.ui.login.signin.Keyboard
-import com.cmc12th.runway.ui.login.signin.keyboardAsState
+import com.cmc12th.runway.ui.signin.Keyboard
+import com.cmc12th.runway.ui.signin.keyboardAsState
 import com.cmc12th.runway.ui.theme.Body2
 import com.cmc12th.runway.ui.theme.Gray600
 import com.cmc12th.runway.ui.theme.HeadLine1

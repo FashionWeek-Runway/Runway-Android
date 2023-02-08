@@ -28,7 +28,7 @@ import com.cmc12th.runway.ui.Screen
 import com.cmc12th.runway.ui.components.BottomBar
 import com.cmc12th.runway.ui.detail.PhotoReviewResultScreen
 import com.cmc12th.runway.ui.domain.model.ApplicationState
-import com.cmc12th.runway.ui.login.signin.SignInProfileImage
+import com.cmc12th.runway.ui.signin.SignInProfileImage
 import com.cmc12th.runway.ui.loginGraph
 import com.cmc12th.runway.ui.mainGraph
 import com.cmc12th.runway.ui.photoreview.PhotoReviewScreen

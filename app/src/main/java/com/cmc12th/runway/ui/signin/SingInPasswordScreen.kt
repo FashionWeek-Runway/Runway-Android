@@ -1,4 +1,4 @@
-package com.cmc12th.runway.ui.login.signin
+package com.cmc12th.runway.ui.signin
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -141,7 +141,7 @@ fun InputPassword() {
     LaunchedEffect(key1 = Unit) {
         focusRequester.requestFocus()
     }
-    
+
     Column {
         CustomTextField(
             modifier = Modifier.fillMaxWidth(),

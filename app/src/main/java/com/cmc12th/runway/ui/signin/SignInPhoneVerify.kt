@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalFoundationApi::class, ExperimentalLayoutApi::class)
 
-package com.cmc12th.runway.ui.login.signin
+package com.cmc12th.runway.ui.signin
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi

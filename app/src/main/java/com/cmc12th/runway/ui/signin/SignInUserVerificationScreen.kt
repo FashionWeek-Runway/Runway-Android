@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalMaterialApi::class, ExperimentalMaterialApi::class)
 
-package com.cmc12th.runway.ui.login.signin
+package com.cmc12th.runway.ui.signin
 
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*

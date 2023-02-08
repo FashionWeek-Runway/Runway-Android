@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalAnimationApi::class, ExperimentalLayoutApi::class)
 
-package com.cmc12th.runway.ui.login.signin
+package com.cmc12th.runway.ui.signin
 
 import android.graphics.Rect
 import android.net.Uri
