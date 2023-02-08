@@ -57,6 +57,12 @@ fun SignInPhoneVerifyScreen(
         ) {
             HeightSpacer(height = 20.dp)
             OnBoardHeadLine(main = "인증번호", sub = "를 입력해주세요.")
+            HeightSpacer(height = 20.dp)
+            Row {
+                Text(text = "인증문자가 ", color = Gray700, style = Body2)
+                Text(text = signInViewModel.phone.value.number, color = Color.Black, style = Body2M)
+                Text(text = "으로 발송되었습니다.", color = Gray700, style = Body2)
+            }
             HeightSpacer(height = 40.dp)
             /** 인증번호 입력 */
             InputVerificationCode(
