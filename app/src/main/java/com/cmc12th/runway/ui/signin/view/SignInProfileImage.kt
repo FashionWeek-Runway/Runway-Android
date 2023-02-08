@@ -1,10 +1,6 @@
-@file:OptIn(ExperimentalAnimationApi::class, ExperimentalLayoutApi::class)
-
 package com.cmc12th.runway.ui.signin.view
 
-import android.graphics.Rect
 import android.net.Uri
-import android.view.ViewTreeObserver
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -31,7 +27,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -41,10 +36,15 @@ import com.cmc12th.runway.R
 import com.cmc12th.runway.ui.components.BackIcon
 import com.cmc12th.runway.ui.components.CustomTextField
 import com.cmc12th.runway.ui.components.HeightSpacer
+import com.cmc12th.runway.ui.domain.keyboardAsState
 import com.cmc12th.runway.ui.signin.components.OnBoardStep
 import com.cmc12th.runway.ui.domain.model.ApplicationState
+import com.cmc12th.runway.ui.domain.model.KeyboardStatus
 import com.cmc12th.runway.ui.signin.SignInViewModel
 import com.cmc12th.runway.ui.theme.*
+import com.cmc12th.runway.utils.Constants.MAX_NICKNAME_LENGTH
+import com.cmc12th.runway.utils.Constants.SIGNIN_CATEGORY_ROUTE
+import kotlin.math.sign
 
 @Composable
 fun SignInProfileImage(
@@ -56,24 +56,23 @@ fun SignInProfileImage(
     }
     val isKeyboardOpen by keyboardAsState() // Keyboard.Opened or Keyboard.Closed
     val profileSize by animateFloatAsState(
-        targetValue = if (isKeyboardOpen == Keyboard.Opened) 0.4f else 0.66f, animationSpec = tween(
-            durationMillis = 200,
-            easing = FastOutSlowInEasing
-        )
-    )
-    val heightSpacerSize by animateDpAsState(
-        targetValue = if (isKeyboardOpen == Keyboard.Opened) 20.dp else 50.dp,
+        targetValue = if (isKeyboardOpen == KeyboardStatus.Opened) 0.4f else 0.66f,
         animationSpec = tween(
             durationMillis = 200,
             easing = FastOutSlowInEasing
         )
     )
-    val selectImage = remember { mutableStateOf<Uri?>(null) }
+    val heightSpacerSize by animateDpAsState(
+        targetValue = if (isKeyboardOpen == KeyboardStatus.Opened) 20.dp else 50.dp,
+        animationSpec = tween(
+            durationMillis = 200,
+            easing = FastOutSlowInEasing
+        )
+    )
     val galleryLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { url ->
-            selectImage.value = url
+            signInViewModel.updateProfileImage(url)
         }
-
 
 
     Column(
@@ -99,17 +98,22 @@ fun SignInProfileImage(
             HeightSpacer(height = 40.dp)
 
             /** 프로필이미지 아이콘 */
-            ProfileImageIcon(selectImage.value, profileSize, galleryLauncher)
+            ProfileImageIcon(signInViewModel.profileImage.value, profileSize, galleryLauncher)
 
             /** 닉네임 입력 칸 */
             HeightSpacer(height = heightSpacerSize)
-            InputNickname() {
+            InputNickname(
+                nickname = signInViewModel.nickName.value,
+                updateNickName = { signInViewModel.updateNickName(it) }
+            ) {
                 onkeyboardFocus.value = it
             }
         }
 
         Button(
-            onClick = { /*TODO*/ },
+            onClick = {
+                appState.navController.navigate(SIGNIN_CATEGORY_ROUTE)
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(50.dp),
@@ -131,11 +135,11 @@ fun SignInProfileImage(
 
 
 @Composable
-fun InputNickname(onFocuseChanged: (Boolean) -> Unit) {
-
-    val nickNameTextField = remember {
-        mutableStateOf(TextFieldValue(""))
-    }
+fun InputNickname(
+    nickname: String,
+    updateNickName: (String) -> Unit,
+    onFocuseChanged: (Boolean) -> Unit
+) {
     CustomTextField(
         modifier = Modifier
             .fillMaxWidth()
@@ -143,9 +147,11 @@ fun InputNickname(onFocuseChanged: (Boolean) -> Unit) {
                 onFocuseChanged(it.hasFocus)
             },
         fontSize = 16.sp,
-        value = nickNameTextField.value,
+        value = nickname,
         placeholderText = "닉네임 입력",
-        onvalueChanged = { if (it.text.length <= 10) nickNameTextField.value = it },
+        onvalueChanged = {
+            if (it.length <= MAX_NICKNAME_LENGTH) updateNickName(it)
+        },
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Text,
             imeAction = ImeAction.Done
@@ -153,36 +159,6 @@ fun InputNickname(onFocuseChanged: (Boolean) -> Unit) {
         keyboardActions = KeyboardActions(onDone = {
         }),
     )
-}
-
-enum class Keyboard {
-    Opened, Closed
-}
-
-@Composable
-fun keyboardAsState(): State<Keyboard> {
-    val keyboardState = remember { mutableStateOf(Keyboard.Closed) }
-    val view = LocalView.current
-    DisposableEffect(view) {
-        val onGlobalListener = ViewTreeObserver.OnGlobalLayoutListener {
-            val rect = Rect()
-            view.getWindowVisibleDisplayFrame(rect)
-            val screenHeight = view.rootView.height
-            val keypadHeight = screenHeight - rect.bottom
-            keyboardState.value = if (keypadHeight > screenHeight * 0.15) {
-                Keyboard.Opened
-            } else {
-                Keyboard.Closed
-            }
-        }
-        view.viewTreeObserver.addOnGlobalLayoutListener(onGlobalListener)
-
-        onDispose {
-            view.viewTreeObserver.removeOnGlobalLayoutListener(onGlobalListener)
-        }
-    }
-
-    return keyboardState
 }
 
 @Composable

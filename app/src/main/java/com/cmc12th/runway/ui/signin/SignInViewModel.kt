@@ -1,5 +1,7 @@
 package com.cmc12th.runway.ui.signin
 
+import android.net.Uri
+import android.provider.ContactsContract.CommonDataKinds.Nickname
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -35,6 +37,20 @@ class SignInViewModel @Inject constructor(
 
     private val _verifyCode = mutableStateOf("")
     val verifyCode: State<String> = _verifyCode
+
+    private val _nickName = mutableStateOf("")
+    val nickName: State<String> = _nickName
+
+    private val _profileImage = mutableStateOf<Uri?>(null)
+    val profileImage: State<Uri?> = _profileImage
+
+    fun updateProfileImage(profileImage: Uri?) {
+        _profileImage.value = profileImage
+    }
+
+    fun updateNickName(nickname: String) {
+        _nickName.value = nickname
+    }
 
     fun updateVerifyCode(verifyCode: String) {
         _verifyCode.value = verifyCode
