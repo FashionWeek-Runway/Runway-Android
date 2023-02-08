@@ -1,11 +1,12 @@
 package com.cmc12th.runway.ui.signin.view
 
-import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -17,10 +18,8 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -29,13 +28,12 @@ import com.cmc12th.runway.ui.components.BackIcon
 import com.cmc12th.runway.ui.components.CustomTextField
 import com.cmc12th.runway.ui.components.HeightSpacer
 import com.cmc12th.runway.ui.signin.components.OnBoardStep
-import com.cmc12th.runway.ui.theme.HeadLine3
 import com.cmc12th.runway.R
 import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.signin.SignInViewModel
 import com.cmc12th.runway.ui.signin.components.OnBoardHeadLine
-import com.cmc12th.runway.ui.theme.Gray300
-import com.cmc12th.runway.ui.theme.Gray500
+import com.cmc12th.runway.ui.signin.model.Password
+import com.cmc12th.runway.ui.theme.*
 import com.cmc12th.runway.utils.Constants
 
 @Composable
@@ -60,13 +58,20 @@ fun SignInPasswordScreen(
         ) {
             HeightSpacer(height = 20.dp)
             OnBoardHeadLine(main = "비밀번호", sub = "를 입력해주세요.")
+
             /** 패스워드 입력 */
             HeightSpacer(height = 30.dp)
-            InputPassword()
-
+            InputPassword(
+                password = signInViewModel.password.value,
+                updatePassword = { signInViewModel.updatePassword(it) }
+            )
             /** 패스워드 확인 */
             HeightSpacer(height = 30.dp)
-            CheckPassword()
+            CheckPassword(
+                password = signInViewModel.retryPassword.value,
+                updateRetryPassword = { signInViewModel.updateRetryPassword(it) },
+                isEqual = signInViewModel.password.value == signInViewModel.retryPassword.value
+            )
         }
         Button(
             onClick = {
@@ -76,7 +81,7 @@ fun SignInPasswordScreen(
                 .fillMaxWidth()
                 .height(50.dp),
             shape = RectangleShape,
-            colors = ButtonDefaults.buttonColors(Gray300)
+            colors = ButtonDefaults.buttonColors(if (signInViewModel.password.value == signInViewModel.retryPassword.value) Color.Black else Gray300)
         ) {
             Text(
                 text = "다음",
@@ -89,97 +94,149 @@ fun SignInPasswordScreen(
 }
 
 @Composable
-fun CheckPassword() {
+fun CheckPassword(
+    password: Password,
+    updateRetryPassword: (Password) -> Unit,
+    isEqual: Boolean
+) {
 
-    val passwdTextField = remember {
-        mutableStateOf(TextFieldValue(""))
+    val pswdVisible = remember {
+        mutableStateOf(false)
     }
-
     Column {
         CustomTextField(
-            modifier = Modifier.fillMaxWidth(),
+            trailingIcon = {
+                if (pswdVisible.value) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_able_pw),
+                        tint = Gray600,
+                        contentDescription = "IC_ABLE_PW",
+                        modifier = Modifier
+                            .size(24.dp)
+                            .clickable {
+                                pswdVisible.value = !pswdVisible.value
+                            },
+                    )
+                } else {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_disable_pw),
+                        tint = Color.Unspecified,
+                        contentDescription = "IC_DISABLE_PW",
+                        modifier = Modifier
+                            .size(24.dp)
+                            .clickable {
+                                pswdVisible.value = !pswdVisible.value
+                            },
+                    )
+                }
+            },
+            modifier = Modifier
+                .fillMaxWidth(),
             fontSize = 16.sp,
-            value = passwdTextField.value,
-            placeholderText = "비밀번호 확인",
-            onvalueChanged = { passwdTextField.value = it },
+            value = password.value,
+            placeholderText = "비밀번호 입력",
+            onvalueChanged = { updateRetryPassword(Password(it)) },
             keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Text,
-                imeAction = ImeAction.Done
+                keyboardType = KeyboardType.Password, imeAction = ImeAction.Done
             ),
             keyboardActions = KeyboardActions(onDone = {
             }),
+            passwordVisible = pswdVisible.value
         )
         HeightSpacer(height = 10.dp)
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Row() {
-                Image(
-                    modifier = Modifier.size(18.dp),
-                    painter = painterResource(id = R.drawable.ic_check),
-                    contentDescription = "IC_CHECK"
-                )
-                Text(
-                    modifier = Modifier.padding(start = 8.dp),
-                    text = "비밀번호 일치",
-                    fontSize = 14.sp,
-                    color = Gray500
-                )
-            }
-
+            passwdValidationIcon("비밀번호 일치", isEqual)
         }
     }
 }
 
 @Composable
-fun InputPassword() {
+fun InputPassword(
+    password: Password,
+    updatePassword: (Password) -> Unit,
+) {
 
-    // TODO 추출
-    val passwdTextField = remember {
-        mutableStateOf(TextFieldValue(""))
-    }
-    
     val focusRequester = remember {
         FocusRequester()
     }
-
+    val pswdVisible = remember {
+        mutableStateOf(false)
+    }
     LaunchedEffect(key1 = Unit) {
         focusRequester.requestFocus()
     }
 
     Column {
         CustomTextField(
-            modifier = Modifier.fillMaxWidth(),
-            fontSize = 16.sp,
-            value = passwdTextField.value,
+            trailingIcon = {
+                if (pswdVisible.value) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_able_pw),
+                        tint = Gray600,
+                        contentDescription = "IC_ABLE_PW",
+                        modifier = Modifier
+                            .size(24.dp)
+                            .clickable {
+                                pswdVisible.value = !pswdVisible.value
+                            },
+                    )
+                } else {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_disable_pw),
+                        tint = Color.Unspecified,
+                        contentDescription = "IC_DISABLE_PW",
+                        modifier = Modifier
+                            .size(24.dp)
+                            .clickable {
+                                pswdVisible.value = !pswdVisible.value
+                            },
+                    )
+                }
+            },
             focusRequest = focusRequester,
-            placeholderText = "영문, 숫자, 조합 8~16자",
-            onvalueChanged = { passwdTextField.value = it },
+            modifier = Modifier
+                .fillMaxWidth(),
+            fontSize = 16.sp,
+            value = password.value,
+            placeholderText = "비밀번호 입력",
+            onvalueChanged = { updatePassword(Password(it)) },
             keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Text,
-                imeAction = ImeAction.Next
+                keyboardType = KeyboardType.Password, imeAction = ImeAction.Next
             ),
-            keyboardActions = KeyboardActions(onDone = {
-            }),
+            passwordVisible = pswdVisible.value
         )
+
         HeightSpacer(height = 10.dp)
         Row(
-            verticalAlignment = Alignment.CenterVertically
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            Row() {
-                Image(
-                    modifier = Modifier.size(18.dp),
-                    painter = painterResource(id = R.drawable.ic_check),
-                    contentDescription = "IC_CHECK"
-                )
-                Text(
-                    modifier = Modifier.padding(start = 8.dp),
-                    text = "영문",
-                    fontSize = 14.sp,
-                    color = Gray500
-                )
-            }
+            passwdValidationIcon("영문", password.includeEnglish())
+            passwdValidationIcon("숫자", password.includeNumber())
+            passwdValidationIcon("8~16자", password.inLegnth())
+        }
+    }
+}
 
+@Composable
+private fun passwdValidationIcon(text: String, status: Boolean) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Row() {
+            Icon(
+                modifier = Modifier.size(18.dp),
+                painter = painterResource(id = R.drawable.ic_check),
+                contentDescription = "IC_CHECK",
+                tint = if (status) Primary else Gray500
+            )
+            Text(
+                modifier = Modifier.padding(start = 8.dp),
+                text = text,
+                style = Body2M,
+                color = if (status) Primary else Gray500
+            )
         }
     }
 }

@@ -27,6 +27,20 @@ class SignInViewModel @Inject constructor(
     private val _userVerificationStatus = mutableStateOf(false)
     val userVerificationStatus: State<Boolean> = _userVerificationStatus
 
+    private val _password = mutableStateOf(Password(""))
+    val password: State<Password> = _password
+
+    private val _retryPassword = mutableStateOf(Password(""))
+    val retryPassword: State<Password> = _retryPassword
+
+    fun updatePassword(password: Password) {
+        _password.value = password
+    }
+
+    fun updateRetryPassword(password: Password) {
+        _retryPassword.value = password
+    }
+
     fun updateName(name: String) {
         _nameAndNationality.value = _nameAndNationality.value.copy(name = name)
         checkUserVerificationStatus()
