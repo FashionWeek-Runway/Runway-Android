@@ -12,6 +12,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -39,6 +40,11 @@ fun SignInAgreementScreen(
     appState: ApplicationState,
     signInViewModel: SignInViewModel = hiltViewModel()
 ) {
+
+    val agreements = remember {
+        mutableStateListOf(false, false, false)
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -68,7 +74,14 @@ fun SignInAgreementScreen(
 
             /** 약관 전체 동의 */
             Column {
-                AgreementAll()
+                AgreementAll(
+                    checkState = agreements.all { it },
+                    onChecked = {
+                        for (i in 0 until agreements.size) {
+                            agreements[i] = true
+                        }
+                    }
+                )
                 Spacer(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -76,9 +89,12 @@ fun SignInAgreementScreen(
                         .background(Gray300)
                 )
                 HeightSpacer(height = 10.dp)
-                AgreementComponent()
-                AgreementComponent()
-                AgreementComponent()
+                agreements.forEachIndexed { index, value ->
+                    AgreementComponent(
+                        checkState = agreements[index],
+                        onChecked = { agreements[index] = !value }
+                    )
+                }
                 HeightSpacer(height = 60.dp)
                 Button(
                     modifier = Modifier.fillMaxWidth(),
@@ -95,13 +111,17 @@ fun SignInAgreementScreen(
 }
 
 @Composable
-fun AgreementComponent() {
+fun AgreementComponent(
+    checkState: Boolean,
+    onChecked: () -> Unit,
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(10.dp)
     ) {
-        AgreementCheckBox()
+        AgreementCheckBox(checkState = checkState,
+            onChecked = { onChecked() })
         WidthSpacer(width = 20.dp)
         Row(
             modifier = Modifier.clickable {
@@ -122,39 +142,43 @@ fun AgreementComponent() {
 }
 
 @Composable
-fun AgreementAll() {
+fun AgreementAll(
+    checkState: Boolean,
+    onChecked: () -> Unit,
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(10.dp, 20.dp)
     ) {
-        AgreementCheckBox()
+        AgreementCheckBox(
+            checkState = checkState,
+            onChecked = { onChecked() }
+        )
         WidthSpacer(width = 20.dp)
         Text(text = "약관 전체 동의", fontSize = 16.sp, fontWeight = FontWeight.Medium)
     }
 }
 
 @Composable
-fun AgreementCheckBox() {
-    // TODO 약관 함수 밖으로 추출
-    val isChecked = remember {
-        mutableStateOf(false)
-    }
-
+fun AgreementCheckBox(
+    checkState: Boolean,
+    onChecked: () -> Unit,
+) {
     Box(
         modifier = Modifier
             .size(24.dp)
-            .border(BorderStroke(if (isChecked.value) 0.dp else 1.dp, Gray300))
-            .background(if (isChecked.value) Primary else Color.White)
+            .border(BorderStroke(if (checkState) 0.dp else 1.dp, Gray300))
+            .background(if (checkState) Primary else Color.White)
             .clickable {
-                isChecked.value = !isChecked.value
+                onChecked()
             }
     ) {
         AnimatedVisibility(
-            visible = isChecked.value, modifier = Modifier
+            visible = checkState, modifier = Modifier
                 .align(Alignment.Center)
         ) {
-            if (isChecked.value) {
+            if (checkState) {
                 Icon(
                     modifier = Modifier
                         .size(16.dp)
