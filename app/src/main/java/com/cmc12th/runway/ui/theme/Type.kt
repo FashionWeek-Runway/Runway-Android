@@ -11,9 +11,11 @@ import com.cmc12th.runway.R
 
 val SpoqaHansSansNeo = FontFamily(
     Font(R.font.spoqa_han_sans_neo_bold, FontWeight.Bold, FontStyle.Normal),
-    Font(R.font.spoqa_han_sans_neo_regular,
+    Font(
+        R.font.spoqa_han_sans_neo_regular,
         FontWeight.Normal,
-        FontStyle.Normal), // Regular을 Normal로 취급
+        FontStyle.Normal
+    ), // Regular을 Normal로 취급
     Font(R.font.spoqa_han_sans_neo_medium, FontWeight.Medium, FontStyle.Normal),
     Font(R.font.spoqa_han_sans_neo_light, FontWeight.Light, FontStyle.Normal),
 )
@@ -86,7 +88,7 @@ val Body2 = TextStyle(
 
 val Caption = TextStyle(
     fontFamily = SpoqaHansSansNeo,
-    fontWeight = FontWeight.Bold,
+    fontWeight = FontWeight.Normal,
     fontSize = 12.sp,
 )
 
