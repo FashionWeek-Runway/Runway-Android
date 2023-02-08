@@ -23,9 +23,9 @@ import com.cmc12th.runway.R
 import com.cmc12th.runway.ui.components.BackIcon
 import com.cmc12th.runway.ui.components.CustomTextField
 import com.cmc12th.runway.ui.components.HeightSpacer
+import com.cmc12th.runway.ui.domain.keyboardAsState
 import com.cmc12th.runway.ui.domain.model.ApplicationState
-import com.cmc12th.runway.ui.signin.view.Keyboard
-import com.cmc12th.runway.ui.signin.view.keyboardAsState
+import com.cmc12th.runway.ui.domain.model.KeyboardStatus
 import com.cmc12th.runway.ui.theme.Body2
 import com.cmc12th.runway.ui.theme.Gray600
 import com.cmc12th.runway.ui.theme.HeadLine1
@@ -73,7 +73,7 @@ fun LoginIdPasswdScreen(appState: ApplicationState) {
 
         /** 하단 로그인, 회원가입 */
         BottomButtons(
-            onkeyboardState == Keyboard.Opened,
+            onkeyboardState == KeyboardStatus.Opened,
             onLogin = {
                 appState.navController.navigate(MAIN_GRAPH)
             },

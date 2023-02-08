@@ -35,6 +35,7 @@ import com.cmc12th.runway.R
 import com.cmc12th.runway.ui.components.*
 import com.cmc12th.runway.ui.signin.components.OnBoardStep
 import com.cmc12th.runway.ui.components.util.bottomBorder
+import com.cmc12th.runway.ui.domain.keyboardAsState
 import com.cmc12th.runway.ui.domain.model.*
 import com.cmc12th.runway.ui.domain.rememberBottomSheet
 import com.cmc12th.runway.ui.signin.SignInViewModel
@@ -136,8 +137,8 @@ private fun UserVerificationContents(
 
         }
 
-        if (keyboardState == Keyboard.Closed ||
-            (keyboardState == Keyboard.Opened && isPhoneFocused.value)
+        if (keyboardState == KeyboardStatus.Closed ||
+            (keyboardState == KeyboardStatus.Opened && isPhoneFocused.value)
         ) {
             /** 인증 요청 */
             Button(modifier = Modifier
