@@ -12,6 +12,9 @@ data class Password(
 
     fun inLegnth(): Boolean = value.length in MIN_PASSWORD_LENGTH..MAX_PASSWORD_LENGTH
 
+    fun isValidatePassword(password: Password): Boolean =
+        password.includeEnglish() && password.includeNumber() && password.inLegnth() && password.value == this.value
+
     companion object {
         private const val MIN_PASSWORD_LENGTH = 8
         private const val MAX_PASSWORD_LENGTH = 16

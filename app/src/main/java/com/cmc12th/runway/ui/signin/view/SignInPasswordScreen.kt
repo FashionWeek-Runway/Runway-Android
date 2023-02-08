@@ -70,7 +70,9 @@ fun SignInPasswordScreen(
             CheckPassword(
                 password = signInViewModel.retryPassword.value,
                 updateRetryPassword = { signInViewModel.updateRetryPassword(it) },
-                isEqual = signInViewModel.password.value == signInViewModel.retryPassword.value
+                isEqual = signInViewModel.password.value.isValidatePassword(
+                    signInViewModel.retryPassword.value
+                )
             )
         }
         Button(
@@ -81,7 +83,12 @@ fun SignInPasswordScreen(
                 .fillMaxWidth()
                 .height(50.dp),
             shape = RectangleShape,
-            colors = ButtonDefaults.buttonColors(if (signInViewModel.password.value == signInViewModel.retryPassword.value) Color.Black else Gray300)
+            colors = ButtonDefaults.buttonColors(
+                if (signInViewModel.password.value.isValidatePassword(
+                        signInViewModel.retryPassword.value
+                    )
+                ) Color.Black else Gray300
+            )
         ) {
             Text(
                 text = "다음",
