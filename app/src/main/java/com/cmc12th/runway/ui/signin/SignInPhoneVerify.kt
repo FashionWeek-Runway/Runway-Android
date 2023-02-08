@@ -2,6 +2,7 @@
 
 package com.cmc12th.runway.ui.signin
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.border
@@ -22,6 +23,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.cmc12th.runway.ui.components.BackIcon
 import com.cmc12th.runway.ui.components.CustomTextField
 import com.cmc12th.runway.ui.components.HeightSpacer
@@ -34,8 +36,10 @@ import com.cmc12th.runway.ui.theme.HeadLine3
 import com.cmc12th.runway.utils.Constants.SIGNIN_PASSWORD_ROUTE
 
 @Composable
-fun SignInPhoneVerifyScreen(appState: ApplicationState) {
-
+fun SignInPhoneVerifyScreen(
+    appState: ApplicationState,
+    signInViewModel: SignInViewModel = hiltViewModel()
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()

@@ -24,6 +24,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.cmc12th.runway.ui.components.BackIcon
 import com.cmc12th.runway.ui.components.CustomTextField
 import com.cmc12th.runway.ui.components.HeightSpacer
@@ -36,7 +37,10 @@ import com.cmc12th.runway.ui.theme.Gray500
 import com.cmc12th.runway.utils.Constants
 
 @Composable
-fun SignInPasswordScreen(appState: ApplicationState) {
+fun SignInPasswordScreen(
+    appState: ApplicationState,
+    signInViewModel: SignInViewModel = hiltViewModel()
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()

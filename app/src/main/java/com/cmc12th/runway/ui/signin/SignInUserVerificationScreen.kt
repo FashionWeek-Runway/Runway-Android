@@ -2,12 +2,12 @@
 
 package com.cmc12th.runway.ui.signin
 
+import android.util.Log
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
-import androidx.compose.material3.*
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -27,6 +27,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.cmc12th.runway.R
 import com.cmc12th.runway.ui.components.*
 import com.cmc12th.runway.ui.components.onboard.OnBoardStep
@@ -53,12 +54,13 @@ fun rememberBottomSheet(
 }
 
 @Composable
-fun SignInUserInfoVerifyScreen(appState: ApplicationState) {
+fun SignInUserInfoVerifyScreen(
+    appState: ApplicationState,
+    signInViewModel: SignInViewModel = hiltViewModel()
+) {
 
     val coroutineScope = rememberCoroutineScope()
     val bottomsheetState = rememberBottomSheet()
-
-    // BottomSheet 내용을 바꾸는 State
     val showBottomSheet: (BottomSheetContent) -> Unit = {
         coroutineScope.launch {
             bottomsheetState.bottomsheetContent.value = it
@@ -117,7 +119,8 @@ private fun UserVerificationContents(
             }
 
             /** 이름 입력 */
-            NameContainter(showBottomSheet,
+            NameContainter(
+                showBottomSheet,
                 userNationality.value
             ) {
                 userNationality.value = it

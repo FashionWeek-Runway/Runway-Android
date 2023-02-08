@@ -16,7 +16,7 @@ import com.cmc12th.runway.ui.theme.Body1M
 import com.cmc12th.runway.ui.theme.HeadLine4
 
 @Composable
-fun AgreementDetailScreen(appState: ApplicationState) {
+fun AgreementDetailScreen(appState: ApplicationState, hiltViewModel: Any) {
 
     Column(
         modifier = Modifier

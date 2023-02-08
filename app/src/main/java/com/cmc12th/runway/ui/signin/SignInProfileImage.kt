@@ -14,7 +14,6 @@ import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.*
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -36,6 +35,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberAsyncImagePainter
 import com.cmc12th.runway.R
 import com.cmc12th.runway.ui.components.BackIcon
@@ -46,7 +46,10 @@ import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.theme.*
 
 @Composable
-fun SignInProfileImage(appState: ApplicationState) {
+fun SignInProfileImage(
+    appState: ApplicationState,
+    signInViewModel: SignInViewModel = hiltViewModel()
+) {
     val onkeyboardFocus = remember {
         mutableStateOf(false)
     }

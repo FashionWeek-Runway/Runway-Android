@@ -1,5 +1,7 @@
 package com.cmc12th.runway.ui
 
+import androidx.compose.runtime.remember
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
@@ -7,7 +9,6 @@ import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.home.HomeScreen
 import com.cmc12th.runway.ui.login.LoginBaseScreen
 import com.cmc12th.runway.ui.login.LoginIdPasswdScreen
-import com.cmc12th.runway.ui.login.signin.*
 import com.cmc12th.runway.ui.signin.agreement.AgreementDetailScreen
 import com.cmc12th.runway.ui.map.MapScreen
 import com.cmc12th.runway.ui.mypage.MypageScreen
@@ -48,25 +49,45 @@ fun NavGraphBuilder.signInGraph(
     appState: ApplicationState,
 ) {
     navigation(startDestination = SIGNIN_USER_VERIFICATION_ROUTE, route = SIGNIN_GRAPH) {
-        composable(SIGNIN_USER_VERIFICATION_ROUTE) {
-            SignInUserInfoVerifyScreen(appState)
+        composable(SIGNIN_USER_VERIFICATION_ROUTE) { entry ->
+            val backStackEntry = remember(entry) {
+                appState.navController.getBackStackEntry(SIGNIN_GRAPH)
+            }
+            SignInUserInfoVerifyScreen(appState, hiltViewModel(backStackEntry))
         }
-        composable(SIGNIN_PHONE_VERIFY_ROUTE) {
-            SignInPhoneVerifyScreen(appState)
+        composable(SIGNIN_PHONE_VERIFY_ROUTE) { entry ->
+            val backStackEntry = remember(entry) {
+                appState.navController.getBackStackEntry(SIGNIN_GRAPH)
+            }
+            SignInPhoneVerifyScreen(appState, hiltViewModel(backStackEntry))
         }
-        composable(SIGNIN_PASSWORD_ROUTE) {
-            SignInPasswordScreen(appState)
+        composable(SIGNIN_PASSWORD_ROUTE) { entry ->
+            val backStackEntry = remember(entry) {
+                appState.navController.getBackStackEntry(SIGNIN_GRAPH)
+            }
+            SignInPasswordScreen(appState, hiltViewModel(backStackEntry))
         }
-        composable(SIGNIN_AGREEMENT_ROUTE) {
-            SignInAgreementScreen(appState)
+        composable(SIGNIN_AGREEMENT_ROUTE) { entry ->
+            val backStackEntry = remember(entry) {
+                appState.navController.getBackStackEntry(SIGNIN_GRAPH)
+            }
+            SignInAgreementScreen(appState, hiltViewModel(backStackEntry))
         }
-        composable(SIGNIN_PROFILE_IMAGE_ROUTE) {
-            SignInProfileImage(appState)
+        composable(SIGNIN_PROFILE_IMAGE_ROUTE) { entry ->
+            val backStackEntry = remember(entry) {
+                appState.navController.getBackStackEntry(SIGNIN_GRAPH)
+            }
+            SignInProfileImage(appState, hiltViewModel(backStackEntry))
         }
-        composable(SIGNIN_AGREEMENT_DETAIL_ROUTE) {
-            AgreementDetailScreen(appState)
+        composable(SIGNIN_AGREEMENT_DETAIL_ROUTE) { entry ->
+            val backStackEntry = remember(entry) {
+                appState.navController.getBackStackEntry(SIGNIN_GRAPH)
+            }
+            AgreementDetailScreen(appState, hiltViewModel(backStackEntry))
         }
 //        composable(SIGNIN_CATEOGRY_ROUTE) {
 //        }
     }
 }
+
+

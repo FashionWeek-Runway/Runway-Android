@@ -23,6 +23,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.cmc12th.runway.R
 import com.cmc12th.runway.ui.components.BackIcon
 import com.cmc12th.runway.ui.components.HeightSpacer
@@ -33,7 +34,10 @@ import com.cmc12th.runway.ui.theme.*
 import com.cmc12th.runway.utils.Constants.SIGNIN_PROFILE_IMAGE_ROUTE
 
 @Composable
-fun SignInAgreementScreen(appState: ApplicationState) {
+fun SignInAgreementScreen(
+    appState: ApplicationState,
+    signInViewModel: SignInViewModel = hiltViewModel()
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()

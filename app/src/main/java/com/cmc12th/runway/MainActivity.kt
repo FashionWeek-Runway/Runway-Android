@@ -46,7 +46,9 @@ import com.cmc12th.runway.utils.Constants.SIGNIN_PHONE_VERIFY_ROUTE
 import com.cmc12th.runway.utils.Constants.SIGNIN_PROFILE_IMAGE_ROUTE
 import com.cmc12th.runway.utils.Constants.SIGNIN_USER_VERIFICATION_ROUTE
 import com.cmc12th.runway.utils.Constants.SPLASH_ROUTE
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
