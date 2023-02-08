@@ -81,7 +81,7 @@ dependencies {
     implementation 'io.github.ParkSangGwon:tedclustering-naver:1.0.2'
 
     // accompanist-inset
-    implementation "com.google.accompanist:accompanist-insets:0.24.7-alpha"
-    implementation "com.google.accompanist:accompanist-insets-ui:0.24.7-alpha"
+//    implementation "com.google.accompanist:accompanist-insets:0.24.7-alpha"
+//    implementation "com.google.accompanist:accompanist-insets-ui:0.24.7-alpha"
 
 }

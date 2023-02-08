@@ -3,6 +3,7 @@ package com.cmc12th.runway
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.util.Log
+import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.*
@@ -49,7 +50,6 @@ import com.cmc12th.runway.utils.Constants.SPLASH_ROUTE
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        WindowCompat.setDecorFitsSystemWindows(window, false)
         setContent {
             val appState = rememberApplicationState()
             val navBackStackEntry by appState.navController.currentBackStackEntryAsState()
@@ -72,6 +72,7 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+        WindowCompat.setDecorFitsSystemWindows(window, false)
     }
 }
 
@@ -82,7 +83,6 @@ private fun rememberApplicationState(
     navController: NavHostController = rememberNavController(),
     scaffoldState: ScaffoldState = rememberScaffoldState(),
     imePaddingState: MutableState<Boolean> = mutableStateOf(false),
-//) = remember(bottomBarState, navController, scaffoldState, imePaddingState) {
 ) = remember(Unit) {
     ApplicationState(
         bottomBarState,
@@ -98,14 +98,12 @@ private fun ManageBottomBarState(
     navBackStackEntry: NavBackStackEntry?,
     applicationState: ApplicationState,
 ) {
-    Log.i("dlgocks1", navBackStackEntry?.destination?.route.toString())
     when (navBackStackEntry?.destination?.route) {
         HOME_ROUTE, MAP_ROUTE, MYPAGE_ROUTE -> applicationState.bottomBarState.value = true
         else -> applicationState.bottomBarState.value = false
     }
     when (navBackStackEntry?.destination?.route) {
-//        SIGNIN_USER_VERIFICATION_ROUTE,
-        PHOTO_REVIEW_ROUTE, SIGNIN_PHONE_VERIFY_ROUTE -> {
+        SIGNIN_USER_VERIFICATION_ROUTE, PHOTO_REVIEW_ROUTE, SIGNIN_PHONE_VERIFY_ROUTE -> {
             applicationState.imePaddingState.value = true
         }
         else -> applicationState.imePaddingState.value = false

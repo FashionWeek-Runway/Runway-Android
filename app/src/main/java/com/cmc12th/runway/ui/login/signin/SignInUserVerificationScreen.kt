@@ -16,6 +16,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
@@ -89,7 +90,7 @@ private fun UserVerificationContents(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .verticalScroll(rememberScrollState(), reverseScrolling = true),
+            .imePadding(),
     ) {
         Box(modifier = Modifier.padding(20.dp)) {
             BackIcon()
@@ -99,7 +100,8 @@ private fun UserVerificationContents(
         Column(
             modifier = Modifier
                 .padding(20.dp)
-                .weight(1f),
+                .weight(1f)
+                .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(30.dp)
         ) {
             /** 본인인증 텍스트 */
@@ -122,7 +124,8 @@ private fun UserVerificationContents(
             BirthContainer()
 
             /** 휴대전화 입력 */
-            PhoneContainer(showBottomSheet,
+            PhoneContainer(
+                showBottomSheet,
                 selectedMobileCarrier.value
             ) { selectedMobileCarrier.value = it }
 
@@ -209,7 +212,8 @@ fun PhoneContainer(
         }
         HeightSpacer(height = 10.dp)
         CustomTextField(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth(),
             fontSize = 16.sp,
             value = phoneNumber.value,
             placeholderText = "휴대폰 번호 입력('-' 제외)",
