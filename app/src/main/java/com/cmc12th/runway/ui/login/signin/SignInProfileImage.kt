@@ -14,6 +14,7 @@ import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.*
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -68,11 +69,12 @@ fun SignInProfileImage(appState: ApplicationState) {
         rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { url ->
             selectImage.value = url
         }
-    
+
 
 
     Column(
         modifier = Modifier
+            .imePadding()
     ) {
         Box(modifier = Modifier.padding(20.dp)) {
             BackIcon()
@@ -83,6 +85,7 @@ fun SignInProfileImage(appState: ApplicationState) {
             modifier = Modifier
                 .padding(20.dp)
                 .weight(1f)
+                .verticalScroll(rememberScrollState())
         ) {
             HeightSpacer(height = 20.dp)
             Row {

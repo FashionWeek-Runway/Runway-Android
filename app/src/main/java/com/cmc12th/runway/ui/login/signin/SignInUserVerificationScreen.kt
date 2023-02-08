@@ -87,6 +87,12 @@ private fun UserVerificationContents(
     selectedMobileCarrier: MutableState<MobileCarrier>,
     userNationality: MutableState<Nationality>,
 ) {
+
+    val keyboardState by keyboardAsState()
+    val isPhoneFocused = remember {
+        mutableStateOf(false)
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -125,32 +131,38 @@ private fun UserVerificationContents(
 
             /** 휴대전화 입력 */
             PhoneContainer(
+                { isPhoneFocused.value = it },
                 showBottomSheet,
                 selectedMobileCarrier.value
             ) { selectedMobileCarrier.value = it }
 
         }
 
-        /** 인증 요청 */
-        Button(modifier = Modifier
-            .fillMaxWidth(),
-            shape = RectangleShape,
-            colors = ButtonDefaults.buttonColors(Gray300),
-            onClick = {
-                appState.navController.navigate(SIGNIN_PHONE_VERIFY_ROUTE)
-            }) {
-            Text(
-                modifier = Modifier.padding(0.dp, 5.dp),
-                text = "인증 요청",
-                fontSize = 16.sp,
-                color = Color.White
-            )
+        if (keyboardState == Keyboard.Closed ||
+            (keyboardState == Keyboard.Opened && isPhoneFocused.value)
+        ) {
+            /** 인증 요청 */
+            Button(modifier = Modifier
+                .fillMaxWidth(),
+                shape = RectangleShape,
+                colors = ButtonDefaults.buttonColors(Gray300),
+                onClick = {
+                    appState.navController.navigate(SIGNIN_PHONE_VERIFY_ROUTE)
+                }) {
+                Text(
+                    modifier = Modifier.padding(0.dp, 5.dp),
+                    text = "인증 요청",
+                    fontSize = 16.sp,
+                    color = Color.White
+                )
+            }
         }
     }
 }
 
 @Composable
 fun PhoneContainer(
+    changeFocus: (Boolean) -> Unit,
     showBottomSheet: (BottomSheetContent) -> Unit,
     selectedMobileCarrier: MobileCarrier,
     updateMobildeCarrier: (MobileCarrier) -> Unit,
@@ -213,7 +225,10 @@ fun PhoneContainer(
         HeightSpacer(height = 10.dp)
         CustomTextField(
             modifier = Modifier
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .onFocusChanged {
+                    changeFocus(it.hasFocus)
+                },
             fontSize = 16.sp,
             value = phoneNumber.value,
             placeholderText = "휴대폰 번호 입력('-' 제외)",
