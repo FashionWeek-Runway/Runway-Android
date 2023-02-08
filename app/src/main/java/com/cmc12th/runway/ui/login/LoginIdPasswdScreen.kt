@@ -8,13 +8,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
@@ -27,6 +25,8 @@ import com.cmc12th.runway.ui.components.BackIcon
 import com.cmc12th.runway.ui.components.CustomTextField
 import com.cmc12th.runway.ui.components.HeightSpacer
 import com.cmc12th.runway.ui.domain.model.ApplicationState
+import com.cmc12th.runway.ui.login.signin.Keyboard
+import com.cmc12th.runway.ui.login.signin.keyboardAsState
 import com.cmc12th.runway.ui.theme.Body2
 import com.cmc12th.runway.ui.theme.Gray600
 import com.cmc12th.runway.ui.theme.HeadLine1
@@ -43,19 +43,23 @@ fun LoginIdPasswdScreen(appState: ApplicationState) {
     val passWdTextFieldValue = remember {
         mutableStateOf(TextFieldValue(""))
     }
+    val onkeyboardState by keyboardAsState()
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(20.dp)
+            .imePadding()
     ) {
         /** 상단 뒤로가기 */
-        BackIcon()
+        Box(modifier = Modifier.padding(20.dp)) {
+            BackIcon()
+        }
 
         /** 로그인 본문 */
         Column(
-            modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.spacedBy(0.dp, Alignment.CenterVertically)
+            modifier = Modifier
+                .padding(start = 20.dp, end = 20.dp, top = 60.dp)
+                .weight(1f),
         ) {
             Text(text = "로그인", style = HeadLine1)
             HeightSpacer(60.dp)
@@ -70,6 +74,7 @@ fun LoginIdPasswdScreen(appState: ApplicationState) {
 
         /** 하단 로그인, 회원가입 */
         BottomButtons(
+            onkeyboardState == Keyboard.Opened,
             onLogin = {
                 appState.navController.navigate(MAIN_GRAPH)
             },
@@ -81,7 +86,48 @@ fun LoginIdPasswdScreen(appState: ApplicationState) {
 }
 
 @Composable
-private fun PhoneTextField(phoneTextFieldValue: MutableState<TextFieldValue>) {
+private fun BottomButtons(
+    onLoginFocused: Boolean,
+    onLogin: () -> Unit,
+    onSignin: () -> Unit,
+) {
+    Column(
+        modifier = Modifier.padding(bottom = if (onLoginFocused) 0.dp else 30.dp)
+    ) {
+        Button(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = if (!onLoginFocused) 20.dp else 0.dp,
+                    vertical = if (!onLoginFocused) 10.dp else 0.dp)
+                .clip(shape = RoundedCornerShape(if (!onLoginFocused) 5.dp else 0.dp))
+                .background(Color.Black),
+            onClick = onLogin,
+            colors = ButtonDefaults.buttonColors(Color.Black)
+        ) {
+            Text(text = "로그인", color = Color.White, fontSize = 16.sp)
+        }
+        if (!onLoginFocused) {
+            Button(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(20.dp, 0.dp)
+                    .clip(shape = RoundedCornerShape(5.dp))
+                    .background(Color.White)
+                    .border(1.dp, Color.Black, shape = RoundedCornerShape(5.dp)),
+                onClick = onSignin,
+                colors = ButtonDefaults.buttonColors(Color.Transparent)
+            ) {
+                Text(text = "회원가입", color = Color.Black, fontSize = 16.sp)
+            }
+        }
+
+    }
+}
+
+@Composable
+private fun PhoneTextField(
+    phoneTextFieldValue: MutableState<TextFieldValue>,
+) {
 
     CustomTextField(
         modifier = Modifier
@@ -100,7 +146,9 @@ private fun PhoneTextField(phoneTextFieldValue: MutableState<TextFieldValue>) {
 }
 
 @Composable
-private fun PasswordTextField(passWdTextFieldValue: MutableState<TextFieldValue>) {
+private fun PasswordTextField(
+    passWdTextFieldValue: MutableState<TextFieldValue>,
+) {
     val pswdVisible = remember {
         mutableStateOf(false)
     }
@@ -145,35 +193,4 @@ private fun PasswordTextField(passWdTextFieldValue: MutableState<TextFieldValue>
     )
 }
 
-
-@Composable
-private fun BottomButtons(onLogin: () -> Unit, onSignin: () -> Unit) {
-    Column(
-        verticalArrangement = Arrangement.spacedBy(10.dp),
-        modifier = Modifier.padding(bottom = 30.dp)
-    ) {
-        Button(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clip(shape = RoundedCornerShape(5.dp))
-                .background(Color.Black),
-            onClick = onLogin,
-            colors = ButtonDefaults.buttonColors(Color.Black)
-        )
-        {
-            Text(text = "로그인", color = Color.White, fontSize = 16.sp)
-        }
-        Button(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clip(shape = RoundedCornerShape(5.dp))
-                .background(Color.White)
-                .border(1.dp, Color.Black, shape = RoundedCornerShape(5.dp)),
-            onClick = onSignin,
-            colors = ButtonDefaults.buttonColors(Color.Transparent)
-        ) {
-            Text(text = "회원가입", color = Color.Black, fontSize = 16.sp)
-        }
-    }
-}
 
