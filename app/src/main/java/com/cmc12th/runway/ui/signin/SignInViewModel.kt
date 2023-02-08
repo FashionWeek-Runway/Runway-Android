@@ -33,6 +33,13 @@ class SignInViewModel @Inject constructor(
     private val _retryPassword = mutableStateOf(Password(""))
     val retryPassword: State<Password> = _retryPassword
 
+    private val _verifyCode = mutableStateOf("")
+    val verifyCode: State<String> = _verifyCode
+
+    fun updateVerifyCode(verifyCode: String) {
+        _verifyCode.value = verifyCode
+    }
+
     fun updatePassword(password: Password) {
         _password.value = password
     }
