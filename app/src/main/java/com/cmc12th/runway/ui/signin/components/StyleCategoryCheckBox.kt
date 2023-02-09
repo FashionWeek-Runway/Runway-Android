@@ -1,5 +1,7 @@
 package com.cmc12th.runway.ui.signin.components
 
+import androidx.compose.animation.Animatable
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -11,6 +13,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -24,6 +28,7 @@ import com.cmc12th.runway.ui.theme.*
 @Composable
 fun StyleCategoryCheckBox(
     isSelected: Boolean,
+    color: Color,
     onClicked: () -> Unit,
     title: String,
 ) {
@@ -31,7 +36,7 @@ fun StyleCategoryCheckBox(
         modifier = Modifier
             .clip(RoundedCornerShape(5.dp))
             .border(1.dp, if (isSelected) Primary else Gray300, RoundedCornerShape(5.dp))
-            .background(if (isSelected) Primary else Color.White)
+            .background(color)
             .clickable {
                 onClicked()
             }

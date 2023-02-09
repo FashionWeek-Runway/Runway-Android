@@ -1,12 +1,21 @@
+@file:OptIn(ExperimentalAnimationApi::class)
+
 package com.cmc12th.runway.ui.signin.view
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -24,7 +33,7 @@ import com.cmc12th.runway.utils.Constants.SIGNIN_COMPLETE_ROUTE
 @Composable
 fun SignInCategoryScreen(
     appState: ApplicationState,
-    signInViewModel: SignInViewModel = hiltViewModel()
+    signInViewModel: SignInViewModel = hiltViewModel(),
 ) {
 
     Column(
@@ -44,7 +53,7 @@ fun SignInCategoryScreen(
             HeightSpacer(height = 20.dp)
             Column() {
                 Row {
-                    Text(text = "나패피", style = HeadLine3, color = Primary)
+                    Text(text = signInViewModel.nickName.value, style = HeadLine3, color = Primary)
                     Text(text = "님의 옷 스타일을", style = SubHeadline1)
                 }
                 Text(text = "선택해주세요.", style = SubHeadline1)
@@ -76,14 +85,18 @@ fun SignInCategoryScreen(
 @Composable
 fun CategoryGroup(
     categoryTags: SnapshotStateList<CategoryTag>,
-    updateCategoryTag: (CategoryTag) -> Unit
+    updateCategoryTag: (CategoryTag) -> Unit,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(15.dp)) {
         categoryTags.chunked(2).forEach { item ->
             Row(horizontalArrangement = Arrangement.spacedBy(15.dp)) {
                 item.forEach { categoryTag ->
+                    val surfaceColor: State<Color> = animateColorAsState(
+                        if (categoryTag.isSelected) Primary else White
+                    )
                     StyleCategoryCheckBox(
                         isSelected = categoryTag.isSelected,
+                        color = surfaceColor.value,
                         onClicked = { updateCategoryTag(categoryTag) },
                         title = categoryTag.name
                     )
