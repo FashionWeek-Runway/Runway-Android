@@ -38,7 +38,7 @@ import com.cmc12th.runway.utils.Constants.SIGNIN_PROFILE_IMAGE_ROUTE
 @Composable
 fun SignInAgreementScreen(
     appState: ApplicationState,
-    signInViewModel: SignInViewModel = hiltViewModel()
+    signInViewModel: SignInViewModel = hiltViewModel(),
 ) {
 
     val agreements = remember {
@@ -99,7 +99,7 @@ fun SignInAgreementScreen(
                 Button(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RectangleShape,
-                    colors = ButtonDefaults.buttonColors(Gray300),
+                    colors = ButtonDefaults.buttonColors(if (agreements.all { it }) Black else Gray300),
                     onClick = {
                         appState.navController.navigate(SIGNIN_PROFILE_IMAGE_ROUTE)
                     }) {
