@@ -51,7 +51,6 @@ class MainActivity : ComponentActivity() {
             val navBackStackEntry by appState.navController.currentBackStackEntryAsState()
             RunwayTheme {
                 ManageBottomBarState(navBackStackEntry, appState)
-                Log.i("dlgocks1", appState.imePaddingState.value.toString())
                 Surface(
                     modifier = if (appState.imePaddingState.value) Modifier
                         .statusBarsPadding()

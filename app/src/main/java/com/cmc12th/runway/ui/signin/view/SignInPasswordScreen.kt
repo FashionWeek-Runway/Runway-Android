@@ -15,6 +15,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
@@ -29,6 +30,7 @@ import com.cmc12th.runway.ui.components.CustomTextField
 import com.cmc12th.runway.ui.components.HeightSpacer
 import com.cmc12th.runway.ui.signin.components.OnBoardStep
 import com.cmc12th.runway.R
+import com.cmc12th.runway.ui.components.LastPasswordVisibleCustomTextField
 import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.signin.SignInViewModel
 import com.cmc12th.runway.ui.signin.components.OnBoardHeadLine
@@ -39,7 +41,7 @@ import com.cmc12th.runway.utils.Constants
 @Composable
 fun SignInPasswordScreen(
     appState: ApplicationState,
-    signInViewModel: SignInViewModel = hiltViewModel()
+    signInViewModel: SignInViewModel = hiltViewModel(),
 ) {
     Column(
         modifier = Modifier
@@ -104,52 +106,25 @@ fun SignInPasswordScreen(
 fun CheckPassword(
     password: Password,
     updateRetryPassword: (Password) -> Unit,
-    isEqual: Boolean
+    isEqual: Boolean,
 ) {
 
-    val pswdVisible = remember {
-        mutableStateOf(false)
-    }
     Column {
-        CustomTextField(
-            trailingIcon = {
-                if (pswdVisible.value) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_able_pw),
-                        tint = Gray600,
-                        contentDescription = "IC_ABLE_PW",
-                        modifier = Modifier
-                            .size(24.dp)
-                            .clickable {
-                                pswdVisible.value = !pswdVisible.value
-                            },
-                    )
-                } else {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_disable_pw),
-                        tint = Color.Unspecified,
-                        contentDescription = "IC_DISABLE_PW",
-                        modifier = Modifier
-                            .size(24.dp)
-                            .clickable {
-                                pswdVisible.value = !pswdVisible.value
-                            },
-                    )
-                }
-            },
+        LastPasswordVisibleCustomTextField(
             modifier = Modifier
                 .fillMaxWidth(),
             fontSize = 16.sp,
             value = password.value,
-            placeholderText = "비밀번호 입력",
+            placeholderText = "비밀번호 확인",
             onvalueChanged = { updateRetryPassword(Password(it)) },
             keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Password, imeAction = ImeAction.Done
+                keyboardType = KeyboardType.Password, imeAction = ImeAction.Next
             ),
-            keyboardActions = KeyboardActions(onDone = {
-            }),
-            passwordVisible = pswdVisible.value
+            keyboardActions = KeyboardActions(
+                onDone = {}
+            )
         )
+
         HeightSpacer(height = 10.dp)
         Row(
             verticalAlignment = Alignment.CenterVertically
@@ -168,40 +143,14 @@ fun InputPassword(
     val focusRequester = remember {
         FocusRequester()
     }
-    val pswdVisible = remember {
-        mutableStateOf(false)
-    }
+
+
     LaunchedEffect(key1 = Unit) {
         focusRequester.requestFocus()
     }
 
     Column {
-        CustomTextField(
-            trailingIcon = {
-                if (pswdVisible.value) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_able_pw),
-                        tint = Gray600,
-                        contentDescription = "IC_ABLE_PW",
-                        modifier = Modifier
-                            .size(24.dp)
-                            .clickable {
-                                pswdVisible.value = !pswdVisible.value
-                            },
-                    )
-                } else {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_disable_pw),
-                        tint = Color.Unspecified,
-                        contentDescription = "IC_DISABLE_PW",
-                        modifier = Modifier
-                            .size(24.dp)
-                            .clickable {
-                                pswdVisible.value = !pswdVisible.value
-                            },
-                    )
-                }
-            },
+        LastPasswordVisibleCustomTextField(
             focusRequest = focusRequester,
             modifier = Modifier
                 .fillMaxWidth(),
@@ -212,7 +161,8 @@ fun InputPassword(
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Password, imeAction = ImeAction.Next
             ),
-            passwordVisible = pswdVisible.value
+            keyboardActions = KeyboardActions(
+            )
         )
 
         HeightSpacer(height = 10.dp)
