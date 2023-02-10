@@ -71,7 +71,6 @@ fun SignInProfileImage(
             signInViewModel.updateProfileImage(url)
         }
 
-
     Column(
         modifier = Modifier
             .imePadding()
@@ -113,7 +112,9 @@ fun SignInProfileImage(
                 .fillMaxWidth()
                 .height(50.dp),
             shape = RectangleShape,
-            colors = ButtonDefaults.buttonColors(Gray300)
+            colors = ButtonDefaults.buttonColors(
+                if (uiState.nickName.text.isNotBlank() && uiState.nickName.checkValidate()) Black else Gray300
+            )
         ) {
             Text(
                 text = "다음",

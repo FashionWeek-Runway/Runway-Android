@@ -64,7 +64,7 @@ fun SignInPhoneVerifyScreen(
             HeightSpacer(height = 20.dp)
             Row {
                 Text(text = "인증문자가 ", color = Gray700, style = Body2)
-                Text(text = "signInViewModel.value.number", color = Color.Black, style = Body2M)
+                Text(text = uiState.phone.number, color = Color.Black, style = Body2M)
                 Text(text = "으로 발송되었습니다.", color = Gray700, style = Body2)
             }
             HeightSpacer(height = 40.dp)
