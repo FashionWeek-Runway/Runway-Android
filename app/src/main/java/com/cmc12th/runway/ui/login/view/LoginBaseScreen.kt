@@ -10,18 +10,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.cmc12th.runway.R
 import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.theme.HeadLine1
 import com.cmc12th.runway.utils.Constants.LOGIN_ID_PW_ROUTE
 import com.cmc12th.runway.utils.Constants.SIGNIN_GRAPH
-import com.cmc12th.runway.utils.Constants.SIGNIN_PROFILE_IMAGE_ROUTE
 
 @Composable
-fun LoginBaseScreen(appState: ApplicationState) {
+fun LoginBaseScreen(
+    appState: ApplicationState,
+    hiltViewModel: LoginViewModel = hiltViewModel(),
+) {
     Box(modifier = Modifier.fillMaxSize()) {
         /** 배경 */
         Box(

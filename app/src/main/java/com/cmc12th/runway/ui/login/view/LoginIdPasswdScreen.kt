@@ -19,6 +19,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.cmc12th.runway.R
 import com.cmc12th.runway.ui.components.BackIcon
 import com.cmc12th.runway.ui.components.CustomTextField
@@ -33,7 +34,10 @@ import com.cmc12th.runway.utils.Constants.MAIN_GRAPH
 import com.cmc12th.runway.utils.Constants.SIGNIN_GRAPH
 
 @Composable
-fun LoginIdPasswdScreen(appState: ApplicationState) {
+fun LoginIdPasswdScreen(
+    appState: ApplicationState,
+    loginViewModel: LoginViewModel = hiltViewModel(),
+) {
 
     // TODO ViewModel로 추출
     val phoneTextFieldValue = remember {
