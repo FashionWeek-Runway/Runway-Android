@@ -13,7 +13,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,6 +21,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -29,6 +29,7 @@ import com.cmc12th.runway.R
 import com.cmc12th.runway.ui.components.BackIcon
 import com.cmc12th.runway.ui.components.HeightSpacer
 import com.cmc12th.runway.ui.components.WidthSpacer
+import com.cmc12th.runway.ui.components.WidthSpacerLine
 import com.cmc12th.runway.ui.signin.components.OnBoardStep
 import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.signin.SignInViewModel
@@ -41,9 +42,7 @@ fun SignInAgreementScreen(
     signInViewModel: SignInViewModel = hiltViewModel(),
 ) {
 
-    val agreements = remember {
-        mutableStateListOf(false, false, false)
-    }
+    val agreements = signInViewModel.agreements
 
     Column(
         modifier = Modifier
@@ -60,20 +59,10 @@ fun SignInAgreementScreen(
                 .scrollable(rememberScrollState(), orientation = Orientation.Vertical),
         ) {
             /** 약관동의 텍스트 */
-            Column(
-                modifier = Modifier
-                    .padding(top = 20.dp)
-                    .weight(1f)
-            ) {
-                Text(text = "런웨이 사용을 위해", fontSize = 20.sp, fontWeight = FontWeight.Normal)
-                Row {
-                    Text(text = "약관 동의", style = HeadLine3)
-                    Text(text = "가 필요해요.", fontSize = 20.sp, fontWeight = FontWeight.Normal)
-                }
-            }
+            HeadLineText()
 
-            /** 약관 전체 동의 */
             Column {
+                /** 약관 전체 동의 */
                 AgreementAll(
                     checkState = agreements.all { it },
                     onChecked = {
@@ -82,13 +71,10 @@ fun SignInAgreementScreen(
                         }
                     }
                 )
-                Spacer(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(1.dp)
-                        .background(Gray300)
-                )
+                WidthSpacerLine(1.dp, Gray300)
                 HeightSpacer(height = 10.dp)
+
+                /** 개별 약관 동의 */
                 agreements.forEachIndexed { index, value ->
                     AgreementComponent(
                         checkState = agreements[index],
@@ -106,6 +92,21 @@ fun SignInAgreementScreen(
                     Text(text = "다음", modifier = Modifier.padding(0.dp, 5.dp), fontSize = 16.sp)
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun ColumnScope.HeadLineText() {
+    Column(
+        modifier = Modifier
+            .padding(top = 20.dp)
+            .weight(1f)
+    ) {
+        Text(text = "런웨이 사용을 위해", fontSize = 20.sp, fontWeight = FontWeight.Normal)
+        Row {
+            Text(text = "약관 동의", style = HeadLine3)
+            Text(text = "가 필요해요.", fontSize = 20.sp, fontWeight = FontWeight.Normal)
         }
     }
 }
