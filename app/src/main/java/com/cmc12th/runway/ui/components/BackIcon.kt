@@ -10,11 +10,11 @@ import androidx.compose.ui.unit.dp
 import com.cmc12th.runway.R
 
 @Composable
-fun BackIcon() {
+fun BackIcon(onClick: () -> Unit = {}) {
     IconButton(
         modifier = Modifier
             .size(24.dp),
-        onClick = {},
+        onClick = onClick,
     ) {
         Icon(
             painter = painterResource(id = R.drawable.ic_arrow),
