@@ -30,7 +30,9 @@ import com.cmc12th.runway.ui.components.WidthSpacerLine
 import com.cmc12th.runway.ui.signin.components.OnBoardStep
 import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.signin.SignInViewModel
+import com.cmc12th.runway.ui.signin.model.Agreement
 import com.cmc12th.runway.ui.theme.*
+import com.cmc12th.runway.utils.Constants.SIGNIN_AGREEMENT_DETAIL_ROUTE
 import com.cmc12th.runway.utils.Constants.SIGNIN_PROFILE_IMAGE_ROUTE
 
 @Composable
@@ -63,10 +65,17 @@ fun SignInAgreementScreen(
                 AgreementAll(
                     checkState = uiState.isAllChcked(),
                     onChecked = {
-                        signInViewModel.updateAgreements(
-                            agreement = uiState.agreements.map { it.copy(isChecked = true) }
-                                .toMutableList()
-                        )
+                        if (uiState.agreements.any { !it.isChecked }) {
+                            signInViewModel.updateAgreements(
+                                agreement = uiState.agreements.map { it.copy(isChecked = true) }
+                                    .toMutableList()
+                            )
+                        } else {
+                            signInViewModel.updateAgreements(
+                                agreement = uiState.agreements.map { it.copy(isChecked = false) }
+                                    .toMutableList()
+                            )
+                        }
                     }
                 )
                 WidthSpacerLine(1.dp, Gray300)
@@ -75,6 +84,8 @@ fun SignInAgreementScreen(
                 /** 개별 약관 동의 */
                 uiState.agreements.forEachIndexed { index, value ->
                     AgreementComponent(
+                        onClick = { appState.navController.navigate(SIGNIN_AGREEMENT_DETAIL_ROUTE) },
+                        agreement = value,
                         isChecked = uiState.agreements[index].isChecked,
                         onCheck = {
                             signInViewModel.updateAgreements(uiState.agreements.mapIndexed { idx, agreement ->
@@ -115,23 +126,25 @@ private fun ColumnScope.HeadLineText() {
 
 @Composable
 fun AgreementComponent(
-    isChecked: Boolean,
+    onClick: () -> Unit,
     onCheck: () -> Unit,
+    isChecked: Boolean,
+    agreement: Agreement,
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(10.dp)
+            .padding(10.dp), verticalAlignment = Alignment.CenterVertically
     ) {
         AgreementCheckBox(checkState = isChecked,
             onChecked = { onCheck() })
         WidthSpacer(width = 20.dp)
         Row(
             modifier = Modifier.clickable {
-                // TODO 약관 디테일로 이동
-            }
+                onClick()
+            },
         ) {
-            Text(text = "이용약관 동의(필수)", style = Body2)
+            Text(text = agreement.title, style = Body2)
             Spacer(modifier = Modifier.weight(1f))
             Icon(
                 painter = painterResource(id = R.drawable.ic_arrow),
@@ -152,7 +165,8 @@ fun AgreementAll(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(10.dp, 20.dp)
+            .padding(10.dp, 20.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
         AgreementCheckBox(
             checkState = checkState,

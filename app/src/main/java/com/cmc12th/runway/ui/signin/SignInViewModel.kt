@@ -33,12 +33,13 @@ data class SignInPasswordUiState(
 
 data class SignInAgreementUiState(
     val agreements: MutableList<Agreement> = mutableListOf(
-        Agreement("약관1", false),
-        Agreement("약관2", false),
-        Agreement("약관3", false),
+        Agreement("이용약관 동의 (필수)", true),
+        Agreement("개인정보 처리 방침 동의 (필수)", true),
+        Agreement("위치정보 이용 약관 동의 (필수)", true),
+        Agreement("마케팅 정보 수신 동의 (선택)", false),
     ),
 ) {
-    fun isAllChcked() = agreements.all { it.isChecked }
+    fun isAllChcked() = agreements.filter { it.isRequire }.all { it.isChecked }
 }
 
 data class SignInProfileImageUiState(
@@ -84,9 +85,10 @@ class SignInViewModel @Inject constructor(
 
     private val _agreements = MutableStateFlow(
         mutableListOf(
-            Agreement("약관1", false),
-            Agreement("약관2", false),
-            Agreement("약관3", false),
+            Agreement("이용약관 동의 (필수)", true),
+            Agreement("개인정보 처리 방침 동의 (필수)", true),
+            Agreement("위치정보 이용 약관 동의 (필수)", true),
+            Agreement("마케팅 정보 수신 동의 (선택)", false),
         )
     )
 
