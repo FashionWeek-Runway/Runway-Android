@@ -24,9 +24,12 @@ import com.cmc12th.runway.R
 import com.cmc12th.runway.ui.components.BackIcon
 import com.cmc12th.runway.ui.components.CustomTextField
 import com.cmc12th.runway.ui.components.HeightSpacer
+import com.cmc12th.runway.ui.components.LastPasswordVisibleCustomTextField
 import com.cmc12th.runway.ui.domain.keyboardAsState
 import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.domain.model.KeyboardStatus
+import com.cmc12th.runway.ui.signin.model.Password
+import com.cmc12th.runway.ui.signin.model.Phone
 import com.cmc12th.runway.ui.theme.Body2
 import com.cmc12th.runway.ui.theme.Gray600
 import com.cmc12th.runway.ui.theme.HeadLine1
@@ -39,13 +42,6 @@ fun LoginIdPasswdScreen(
     loginViewModel: LoginViewModel = hiltViewModel(),
 ) {
 
-    // TODO ViewModel로 추출
-    val phoneTextFieldValue = remember {
-        mutableStateOf(TextFieldValue(""))
-    }
-    val passWdTextFieldValue = remember {
-        mutableStateOf(TextFieldValue(""))
-    }
     val onkeyboardState by keyboardAsState()
 
     Column(
@@ -65,12 +61,19 @@ fun LoginIdPasswdScreen(
                 .weight(1f),
         ) {
             Text(text = "로그인", style = HeadLine1)
+
+            /** 핸드폰 텍스트 필드 */
             HeightSpacer(60.dp)
-            PhoneTextField(phoneTextFieldValue)
-            // Text(text = "error Message", color = Color.Red)
+            PhoneTextField(loginViewModel.phoneNumber.value, loginViewModel::updatePhoneNumber)
+
+            /** 비밀번호 텍스트 필드 */
             HeightSpacer(30.dp)
-            PasswordTextField(passWdTextFieldValue)
-            // Text(text = "error Message", color = Color.Red)
+            PasswordTextField(loginViewModel.password.value,
+                loginViewModel::updatePassword,
+                onDone = {
+                    appState.navController.navigate(MAIN_GRAPH)
+                })
+
             HeightSpacer(30.dp)
             Text(text = "비밀번호 찾기", style = Body2, modifier = Modifier.align(Alignment.End))
         }
@@ -131,16 +134,16 @@ private fun BottomButtons(
 
 @Composable
 private fun PhoneTextField(
-    phoneTextFieldValue: MutableState<TextFieldValue>,
+    phone: Phone,
+    updatePhoneNumber: (String) -> Unit,
 ) {
-
     CustomTextField(
         modifier = Modifier
             .fillMaxWidth(),
         fontSize = 16.sp,
-        value = phoneTextFieldValue.value,
+        value = phone.number,
         placeholderText = "전화번호 입력",
-        onvalueChanged = { phoneTextFieldValue.value = it },
+        onvalueChanged = updatePhoneNumber,
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Number,
             imeAction = ImeAction.Next
@@ -152,49 +155,21 @@ private fun PhoneTextField(
 
 @Composable
 private fun PasswordTextField(
-    passWdTextFieldValue: MutableState<TextFieldValue>,
+    password: Password,
+    updatePassword: (String) -> Unit,
+    onDone: () -> Unit,
 ) {
-    val pswdVisible = remember {
-        mutableStateOf(false)
-    }
-    CustomTextField(
-        trailingIcon = {
-            if (pswdVisible.value) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_able_pw),
-                    tint = Gray600,
-                    contentDescription = "IC_ABLE_PW",
-                    modifier = Modifier
-                        .size(24.dp)
-                        .clickable {
-                            pswdVisible.value = !pswdVisible.value
-                        },
-                )
-            } else {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_disable_pw),
-                    tint = Color.Unspecified,
-                    contentDescription = "IC_DISABLE_PW",
-                    modifier = Modifier
-                        .size(24.dp)
-                        .clickable {
-                            pswdVisible.value = !pswdVisible.value
-                        },
-                )
-            }
-        },
+    LastPasswordVisibleCustomTextField(
+        value = password.value, onvalueChanged = updatePassword,
         modifier = Modifier
             .fillMaxWidth(),
-        fontSize = 16.sp,
-        value = passWdTextFieldValue.value,
         placeholderText = "비밀번호 입력",
-        onvalueChanged = { passWdTextFieldValue.value = it },
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Password, imeAction = ImeAction.Done
         ),
         keyboardActions = KeyboardActions(onDone = {
+            onDone()
         }),
-        passwordVisible = pswdVisible.value
     )
 }
 
