@@ -6,6 +6,8 @@
 package com.cmc12th.runway.ui.signin.view
 
 import androidx.compose.foundation.*
+import androidx.compose.foundation.gestures.animateScrollBy
+import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -20,7 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -28,7 +30,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -47,6 +48,7 @@ import com.cmc12th.runway.ui.signin.model.Birth.Companion.BIRTH_LENGTH
 import com.cmc12th.runway.ui.signin.model.Phone.Companion.PHONE_NUMBER_LENGTH
 import com.cmc12th.runway.ui.theme.*
 import com.cmc12th.runway.utils.Constants.SIGNIN_PHONE_VERIFY_ROUTE
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 @Composable
@@ -84,11 +86,15 @@ private fun UserVerificationContents(
 ) {
     val keyboardState by keyboardAsState()
 
+    
     /** 핸드폰 TextField가 포커스일 때 로그인 버튼이 올라오게 하기위해 */
     val isPhoneFocused = remember {
         mutableStateOf(false)
     }
     val uiState by viewmodel.userVerificationUiState.collectAsStateWithLifecycle()
+    val (birthFocusRequest, phoneFocusRequest) = remember { FocusRequester.createRefs() }
+    val coroutineScope = rememberCoroutineScope()
+    val scrollState = rememberScrollState()
 
     Column(
         modifier = Modifier
@@ -102,9 +108,9 @@ private fun UserVerificationContents(
 
         Column(
             modifier = Modifier
-                .padding(20.dp)
+                .padding(top = 20.dp, start = 20.dp, end = 20.dp)
                 .weight(1f)
-                .verticalScroll(rememberScrollState()),
+                .verticalScroll(scrollState),
             verticalArrangement = Arrangement.spacedBy(30.dp)
         ) {
             /** 본인인증 텍스트 */
@@ -112,7 +118,8 @@ private fun UserVerificationContents(
 
             /** 이름 입력 */
             NameContainter(
-                showBottomSheet,
+                showBottomSheet = showBottomSheet,
+                onFocusRequest = { birthFocusRequest.requestFocus() },
                 nameAndNationality = uiState.nameAndNationality,
                 updateName = { viewmodel.updateName(it) },
                 updateNationality = { viewmodel.updateNationality(it) }
@@ -125,19 +132,25 @@ private fun UserVerificationContents(
 
             /** 생년 입력 */
             BirthContainer(
+                focusRequest = birthFocusRequest,
+                onFocusRequest = { phoneFocusRequest.requestFocus() },
                 birth = uiState.birth,
                 updateBirth = { viewmodel.updateBirth(it) }
             )
 
             /** 휴대전화 입력 */
             PhoneContainer(
-                changeFocus = { isPhoneFocused.value = it },
+                onscrollBottom = { coroutineScope.launch { scrollState.scrollBy(200f) } },
+                focusRequest = phoneFocusRequest,
+                changeFocus = {
+                    isPhoneFocused.value = it
+                },
                 showBottomSheet = showBottomSheet,
                 phone = uiState.phone,
                 updateMobildeCarrier = { viewmodel.updateMobileCarrier(it) },
                 updatePhoneNumber = { viewmodel.updatePhoneNumber(it) }
             )
-
+            HeightSpacer(height = 10.dp)
         }
 
         if (keyboardState == KeyboardStatus.Closed ||
@@ -173,6 +186,8 @@ fun PhoneContainer(
     phone: Phone,
     updateMobildeCarrier: (MobileCarrier) -> Unit,
     updatePhoneNumber: (String) -> Unit,
+    focusRequest: FocusRequester,
+    onscrollBottom: () -> Unit,
 ) {
 
     val isDropDownMenuExpanded = remember {
@@ -229,9 +244,17 @@ fun PhoneContainer(
                 .fillMaxWidth(),
             onFocuseChange = changeFocus,
             fontSize = 16.sp,
+            focusRequest = focusRequest,
             value = phone.number,
             placeholderText = "휴대폰 번호 입력('-' 제외)",
-            onvalueChanged = { if (it.length <= PHONE_NUMBER_LENGTH) updatePhoneNumber(it) },
+            onvalueChanged = {
+                if (it.length <= PHONE_NUMBER_LENGTH) {
+                    updatePhoneNumber(it)
+                }
+                if (phone.number.isNotBlank() && !phone.checkValidation()) {
+                    onscrollBottom()
+                }
+            },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Phone,
                 imeAction = ImeAction.Done
@@ -241,14 +264,17 @@ fun PhoneContainer(
             onErrorState = phone.number.isNotBlank() && !phone.checkValidation(),
             errorMessage = "휴대폰번호 11자를 입력해주세요."
         )
+
     }
 }
 
 
 @Composable
 fun BirthContainer(
+    focusRequest: FocusRequester,
     birth: Birth,
     updateBirth: (Birth) -> Unit,
+    onFocusRequest: () -> Unit,
 ) {
     Column {
         Text(text = "생년월일", style = Caption, color = Gray700)
@@ -257,12 +283,14 @@ fun BirthContainer(
             modifier = Modifier.fillMaxWidth(),
             fontSize = 16.sp,
             value = birth.date,
+            focusRequest = focusRequest,
             placeholderText = "19990101",
             onvalueChanged = { if (it.length <= BIRTH_LENGTH) updateBirth(Birth(it)) },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Phone,
                 imeAction = ImeAction.Next
             ),
+            keyboardActions = KeyboardActions(onNext = { onFocusRequest() }),
             onErrorState = birth.date.isNotBlank() && !birth.checkValidation(),
             errorMessage = "생년월일 8자를 입력해주세요."
         )
@@ -325,6 +353,7 @@ private fun NameContainter(
     nameAndNationality: NameAndNationality,
     updateName: (String) -> Unit,
     updateNationality: (Nationality) -> Unit,
+    onFocusRequest: () -> Unit,
 ) {
     Column {
         Text(text = "이름", style = Caption, color = Gray700)
@@ -341,7 +370,8 @@ private fun NameContainter(
                     keyboardType = KeyboardType.Text,
                     imeAction = ImeAction.Next
                 ),
-                keyboardActions = KeyboardActions(onDone = {
+                keyboardActions = KeyboardActions(onNext = {
+                    onFocusRequest()
                 }),
             )
             WidthSpacer(width = 15.dp)

@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalComposeUiApi::class)
+
 package com.cmc12th.runway.ui.signin.view
 
 import androidx.compose.foundation.layout.*
@@ -9,9 +11,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
@@ -23,7 +25,6 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.cmc12th.runway.ui.components.BackIcon
-import com.cmc12th.runway.ui.components.CustomTextField
 import com.cmc12th.runway.ui.components.HeightSpacer
 import com.cmc12th.runway.ui.signin.components.OnBoardStep
 import com.cmc12th.runway.R
@@ -34,7 +35,6 @@ import com.cmc12th.runway.ui.signin.components.OnBoardHeadLine
 import com.cmc12th.runway.ui.signin.model.Password
 import com.cmc12th.runway.ui.theme.*
 import com.cmc12th.runway.utils.Constants
-import kotlin.math.sign
 
 @Composable
 fun SignInPasswordScreen(
@@ -43,6 +43,7 @@ fun SignInPasswordScreen(
 ) {
 
     val uiState by signInViewModel.passwordUiState.collectAsStateWithLifecycle()
+    val (retryFocusRequest) = remember { FocusRequester.createRefs() }
 
     Column(
         modifier = Modifier
@@ -65,6 +66,7 @@ fun SignInPasswordScreen(
             /** 패스워드 입력 */
             HeightSpacer(height = 30.dp)
             InputPassword(
+                requestFocus = { retryFocusRequest.requestFocus() },
                 password = uiState.password,
                 updatePassword = { signInViewModel.updatePassword(it) }
             )
@@ -73,7 +75,8 @@ fun SignInPasswordScreen(
             CheckPassword(
                 password = uiState.retryPassword,
                 updateRetryPassword = { signInViewModel.updateRetryPassword(it) },
-                isEqual = uiState.checkValidate()
+                isEqual = uiState.checkValidate(),
+                focusRequest = retryFocusRequest,
             )
         }
         Button(
@@ -103,6 +106,7 @@ fun CheckPassword(
     password: Password,
     updateRetryPassword: (Password) -> Unit,
     isEqual: Boolean,
+    focusRequest: FocusRequester,
 ) {
 
     Column {
@@ -112,6 +116,7 @@ fun CheckPassword(
             fontSize = 16.sp,
             value = password.value,
             placeholderText = "비밀번호 확인",
+            focusRequest = focusRequest,
             onvalueChanged = { updateRetryPassword(Password(it)) },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Password, imeAction = ImeAction.Next
@@ -134,12 +139,12 @@ fun CheckPassword(
 fun InputPassword(
     password: Password,
     updatePassword: (Password) -> Unit,
+    requestFocus: () -> Unit,
 ) {
 
     val focusRequester = remember {
         FocusRequester()
     }
-
 
     LaunchedEffect(key1 = Unit) {
         focusRequester.requestFocus()
@@ -158,6 +163,7 @@ fun InputPassword(
                 keyboardType = KeyboardType.Password, imeAction = ImeAction.Next
             ),
             keyboardActions = KeyboardActions(
+                onNext = { requestFocus() }
             )
         )
 
