@@ -1,9 +1,6 @@
 package com.cmc12th.runway.ui.components
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -20,19 +17,21 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cmc12th.runway.ui.components.util.bottomBorder
+import com.cmc12th.runway.ui.signin.view.ErrorMessage
+import com.cmc12th.runway.ui.theme.Error_Color
 import com.cmc12th.runway.ui.theme.Gray300
 import com.cmc12th.runway.ui.theme.Gray600
 
 @Composable
 fun CustomTextField(
+    value: TextFieldValue,
+    onvalueChanged: (TextFieldValue) -> Unit,
     modifier: Modifier = Modifier,
     leadingIcon: @Composable() (() -> Unit)? = null,
     trailingIcon: @Composable() (() -> Unit)? = null,
@@ -41,66 +40,71 @@ fun CustomTextField(
     focusRequest: FocusRequester? = null,
     keyboardOptions: KeyboardOptions? = null,
     keyboardActions: KeyboardActions? = null,
-    value: TextFieldValue,
-    onvalueChanged: (TextFieldValue) -> Unit,
-    passwordVisible: Boolean = true
+    onFocuseChange: (Boolean) -> Unit = {},
+    onErrorState: Boolean = false,
+    errorMessage: String = "",
 ) {
     val bottomLineColor = remember {
         mutableStateOf(Gray600)
     }
-    BasicTextField(
-        modifier = modifier
-            .bottomBorder(1.dp, Gray300)
-            .onFocusChanged {
-                if (it.isFocused) {
-                    bottomLineColor.value = Color.Black
-                } else {
-                    bottomLineColor.value = Gray600
-                }
-            }
-            .bottomBorder(1.dp, bottomLineColor.value)
-            .focusRequester(focusRequest ?: FocusRequester()),
-        value = value,
-        onValueChange = {
-            if (it.selection.length <= 25) onvalueChanged(it)
-        },
-        singleLine = true,
-        cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
-        textStyle = LocalTextStyle.current.copy(
-            color = Color.Black,
-            fontSize = fontSize,
-        ),
-        keyboardOptions = keyboardOptions ?: KeyboardOptions(),
-        keyboardActions = keyboardActions ?: KeyboardActions(),
-        decorationBox = { innerTextField ->
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(0.dp, 15.dp)
-            ) {
-                if (leadingIcon != null) leadingIcon()
-                Box(Modifier.weight(1f)) {
-                    if (value.text.isEmpty()) {
-                        Text(
-                            placeholderText,
-                            style = LocalTextStyle.current.copy(
-                                color = Color.Black.copy(alpha = 0.3f),
-                                fontSize = fontSize,
-                            ),
-                        )
+    Column(modifier = modifier) {
+        BasicTextField(
+            modifier = Modifier
+                .bottomBorder(1.dp, Gray300)
+                .onFocusChanged {
+                    onFocuseChange(it.isFocused)
+                    if (it.isFocused) {
+                        bottomLineColor.value = Color.Black
+                    } else {
+                        bottomLineColor.value = Gray600
                     }
-                    innerTextField()
                 }
-                if (trailingIcon != null) trailingIcon()
-            }
-        },
-        visualTransformation =
-        if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-    )
+                .bottomBorder(1.dp, if (onErrorState) Error_Color else bottomLineColor.value)
+                .focusRequester(focusRequest ?: FocusRequester()),
+            value = value,
+            onValueChange = {
+                if (it.text.length <= 25) onvalueChanged(it)
+            },
+            singleLine = true,
+            cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
+            textStyle = LocalTextStyle.current.copy(
+                color = Color.Black,
+                fontSize = fontSize,
+            ),
+            keyboardOptions = keyboardOptions ?: KeyboardOptions(),
+            keyboardActions = keyboardActions ?: KeyboardActions(),
+            decorationBox = { innerTextField ->
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(0.dp, 15.dp)
+                ) {
+                    if (leadingIcon != null) leadingIcon()
+                    Box(Modifier.weight(1f)) {
+                        if (value.text.isEmpty()) {
+                            Text(
+                                placeholderText,
+                                style = LocalTextStyle.current.copy(
+                                    color = Color.Black.copy(alpha = 0.3f),
+                                    fontSize = fontSize,
+                                ),
+                            )
+                        }
+                        innerTextField()
+                    }
+                    if (trailingIcon != null) trailingIcon()
+                }
+            },
+            visualTransformation = VisualTransformation.None,
+        )
+        if (onErrorState) ErrorMessage(message = errorMessage)
+    }
 }
 
 
 @Composable
 fun CustomTextField(
+    value: String,
+    onvalueChanged: (String) -> Unit,
     modifier: Modifier = Modifier,
     leadingIcon: @Composable() (() -> Unit)? = null,
     trailingIcon: @Composable() (() -> Unit)? = null,
@@ -109,59 +113,62 @@ fun CustomTextField(
     focusRequest: FocusRequester? = null,
     keyboardOptions: KeyboardOptions? = null,
     keyboardActions: KeyboardActions? = null,
-    value: String,
-    onvalueChanged: (String) -> Unit,
-    passwordVisible: Boolean = true
+    onFocuseChange: (Boolean) -> Unit = {},
+    onErrorState: Boolean = false,
+    errorMessage: String = "",
 ) {
     val bottomLineColor = remember {
         mutableStateOf(Gray600)
     }
-    BasicTextField(
-        modifier = modifier
-            .bottomBorder(1.dp, Gray300)
-            .onFocusChanged {
-                if (it.isFocused) {
-                    bottomLineColor.value = Color.Black
-                } else {
-                    bottomLineColor.value = Gray600
-                }
-            }
-            .bottomBorder(1.dp, bottomLineColor.value)
-            .focusRequester(focusRequest ?: FocusRequester()),
-        value = value,
-        onValueChange = {
-            if (it.length <= 25) onvalueChanged(it)
-        },
-        singleLine = true,
-        cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
-        textStyle = LocalTextStyle.current.copy(
-            color = Color.Black,
-            fontSize = fontSize,
-        ),
-        keyboardOptions = keyboardOptions ?: KeyboardOptions(),
-        keyboardActions = keyboardActions ?: KeyboardActions(),
-        decorationBox = { innerTextField ->
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(0.dp, 15.dp)
-            ) {
-                if (leadingIcon != null) leadingIcon()
-                Box(Modifier.weight(1f)) {
-                    if (value.isEmpty()) {
-                        Text(
-                            placeholderText,
-                            style = LocalTextStyle.current.copy(
-                                color = Color.Black.copy(alpha = 0.3f),
-                                fontSize = fontSize,
-                            ),
-                        )
+    Column(modifier = modifier) {
+        BasicTextField(
+            modifier = Modifier
+                .bottomBorder(1.dp, Gray300)
+                .onFocusChanged {
+                    onFocuseChange(it.isFocused)
+                    if (it.isFocused) {
+                        bottomLineColor.value = Color.Black
+                    } else {
+                        bottomLineColor.value = Gray600
                     }
-                    innerTextField()
                 }
-                if (trailingIcon != null) trailingIcon()
-            }
-        },
-        visualTransformation =
-        if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-    )
+                .bottomBorder(1.dp, if (onErrorState) Error_Color else bottomLineColor.value)
+                .focusRequester(focusRequest ?: FocusRequester()),
+            value = value,
+            onValueChange = {
+                if (it.length <= 25) onvalueChanged(it)
+            },
+            singleLine = true,
+            cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
+            textStyle = LocalTextStyle.current.copy(
+                color = Color.Black,
+                fontSize = fontSize,
+            ),
+            keyboardOptions = keyboardOptions ?: KeyboardOptions(),
+            keyboardActions = keyboardActions ?: KeyboardActions(),
+            decorationBox = { innerTextField ->
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(0.dp, 15.dp)
+                ) {
+                    if (leadingIcon != null) leadingIcon()
+                    Box(Modifier.weight(1f)) {
+                        if (value.isEmpty()) {
+                            Text(
+                                placeholderText,
+                                style = LocalTextStyle.current.copy(
+                                    color = Color.Black.copy(alpha = 0.3f),
+                                    fontSize = fontSize,
+                                ),
+                            )
+                        }
+                        innerTextField()
+                    }
+                    if (trailingIcon != null) trailingIcon()
+                }
+            },
+            visualTransformation = VisualTransformation.None,
+        )
+        if (onErrorState) ErrorMessage(message = errorMessage)
+    }
 }
