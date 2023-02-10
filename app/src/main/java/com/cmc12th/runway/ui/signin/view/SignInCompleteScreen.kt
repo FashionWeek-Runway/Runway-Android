@@ -46,6 +46,10 @@ import com.cmc12th.runway.ui.signin.SignInViewModel
 import com.cmc12th.runway.ui.signin.model.CategoryTag
 import com.cmc12th.runway.ui.signin.model.Nickname
 import com.cmc12th.runway.ui.theme.*
+import com.cmc12th.runway.utils.Constants
+import com.cmc12th.runway.utils.Constants.LOGIN_GRAPH
+import com.cmc12th.runway.utils.Constants.MAIN_GRAPH
+import com.cmc12th.runway.utils.Constants.SIGNIN_GRAPH
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.delay
 
@@ -135,7 +139,9 @@ fun SignInCompleteScreen(
             shape = RoundedCornerShape(5.dp),
             colors = ButtonDefaults.buttonColors(Point),
             onClick = {
-                // TODO
+                appState.navController.navigate(MAIN_GRAPH) {
+                    popUpTo(LOGIN_GRAPH)
+                }
             }
         ) {
             Text(
@@ -179,7 +185,8 @@ private fun ProfileBox(
                             .align(Alignment.Center)
                             .fillMaxHeight()
                             .aspectRatio(1f),
-                        painter = painterResource(id = R.drawable.img_dummy),
+                        contentScale = ContentScale.Crop,
+                        painter = painterResource(id = R.drawable.img_profile_default),
                         contentDescription = "PROFILE_IMAGE"
                     )
                 } else {
@@ -193,7 +200,6 @@ private fun ProfileBox(
                         contentDescription = "PROFILE_IMAGE"
                     )
                 }
-
             }
 
             Column(
