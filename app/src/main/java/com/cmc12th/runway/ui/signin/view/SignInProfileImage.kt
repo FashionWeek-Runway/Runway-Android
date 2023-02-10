@@ -4,7 +4,6 @@ import android.net.Uri
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.animation.*
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
@@ -18,11 +17,9 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -41,10 +38,10 @@ import com.cmc12th.runway.ui.signin.components.OnBoardStep
 import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.domain.model.KeyboardStatus
 import com.cmc12th.runway.ui.signin.SignInViewModel
+import com.cmc12th.runway.ui.signin.model.Nickname
 import com.cmc12th.runway.ui.theme.*
 import com.cmc12th.runway.utils.Constants.MAX_NICKNAME_LENGTH
 import com.cmc12th.runway.utils.Constants.SIGNIN_CATEGORY_ROUTE
-import kotlin.math.sign
 
 @Composable
 fun SignInProfileImage(
@@ -132,14 +129,14 @@ fun SignInProfileImage(
 
 @Composable
 fun InputNickname(
-    nickname: String,
+    nickname: Nickname,
     updateNickName: (String) -> Unit,
 ) {
     CustomTextField(
         modifier = Modifier
             .fillMaxWidth(),
         fontSize = 16.sp,
-        value = nickname,
+        value = nickname.text,
         placeholderText = "닉네임 입력",
         onvalueChanged = {
             if (it.length <= MAX_NICKNAME_LENGTH) updateNickName(it)
@@ -150,6 +147,8 @@ fun InputNickname(
         ),
         keyboardActions = KeyboardActions(onDone = {
         }),
+        onErrorState = nickname.text.isNotBlank() && !nickname.checkValidate(),
+        errorMessage = "닉네임은 한글, 영어 혼합 2~10글자 입니다."
     )
 }
 
