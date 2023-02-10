@@ -15,7 +15,7 @@ import javax.inject.Inject
 @HiltViewModel
 class SignInViewModel @Inject constructor(
 ) : ViewModel() {
-    
+
     private val tagLists = CATEGORYS.map {
         CategoryTag(it)
     }.toTypedArray()
@@ -36,10 +36,10 @@ class SignInViewModel @Inject constructor(
     private val _userVerificationStatus = mutableStateOf(false)
     val userVerificationStatus: State<Boolean> = _userVerificationStatus
 
-    private val _password = mutableStateOf(Password(""))
+    private val _password = mutableStateOf(Password.default())
     val password: State<Password> = _password
 
-    private val _retryPassword = mutableStateOf(Password(""))
+    private val _retryPassword = mutableStateOf(Password.default())
     val retryPassword: State<Password> = _retryPassword
 
     private val _verifyCode = mutableStateOf("")

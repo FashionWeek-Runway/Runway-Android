@@ -1,7 +1,7 @@
 package com.cmc12th.runway.ui.signin.model
 
 data class Password(
-    val value: String
+    val value: String,
 ) {
 
     fun includeEnglish(): Boolean =
@@ -16,6 +16,9 @@ data class Password(
         password.includeEnglish() && password.includeNumber() && password.inLegnth() && password.value == this.value
 
     companion object {
+
+        fun default() = Password("")
+
         private const val MIN_PASSWORD_LENGTH = 8
         private const val MAX_PASSWORD_LENGTH = 16
     }
