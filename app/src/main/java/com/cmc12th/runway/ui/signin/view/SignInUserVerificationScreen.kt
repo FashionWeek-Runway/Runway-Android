@@ -224,10 +224,8 @@ fun PhoneContainer(
         HeightSpacer(height = 10.dp)
         CustomTextField(
             modifier = Modifier
-                .fillMaxWidth()
-                .onFocusChanged {
-                    changeFocus(it.hasFocus)
-                },
+                .fillMaxWidth(),
+            onFocuseChange = changeFocus,
             fontSize = 16.sp,
             value = phone.number,
             placeholderText = "휴대폰 번호 입력('-' 제외)",
