@@ -1,8 +1,6 @@
 package com.cmc12th.runway.ui.signin
 
 import android.net.Uri
-import android.util.Log
-import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cmc12th.runway.ui.signin.model.*
@@ -13,7 +11,7 @@ import javax.inject.Inject
 
 
 /** UserVerification 화면의 Ui State */
-data class UserVerificationUiState(
+data class SignInUserVerificationUiState(
     val nameAndNationality: NameAndNationality = NameAndNationality.default(),
     val gender: Gender = Gender.Unknown,
     val birth: Birth = Birth.default(),
@@ -21,19 +19,19 @@ data class UserVerificationUiState(
     val userVerificationStatus: Boolean = false,
 )
 
-data class PhoneVerifyUiState(
+data class SignInPhoneVerifyUiState(
     val phone: Phone = Phone.default(),
     val verifyCode: String = "",
 )
 
-data class PasswordUiState(
+data class SignInPasswordUiState(
     val password: Password = Password.default(),
     val retryPassword: Password = Password.default(),
 ) {
     fun checkValidate() = password.isValidatePassword(retryPassword)
 }
 
-data class AgreementUiState(
+data class SignInAgreementUiState(
     val agreements: MutableList<Agreement> = mutableListOf(
         Agreement("약관1", false),
         Agreement("약관2", false),
@@ -43,13 +41,13 @@ data class AgreementUiState(
     fun isAllChcked() = agreements.all { it.isChecked }
 }
 
-data class ProfileImageUiState(
+data class SignInProfileImageUiState(
     val profileImage: Uri? = null,
     val nickName: Nickname = Nickname.default(),
 )
 
 
-data class CategoryUiState(
+data class SignInCategoryUiState(
     val nickName: Nickname = Nickname.default(),
     val categoryTags: MutableList<CategoryTag> = CATEGORYS.map {
         CategoryTag(it)
@@ -57,6 +55,12 @@ data class CategoryUiState(
 ) {
     fun anyCategorySelected() = categoryTags.any { it.isSelected }
 }
+
+data class SignInCompleteUiState(
+    val nickName: Nickname = Nickname.default(),
+    val profileImage: Uri? = null,
+    val categoryTags: List<CategoryTag> = listOf<CategoryTag>()
+)
 
 
 @HiltViewModel
@@ -78,11 +82,13 @@ class SignInViewModel @Inject constructor(
     private val _password = MutableStateFlow(Password.default())
     private val _retryPassword = MutableStateFlow(Password.default())
 
-    private val _agreements = MutableStateFlow(mutableListOf(
-        Agreement("약관1", false),
-        Agreement("약관2", false),
-        Agreement("약관3", false),
-    ))
+    private val _agreements = MutableStateFlow(
+        mutableListOf(
+            Agreement("약관1", false),
+            Agreement("약관2", false),
+            Agreement("약관3", false),
+        )
+    )
 
     private val _nickName = MutableStateFlow(Nickname.default())
     private val _profileImage = MutableStateFlow<Uri?>(null)
@@ -91,10 +97,10 @@ class SignInViewModel @Inject constructor(
         CategoryTag(it)
     }.toMutableList())
 
-    val userVerificationUiState: StateFlow<UserVerificationUiState> = combine(
+    val userVerificationUiState: StateFlow<SignInUserVerificationUiState> = combine(
         _nameAndNationality, _gender, _birth, _phone, _userVerificationStatus
     ) { nameAndNationality, gender, birth, phone, userVerificationStatus ->
-        UserVerificationUiState(
+        SignInUserVerificationUiState(
             nameAndNationality = nameAndNationality,
             gender = gender,
             birth = birth,
@@ -104,52 +110,65 @@ class SignInViewModel @Inject constructor(
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
-        initialValue = UserVerificationUiState()
+        initialValue = SignInUserVerificationUiState()
     )
 
-    val phoneVerifyUiState: StateFlow<PhoneVerifyUiState> =
+    val phoneVerifyUiState: StateFlow<SignInPhoneVerifyUiState> =
         combine(_phone, _verifyCode) { phone, verifyCode ->
-            PhoneVerifyUiState(phone = phone, verifyCode = verifyCode)
+            SignInPhoneVerifyUiState(phone = phone, verifyCode = verifyCode)
         }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
-            initialValue = PhoneVerifyUiState()
+            initialValue = SignInPhoneVerifyUiState()
         )
 
-    val passwordUiState: StateFlow<PasswordUiState> =
+    val passwordUiState: StateFlow<SignInPasswordUiState> =
         combine(_password, _retryPassword) { password, retryPassword ->
-            PasswordUiState(password = password, retryPassword = retryPassword)
+            SignInPasswordUiState(password = password, retryPassword = retryPassword)
         }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
-            initialValue = PasswordUiState()
+            initialValue = SignInPasswordUiState()
         )
 
-    val agreementUiState: StateFlow<AgreementUiState> =
+    val agreementUiState: StateFlow<SignInAgreementUiState> =
         combine(_agreements) { agreements ->
-            AgreementUiState(agreements.first())
+            SignInAgreementUiState(agreements.first())
         }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
-            initialValue = AgreementUiState()
+            initialValue = SignInAgreementUiState()
         )
 
-    val profileImageUiState: StateFlow<ProfileImageUiState> =
+    val profileImageUiState: StateFlow<SignInProfileImageUiState> =
         combine(_profileImage, _nickName) { profileImage, nickName ->
-            ProfileImageUiState(profileImage = profileImage, nickName = nickName)
+            SignInProfileImageUiState(profileImage = profileImage, nickName = nickName)
         }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
-            initialValue = ProfileImageUiState()
+            initialValue = SignInProfileImageUiState()
         )
 
-    val categoryUiState: StateFlow<CategoryUiState> =
+    val categoryUiState: StateFlow<SignInCategoryUiState> =
         combine(_nickName, _categoryTags) { nickName, categoryTags ->
-            CategoryUiState(nickName = nickName, categoryTags = categoryTags)
+            SignInCategoryUiState(nickName = nickName, categoryTags = categoryTags)
         }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
-            initialValue = CategoryUiState()
+            initialValue = SignInCategoryUiState()
+        )
+
+    val complteUiState: StateFlow<SignInCompleteUiState> =
+        combine(_nickName, _categoryTags, _profileImage) { nickName, categoryTags, profileImage ->
+            SignInCompleteUiState(
+                nickName = nickName,
+                categoryTags = categoryTags.filter { it.isSelected },
+                profileImage = profileImage
+            )
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = SignInCompleteUiState()
         )
 
     fun updateCategoryTags(categoryTag: CategoryTag) {

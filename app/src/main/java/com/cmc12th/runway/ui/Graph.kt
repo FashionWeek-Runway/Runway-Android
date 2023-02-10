@@ -88,7 +88,7 @@ fun NavGraphBuilder.signInGraph(
         }
         composable(SIGNIN_COMPLETE_ROUTE) { entry ->
             val backStackEntry = rememberNavControllerBackEntry(entry, appState, SIGNIN_GRAPH)
-            SignInCompleteScreen()
+            SignInCompleteScreen(appState, hiltViewModel(backStackEntry))
         }
     }
 }
