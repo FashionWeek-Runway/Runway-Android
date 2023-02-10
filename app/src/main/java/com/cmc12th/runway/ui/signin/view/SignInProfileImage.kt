@@ -28,6 +28,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.rememberAsyncImagePainter
 import com.cmc12th.runway.R
 import com.cmc12th.runway.ui.components.BackIcon
@@ -49,6 +50,7 @@ fun SignInProfileImage(
     signInViewModel: SignInViewModel = hiltViewModel(),
 ) {
 
+    val uiState by signInViewModel.profileImageUiState.collectAsStateWithLifecycle()
     val isKeyboardOpen by keyboardAsState() // Keyboard.Opened or Keyboard.Closed
     val profileSize by animateFloatAsState(
         targetValue = if (isKeyboardOpen == KeyboardStatus.Opened) 0.4f else 0.66f,
@@ -93,12 +95,12 @@ fun SignInProfileImage(
             HeightSpacer(height = 40.dp)
 
             /** 프로필이미지 아이콘 */
-            ProfileImageIcon(signInViewModel.profileImage.value, profileSize, galleryLauncher)
+            ProfileImageIcon(uiState.profileImage, profileSize, galleryLauncher)
 
             /** 닉네임 입력 칸 */
             HeightSpacer(height = heightSpacerSize)
             InputNickname(
-                nickname = signInViewModel.nickName.value,
+                nickname = uiState.nickName,
                 updateNickName = { signInViewModel.updateNickName(it) }
             )
         }

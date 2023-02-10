@@ -1,6 +1,5 @@
 package com.cmc12th.runway.ui.signin.view
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -8,10 +7,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -25,6 +21,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.cmc12th.runway.ui.components.BackIcon
 import com.cmc12th.runway.ui.components.CustomTextField
 import com.cmc12th.runway.ui.components.HeightSpacer
@@ -37,12 +34,16 @@ import com.cmc12th.runway.ui.signin.components.OnBoardHeadLine
 import com.cmc12th.runway.ui.signin.model.Password
 import com.cmc12th.runway.ui.theme.*
 import com.cmc12th.runway.utils.Constants
+import kotlin.math.sign
 
 @Composable
 fun SignInPasswordScreen(
     appState: ApplicationState,
     signInViewModel: SignInViewModel = hiltViewModel(),
 ) {
+
+    val uiState by signInViewModel.passwordUiState.collectAsStateWithLifecycle()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -64,17 +65,15 @@ fun SignInPasswordScreen(
             /** 패스워드 입력 */
             HeightSpacer(height = 30.dp)
             InputPassword(
-                password = signInViewModel.password.value,
+                password = uiState.password,
                 updatePassword = { signInViewModel.updatePassword(it) }
             )
             /** 패스워드 확인 */
             HeightSpacer(height = 30.dp)
             CheckPassword(
-                password = signInViewModel.retryPassword.value,
+                password = uiState.retryPassword,
                 updateRetryPassword = { signInViewModel.updateRetryPassword(it) },
-                isEqual = signInViewModel.password.value.isValidatePassword(
-                    signInViewModel.retryPassword.value
-                )
+                isEqual = uiState.checkValidate()
             )
         }
         Button(
@@ -86,10 +85,7 @@ fun SignInPasswordScreen(
                 .height(50.dp),
             shape = RectangleShape,
             colors = ButtonDefaults.buttonColors(
-                if (signInViewModel.password.value.isValidatePassword(
-                        signInViewModel.retryPassword.value
-                    )
-                ) Color.Black else Gray300
+                if (uiState.checkValidate()) Color.Black else Gray300
             )
         ) {
             Text(

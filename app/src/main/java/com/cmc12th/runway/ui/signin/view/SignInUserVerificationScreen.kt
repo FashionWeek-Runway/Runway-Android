@@ -149,7 +149,7 @@ private fun UserVerificationContents(
                 shape = RectangleShape,
 //                enabled = viewmodel.userVerificationStatus.value,
                 colors = ButtonDefaults.buttonColors(
-                    if (viewmodel.userVerificationStatus.value) Color.Black else Gray300
+                    if (uiState.userVerificationStatus) Color.Black else Gray300
                 ),
                 onClick = {
                     appState.navController.navigate(SIGNIN_PHONE_VERIFY_ROUTE)

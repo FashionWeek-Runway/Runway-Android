@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalAnimationApi::class)
-
 package com.cmc12th.runway.ui.signin.view
 
 import androidx.compose.animation.*
@@ -12,8 +10,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
@@ -21,10 +18,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.cmc12th.runway.R
 import com.cmc12th.runway.ui.components.BackIcon
 import com.cmc12th.runway.ui.components.HeightSpacer
@@ -42,7 +39,7 @@ fun SignInAgreementScreen(
     signInViewModel: SignInViewModel = hiltViewModel(),
 ) {
 
-    val agreements = signInViewModel.agreements
+    val uiState by signInViewModel.agreementUiState.collectAsStateWithLifecycle()
 
     Column(
         modifier = Modifier
@@ -64,28 +61,33 @@ fun SignInAgreementScreen(
             Column {
                 /** 약관 전체 동의 */
                 AgreementAll(
-                    checkState = agreements.all { it },
+                    checkState = uiState.isAllChcked(),
                     onChecked = {
-                        for (i in 0 until agreements.size) {
-                            agreements[i] = true
-                        }
+                        signInViewModel.updateAgreements(
+                            agreement = uiState.agreements.map { it.copy(isChecked = true) }
+                                .toMutableList()
+                        )
                     }
                 )
                 WidthSpacerLine(1.dp, Gray300)
                 HeightSpacer(height = 10.dp)
 
                 /** 개별 약관 동의 */
-                agreements.forEachIndexed { index, value ->
+                uiState.agreements.forEachIndexed { index, value ->
                     AgreementComponent(
-                        checkState = agreements[index],
-                        onChecked = { agreements[index] = !value }
+                        isChecked = uiState.agreements[index].isChecked,
+                        onCheck = {
+                            signInViewModel.updateAgreements(uiState.agreements.mapIndexed { idx, agreement ->
+                                if (index == idx) agreement.copy(isChecked = !agreement.isChecked) else agreement
+                            }.toMutableList())
+                        }
                     )
                 }
                 HeightSpacer(height = 60.dp)
                 Button(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RectangleShape,
-                    colors = ButtonDefaults.buttonColors(if (agreements.all { it }) Black else Gray300),
+                    colors = ButtonDefaults.buttonColors(if (uiState.isAllChcked()) Black else Gray300),
                     onClick = {
                         appState.navController.navigate(SIGNIN_PROFILE_IMAGE_ROUTE)
                     }) {
@@ -113,16 +115,16 @@ private fun ColumnScope.HeadLineText() {
 
 @Composable
 fun AgreementComponent(
-    checkState: Boolean,
-    onChecked: () -> Unit,
+    isChecked: Boolean,
+    onCheck: () -> Unit,
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(10.dp)
     ) {
-        AgreementCheckBox(checkState = checkState,
-            onChecked = { onChecked() })
+        AgreementCheckBox(checkState = isChecked,
+            onChecked = { onCheck() })
         WidthSpacer(width = 20.dp)
         Row(
             modifier = Modifier.clickable {

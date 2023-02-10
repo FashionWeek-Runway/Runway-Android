@@ -2,7 +2,6 @@
 
 package com.cmc12th.runway.ui.signin.view
 
-import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.layout.*
@@ -11,8 +10,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -20,6 +18,7 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.cmc12th.runway.ui.components.BackIcon
 import com.cmc12th.runway.ui.components.HeightSpacer
 import com.cmc12th.runway.ui.domain.model.ApplicationState
@@ -35,6 +34,8 @@ fun SignInCategoryScreen(
     appState: ApplicationState,
     signInViewModel: SignInViewModel = hiltViewModel(),
 ) {
+
+    val uiState by signInViewModel.categoryUiState.collectAsStateWithLifecycle()
 
     Column(
         modifier = Modifier
@@ -53,7 +54,7 @@ fun SignInCategoryScreen(
             HeightSpacer(height = 20.dp)
             Column() {
                 Row {
-                    Text(text = signInViewModel.nickName.value.text,
+                    Text(text = uiState.nickName.text,
                         style = HeadLine3,
                         color = Primary)
                     Text(text = "님의 옷 스타일을", style = SubHeadline1)
@@ -66,7 +67,7 @@ fun SignInCategoryScreen(
             HeightSpacer(height = 20.dp)
             /** 카테고리 입력 */
             CategoryGroup(
-                signInViewModel.categoryTags
+                uiState.categoryTags
             ) { signInViewModel.updateCategoryTags(it) }
         }
         Button(
@@ -74,7 +75,7 @@ fun SignInCategoryScreen(
                 .fillMaxWidth()
                 .padding(20.dp),
             shape = RectangleShape,
-            colors = ButtonDefaults.buttonColors(if (signInViewModel.categoryTags.any { it.isSelected }) Color.Black else Gray300),
+            colors = ButtonDefaults.buttonColors(if (uiState.anyCategorySelected()) Color.Black else Gray300),
             onClick = {
                 appState.navController.navigate(SIGNIN_COMPLETE_ROUTE)
             }
@@ -86,7 +87,7 @@ fun SignInCategoryScreen(
 
 @Composable
 fun CategoryGroup(
-    categoryTags: SnapshotStateList<CategoryTag>,
+    categoryTags: MutableList<CategoryTag>,
     updateCategoryTag: (CategoryTag) -> Unit,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(15.dp)) {
@@ -99,7 +100,9 @@ fun CategoryGroup(
                     StyleCategoryCheckBox(
                         isSelected = categoryTag.isSelected,
                         color = surfaceColor.value,
-                        onClicked = { updateCategoryTag(categoryTag) },
+                        onClicked = {
+                            updateCategoryTag(categoryTag)
+                        },
                         title = categoryTag.name
                     )
                 }
