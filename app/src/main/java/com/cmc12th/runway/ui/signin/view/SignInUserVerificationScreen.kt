@@ -32,6 +32,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.cmc12th.runway.R
 import com.cmc12th.runway.ui.components.*
 import com.cmc12th.runway.ui.signin.components.OnBoardStep
@@ -87,6 +88,7 @@ private fun UserVerificationContents(
     val isPhoneFocused = remember {
         mutableStateOf(false)
     }
+    val uiState by viewmodel.userVerificationUiState.collectAsStateWithLifecycle()
 
     Column(
         modifier = Modifier
@@ -111,19 +113,19 @@ private fun UserVerificationContents(
             /** 이름 입력 */
             NameContainter(
                 showBottomSheet,
-                nameAndNationality = viewmodel.nameAndNationality.value,
+                nameAndNationality = uiState.nameAndNationality,
                 updateName = { viewmodel.updateName(it) },
                 updateNationality = { viewmodel.updateNationality(it) }
             )
             /** 성별 입력 */
             GenderContainer(
-                gender = viewmodel.gender.value,
+                gender = uiState.gender,
                 updateGender = { viewmodel.updateGender(it) }
             )
 
             /** 생년 입력 */
             BirthContainer(
-                birth = viewmodel.birth.value,
+                birth = uiState.birth,
                 updateBirth = { viewmodel.updateBirth(it) }
             )
 
@@ -131,7 +133,7 @@ private fun UserVerificationContents(
             PhoneContainer(
                 changeFocus = { isPhoneFocused.value = it },
                 showBottomSheet = showBottomSheet,
-                phone = viewmodel.phone.value,
+                phone = uiState.phone,
                 updateMobildeCarrier = { viewmodel.updateMobileCarrier(it) },
                 updatePhoneNumber = { viewmodel.updatePhoneNumber(it) }
             )

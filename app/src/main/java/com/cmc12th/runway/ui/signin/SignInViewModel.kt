@@ -5,10 +5,31 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.cmc12th.runway.ui.signin.model.*
 import com.cmc12th.runway.utils.Constants.CATEGORYS
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.*
 import javax.inject.Inject
+
+
+/** UserVerification 화면의 Ui State */
+data class UserVerificationUiState(
+    val nameAndNationality: NameAndNationality,
+    val gender: Gender,
+    val birth: Birth,
+    val phone: Phone,
+) {
+    companion object {
+        fun default() = UserVerificationUiState(
+            nameAndNationality = NameAndNationality.default(),
+            gender = Gender.Unknown,
+            birth = Birth.default(),
+            phone = Phone.default()
+        )
+    }
+}
+
 
 @HiltViewModel
 class SignInViewModel @Inject constructor(
@@ -18,18 +39,10 @@ class SignInViewModel @Inject constructor(
         CategoryTag(it)
     }.toTypedArray()
 
-    private val _nameAndNationality =
-        mutableStateOf<NameAndNationality>(NameAndNationality.default())
-    val nameAndNationality: State<NameAndNationality> = _nameAndNationality
-
-    private val _gender = mutableStateOf(Gender.Unknown)
-    val gender: State<Gender> = _gender
-
-    private val _birth = mutableStateOf(Birth.default())
-    val birth: State<Birth> = _birth
-
-    private val _phone = mutableStateOf(Phone.default())
-    val phone: State<Phone> = _phone
+    private val _nameAndNationality = MutableStateFlow(NameAndNationality.default())
+    private val _gender = MutableStateFlow(Gender.Unknown)
+    private val _birth = MutableStateFlow(Birth.default())
+    private val _phone = MutableStateFlow(Phone.default())
 
     private val _userVerificationStatus = mutableStateOf(false)
     val userVerificationStatus: State<Boolean> = _userVerificationStatus
@@ -52,6 +65,20 @@ class SignInViewModel @Inject constructor(
     val agreements = mutableStateListOf(false, false, false)
     val categoryTags = mutableStateListOf(*tagLists)
 
+    val userVerificationUiState: StateFlow<UserVerificationUiState> = combine(
+        _nameAndNationality, _gender, _birth, _phone
+    ) { nameAndNationality, gender, birth, phone ->
+        UserVerificationUiState(
+            nameAndNationality = nameAndNationality,
+            gender = gender,
+            birth = birth,
+            phone = phone
+        )
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = UserVerificationUiState.default()
+    )
 
     fun updateCategoryTags(categoryTag: CategoryTag) {
         for (index in 0 until categoryTags.size)
