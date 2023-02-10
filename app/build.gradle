@@ -99,4 +99,7 @@ dependencies {
     // Accompanist - Statusbar Color바꾸기 위해서..
     implementation "com.google.accompanist:accompanist-systemuicontroller:0.27.0"
 
+    // Coil
+    implementation("io.coil-kt:coil-compose:2.2.2")
+
 }
