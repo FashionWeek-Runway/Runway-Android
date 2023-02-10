@@ -72,7 +72,7 @@ fun SignInCategoryScreen(
                 .fillMaxWidth()
                 .padding(20.dp),
             shape = RectangleShape,
-            colors = ButtonDefaults.buttonColors(Gray300),
+            colors = ButtonDefaults.buttonColors(if (signInViewModel.categoryTags.any { it.isSelected }) Color.Black else Gray300),
             onClick = {
                 appState.navController.navigate(SIGNIN_COMPLETE_ROUTE)
             }
