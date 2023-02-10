@@ -49,11 +49,9 @@ import kotlin.math.sign
 @Composable
 fun SignInProfileImage(
     appState: ApplicationState,
-    signInViewModel: SignInViewModel = hiltViewModel()
+    signInViewModel: SignInViewModel = hiltViewModel(),
 ) {
-    val onkeyboardFocus = remember {
-        mutableStateOf(false)
-    }
+
     val isKeyboardOpen by keyboardAsState() // Keyboard.Opened or Keyboard.Closed
     val profileSize by animateFloatAsState(
         targetValue = if (isKeyboardOpen == KeyboardStatus.Opened) 0.4f else 0.66f,
@@ -105,9 +103,7 @@ fun SignInProfileImage(
             InputNickname(
                 nickname = signInViewModel.nickName.value,
                 updateNickName = { signInViewModel.updateNickName(it) }
-            ) {
-                onkeyboardFocus.value = it
-            }
+            )
         }
 
         Button(
@@ -138,14 +134,10 @@ fun SignInProfileImage(
 fun InputNickname(
     nickname: String,
     updateNickName: (String) -> Unit,
-    onFocuseChanged: (Boolean) -> Unit
 ) {
     CustomTextField(
         modifier = Modifier
-            .fillMaxWidth()
-            .onFocusChanged {
-                onFocuseChanged(it.hasFocus)
-            },
+            .fillMaxWidth(),
         fontSize = 16.sp,
         value = nickname,
         placeholderText = "닉네임 입력",
