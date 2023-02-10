@@ -63,7 +63,7 @@ fun SignInAgreementScreen(
             Column {
                 /** 약관 전체 동의 */
                 AgreementAll(
-                    checkState = uiState.isAllChcked(),
+                    checkState = !(uiState.agreements.any { !it.isChecked }),
                     onChecked = {
                         if (uiState.agreements.any { !it.isChecked }) {
                             signInViewModel.updateAgreements(
