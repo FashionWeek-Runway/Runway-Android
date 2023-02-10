@@ -15,6 +15,10 @@ import javax.inject.Inject
 @HiltViewModel
 class SignInViewModel @Inject constructor(
 ) : ViewModel() {
+    
+    private val tagLists = CATEGORYS.map {
+        CategoryTag(it)
+    }.toTypedArray()
 
     private val _nameAndNationality =
         mutableStateOf<NameAndNationality>(NameAndNationality.default())
@@ -47,14 +51,9 @@ class SignInViewModel @Inject constructor(
     private val _profileImage = mutableStateOf<Uri?>(null)
     val profileImage: State<Uri?> = _profileImage
 
-    val categoryTags = mutableStateListOf(
-        CategoryTag("미니멀"),
-        CategoryTag("캐주얼"),
-        CategoryTag("스트릿"),
-        CategoryTag("빈티지"),
-        CategoryTag("페미닌"),
-        CategoryTag("시티보이"),
-    )
+    val agreements = mutableStateListOf(false, false, false)
+    val categoryTags = mutableStateListOf(*tagLists)
+
 
     fun updateCategoryTags(categoryTag: CategoryTag) {
         for (index in 0 until categoryTags.size)
