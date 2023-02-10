@@ -53,7 +53,9 @@ fun SignInCategoryScreen(
             HeightSpacer(height = 20.dp)
             Column() {
                 Row {
-                    Text(text = signInViewModel.nickName.value, style = HeadLine3, color = Primary)
+                    Text(text = signInViewModel.nickName.value.text,
+                        style = HeadLine3,
+                        color = Primary)
                     Text(text = "님의 옷 스타일을", style = SubHeadline1)
                 }
                 Text(text = "선택해주세요.", style = SubHeadline1)

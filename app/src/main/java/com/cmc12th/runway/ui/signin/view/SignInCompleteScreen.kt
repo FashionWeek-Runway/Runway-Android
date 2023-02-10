@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cmc12th.runway.R
 import com.cmc12th.runway.ui.components.HeightSpacer
+import com.cmc12th.runway.ui.components.WidthSpacerLine
 import com.cmc12th.runway.ui.domain.model.KeyboardStatus
 import com.cmc12th.runway.ui.theme.*
 import kotlinx.coroutines.delay
@@ -40,13 +41,17 @@ import kotlinx.coroutines.delay
 @Composable
 fun SignInCompleteScreen() {
 
-    val onEnterScreen = remember {
-        mutableStateOf(false)
-    }
-
     val scale = remember {
         mutableStateOf(0.6f)
     }
+
+    val animatedScale = animateFloatAsState(
+        targetValue = scale.value,
+        animationSpec = tween(
+            durationMillis = 200,
+            easing = FastOutSlowInEasing
+        )
+    )
 
     LaunchedEffect(key1 = Unit) {
         delay(200)
@@ -83,11 +88,11 @@ fun SignInCompleteScreen() {
             verticalArrangement = Arrangement.Bottom,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            AnimatedContent(targetState = scale.value) {
+            AnimatedContent(targetState = animatedScale.value) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .scale(scale.value)
+                        .scale(animatedScale.value)
                         .padding(start = 50.dp, end = 50.dp)
                         .clip(RoundedCornerShape(10.dp))
                         .background(Color.White)
@@ -128,10 +133,10 @@ fun SignInCompleteScreen() {
                                 contentDescription = "IMG_CONGRATUATION"
                             )
 
-                            WidthSpacerLine()
+                            WidthSpacerLine(1.dp, Primary)
                             Text(text = "NAME", color = Primary, style = Body1)
                             Text(text = "닉네임이열자까지래요", color = Primary, style = HeadLine2)
-                            WidthSpacerLine()
+                            WidthSpacerLine(1.dp, Primary)
                             Text(text = "STYLE", color = Primary, style = Body1)
                             Row(
                                 modifier = Modifier.align(Alignment.End),
@@ -159,7 +164,7 @@ fun SignInCompleteScreen() {
                                     color = Color.White
                                 )
                             }
-                            WidthSpacerLine()
+                            WidthSpacerLine(1.dp, Primary)
                             Image(
                                 contentScale = ContentScale.FillWidth,
                                 painter = painterResource(id = R.drawable.ic_logo_barcode),
@@ -197,16 +202,6 @@ fun SignInCompleteScreen() {
     }
 
 
-}
-
-@Composable
-private fun WidthSpacerLine() {
-    Spacer(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(1.dp)
-            .background(Primary)
-    )
 }
 
 @Composable
