@@ -10,7 +10,6 @@ class ApplicationState(
     val bottomBarState: MutableState<Boolean>,
     val navController: NavHostController,
     val scaffoldState: ScaffoldState,
-    val imePaddingState: MutableState<Boolean>
 ) {
     suspend fun showSnackbar(message: String) {
         scaffoldState.snackbarHostState.showSnackbar(message)

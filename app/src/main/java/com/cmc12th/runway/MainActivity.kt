@@ -40,6 +40,7 @@ import com.cmc12th.runway.utils.Constants.PHOTO_REVIEW_ROUTE
 import com.cmc12th.runway.utils.Constants.SIGNIN_PHONE_VERIFY_ROUTE
 import com.cmc12th.runway.utils.Constants.SIGNIN_USER_VERIFICATION_ROUTE
 import com.cmc12th.runway.utils.Constants.SPLASH_ROUTE
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -49,15 +50,12 @@ class MainActivity : ComponentActivity() {
         setContent {
             val appState = rememberApplicationState()
             val navBackStackEntry by appState.navController.currentBackStackEntryAsState()
+            val systemUiController = rememberSystemUiController()
             RunwayTheme {
+                systemUiController.setSystemBarsColor(color = Color.White)
                 ManageBottomBarState(navBackStackEntry, appState)
                 Surface(
-                    modifier = if (appState.imePaddingState.value) Modifier
-                        .statusBarsPadding()
-                        .imePadding()
-                        .navigationBarsPadding()
-                        .fillMaxSize()
-                    else Modifier
+                    modifier = Modifier
                         .statusBarsPadding()
                         .navigationBarsPadding()
                         .fillMaxSize(),
@@ -77,13 +75,11 @@ private fun rememberApplicationState(
     bottomBarState: MutableState<Boolean> = mutableStateOf(false),
     navController: NavHostController = rememberNavController(),
     scaffoldState: ScaffoldState = rememberScaffoldState(),
-    imePaddingState: MutableState<Boolean> = mutableStateOf(false),
 ) = remember(Unit) {
     ApplicationState(
         bottomBarState,
         navController,
         scaffoldState,
-        imePaddingState
     )
 }
 
@@ -96,12 +92,6 @@ private fun ManageBottomBarState(
     when (navBackStackEntry?.destination?.route) {
         HOME_ROUTE, MAP_ROUTE, MYPAGE_ROUTE -> applicationState.bottomBarState.value = true
         else -> applicationState.bottomBarState.value = false
-    }
-    when (navBackStackEntry?.destination?.route) {
-        SIGNIN_USER_VERIFICATION_ROUTE, PHOTO_REVIEW_ROUTE, SIGNIN_PHONE_VERIFY_ROUTE -> {
-            applicationState.imePaddingState.value = true
-        }
-        else -> applicationState.imePaddingState.value = false
     }
 }
 
