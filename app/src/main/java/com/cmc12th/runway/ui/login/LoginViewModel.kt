@@ -2,16 +2,21 @@ package com.cmc12th.runway.ui.login
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.cmc12th.runway.data.request.LoginRequest
+import com.cmc12th.runway.domain.repository.SignInRepository
 import com.cmc12th.runway.ui.signin.model.Password
 import com.cmc12th.runway.ui.signin.model.Phone
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class LoginViewModel @Inject constructor() : ViewModel() {
+class LoginViewModel @Inject constructor(
+    private val signInRepository: SignInRepository
+) : ViewModel() {
     private val _phoneNumber = mutableStateOf(Phone.default())
     val phoneNumber: State<Phone> get() = _phoneNumber
 
@@ -26,4 +31,18 @@ class LoginViewModel @Inject constructor() : ViewModel() {
         _password.value = _password.value.copy(value = password)
     }
 
+    fun login() = viewModelScope.launch {
+        signInRepository.login(LoginRequest(password = "1234", phone = "01026972321"))
+            .collectLatest {
+                it.onSuccess {
+
+                }
+                it.onLoading {
+
+                }
+                it.onNotResponse {
+
+                }
+            }
+    }
 }

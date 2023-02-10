@@ -1,12 +1,22 @@
 package com.cmc12th.runway.ui.signin
 
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.cmc12th.runway.data.request.LoginRequest
+import com.cmc12th.runway.domain.repository.SignInRepository
+import com.cmc12th.runway.network.toPlainRequestBody
 import com.cmc12th.runway.ui.signin.model.*
 import com.cmc12th.runway.utils.Constants.CATEGORYS
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import java.io.File
 import javax.inject.Inject
 
 
@@ -67,10 +77,6 @@ data class SignInCompleteUiState(
 @HiltViewModel
 class SignInViewModel @Inject constructor(
 ) : ViewModel() {
-
-    private val tagLists = CATEGORYS.map {
-        CategoryTag(it)
-    }.toTypedArray()
 
     private val _nameAndNationality = MutableStateFlow(NameAndNationality.default())
     private val _gender = MutableStateFlow(Gender.Unknown)
@@ -172,6 +178,39 @@ class SignInViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = SignInCompleteUiState()
         )
+
+    fun signUp(image: Uri) = viewModelScope.launch {
+        val params = hashMapOf<String, RequestBody>()
+
+        // TODO 이미지를 선택 안하면 Drawble을 파일로 바꿔서 보내야함
+        val file = image.path?.let { File(it) } ?: return@launch
+        val requestBody: RequestBody = file.asRequestBody("image/*".toMediaType())
+
+        val multipartFile = MultipartBody.Part.createFormData("images", file.name, requestBody)
+        params["gender"] = "남".toPlainRequestBody()
+        params["name"] = "이름".toPlainRequestBody()
+        params["nickname"] = "닉네임".toPlainRequestBody()
+        params["password"] = "패스워드".toPlainRequestBody()
+        params["phone"] = "전화번호".toPlainRequestBody()
+        val categoryList = _categoryTags.value.filter { it.isSelected }.map {
+            MultipartBody.Part.createFormData("categoryList", it.name)
+        }
+    }
+
+    fun kakaoSignUp(image: Uri) = viewModelScope.launch {
+        val params = hashMapOf<String, RequestBody>()
+
+        params["gender"] = "남".toPlainRequestBody()
+        params["name"] = "이름".toPlainRequestBody()
+        params["nickname"] = "닉네임".toPlainRequestBody()
+        params["password"] = "패스워드".toPlainRequestBody()
+        params["phone"] = "전화번호".toPlainRequestBody()
+        params["profileImgUrl"] = "프로필ImageURL".toPlainRequestBody()
+        val categoryList = _categoryTags.value.filter { it.isSelected }.map {
+            MultipartBody.Part.createFormData("categoryList", it.name)
+        }
+    }
+
 
     fun updateCategoryTags(categoryTag: CategoryTag) {
         _categoryTags.value = _categoryTags.value.mapIndexed { _, item ->
