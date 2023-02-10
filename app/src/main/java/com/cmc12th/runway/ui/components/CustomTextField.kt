@@ -56,7 +56,7 @@ fun CustomTextField(
                     if (it.isFocused) {
                         bottomLineColor.value = Color.Black
                     } else {
-                        bottomLineColor.value = Gray600
+                        bottomLineColor.value = Gray300
                     }
                 }
                 .bottomBorder(1.dp, if (onErrorState) Error_Color else bottomLineColor.value)
@@ -133,7 +133,7 @@ fun CustomTextField(
                     if (it.isFocused) {
                         bottomLineColor.value = Color.Black
                     } else {
-                        bottomLineColor.value = Gray600
+                        bottomLineColor.value = Gray300
                     }
                 }
                 .bottomBorder(1.dp, if (onErrorState) Error_Color else bottomLineColor.value)
