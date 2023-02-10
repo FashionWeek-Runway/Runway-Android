@@ -28,6 +28,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -50,7 +51,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun SignInUserInfoVerifyScreen(
     appState: ApplicationState,
-    signInViewModel: SignInViewModel = hiltViewModel()
+    signInViewModel: SignInViewModel = hiltViewModel(),
 ) {
     val coroutineScope = rememberCoroutineScope()
     val bottomsheetState = rememberBottomSheet()
@@ -237,6 +238,8 @@ fun PhoneContainer(
             ),
             keyboardActions = KeyboardActions(onDone = {
             }),
+            onErrorState = phone.number.isNotBlank() && !phone.checkValidation(),
+            errorMessage = "휴대폰번호 11자를 입력해주세요."
         )
     }
 }
@@ -260,18 +263,12 @@ fun BirthContainer(
                 keyboardType = KeyboardType.Phone,
                 imeAction = ImeAction.Next
             ),
+            onErrorState = birth.date.isNotBlank() && !birth.checkValidation(),
+            errorMessage = "생년월일 8자를 입력해주세요."
         )
-        // ErrorMessage()
     }
 }
 
-@Composable
-private fun ErrorMessage() {
-    Text(
-        text = "생년월일은 8자로 입력해주세요.",
-        modifier = Modifier.offset(y = 5.dp), color = Error_Color, fontSize = 14.sp
-    )
-}
 
 @Composable
 private fun GenderContainer(
@@ -296,7 +293,7 @@ private fun GenderContainer(
 private fun RowScope.GenderRadioButton(
     gender: Gender,
     checkGender: Boolean,
-    updateGender: () -> Unit
+    updateGender: () -> Unit,
 ) {
     val strokeShape = if (gender.isMale()) RoundedCornerShape(5.dp, 0.dp, 0.dp, 5.dp)
     else RoundedCornerShape(0.dp, 5.dp, 5.dp, 0.dp)
@@ -332,7 +329,7 @@ private fun NameContainter(
     Column {
         Text(text = "이름", style = Caption, color = Gray700)
         HeightSpacer(height = 10.dp)
-        Row(verticalAlignment = Alignment.Bottom) {
+        Row(verticalAlignment = Alignment.Top) {
             CustomTextField(
                 modifier = Modifier
                     .weight(3f),
@@ -349,49 +346,60 @@ private fun NameContainter(
             )
             WidthSpacer(width = 15.dp)
             Box(modifier = Modifier.weight(2f)) {
-                Box {
-                    Button(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .bottomBorder(
-                                1.dp,
-                                Gray600
-                            ),
-                        onClick = {
-                            showBottomSheet(
-                                BottomSheetContent(
-                                    title = "국가",
-                                    itemList = Nationality.values().map {
-                                        BottomSheetContentItem(
-                                            itemName = it.getString(),
-                                            onItemClick = { updateNationality(it) },
-                                            isSeleceted = nameAndNationality.nationality == it
-                                        )
-                                    }
-                                )
-                            )
-                        },
-                        colors = ButtonDefaults.buttonColors(Color.White)
-                    ) {
-                    }
-                    Text(
-                        modifier = Modifier.align(Alignment.CenterStart),
-                        text = nameAndNationality.nationality.getString(), color = Color.Black,
-                        textAlign = TextAlign.Start
-                    )
-                    Icon(
-                        tint = Gray400,
-                        painter = painterResource(id = R.drawable.ic_arrow),
-                        contentDescription = "IC_ARROW",
-                        modifier = Modifier
-                            .rotate(270f)
-                            .size(20.dp)
-                            .align(Alignment.CenterEnd),
-                    )
-                }
-
+                NationalityButton(showBottomSheet, updateNationality, nameAndNationality)
             }
         }
+    }
+}
+
+@Composable
+private fun NationalityButton(
+    showBottomSheet: (BottomSheetContent) -> Unit,
+    updateNationality: (Nationality) -> Unit,
+    nameAndNationality: NameAndNationality,
+) {
+    Box(
+        modifier = Modifier.padding(0.dp, 4.dp)
+    ) {
+        Button(
+            modifier = Modifier
+                .fillMaxWidth()
+                .bottomBorder(
+                    1.dp,
+                    Gray600
+                ),
+            onClick = {
+                showBottomSheet(
+                    BottomSheetContent(
+                        title = "국가",
+                        itemList = Nationality.values().map {
+                            BottomSheetContentItem(
+                                itemName = it.getString(),
+                                onItemClick = { updateNationality(it) },
+                                isSeleceted = nameAndNationality.nationality == it
+                            )
+                        }
+                    )
+                )
+            },
+            colors = ButtonDefaults.buttonColors(Color.Transparent)
+        ) {
+        }
+        Text(
+            modifier = Modifier.align(Alignment.CenterStart),
+            text = nameAndNationality.nationality.getString(), color = Color.Black,
+            textAlign = TextAlign.Start,
+            fontSize = 16.sp
+        )
+        Icon(
+            tint = Gray400,
+            painter = painterResource(id = R.drawable.ic_arrow),
+            contentDescription = "IC_ARROW",
+            modifier = Modifier
+                .rotate(270f)
+                .size(20.dp)
+                .align(Alignment.CenterEnd),
+        )
     }
 }
 

@@ -38,7 +38,7 @@ import kotlin.math.sign
 @Composable
 fun SignInPhoneVerifyScreen(
     appState: ApplicationState,
-    signInViewModel: SignInViewModel = hiltViewModel()
+    signInViewModel: SignInViewModel = hiltViewModel(),
 ) {
     Column(
         modifier = Modifier
@@ -110,7 +110,7 @@ private fun InputVerificationCode(
         Box(Modifier.weight(1f)) {
             CustomTextField(
                 trailingIcon = {
-
+                    RetryContainer()
                 },
                 modifier = Modifier,
                 fontSize = 16.sp,
@@ -125,7 +125,7 @@ private fun InputVerificationCode(
                 keyboardActions = KeyboardActions(onDone = {
                 }),
             )
-            RetryContainer()
+
         }
     }
 }
