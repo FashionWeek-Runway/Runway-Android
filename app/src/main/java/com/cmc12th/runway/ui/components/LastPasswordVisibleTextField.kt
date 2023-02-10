@@ -35,6 +35,9 @@ import com.cmc12th.runway.ui.components.util.bottomBorder
 import com.cmc12th.runway.ui.theme.Gray300
 import com.cmc12th.runway.ui.theme.Gray600
 
+/**
+ * 마지막 자리 비밀번호가 보이는 비밀번호 용 커스텀 텍스트 필드
+ */
 @Composable
 fun LastPasswordVisibleCustomTextField(
     modifier: Modifier = Modifier,
