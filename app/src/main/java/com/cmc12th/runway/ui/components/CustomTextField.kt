@@ -101,6 +101,10 @@ fun CustomTextField(
 }
 
 
+/**
+ * @param onErrorState 해당 값이 true라면 밑줄이 색이 빨개지고, 에러 메시지를 출력한다.
+ * @param onFocuseChange 포커스 값을 외부에서 관찰할 때 사용
+ */
 @Composable
 fun CustomTextField(
     value: String,
