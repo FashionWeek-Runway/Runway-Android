@@ -1,10 +1,10 @@
 package com.cmc12th.runway.ui.signin
 
 import android.net.Uri
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.cmc12th.runway.data.request.LoginRequest
+import com.cmc12th.runway.data.request.SendVerifyMessageRequest
+import com.cmc12th.runway.data.response.ErrorResponse
 import com.cmc12th.runway.domain.repository.SignInRepository
 import com.cmc12th.runway.network.toPlainRequestBody
 import com.cmc12th.runway.ui.signin.model.*
@@ -20,62 +20,9 @@ import java.io.File
 import javax.inject.Inject
 
 
-/** UserVerification 화면의 Ui State */
-data class SignInUserVerificationUiState(
-    val nameAndNationality: NameAndNationality = NameAndNationality.default(),
-    val gender: Gender = Gender.Unknown,
-    val birth: Birth = Birth.default(),
-    val phone: Phone = Phone.default(),
-    val userVerificationStatus: Boolean = false,
-)
-
-data class SignInPhoneVerifyUiState(
-    val phone: Phone = Phone.default(),
-    val verifyCode: String = "",
-)
-
-data class SignInPasswordUiState(
-    val password: Password = Password.default(),
-    val retryPassword: Password = Password.default(),
-) {
-    fun checkValidate() = password.isValidatePassword(retryPassword)
-}
-
-data class SignInAgreementUiState(
-    val agreements: MutableList<Agreement> = mutableListOf(
-        Agreement("이용약관 동의 (필수)", true),
-        Agreement("개인정보 처리 방침 동의 (필수)", true),
-        Agreement("위치정보 이용 약관 동의 (필수)", true),
-        Agreement("마케팅 정보 수신 동의 (선택)", false),
-    ),
-) {
-    fun isAllChcked() = agreements.filter { it.isRequire }.all { it.isChecked }
-}
-
-data class SignInProfileImageUiState(
-    val profileImage: Uri? = null,
-    val nickName: Nickname = Nickname.default(),
-)
-
-
-data class SignInCategoryUiState(
-    val nickName: Nickname = Nickname.default(),
-    val categoryTags: MutableList<CategoryTag> = CATEGORYS.map {
-        CategoryTag(it)
-    }.toMutableList(),
-) {
-    fun anyCategorySelected() = categoryTags.any { it.isSelected }
-}
-
-data class SignInCompleteUiState(
-    val nickName: Nickname = Nickname.default(),
-    val profileImage: Uri? = null,
-    val categoryTags: List<CategoryTag> = listOf<CategoryTag>()
-)
-
-
 @HiltViewModel
 class SignInViewModel @Inject constructor(
+    private val signInRepository: SignInRepository
 ) : ViewModel() {
 
     private val _nameAndNationality = MutableStateFlow(NameAndNationality.default())
@@ -105,79 +52,14 @@ class SignInViewModel @Inject constructor(
         CategoryTag(it)
     }.toMutableList())
 
-    val userVerificationUiState: StateFlow<SignInUserVerificationUiState> = combine(
-        _nameAndNationality, _gender, _birth, _phone, _userVerificationStatus
-    ) { nameAndNationality, gender, birth, phone, userVerificationStatus ->
-        SignInUserVerificationUiState(
-            nameAndNationality = nameAndNationality,
-            gender = gender,
-            birth = birth,
-            phone = phone,
-            userVerificationStatus = userVerificationStatus
-        )
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000),
-        initialValue = SignInUserVerificationUiState()
-    )
-
-    val phoneVerifyUiState: StateFlow<SignInPhoneVerifyUiState> =
-        combine(_phone, _verifyCode) { phone, verifyCode ->
-            SignInPhoneVerifyUiState(phone = phone, verifyCode = verifyCode)
-        }.stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = SignInPhoneVerifyUiState()
-        )
-
-    val passwordUiState: StateFlow<SignInPasswordUiState> =
-        combine(_password, _retryPassword) { password, retryPassword ->
-            SignInPasswordUiState(password = password, retryPassword = retryPassword)
-        }.stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = SignInPasswordUiState()
-        )
-
-    val agreementUiState: StateFlow<SignInAgreementUiState> =
-        combine(_agreements) { agreements ->
-            SignInAgreementUiState(agreements.first())
-        }.stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = SignInAgreementUiState()
-        )
-
-    val profileImageUiState: StateFlow<SignInProfileImageUiState> =
-        combine(_profileImage, _nickName) { profileImage, nickName ->
-            SignInProfileImageUiState(profileImage = profileImage, nickName = nickName)
-        }.stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = SignInProfileImageUiState()
-        )
-
-    val categoryUiState: StateFlow<SignInCategoryUiState> =
-        combine(_nickName, _categoryTags) { nickName, categoryTags ->
-            SignInCategoryUiState(nickName = nickName, categoryTags = categoryTags)
-        }.stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = SignInCategoryUiState()
-        )
-
-    val complteUiState: StateFlow<SignInCompleteUiState> =
-        combine(_nickName, _categoryTags, _profileImage) { nickName, categoryTags, profileImage ->
-            SignInCompleteUiState(
-                nickName = nickName,
-                categoryTags = categoryTags.filter { it.isSelected },
-                profileImage = profileImage
-            )
-        }.stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = SignInCompleteUiState()
-        )
+    fun sendVerifyMessage(onSuccess: () -> Unit, onError: (ErrorResponse) -> Unit) =
+        viewModelScope.launch {
+            val params = SendVerifyMessageRequest(_phone.value.number)
+            signInRepository.sendVerifyMessage(params).collect { apiState ->
+                apiState.onSuccess { onSuccess() }
+                apiState.onError { onError(it) }
+            }
+        }
 
     fun signUp(image: Uri) = viewModelScope.launch {
         val params = hashMapOf<String, RequestBody>()
@@ -276,4 +158,77 @@ class SignInViewModel @Inject constructor(
         _userVerificationStatus.value = isVerified
     }
 
+    val userVerificationUiState: StateFlow<SignInUserVerificationUiState> = combine(
+        _nameAndNationality, _gender, _birth, _phone, _userVerificationStatus
+    ) { nameAndNationality, gender, birth, phone, userVerificationStatus ->
+        SignInUserVerificationUiState(
+            nameAndNationality = nameAndNationality,
+            gender = gender,
+            birth = birth,
+            phone = phone,
+            userVerificationStatus = userVerificationStatus
+        )
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = SignInUserVerificationUiState()
+    )
+
+    val phoneVerifyUiState: StateFlow<SignInPhoneVerifyUiState> =
+        combine(_phone, _verifyCode) { phone, verifyCode ->
+            SignInPhoneVerifyUiState(phone = phone, verifyCode = verifyCode)
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = SignInPhoneVerifyUiState()
+        )
+
+    val passwordUiState: StateFlow<SignInPasswordUiState> =
+        combine(_password, _retryPassword) { password, retryPassword ->
+            SignInPasswordUiState(password = password, retryPassword = retryPassword)
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = SignInPasswordUiState()
+        )
+
+    val agreementUiState: StateFlow<SignInAgreementUiState> =
+        combine(_agreements) { agreements ->
+            SignInAgreementUiState(agreements.first())
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = SignInAgreementUiState()
+        )
+
+    val profileImageUiState: StateFlow<SignInProfileImageUiState> =
+        combine(_profileImage, _nickName) { profileImage, nickName ->
+            SignInProfileImageUiState(profileImage = profileImage, nickName = nickName)
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = SignInProfileImageUiState()
+        )
+
+    val categoryUiState: StateFlow<SignInCategoryUiState> =
+        combine(_nickName, _categoryTags) { nickName, categoryTags ->
+            SignInCategoryUiState(nickName = nickName, categoryTags = categoryTags)
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = SignInCategoryUiState()
+        )
+
+    val complteUiState: StateFlow<SignInCompleteUiState> =
+        combine(_nickName, _categoryTags, _profileImage) { nickName, categoryTags, profileImage ->
+            SignInCompleteUiState(
+                nickName = nickName,
+                categoryTags = categoryTags.filter { it.isSelected },
+                profileImage = profileImage
+            )
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = SignInCompleteUiState()
+        )
 }

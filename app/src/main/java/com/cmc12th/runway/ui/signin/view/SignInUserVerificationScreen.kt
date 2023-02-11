@@ -6,7 +6,6 @@
 package com.cmc12th.runway.ui.signin.view
 
 import androidx.compose.foundation.*
-import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -48,7 +47,6 @@ import com.cmc12th.runway.ui.signin.model.Birth.Companion.BIRTH_LENGTH
 import com.cmc12th.runway.ui.signin.model.Phone.Companion.PHONE_NUMBER_LENGTH
 import com.cmc12th.runway.ui.theme.*
 import com.cmc12th.runway.utils.Constants.SIGNIN_PHONE_VERIFY_ROUTE
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 @Composable
@@ -86,7 +84,6 @@ private fun UserVerificationContents(
 ) {
     val keyboardState by keyboardAsState()
 
-    
     /** 핸드폰 TextField가 포커스일 때 로그인 버튼이 올라오게 하기위해 */
     val isPhoneFocused = remember {
         mutableStateOf(false)
@@ -95,6 +92,9 @@ private fun UserVerificationContents(
     val (birthFocusRequest, phoneFocusRequest) = remember { FocusRequester.createRefs() }
     val coroutineScope = rememberCoroutineScope()
     val scrollState = rememberScrollState()
+    val passwordErrorMessage = remember {
+        mutableStateOf("")
+    }
 
     Column(
         modifier = Modifier
@@ -102,10 +102,14 @@ private fun UserVerificationContents(
             .imePadding(),
     ) {
         Box(modifier = Modifier.padding(20.dp)) {
-            BackIcon()
+            BackIcon {
+                appState.popBackStack()
+            }
         }
         OnBoardStep(1)
-
+        TestButon {
+            appState.navigate(SIGNIN_PHONE_VERIFY_ROUTE)
+        }
         Column(
             modifier = Modifier
                 .padding(top = 20.dp, start = 20.dp, end = 20.dp)
@@ -145,6 +149,7 @@ private fun UserVerificationContents(
                 changeFocus = {
                     isPhoneFocused.value = it
                 },
+                errorMessage = passwordErrorMessage.value,
                 showBottomSheet = showBottomSheet,
                 phone = uiState.phone,
                 updateMobildeCarrier = { viewmodel.updateMobileCarrier(it) },
@@ -160,12 +165,22 @@ private fun UserVerificationContents(
             Button(modifier = Modifier
                 .fillMaxWidth(),
                 shape = RectangleShape,
-//                enabled = viewmodel.userVerificationStatus.value,
+                enabled = uiState.userVerificationStatus,
                 colors = ButtonDefaults.buttonColors(
                     if (uiState.userVerificationStatus) Color.Black else Gray300
                 ),
                 onClick = {
-                    appState.navController.navigate(SIGNIN_PHONE_VERIFY_ROUTE)
+                    viewmodel.sendVerifyMessage(
+                        onSuccess = {
+                            appState.navController.navigate(SIGNIN_PHONE_VERIFY_ROUTE)
+                        },
+                        onError = {
+                            when (it.code) {
+                                "U005" -> passwordErrorMessage.value = it.message
+                                else -> coroutineScope.launch { appState.showSnackbar(it.message) }
+                            }
+                        }
+                    )
                 }) {
                 Text(
                     modifier = Modifier.padding(0.dp, 5.dp),
@@ -178,6 +193,14 @@ private fun UserVerificationContents(
     }
 }
 
+@Composable
+fun TestButon(onClick: () -> Unit) {
+    Text(text = "다음화면으로 억지로 이동하기(에러남)",
+        modifier = Modifier.clickable {
+            onClick()
+        })
+}
+
 
 @Composable
 fun PhoneContainer(
@@ -188,6 +211,7 @@ fun PhoneContainer(
     updatePhoneNumber: (String) -> Unit,
     focusRequest: FocusRequester,
     onscrollBottom: () -> Unit,
+    errorMessage: String,
 ) {
 
     val isDropDownMenuExpanded = remember {
@@ -262,7 +286,7 @@ fun PhoneContainer(
             keyboardActions = KeyboardActions(onDone = {
             }),
             onErrorState = phone.number.isNotBlank() && !phone.checkValidation(),
-            errorMessage = "휴대폰번호 11자를 입력해주세요."
+            errorMessage = errorMessage.ifBlank { "휴대폰번호 11자를 입력해주세요." }
         )
 
     }
