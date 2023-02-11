@@ -74,6 +74,7 @@ fun SignInPasswordScreen(
             HeightSpacer(height = 30.dp)
             CheckPassword(
                 password = uiState.retryPassword,
+                onDone = { appState.navController.navigate(Constants.SIGNIN_AGREEMENT_ROUTE) },
                 updateRetryPassword = { signInViewModel.updateRetryPassword(it) },
                 isEqual = uiState.checkValidate(),
                 focusRequest = retryFocusRequest,
@@ -86,6 +87,7 @@ fun SignInPasswordScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(50.dp),
+            enabled = uiState.checkValidate(),
             shape = RectangleShape,
             colors = ButtonDefaults.buttonColors(
                 if (uiState.checkValidate()) Color.Black else Gray300
@@ -107,6 +109,7 @@ fun CheckPassword(
     updateRetryPassword: (Password) -> Unit,
     isEqual: Boolean,
     focusRequest: FocusRequester,
+    onDone: () -> Unit,
 ) {
 
     Column {
@@ -119,10 +122,10 @@ fun CheckPassword(
             focusRequest = focusRequest,
             onvalueChanged = { updateRetryPassword(Password(it)) },
             keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Password, imeAction = ImeAction.Next
+                keyboardType = KeyboardType.Password, imeAction = ImeAction.Done
             ),
             keyboardActions = KeyboardActions(
-                onDone = {}
+                onDone = { if (isEqual) onDone() }
             )
         )
 
@@ -183,7 +186,7 @@ private fun passwdValidationIcon(text: String, status: Boolean) {
     Row(
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Row() {
+        Row {
             Icon(
                 modifier = Modifier.size(18.dp),
                 painter = painterResource(id = R.drawable.ic_check),
