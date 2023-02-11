@@ -13,11 +13,11 @@ interface LoginService {
 
     /** 로그인 */
     @POST("/login")
-    suspend fun login(@Body params: LoginRequest): NetworkResponse<LoginResponse>
+    suspend fun login(@Body loginRequest: LoginRequest): NetworkResponse<LoginResponse>
 
     /** 유저 인증번호 확인 */
     @POST("/login/check")
-    suspend fun verifyPhoneNumber(@Body params: LoginCheckRequest): DefaultResponse
+    suspend fun verifyPhoneNumber(@Body loginCheckRequest: LoginCheckRequest): DefaultResponse
 
     /** 닉네임 중복체크 */
     @GET("/login/check/nickname")
