@@ -4,7 +4,11 @@ plugins {
     id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
 }
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+
 tasks.withType(Test) { useJUnitPlatform() }
+
 android {
     namespace 'com.cmc12th.runway'
     compileSdk 33
@@ -15,6 +19,9 @@ android {
         targetSdk 33
         versionCode 1
         versionName "1.0"
+
+        buildConfigField "String", "KAKAO_NATIVE_APP_KEY", properties["kakao.native.app.key"]
+        resValue "string", "KAKAO_NATIVE_APP_KEY_FULL", properties["kakao.native.app.key.full"]
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -28,6 +35,8 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -111,4 +120,6 @@ dependencies {
     // Gson
     implementation 'com.google.code.gson:gson:2.9.0'
 
+    // Kakao Login
+    implementation "com.kakao.sdk:v2-user:2.12.1" // 카카오 로그인
 }
