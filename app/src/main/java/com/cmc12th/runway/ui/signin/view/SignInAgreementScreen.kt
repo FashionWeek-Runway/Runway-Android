@@ -166,7 +166,10 @@ fun AgreementAll(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(10.dp, 20.dp),
+            .padding(10.dp, 20.dp)
+            .clickable {
+                onChecked()
+            },
         verticalAlignment = Alignment.CenterVertically
     ) {
         AgreementCheckBox(
