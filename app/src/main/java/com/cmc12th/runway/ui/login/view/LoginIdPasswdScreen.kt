@@ -34,6 +34,7 @@ import com.cmc12th.runway.ui.signin.model.Phone
 import com.cmc12th.runway.ui.signin.view.ErrorMessage
 import com.cmc12th.runway.ui.theme.Body2
 import com.cmc12th.runway.ui.theme.HeadLine1
+import com.cmc12th.runway.utils.Constants.LOGIN_GRAPH
 import com.cmc12th.runway.utils.Constants.MAIN_GRAPH
 import com.cmc12th.runway.utils.Constants.SIGNIN_GRAPH
 
@@ -58,7 +59,9 @@ fun LoginIdPasswdScreen(
         keyboardController?.hide()
         loginViewModel.login(
             onSuccess = {
-                appState.navController.navigate(MAIN_GRAPH)
+                appState.navController.navigate(MAIN_GRAPH) {
+                    popUpTo(LOGIN_GRAPH)
+                }
             },
             onError = {
                 when (it.code) {
