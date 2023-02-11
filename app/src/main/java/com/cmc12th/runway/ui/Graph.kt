@@ -3,14 +3,12 @@ package com.cmc12th.runway.ui
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavBackStackEntry
-import androidx.navigation.NavGraphBuilder
+import androidx.navigation.*
 import androidx.navigation.compose.composable
-import androidx.navigation.navigation
 import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.home.HomeScreen
-import com.cmc12th.runway.ui.login.LoginBaseScreen
 import com.cmc12th.runway.ui.login.LoginIdPasswdScreen
+import com.cmc12th.runway.ui.login.view.LoginBaseScreen
 import com.cmc12th.runway.ui.map.MapScreen
 import com.cmc12th.runway.ui.mypage.MypageScreen
 import com.cmc12th.runway.ui.signin.view.*
@@ -74,9 +72,26 @@ fun NavGraphBuilder.signInGraph(
             val backStackEntry = rememberNavControllerBackEntry(entry, appState, SIGNIN_GRAPH)
             SignInAgreementScreen(appState, hiltViewModel(backStackEntry))
         }
-        composable(SIGNIN_PROFILE_IMAGE_ROUTE) { entry ->
+        composable(
+            route = "$SIGNIN_PROFILE_IMAGE_ROUTE?profileImage={profileImage}&kakaoId={kakaoId}",
+            arguments = listOf(
+                navArgument("profileImage") {
+                    type = NavType.StringType
+                },
+                navArgument("kakaoId") {
+                    type = NavType.StringType
+                }
+            )
+        ) { entry ->
+            val profileImage = entry.arguments?.getString("profileImage") ?: ""
+            val kakaoId = entry.arguments?.getString("kakaoId") ?: ""
             val backStackEntry = rememberNavControllerBackEntry(entry, appState, SIGNIN_GRAPH)
-            SignInProfileImage(appState, hiltViewModel(backStackEntry))
+            SignInProfileImageScreen(
+                appState = appState,
+                signInViewModel = hiltViewModel(backStackEntry),
+                profileImage = profileImage,
+                kakaoId = kakaoId
+            )
         }
         composable(SIGNIN_AGREEMENT_DETAIL_ROUTE) { entry ->
             val backStackEntry = rememberNavControllerBackEntry(entry, appState, SIGNIN_GRAPH)

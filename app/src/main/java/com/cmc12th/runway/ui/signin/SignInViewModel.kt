@@ -2,6 +2,9 @@ package com.cmc12th.runway.ui.signin
 
 import android.content.Context
 import android.net.Uri
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cmc12th.runway.data.request.LoginCheckRequest
@@ -29,6 +32,11 @@ class SignInViewModel @Inject constructor(
     private val signInRepository: SignInRepository,
     @ApplicationContext private val context: Context,
 ) : ViewModel() {
+
+    private val _signInType: MutableState<SignInType> = mutableStateOf(SignInType.Phone)
+    private val signInType: State<SignInType> get() = _signInType
+    private val _kakaoId = mutableStateOf("")
+    val kakaoId: State<String> = _kakaoId
 
     private val _nameAndNationality = MutableStateFlow(NameAndNationality.default())
     private val _gender = MutableStateFlow(Gender.Unknown)
@@ -162,6 +170,12 @@ class SignInViewModel @Inject constructor(
             }
         }
 
+
+    fun updateSignIntypeSocial(profileImage: String, kakaoId: String) {
+        _signInType.value = SignInType.SOCIAL
+        _profileImage.value = ProfileImageType.SOCIAL(profileImage)
+        _kakaoId.value = kakaoId
+    }
 
     fun updateCategoryTags(categoryTag: CategoryTag) {
         _categoryTags.value = _categoryTags.value.mapIndexed { _, item ->

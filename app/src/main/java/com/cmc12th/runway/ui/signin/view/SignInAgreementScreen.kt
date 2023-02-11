@@ -101,7 +101,7 @@ fun SignInAgreementScreen(
                     enabled = uiState.isAllChcked(),
                     colors = ButtonDefaults.buttonColors(if (uiState.isAllChcked()) Black else Gray300),
                     onClick = {
-                        appState.navController.navigate(SIGNIN_PROFILE_IMAGE_ROUTE)
+                        appState.navController.navigate("$SIGNIN_PROFILE_IMAGE_ROUTE?profileImage=&kakaoId=")
                     }) {
                     Text(text = "다음", modifier = Modifier.padding(0.dp, 5.dp), fontSize = 16.sp)
                 }
