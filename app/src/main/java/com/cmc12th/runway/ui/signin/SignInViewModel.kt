@@ -1,7 +1,6 @@
 package com.cmc12th.runway.ui.signin
 
 import android.net.Uri
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cmc12th.runway.data.request.LoginCheckRequest
@@ -50,7 +49,7 @@ class SignInViewModel @Inject constructor(
     )
 
     private val _nickName = MutableStateFlow(Nickname.default())
-    private val _profileImage = MutableStateFlow<Uri?>(null)
+    private val _profileImage = MutableStateFlow<ProfileImageType>(ProfileImageType.DEFAULT)
 
     private val _categoryTags = MutableStateFlow(CATEGORYS.map {
         CategoryTag(it)
@@ -75,6 +74,7 @@ class SignInViewModel @Inject constructor(
         _retryTime.value = DEFAULT_RETRY_TIME
     }
 
+
     fun sendVerifyMessage(onSuccess: () -> Unit, onError: (ErrorResponse) -> Unit) =
         viewModelScope.launch {
             val params = SendVerifyMessageRequest(_phone.value.number)
@@ -93,10 +93,10 @@ class SignInViewModel @Inject constructor(
             }
         }
 
-    fun signUp(image: Uri) = viewModelScope.launch {
+    fun signUp() = viewModelScope.launch {
         val params = hashMapOf<String, RequestBody>()
 
-        // TODO 이미지를 선택 안하면 Drawble을 파일로 바꿔서 보내야함
+        // TODO 이미지를 선택 안하면 Drawble을 파일로 바꿔서 보내야함 미치겠네
         val file = image.path?.let { File(it) } ?: return@launch
         val requestBody: RequestBody = file.asRequestBody("image/*".toMediaType())
 
@@ -132,7 +132,7 @@ class SignInViewModel @Inject constructor(
         }.toMutableList()
     }
 
-    fun updateProfileImage(profileImage: Uri?) {
+    fun updateProfileImage(profileImage: ProfileImageType) {
         _profileImage.value = profileImage
     }
 

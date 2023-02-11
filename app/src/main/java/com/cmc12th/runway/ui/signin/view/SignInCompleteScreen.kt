@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
+import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.cmc12th.runway.R
 import com.cmc12th.runway.ui.components.HeightSpacer
@@ -45,6 +46,7 @@ import com.cmc12th.runway.ui.domain.model.KeyboardStatus
 import com.cmc12th.runway.ui.signin.SignInViewModel
 import com.cmc12th.runway.ui.signin.model.CategoryTag
 import com.cmc12th.runway.ui.signin.model.Nickname
+import com.cmc12th.runway.ui.signin.model.ProfileImageType
 import com.cmc12th.runway.ui.theme.*
 import com.cmc12th.runway.utils.Constants
 import com.cmc12th.runway.utils.Constants.LOGIN_GRAPH
@@ -162,7 +164,7 @@ private fun ProfileBox(
     animatedScale: State<Float>,
     nickname: Nickname,
     categoryTags: List<CategoryTag>,
-    image: Uri?
+    image: ProfileImageType
 ) {
     Box(
         modifier = Modifier
@@ -179,27 +181,37 @@ private fun ProfileBox(
                     .height(174.dp)
                     .background(Point)
             ) {
-                if (image == null) {
-                    Image(
-                        modifier = Modifier
-                            .align(Alignment.Center)
-                            .fillMaxHeight()
-                            .aspectRatio(1f),
-                        contentScale = ContentScale.Crop,
-                        painter = painterResource(id = R.drawable.img_profile_default),
-                        contentDescription = "PROFILE_IMAGE"
-                    )
-                } else {
-                    AsyncImage(
-                        modifier = Modifier
-                            .align(Alignment.Center)
-                            .fillMaxHeight()
-                            .aspectRatio(1f),
-                        contentScale = ContentScale.Crop,
-                        model = ImageRequest.Builder(LocalContext.current).data(image).build(),
-                        contentDescription = "PROFILE_IMAGE"
-                    )
+                when (image) {
+                    is ProfileImageType.DEFAULT -> {
+                        Image(
+                            modifier = Modifier
+                                .align(Alignment.Center)
+                                .fillMaxHeight()
+                                .aspectRatio(1f),
+                            contentScale = ContentScale.Crop,
+                            painter = painterResource(id = R.drawable.img_profile_default),
+                            contentDescription = "PROFILE_IMAGE"
+                        )
+                    }
+                    else -> {
+                        Image(
+                            modifier = Modifier
+                                .align(Alignment.Center)
+                                .fillMaxHeight()
+                                .aspectRatio(1f),
+                            contentScale = ContentScale.Crop,
+                            painter = rememberAsyncImagePainter(
+                                model = when (image) {
+                                    is ProfileImageType.LOCAL -> image.uri
+                                    is ProfileImageType.SOCIAL -> image.imgUrl
+                                    else -> {}
+                                }
+                            ),
+                            contentDescription = "PROFILE_IMAGE"
+                        )
+                    }
                 }
+
             }
 
             Column(

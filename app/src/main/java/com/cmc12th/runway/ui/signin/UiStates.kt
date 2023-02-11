@@ -1,6 +1,5 @@
 package com.cmc12th.runway.ui.signin
 
-import android.net.Uri
 import com.cmc12th.runway.ui.signin.SignInViewModel.Companion.DEFAULT_RETRY_TIME
 import com.cmc12th.runway.ui.signin.model.*
 import com.cmc12th.runway.utils.Constants
@@ -38,7 +37,7 @@ data class SignInAgreementUiState(
 }
 
 data class SignInProfileImageUiState(
-    val profileImage: Uri? = null,
+    val profileImage: ProfileImageType = ProfileImageType.DEFAULT,
     val nickName: Nickname = Nickname.default(),
 )
 
@@ -54,6 +53,6 @@ data class SignInCategoryUiState(
 
 data class SignInCompleteUiState(
     val nickName: Nickname = Nickname.default(),
-    val profileImage: Uri? = null,
-    val categoryTags: List<CategoryTag> = listOf<CategoryTag>()
+    val profileImage: ProfileImageType = ProfileImageType.DEFAULT,
+    val categoryTags: List<CategoryTag> = listOf()
 )

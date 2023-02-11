@@ -40,6 +40,7 @@ import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.domain.model.KeyboardStatus
 import com.cmc12th.runway.ui.signin.SignInViewModel
 import com.cmc12th.runway.ui.signin.model.Nickname
+import com.cmc12th.runway.ui.signin.model.ProfileImageType
 import com.cmc12th.runway.ui.theme.*
 import com.cmc12th.runway.utils.Constants.MAX_NICKNAME_LENGTH
 import com.cmc12th.runway.utils.Constants.SIGNIN_CATEGORY_ROUTE
@@ -68,7 +69,10 @@ fun SignInProfileImage(
     )
     val galleryLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { url ->
-            signInViewModel.updateProfileImage(url)
+            if (url != null) {
+                val image = ProfileImageType.LOCAL(uri = url)
+                signInViewModel.updateProfileImage(image)
+            }
         }
 
     Column(
@@ -157,7 +161,7 @@ fun InputNickname(
 
 @Composable
 fun ProfileImageIcon(
-    selectedImage: Uri?,
+    profileImageType: ProfileImageType,
     profileSize: Float,
     galleryLauncher: ManagedActivityResultLauncher<String, Uri?>,
 ) {
@@ -174,26 +178,33 @@ fun ProfileImageIcon(
                 .border(BorderStroke(1.dp, Gray300), shape = CircleShape),
             shape = CircleShape
         ) {
-            if (selectedImage == null) {
-                DefaultProfileImage(galleryLauncher)
-            } else {
-                SelectedProfileImage(selectedImage, galleryLauncher)
+            when (profileImageType) {
+                is ProfileImageType.DEFAULT -> DefaultProfileImage(galleryLauncher)
+                is ProfileImageType.LOCAL -> SelectedProfileImage(profileImageType, galleryLauncher)
+                is ProfileImageType.SOCIAL -> SelectedProfileImage(
+                    profileImageType,
+                    galleryLauncher
+                )
             }
         }
-
     }
-
 }
 
 @Composable
 private fun SelectedProfileImage(
-    selectedImage: Uri,
+    selectedImage: ProfileImageType,
     galleryLauncher: ManagedActivityResultLauncher<String, Uri?>,
 ) {
     Box {
         Image(
             modifier = Modifier.fillMaxSize(),
-            painter = rememberAsyncImagePainter(model = selectedImage),
+            painter = rememberAsyncImagePainter(
+                model = when (selectedImage) {
+                    is ProfileImageType.LOCAL -> selectedImage.uri
+                    is ProfileImageType.SOCIAL -> selectedImage.imgUrl
+                    else -> {}
+                }
+            ),
             contentScale = ContentScale.Crop,
             contentDescription = "IMG_DUMMY"
         )
