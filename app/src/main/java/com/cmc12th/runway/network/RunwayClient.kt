@@ -1,14 +1,8 @@
 package com.cmc12th.runway.network
 
 import com.cmc12th.runway.data.request.*
-import com.cmc12th.runway.data.response.LoginResponse
-import com.cmc12th.runway.data.response.SignUpResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
-import retrofit2.http.Body
-import retrofit2.http.Part
-import retrofit2.http.PartMap
-import retrofit2.http.Query
 import javax.inject.Inject
 
 class RunwayClient @Inject constructor(
@@ -38,7 +32,8 @@ class RunwayClient @Inject constructor(
     suspend fun signUp(
         feedPostReqeust: HashMap<String, RequestBody>,
         categoryList: List<MultipartBody.Part>,
-    ) = loginService.signUp(feedPostReqeust, categoryList)
+        multipartFile: MultipartBody.Part?,
+    ) = loginService.signUp(feedPostReqeust, categoryList, multipartFile)
 
     suspend fun kakoSignUp(
         feedPostReqeust: HashMap<String, RequestBody>,

@@ -1,8 +1,12 @@
 package com.cmc12th.runway.ui.signin
 
+import android.content.Context
+import android.graphics.BitmapFactory
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.cmc12th.runway.R
 import com.cmc12th.runway.data.request.LoginCheckRequest
 import com.cmc12th.runway.data.request.SendVerifyMessageRequest
 import com.cmc12th.runway.data.response.ErrorResponse
@@ -10,21 +14,24 @@ import com.cmc12th.runway.domain.repository.SignInRepository
 import com.cmc12th.runway.network.toPlainRequestBody
 import com.cmc12th.runway.ui.signin.model.*
 import com.cmc12th.runway.utils.Constants.CATEGORYS
+import com.cmc12th.runway.utils.fileFromContentUri
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
-import java.io.File
+import retrofit2.http.Multipart
 import java.util.*
 import javax.inject.Inject
 
 
 @HiltViewModel
 class SignInViewModel @Inject constructor(
-    private val signInRepository: SignInRepository
+    private val signInRepository: SignInRepository,
+    @ApplicationContext private val context: Context,
 ) : ViewModel() {
 
     private val _nameAndNationality = MutableStateFlow(NameAndNationality.default())
@@ -51,8 +58,8 @@ class SignInViewModel @Inject constructor(
     private val _nickName = MutableStateFlow(Nickname.default())
     private val _profileImage = MutableStateFlow<ProfileImageType>(ProfileImageType.DEFAULT)
 
-    private val _categoryTags = MutableStateFlow(CATEGORYS.map {
-        CategoryTag(it)
+    private val _categoryTags = MutableStateFlow(CATEGORYS.mapIndexed { index, name ->
+        CategoryTag(index + 1, name)
     }.toMutableList())
 
 
@@ -74,7 +81,6 @@ class SignInViewModel @Inject constructor(
         _retryTime.value = DEFAULT_RETRY_TIME
     }
 
-
     fun sendVerifyMessage(onSuccess: () -> Unit, onError: (ErrorResponse) -> Unit) =
         viewModelScope.launch {
             val params = SendVerifyMessageRequest(_phone.value.number)
@@ -93,23 +99,43 @@ class SignInViewModel @Inject constructor(
             }
         }
 
-    fun signUp() = viewModelScope.launch {
-        val params = hashMapOf<String, RequestBody>()
+    fun checkNickname() = viewModelScope.launch {
+        signInRepository.checkNickname(nickname = _nickName.value.text).collect() {
 
-        // TODO 이미지를 선택 안하면 Drawble을 파일로 바꿔서 보내야함 미치겠네
-        val file = image.path?.let { File(it) } ?: return@launch
-        val requestBody: RequestBody = file.asRequestBody("image/*".toMediaType())
-
-        val multipartFile = MultipartBody.Part.createFormData("images", file.name, requestBody)
-        params["gender"] = "남".toPlainRequestBody()
-        params["name"] = "이름".toPlainRequestBody()
-        params["nickname"] = "닉네임".toPlainRequestBody()
-        params["password"] = "패스워드".toPlainRequestBody()
-        params["phone"] = "전화번호".toPlainRequestBody()
-        val categoryList = _categoryTags.value.filter { it.isSelected }.map {
-            MultipartBody.Part.createFormData("categoryList", it.name)
         }
     }
+
+    fun signUp(onSuccess: () -> Unit, onError: (ErrorResponse) -> Unit) = viewModelScope.launch {
+
+        /** List형태 MultiPart 설정 */
+        val categoryList: ArrayList<MultipartBody.Part> = ArrayList()
+        _categoryTags.value.filter { it.isSelected }.forEach {
+            categoryList.add(MultipartBody.Part.createFormData("categoryList", it.id.toString()))
+        }
+
+        /** 단일 인자 MultiPart 설정 */
+        val feedPostReqeust = hashMapOf<String, RequestBody>()
+        feedPostReqeust["gender"] = _gender.value.text.toPlainRequestBody()
+        feedPostReqeust["name"] = _nameAndNationality.value.name.toPlainRequestBody()
+        feedPostReqeust["nickname"] = _nickName.value.text.toPlainRequestBody()
+        feedPostReqeust["password"] = _password.value.value.toPlainRequestBody()
+        feedPostReqeust["phone"] = _phone.value.number.toPlainRequestBody()
+
+        /** 이미지 파일 변환 */
+        val multipartFile = convetProfileImageToMultipartFile()
+
+        signInRepository.signUp(
+            multipartFile = multipartFile,
+            feedPostReqeust = feedPostReqeust,
+            categoryList = categoryList
+        ).collect {
+            it.onSuccess {
+                onSuccess()
+            }
+            it.onError(onError)
+        }
+    }
+
 
     fun kakaoSignUp(image: Uri) = viewModelScope.launch {
         val params = hashMapOf<String, RequestBody>()
@@ -124,6 +150,17 @@ class SignInViewModel @Inject constructor(
             MultipartBody.Part.createFormData("categoryList", it.name)
         }
     }
+
+    private fun convetProfileImageToMultipartFile() =
+        when (val profileImage = _profileImage.value) {
+            ProfileImageType.DEFAULT -> null
+            is ProfileImageType.SOCIAL -> null
+            is ProfileImageType.LOCAL -> {
+                val file = fileFromContentUri(context, profileImage.uri)
+                val requestBody: RequestBody = file.asRequestBody("image/*".toMediaType())
+                MultipartBody.Part.createFormData("multipartFile", file.name, requestBody)
+            }
+        }
 
 
     fun updateCategoryTags(categoryTag: CategoryTag) {

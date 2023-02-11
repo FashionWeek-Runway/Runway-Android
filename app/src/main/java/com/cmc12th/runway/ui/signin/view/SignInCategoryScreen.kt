@@ -54,9 +54,11 @@ fun SignInCategoryScreen(
             HeightSpacer(height = 20.dp)
             Column() {
                 Row {
-                    Text(text = uiState.nickName.text,
+                    Text(
+                        text = uiState.nickName.text,
                         style = HeadLine3,
-                        color = Primary)
+                        color = Primary
+                    )
                     Text(text = "님의 옷 스타일을", style = SubHeadline1)
                 }
                 Text(text = "선택해주세요.", style = SubHeadline1)
@@ -74,10 +76,18 @@ fun SignInCategoryScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(20.dp),
+            enabled = uiState.anyCategorySelected(),
             shape = RectangleShape,
             colors = ButtonDefaults.buttonColors(if (uiState.anyCategorySelected()) Color.Black else Gray300),
             onClick = {
-                appState.navController.navigate(SIGNIN_COMPLETE_ROUTE)
+                signInViewModel.signUp(
+                    onSuccess = {
+                        appState.navigate(SIGNIN_COMPLETE_ROUTE)
+                    },
+                    onError = {
+                        appState.showSnackbar(it.message)
+                    }
+                )
             }
         ) {
             Text(text = "다음", modifier = Modifier.padding(0.dp, 5.dp), fontSize = 16.sp)

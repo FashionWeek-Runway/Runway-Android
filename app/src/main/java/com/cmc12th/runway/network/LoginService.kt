@@ -45,6 +45,7 @@ interface LoginService {
     suspend fun signUp(
         @PartMap feedPostReqeust: HashMap<String, RequestBody>,
         @Part categoryList: List<MultipartBody.Part>,
+        @Part multipartFile: MultipartBody.Part?,
     ): NetworkResponse<SignUpResponse>
 
     /** 소셜 회원가입 */

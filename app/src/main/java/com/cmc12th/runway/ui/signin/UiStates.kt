@@ -3,6 +3,7 @@ package com.cmc12th.runway.ui.signin
 import com.cmc12th.runway.ui.signin.SignInViewModel.Companion.DEFAULT_RETRY_TIME
 import com.cmc12th.runway.ui.signin.model.*
 import com.cmc12th.runway.utils.Constants
+import com.cmc12th.runway.utils.Constants.CATEGORYS
 
 data class SignInUserVerificationUiState(
     val nameAndNationality: NameAndNationality = NameAndNationality.default(),
@@ -44,8 +45,8 @@ data class SignInProfileImageUiState(
 
 data class SignInCategoryUiState(
     val nickName: Nickname = Nickname.default(),
-    val categoryTags: MutableList<CategoryTag> = Constants.CATEGORYS.map {
-        CategoryTag(it)
+    val categoryTags: MutableList<CategoryTag> = CATEGORYS.mapIndexed { index, name ->
+        CategoryTag(index + 1, name)
     }.toMutableList(),
 ) {
     fun anyCategorySelected() = categoryTags.any { it.isSelected }

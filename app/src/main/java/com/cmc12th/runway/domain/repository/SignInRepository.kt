@@ -5,14 +5,12 @@ import com.cmc12th.runway.data.request.LoginRequest
 import com.cmc12th.runway.data.request.PasswordAndPhoneNumberRequest
 import com.cmc12th.runway.data.request.SendVerifyMessageRequest
 import com.cmc12th.runway.data.response.LoginResponse
-import com.cmc12th.runway.data.response.ResponseWrapper
-import com.cmc12th.runway.network.ApiState
+import com.cmc12th.runway.data.response.SignUpResponse
 import com.cmc12th.runway.utils.ApiWrapper
 import com.cmc12th.runway.utils.DefaultApiWrapper
-import com.cmc12th.runway.utils.DefaultResponse
 import kotlinx.coroutines.flow.Flow
-import retrofit2.http.Body
-import retrofit2.http.Query
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 
 interface SignInRepository {
     fun login(loginRequest: LoginRequest): Flow<ApiWrapper<LoginResponse>>
@@ -25,4 +23,9 @@ interface SignInRepository {
 
     fun modifyPassword(passwordAndPhoneNumberRequest: PasswordAndPhoneNumberRequest): Flow<DefaultApiWrapper>
 
+    fun signUp(
+        feedPostReqeust: HashMap<String, RequestBody>,
+        categoryList: List<MultipartBody.Part>,
+        multipartFile: MultipartBody.Part?,
+    ): Flow<ApiWrapper<SignUpResponse>>
 }
