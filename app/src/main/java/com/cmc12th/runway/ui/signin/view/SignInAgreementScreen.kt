@@ -98,6 +98,7 @@ fun SignInAgreementScreen(
                 Button(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RectangleShape,
+                    enabled = uiState.isAllChcked(),
                     colors = ButtonDefaults.buttonColors(if (uiState.isAllChcked()) Black else Gray300),
                     onClick = {
                         appState.navController.navigate(SIGNIN_PROFILE_IMAGE_ROUTE)
