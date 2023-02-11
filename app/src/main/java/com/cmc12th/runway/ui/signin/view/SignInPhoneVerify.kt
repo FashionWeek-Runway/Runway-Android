@@ -2,6 +2,7 @@
 
 package com.cmc12th.runway.ui.signin.view
 
+import android.util.Log
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -16,9 +17,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -26,6 +25,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.cmc12th.runway.broadcast.SystemBroadcastReceiver
+import com.cmc12th.runway.broadcast.parseSmsMessage
 import com.cmc12th.runway.ui.components.BackIcon
 import com.cmc12th.runway.ui.components.CustomTextField
 import com.cmc12th.runway.ui.components.HeightSpacer
@@ -35,6 +36,7 @@ import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.signin.SignInViewModel
 import com.cmc12th.runway.ui.signin.components.OnBoardHeadLine
 import com.cmc12th.runway.ui.theme.*
+import com.cmc12th.runway.utils.Constants
 import com.cmc12th.runway.utils.Constants.SIGNIN_PASSWORD_ROUTE
 
 @Composable
@@ -57,6 +59,17 @@ fun SignInPhoneVerifyScreen(
                 verifyErrorMessage.value = it.message
             }
         )
+    }
+
+    SystemBroadcastReceiver(Constants.SMS_INTENT_ACTION) { intent ->
+        val bundle = intent?.extras ?: return@SystemBroadcastReceiver // 번들이 없을때는 아무일도 없었다 시전
+        val messages = parseSmsMessage(bundle)
+        if (messages.isNotEmpty()) {
+            // 문자메세지 내용 추출
+            val contents = messages[0]?.messageBody.toString()
+            val regex = Regex("""[^0-9]""")
+            signInViewModel.updateVerifyCode(contents.replace(regex, ""))
+        }
     }
 
     Column(
