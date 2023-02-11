@@ -1,8 +1,10 @@
 package com.cmc12th.runway.ui.signin
 
 import android.net.Uri
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.cmc12th.runway.data.request.LoginCheckRequest
 import com.cmc12th.runway.data.request.SendVerifyMessageRequest
 import com.cmc12th.runway.data.response.ErrorResponse
 import com.cmc12th.runway.domain.repository.SignInRepository
@@ -17,6 +19,7 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import java.io.File
+import java.util.*
 import javax.inject.Inject
 
 
@@ -31,6 +34,7 @@ class SignInViewModel @Inject constructor(
     private val _phone = MutableStateFlow(Phone.default())
     private val _userVerificationStatus = MutableStateFlow(false)
 
+    private val _retryTime = MutableStateFlow(DEFAULT_RETRY_TIME)
     private val _verifyCode = MutableStateFlow("")
 
     private val _password = MutableStateFlow(Password.default())
@@ -52,10 +56,38 @@ class SignInViewModel @Inject constructor(
         CategoryTag(it)
     }.toMutableList())
 
+
+    private val timer = Timer()
+    private val timerTask = object : TimerTask() {
+        override fun run() {
+            _retryTime.update { _retryTime.value - 1 }
+            if (_retryTime.value <= 0) {
+                timer.cancel()
+            }
+        }
+    }
+
+    fun startTimer() {
+        timer.schedule(timerTask, 0, 1000);
+    }
+
+    fun resetTimer() {
+        _retryTime.value = DEFAULT_RETRY_TIME
+    }
+
     fun sendVerifyMessage(onSuccess: () -> Unit, onError: (ErrorResponse) -> Unit) =
         viewModelScope.launch {
             val params = SendVerifyMessageRequest(_phone.value.number)
             signInRepository.sendVerifyMessage(params).collect { apiState ->
+                apiState.onSuccess { onSuccess() }
+                apiState.onError { onError(it) }
+            }
+        }
+
+    fun verifyPhoneNumber(onSuccess: () -> Unit, onError: (ErrorResponse) -> Unit) =
+        viewModelScope.launch {
+            val params = LoginCheckRequest(_verifyCode.value, _phone.value.number)
+            signInRepository.verifyPhoneNumber(params).collect { apiState ->
                 apiState.onSuccess { onSuccess() }
                 apiState.onError { onError(it) }
             }
@@ -175,8 +207,8 @@ class SignInViewModel @Inject constructor(
     )
 
     val phoneVerifyUiState: StateFlow<SignInPhoneVerifyUiState> =
-        combine(_phone, _verifyCode) { phone, verifyCode ->
-            SignInPhoneVerifyUiState(phone = phone, verifyCode = verifyCode)
+        combine(_phone, _verifyCode, _retryTime) { phone, verifyCode, retryTime ->
+            SignInPhoneVerifyUiState(phone = phone, verifyCode = verifyCode, retryTime = retryTime)
         }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
@@ -231,4 +263,8 @@ class SignInViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = SignInCompleteUiState()
         )
+
+    companion object {
+        const val DEFAULT_RETRY_TIME = 180
+    }
 }

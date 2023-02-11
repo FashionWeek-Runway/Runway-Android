@@ -1,4 +1,4 @@
-@file:OptIn(ExperimentalFoundationApi::class, ExperimentalLayoutApi::class)
+@file:OptIn(ExperimentalComposeUiApi::class)
 
 package com.cmc12th.runway.ui.signin.view
 
@@ -10,15 +10,17 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -34,7 +36,6 @@ import com.cmc12th.runway.ui.signin.SignInViewModel
 import com.cmc12th.runway.ui.signin.components.OnBoardHeadLine
 import com.cmc12th.runway.ui.theme.*
 import com.cmc12th.runway.utils.Constants.SIGNIN_PASSWORD_ROUTE
-import kotlin.math.sign
 
 @Composable
 fun SignInPhoneVerifyScreen(
@@ -43,6 +44,20 @@ fun SignInPhoneVerifyScreen(
 ) {
 
     val uiState by signInViewModel.phoneVerifyUiState.collectAsStateWithLifecycle()
+    val verifyErrorMessage = remember {
+        mutableStateOf("")
+    }
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val verifyPhoneNumber: () -> Unit = {
+        keyboardController?.hide()
+        signInViewModel.verifyPhoneNumber(
+            onSuccess = { appState.navController.navigate(SIGNIN_PASSWORD_ROUTE) },
+            onError = {
+                appState.showSnackbar(it.message)
+                verifyErrorMessage.value = it.message
+            }
+        )
+    }
 
     Column(
         modifier = Modifier
@@ -53,7 +68,9 @@ fun SignInPhoneVerifyScreen(
             BackIcon()
         }
         OnBoardStep(2)
-
+        TestButon {
+            appState.navController.navigate(SIGNIN_PASSWORD_ROUTE)
+        }
         Column(
             modifier = Modifier
                 .weight(1f)
@@ -68,21 +85,35 @@ fun SignInPhoneVerifyScreen(
                 Text(text = "으로 발송되었습니다.", color = Gray700, style = Body2)
             }
             HeightSpacer(height = 40.dp)
+
             /** 인증번호 입력 */
             InputVerificationCode(
+                retryTime = uiState.retryTime,
+                verifyErrorMessage = verifyErrorMessage.value,
                 verifyCode = uiState.verifyCode,
+                resendMessage = {
+                    keyboardController?.hide()
+                    signInViewModel.sendVerifyMessage(
+                        onSuccess = {
+                            signInViewModel.resetTimer()
+                            appState.showSnackbar("인증번호를 재요청 했습니다.")
+                        },
+                        onError = {
+                            appState.showSnackbar(it.message)
+                        }
+                    )
+                },
+                verifyPhonNumber = { if (uiState.verifyCode.length == 6) verifyPhoneNumber() },
                 updateVerifyCode = { signInViewModel.updateVerifyCode(it) }
             )
         }
         Button(
-            onClick = {
-                appState.navController.navigate(SIGNIN_PASSWORD_ROUTE)
-            },
+            onClick = verifyPhoneNumber,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(50.dp),
             shape = RectangleShape,
-            // TODO 로직수정
+            enabled = uiState.verifyCode.length == 6,
             colors = ButtonDefaults.buttonColors(if (uiState.verifyCode.length == 6) Color.Black else Gray300)
         ) {
             Text(
@@ -99,6 +130,10 @@ fun SignInPhoneVerifyScreen(
 private fun InputVerificationCode(
     verifyCode: String,
     updateVerifyCode: (String) -> Unit,
+    verifyErrorMessage: String,
+    resendMessage: () -> Unit,
+    retryTime: Int,
+    verifyPhonNumber: () -> Unit,
 ) {
 
     val focusRequester = remember {
@@ -113,7 +148,7 @@ private fun InputVerificationCode(
         Box(Modifier.weight(1f)) {
             CustomTextField(
                 trailingIcon = {
-                    RetryContainer()
+                    RetryContainer(retryTime = retryTime, resendMessage = resendMessage)
                 },
                 modifier = Modifier,
                 fontSize = 16.sp,
@@ -126,25 +161,33 @@ private fun InputVerificationCode(
                     imeAction = ImeAction.Done
                 ),
                 keyboardActions = KeyboardActions(onDone = {
+                    verifyPhonNumber()
                 }),
+                onErrorState = verifyErrorMessage.isNotBlank(),
+                errorMessage = verifyErrorMessage
             )
-
         }
     }
 }
 
 @Composable
-private fun BoxScope.RetryContainer() {
+private fun BoxScope.RetryContainer(resendMessage: () -> Unit, retryTime: Int) {
     Row(
         modifier = Modifier.Companion.align(Alignment.CenterEnd),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(text = "3:00", color = Error_Color, fontSize = 14.sp)
+        Text(
+            text = "${retryTime / 60}:${"%02d".format(retryTime % 60)}",
+            color = Error_Color,
+            fontSize = 14.sp
+        )
         WidthSpacer(width = 15.dp)
         Box(modifier = Modifier
             .clip(RoundedCornerShape(5.dp))
             .background(Blue100)
-            .clickable {}) {
+            .clickable {
+                resendMessage()
+            }) {
             Text(
                 text = "재요청",
                 modifier = Modifier.padding(14.dp, 7.dp),

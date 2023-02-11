@@ -1,6 +1,7 @@
 package com.cmc12th.runway.ui.signin
 
 import android.net.Uri
+import com.cmc12th.runway.ui.signin.SignInViewModel.Companion.DEFAULT_RETRY_TIME
 import com.cmc12th.runway.ui.signin.model.*
 import com.cmc12th.runway.utils.Constants
 
@@ -15,6 +16,7 @@ data class SignInUserVerificationUiState(
 data class SignInPhoneVerifyUiState(
     val phone: Phone = Phone.default(),
     val verifyCode: String = "",
+    val retryTime: Int = DEFAULT_RETRY_TIME,
 )
 
 data class SignInPasswordUiState(

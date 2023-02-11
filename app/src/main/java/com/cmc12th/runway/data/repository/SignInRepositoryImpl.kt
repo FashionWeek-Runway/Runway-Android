@@ -1,6 +1,8 @@
 package com.cmc12th.runway.data.repository
 
+import com.cmc12th.runway.data.request.LoginCheckRequest
 import com.cmc12th.runway.data.request.LoginRequest
+import com.cmc12th.runway.data.request.PasswordAndPhoneNumberRequest
 import com.cmc12th.runway.data.request.SendVerifyMessageRequest
 import com.cmc12th.runway.data.response.LoginResponse
 import com.cmc12th.runway.data.response.ResponseWrapper
@@ -27,4 +29,17 @@ class SignInRepositoryImpl @Inject constructor(
         safeFlow {
             runwayClient.sendVerifyMessage(sendVerifyMessageRequest)
         }
+
+    override fun verifyPhoneNumber(loginCheckRequest: LoginCheckRequest): Flow<DefaultApiWrapper> =
+        safeFlow {
+            runwayClient.verifyPhoneNumber(loginCheckRequest)
+        }
+
+    override fun checkNickname(nickname: String): Flow<DefaultApiWrapper> {
+        TODO("Not yet implemented")
+    }
+
+    override fun modifyPassword(passwordAndPhoneNumberRequest: PasswordAndPhoneNumberRequest): Flow<DefaultApiWrapper> {
+        TODO("Not yet implemented")
+    }
 }

@@ -25,6 +25,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -69,6 +70,7 @@ fun SignInUserInfoVerifyScreen(
         bottomsheetState
     ) {
         UserVerificationContents(
+            keyboardController,
             appState,
             showBottomSheet,
             signInViewModel,
@@ -78,6 +80,7 @@ fun SignInUserInfoVerifyScreen(
 
 @Composable
 private fun UserVerificationContents(
+    keyboardController: SoftwareKeyboardController?,
     appState: ApplicationState,
     showBottomSheet: (BottomSheetContent) -> Unit,
     viewmodel: SignInViewModel,
@@ -94,6 +97,23 @@ private fun UserVerificationContents(
     val scrollState = rememberScrollState()
     val passwordErrorMessage = remember {
         mutableStateOf("")
+    }
+
+    val sendVerifyMessage: () -> Unit = {
+        keyboardController?.hide()
+        viewmodel.sendVerifyMessage(
+            onSuccess = {
+                viewmodel.startTimer()
+                appState.navController.navigate(SIGNIN_PHONE_VERIFY_ROUTE)
+            },
+            onError = {
+                when (it.code) {
+                    "U005" -> passwordErrorMessage.value = it.message
+                    else -> coroutineScope.launch {
+                        appState.showSnackbar(it.message)
+                    }
+                }
+            })
     }
 
     Column(
@@ -149,6 +169,9 @@ private fun UserVerificationContents(
                 changeFocus = {
                     isPhoneFocused.value = it
                 },
+                sendVerifyMessage = {
+                    if (uiState.userVerificationStatus) sendVerifyMessage()
+                },
                 errorMessage = passwordErrorMessage.value,
                 showBottomSheet = showBottomSheet,
                 phone = uiState.phone,
@@ -169,19 +192,7 @@ private fun UserVerificationContents(
                 colors = ButtonDefaults.buttonColors(
                     if (uiState.userVerificationStatus) Color.Black else Gray300
                 ),
-                onClick = {
-                    viewmodel.sendVerifyMessage(
-                        onSuccess = {
-                            appState.navController.navigate(SIGNIN_PHONE_VERIFY_ROUTE)
-                        },
-                        onError = {
-                            when (it.code) {
-                                "U005" -> passwordErrorMessage.value = it.message
-                                else -> coroutineScope.launch { appState.showSnackbar(it.message) }
-                            }
-                        }
-                    )
-                }) {
+                onClick = { sendVerifyMessage() }) {
                 Text(
                     modifier = Modifier.padding(0.dp, 5.dp),
                     text = "인증 요청",
@@ -212,6 +223,7 @@ fun PhoneContainer(
     focusRequest: FocusRequester,
     onscrollBottom: () -> Unit,
     errorMessage: String,
+    sendVerifyMessage: () -> Unit,
 ) {
 
     val isDropDownMenuExpanded = remember {
@@ -284,6 +296,7 @@ fun PhoneContainer(
                 imeAction = ImeAction.Done
             ),
             keyboardActions = KeyboardActions(onDone = {
+                sendVerifyMessage()
             }),
             onErrorState = phone.number.isNotBlank() && !phone.checkValidation(),
             errorMessage = errorMessage.ifBlank { "휴대폰번호 11자를 입력해주세요." }
