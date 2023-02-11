@@ -60,7 +60,7 @@ fun SignInPhoneVerifyScreen(
         )
     }
 
-    SystemBroadcastReceiver(Constants.SMS_INTENT_ACTION) { intent ->
+    SystemBroadcastReceiver(Constants.SNS_INTENT_ACTION) { intent ->
         val bundle = intent?.extras ?: return@SystemBroadcastReceiver // 번들이 없을때는 아무일도 없었다 시전
         val messages = parseSmsMessage(bundle)
         if (messages.isNotEmpty()) {
