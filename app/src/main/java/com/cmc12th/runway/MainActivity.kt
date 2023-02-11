@@ -2,11 +2,8 @@ package com.cmc12th.runway
 
 import android.graphics.Bitmap
 import android.os.Bundle
-import android.util.Log
-import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.animation.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
@@ -15,7 +12,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.core.view.WindowCompat
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
@@ -37,11 +33,10 @@ import com.cmc12th.runway.utils.Constants.MAP_ROUTE
 import com.cmc12th.runway.utils.Constants.MYPAGE_ROUTE
 import com.cmc12th.runway.utils.Constants.PHOTO_REVIEW_RESULT_ROUTE
 import com.cmc12th.runway.utils.Constants.PHOTO_REVIEW_ROUTE
-import com.cmc12th.runway.utils.Constants.SIGNIN_PHONE_VERIFY_ROUTE
-import com.cmc12th.runway.utils.Constants.SIGNIN_USER_VERIFICATION_ROUTE
 import com.cmc12th.runway.utils.Constants.SPLASH_ROUTE
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -75,11 +70,13 @@ private fun rememberApplicationState(
     bottomBarState: MutableState<Boolean> = mutableStateOf(false),
     navController: NavHostController = rememberNavController(),
     scaffoldState: ScaffoldState = rememberScaffoldState(),
+    coroutineScope: CoroutineScope = rememberCoroutineScope()
 ) = remember(Unit) {
     ApplicationState(
         bottomBarState,
         navController,
         scaffoldState,
+        coroutineScope,
     )
 }
 
