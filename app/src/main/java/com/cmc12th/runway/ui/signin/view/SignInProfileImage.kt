@@ -74,7 +74,9 @@ fun SignInProfileImage(
                 signInViewModel.updateProfileImage(image)
             }
         }
-
+    val errorMessage = remember {
+        mutableStateOf("")
+    }
     Column(
         modifier = Modifier
             .imePadding()
@@ -104,13 +106,26 @@ fun SignInProfileImage(
             HeightSpacer(height = heightSpacerSize)
             InputNickname(
                 nickname = uiState.nickName,
-                updateNickName = { signInViewModel.updateNickName(it) }
+                errorMessage = errorMessage.value,
+                updateNickName = {
+                    errorMessage.value = ""
+                    signInViewModel.updateNickName(it)
+                }
             )
         }
 
         Button(
             onClick = {
-                appState.navController.navigate(SIGNIN_CATEGORY_ROUTE)
+                errorMessage.value = ""
+                signInViewModel.checkNickname(
+                    onSuccess = {
+                        appState.navController.navigate(SIGNIN_CATEGORY_ROUTE)
+                    },
+                    onError = {
+                        errorMessage.value = it.message
+                        appState.showSnackbar(it.message)
+                    }
+                )
             },
             modifier = Modifier
                 .fillMaxWidth()
@@ -138,6 +153,7 @@ fun SignInProfileImage(
 fun InputNickname(
     nickname: Nickname,
     updateNickName: (String) -> Unit,
+    errorMessage: String,
 ) {
     CustomTextField(
         modifier = Modifier
@@ -154,8 +170,8 @@ fun InputNickname(
         ),
         keyboardActions = KeyboardActions(onDone = {
         }),
-        onErrorState = nickname.text.isNotBlank() && !nickname.checkValidate(),
-        errorMessage = "닉네임은 한글, 영어 혼합 2~10글자 입니다."
+        onErrorState = errorMessage.isNotBlank() || (nickname.text.isNotBlank() && !nickname.checkValidate()),
+        errorMessage = errorMessage.ifBlank { "닉네임은 한글, 영어 혼합 2~10글자 입니다." }
     )
 }
 

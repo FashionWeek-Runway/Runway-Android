@@ -100,6 +100,7 @@ private fun UserVerificationContents(
     }
 
     val sendVerifyMessage: () -> Unit = {
+        passwordErrorMessage.value = ""
         keyboardController?.hide()
         viewmodel.sendVerifyMessage(
             onSuccess = {
@@ -109,10 +110,9 @@ private fun UserVerificationContents(
             onError = {
                 when (it.code) {
                     "U005" -> passwordErrorMessage.value = it.message
-                    else -> coroutineScope.launch {
-                        appState.showSnackbar(it.message)
-                    }
+                    else -> {}
                 }
+                appState.showSnackbar(it.message)
             })
     }
 
@@ -176,7 +176,10 @@ private fun UserVerificationContents(
                 showBottomSheet = showBottomSheet,
                 phone = uiState.phone,
                 updateMobildeCarrier = { viewmodel.updateMobileCarrier(it) },
-                updatePhoneNumber = { viewmodel.updatePhoneNumber(it) }
+                updatePhoneNumber = {
+                    passwordErrorMessage.value = ""
+                    viewmodel.updatePhoneNumber(it)
+                }
             )
             HeightSpacer(height = 10.dp)
         }
@@ -298,7 +301,7 @@ fun PhoneContainer(
             keyboardActions = KeyboardActions(onDone = {
                 sendVerifyMessage()
             }),
-            onErrorState = phone.number.isNotBlank() && !phone.checkValidation(),
+            onErrorState = errorMessage.isNotBlank() || (phone.number.isNotBlank() && !phone.checkValidation()),
             errorMessage = errorMessage.ifBlank { "휴대폰번호 11자를 입력해주세요." }
         )
 

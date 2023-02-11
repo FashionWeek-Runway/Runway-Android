@@ -1,12 +1,9 @@
 package com.cmc12th.runway.ui.signin
 
 import android.content.Context
-import android.graphics.BitmapFactory
 import android.net.Uri
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.cmc12th.runway.R
 import com.cmc12th.runway.data.request.LoginCheckRequest
 import com.cmc12th.runway.data.request.SendVerifyMessageRequest
 import com.cmc12th.runway.data.response.ErrorResponse
@@ -23,7 +20,6 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
-import retrofit2.http.Multipart
 import java.util.*
 import javax.inject.Inject
 
@@ -99,11 +95,15 @@ class SignInViewModel @Inject constructor(
             }
         }
 
-    fun checkNickname() = viewModelScope.launch {
-        signInRepository.checkNickname(nickname = _nickName.value.text).collect() {
-
+    fun checkNickname(onSuccess: () -> Unit, onError: (ErrorResponse) -> Unit) =
+        viewModelScope.launch {
+            signInRepository.checkNickname(nickname = _nickName.value.text).collect {
+                it.onSuccess {
+                    onSuccess()
+                }
+                it.onError(onError)
+            }
         }
-    }
 
     fun signUp(onSuccess: () -> Unit, onError: (ErrorResponse) -> Unit) = viewModelScope.launch {
 

@@ -40,9 +40,6 @@ class LoginViewModel @Inject constructor(
                 it.onLoading {
 
                 }
-                it.onNotResponse {
-
-                }
             }
     }
 }
