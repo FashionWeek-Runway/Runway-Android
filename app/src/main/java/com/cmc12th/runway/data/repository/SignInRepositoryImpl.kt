@@ -1,9 +1,6 @@
 package com.cmc12th.runway.data.repository
 
-import com.cmc12th.runway.data.request.LoginCheckRequest
-import com.cmc12th.runway.data.request.LoginRequest
-import com.cmc12th.runway.data.request.PasswordAndPhoneNumberRequest
-import com.cmc12th.runway.data.request.SendVerifyMessageRequest
+import com.cmc12th.runway.data.request.*
 import com.cmc12th.runway.data.response.LoginResponse
 import com.cmc12th.runway.data.response.SignUpResponse
 import com.cmc12th.runway.domain.repository.SignInRepository
@@ -50,4 +47,9 @@ class SignInRepositoryImpl @Inject constructor(
     ): Flow<ApiWrapper<SignUpResponse>> = safeFlow {
         runwayClient.signUp(feedPostReqeust, categoryList, multipartFile)
     }
+
+    override fun kakaoLogin(oauthLoginRequest: OauthLoginRequest): Flow<ApiWrapper<LoginResponse>> =
+        safeFlow {
+            runwayClient.kakaoLogin(oauthLoginRequest)
+        }
 }

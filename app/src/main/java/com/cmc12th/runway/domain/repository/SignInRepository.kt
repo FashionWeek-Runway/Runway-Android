@@ -1,9 +1,6 @@
 package com.cmc12th.runway.domain.repository
 
-import com.cmc12th.runway.data.request.LoginCheckRequest
-import com.cmc12th.runway.data.request.LoginRequest
-import com.cmc12th.runway.data.request.PasswordAndPhoneNumberRequest
-import com.cmc12th.runway.data.request.SendVerifyMessageRequest
+import com.cmc12th.runway.data.request.*
 import com.cmc12th.runway.data.response.LoginResponse
 import com.cmc12th.runway.data.response.SignUpResponse
 import com.cmc12th.runway.utils.ApiWrapper
@@ -11,6 +8,7 @@ import com.cmc12th.runway.utils.DefaultApiWrapper
 import kotlinx.coroutines.flow.Flow
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import retrofit2.http.Body
 
 interface SignInRepository {
     fun login(loginRequest: LoginRequest): Flow<ApiWrapper<LoginResponse>>
@@ -28,4 +26,7 @@ interface SignInRepository {
         categoryList: List<MultipartBody.Part>,
         multipartFile: MultipartBody.Part?,
     ): Flow<ApiWrapper<SignUpResponse>>
+
+    fun kakaoLogin(oauthLoginRequest: OauthLoginRequest): Flow<ApiWrapper<LoginResponse>>
+
 }

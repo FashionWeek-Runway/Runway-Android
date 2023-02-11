@@ -1,4 +1,4 @@
-package com.cmc12th.runway.ui.login
+package com.cmc12th.runway.ui.login.view
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -15,15 +15,33 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.cmc12th.runway.R
 import com.cmc12th.runway.ui.domain.model.ApplicationState
+import com.cmc12th.runway.ui.login.LoginViewModel
 import com.cmc12th.runway.ui.theme.HeadLine1
 import com.cmc12th.runway.utils.Constants.LOGIN_ID_PW_ROUTE
+import com.cmc12th.runway.utils.Constants.MAIN_GRAPH
 import com.cmc12th.runway.utils.Constants.SIGNIN_GRAPH
+import com.cmc12th.runway.utils.Constants.SIGNIN_PROFILE_IMAGE_ROUTE
 
 @Composable
 fun LoginBaseScreen(
     appState: ApplicationState,
-    hiltViewModel: LoginViewModel = hiltViewModel(),
+    loginViewModel: LoginViewModel = hiltViewModel(),
 ) {
+
+    val navigateToLogin = {
+        appState.navigate(LOGIN_ID_PW_ROUTE)
+    }
+    val navigateToSignIn = {
+        appState.navigate(SIGNIN_GRAPH)
+    }
+    val navigateToProfileImage: (String, String) -> Unit = { profileImage, kakaoId ->
+        appState.navigate("$SIGNIN_PROFILE_IMAGE_ROUTE?profileImage=$profileImage&kakaoId=$kakaoId")
+    }
+    val navigateToMain = {
+        appState.navigate(MAIN_GRAPH)
+    }
+
+
     Box(modifier = Modifier.fillMaxSize()) {
         /** 배경 */
         Box(
@@ -54,41 +72,61 @@ fun LoginBaseScreen(
         }
 
         /** 아래 가입 부분 */
-        Column(
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .fillMaxHeight(0.2f),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(modifier = Modifier.clickable {
-                appState.navController.navigate(SIGNIN_GRAPH)
-            }, text = "간편하게 가입하기", fontSize = 14.sp, style = HeadLine1)
-            Spacer(modifier = Modifier.height(20.dp))
-            Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                Image(
-                    modifier = Modifier
-                        .size(60.dp)
-                        .clickable {
-                        },
-                    painter = painterResource(id = R.drawable.img_kakao_btn),
-                    contentDescription = "IMG_KAKAO_BTN"
+        BottomLoginButtons(
+            kakaoLogin = {
+                loginViewModel.getKakaoToken(
+                    alreadyRegistered = {
+                        // TODO 토큰 내부 DB에 저장하기
+                        navigateToMain()
+                    },
+                    notRegistered = { profiletImage, kakaoId ->
+                        navigateToProfileImage(profiletImage, kakaoId)
+                    },
+                    onError = {
+                        appState.showSnackbar(it.message)
+                    }
                 )
-                Image(
-                    modifier = Modifier
-                        .size(60.dp)
-                        .clickable {
-                            appState.navController.navigate(LOGIN_ID_PW_ROUTE)
-                        },
-                    painter = painterResource(id = R.drawable.img_dial_btn),
-                    contentDescription = "IMG_DIAL_BTN"
-                )
-            }
-        }
+            },
+            navigateToSignIn = navigateToSignIn, navigateToLogin = navigateToLogin
+        )
     }
 }
 
-//@Preview
-//@Composable
-//fun LoginBaseScreenPreview() {
-//    LoginBaseScreen()
-//}
+
+@Composable
+private fun BoxScope.BottomLoginButtons(
+    navigateToSignIn: () -> Unit,
+    navigateToLogin: () -> Unit,
+    kakaoLogin: () -> Unit,
+) {
+    Column(
+        modifier = Modifier.Companion
+            .align(Alignment.BottomCenter)
+            .fillMaxHeight(0.2f),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            modifier = Modifier.clickable { navigateToSignIn() },
+            text = "간편하게 가입하기",
+            fontSize = 14.sp,
+            style = HeadLine1
+        )
+        Spacer(modifier = Modifier.height(20.dp))
+        Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+            Image(
+                modifier = Modifier
+                    .size(60.dp)
+                    .clickable { kakaoLogin() },
+                painter = painterResource(id = R.drawable.img_kakao_btn),
+                contentDescription = "IMG_KAKAO_BTN"
+            )
+            Image(
+                modifier = Modifier
+                    .size(60.dp)
+                    .clickable { navigateToLogin() },
+                painter = painterResource(id = R.drawable.img_dial_btn),
+                contentDescription = "IMG_DIAL_BTN"
+            )
+        }
+    }
+}
