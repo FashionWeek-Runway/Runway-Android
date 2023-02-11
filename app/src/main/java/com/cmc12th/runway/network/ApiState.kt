@@ -21,11 +21,8 @@ sealed class ApiState<out T : Any> {
         if (this is Error) {
             onError(this@ApiState.errorResponse)
         }
-    }
-
-    fun onNotResponse(onNotResponse: () -> Unit) {
         if (this is NotResponse) {
-            onNotResponse()
+            onError(ErrorResponse("500", false, "네트워크 오류가 발생했습니다."))
         }
     }
 
