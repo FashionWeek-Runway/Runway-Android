@@ -11,4 +11,5 @@ data class ErrorResponse(
     val isSuccess: Boolean,
     @Json(name = "message")
     val message: String,
+    val totalResponse: String = ""
 )
