@@ -375,7 +375,7 @@ private fun RowScope.GenderRadioButton(
             }
     ) {
         Text(
-            text = gender.getText(),
+            text = gender.text,
             fontSize = 14.sp,
             modifier = Modifier
                 .align(Alignment.Center)
