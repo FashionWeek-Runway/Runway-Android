@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cmc12th.runway.ui.components.util.LastPasswordVisibleVisuualTransformation
 import com.cmc12th.runway.ui.components.util.bottomBorder
+import com.cmc12th.runway.ui.theme.Error_Color
 import com.cmc12th.runway.ui.theme.Gray300
 import com.cmc12th.runway.ui.theme.Gray600
 
@@ -49,6 +50,7 @@ fun LastPasswordVisibleCustomTextField(
     keyboardActions: KeyboardActions? = null,
     value: String,
     onvalueChanged: (String) -> Unit,
+    onErrorState: Boolean = false
 ) {
     val hasFocus = remember {
         mutableStateOf(false)
@@ -71,7 +73,7 @@ fun LastPasswordVisibleCustomTextField(
                     bottomLineColor.value = Gray600
                 }
             }
-            .bottomBorder(1.dp, bottomLineColor.value),
+            .bottomBorder(1.dp, if (onErrorState) Error_Color else bottomLineColor.value),
         value = value,
         onValueChange = {
             if (it.length <= 25) onvalueChanged(it)
