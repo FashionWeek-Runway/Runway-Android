@@ -2,7 +2,6 @@
 
 package com.cmc12th.runway.ui.signin.view
 
-import android.util.Log
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape

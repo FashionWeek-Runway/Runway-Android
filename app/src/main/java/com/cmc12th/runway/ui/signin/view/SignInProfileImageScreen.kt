@@ -1,6 +1,7 @@
 package com.cmc12th.runway.ui.signin.view
 
 import android.net.Uri
+import android.util.Log
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -20,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -29,7 +31,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
+import coil.request.ImageRequest
 import com.cmc12th.runway.R
 import com.cmc12th.runway.ui.components.BackIcon
 import com.cmc12th.runway.ui.components.CustomTextField
@@ -46,12 +50,25 @@ import com.cmc12th.runway.utils.Constants.MAX_NICKNAME_LENGTH
 import com.cmc12th.runway.utils.Constants.SIGNIN_CATEGORY_ROUTE
 
 @Composable
-fun SignInProfileImage(
+fun SignInProfileImageScreen(
     appState: ApplicationState,
     signInViewModel: SignInViewModel = hiltViewModel(),
+    profileImage: String,
+    kakaoId: String,
 ) {
 
     val uiState by signInViewModel.profileImageUiState.collectAsStateWithLifecycle()
+
+    val someFlag = remember { mutableStateOf(true) }
+    LaunchedEffect(Unit) {
+        if (someFlag.value) {
+            someFlag.value = false
+            if (profileImage.isNotBlank() && kakaoId.isNotBlank()) {
+                signInViewModel.updateSignIntypeSocial(profileImage, kakaoId)
+            }
+        }
+    }
+
     val isKeyboardOpen by keyboardAsState() // Keyboard.Opened or Keyboard.Closed
     val profileSize by animateFloatAsState(
         targetValue = if (isKeyboardOpen == KeyboardStatus.Opened) 0.4f else 0.66f,
@@ -77,6 +94,7 @@ fun SignInProfileImage(
     val errorMessage = remember {
         mutableStateOf("")
     }
+
     Column(
         modifier = Modifier
             .imePadding()
@@ -93,7 +111,12 @@ fun SignInProfileImage(
                 .verticalScroll(rememberScrollState())
         ) {
             HeightSpacer(height = 20.dp)
-            Row {
+            Row(modifier = Modifier.clickable {
+                signInViewModel.updateProfileImage(
+                    ProfileImageType.SOCIAL(profileImage)
+                )
+            }) {
+
                 Text(text = "프로필", style = HeadLine3)
                 Text(text = "을 설정해주세요.", fontSize = 20.sp, fontWeight = FontWeight.Normal)
             }
@@ -212,18 +235,31 @@ private fun SelectedProfileImage(
     galleryLauncher: ManagedActivityResultLauncher<String, Uri?>,
 ) {
     Box {
-        Image(
-            modifier = Modifier.fillMaxSize(),
-            painter = rememberAsyncImagePainter(
-                model = when (selectedImage) {
-                    is ProfileImageType.LOCAL -> selectedImage.uri
-                    is ProfileImageType.SOCIAL -> selectedImage.imgUrl
-                    else -> {}
-                }
-            ),
-            contentScale = ContentScale.Crop,
-            contentDescription = "IMG_DUMMY"
-        )
+        if (selectedImage is ProfileImageType.SOCIAL) {
+            Log.i("dlgocks1", selectedImage.imgUrl)
+            AsyncImage(
+                modifier = Modifier.fillMaxSize(),
+                model = ImageRequest.Builder(LocalContext.current)
+//                    .data("https://mblogthumb-phinf.pstatic.net/MjAyMjA1MjRfMjMg/MDAxNjUzMzgwMjMxOTg2.Yonm6xZ1a7Dcn_-RMtwP52vnr9SPF7oaLeyzdik4Tosg.V21pJWyKrrrr5h85A1R4SnXB0LK938eJG9oZdsRxOi8g.JPEG.bhybabo/KakaoTalk_20220524_145551442.jpg?type=w800")
+                    .data(selectedImage.imgUrl)
+                    .crossfade(true)
+                    .build(),
+                placeholder = painterResource(R.drawable.img_dummy),
+                error = painterResource(id = R.drawable.img_dummy),
+                contentDescription = "ASDas",
+                contentScale = ContentScale.Crop,
+            )
+        }
+        if (selectedImage is ProfileImageType.LOCAL) {
+            Image(
+                modifier = Modifier.fillMaxSize(),
+                painter = rememberAsyncImagePainter(
+                    model = selectedImage.uri
+                ),
+                contentScale = ContentScale.Crop,
+                contentDescription = "IMG_DUMMY"
+            )
+        }
         Box(
             modifier = Modifier
                 .align(Alignment.BottomCenter)

@@ -1,5 +1,7 @@
 package com.cmc12th.runway
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -12,6 +14,9 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
@@ -42,6 +47,7 @@ import kotlinx.coroutines.CoroutineScope
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        requirePerms()
         setContent {
             val appState = rememberApplicationState()
             val navBackStackEntry by appState.navController.currentBackStackEntryAsState()
@@ -62,6 +68,16 @@ class MainActivity : ComponentActivity() {
         }
         WindowCompat.setDecorFitsSystemWindows(window, false)
     }
+
+    fun requirePerms() {
+        val permissions = arrayOf<String>(Manifest.permission.RECEIVE_SMS)
+        val permissionCheck =
+            ContextCompat.checkSelfPermission(this, Manifest.permission.RECEIVE_SMS)
+        if (permissionCheck == PackageManager.PERMISSION_DENIED) {
+            ActivityCompat.requestPermissions(this, permissions, 1)
+        }
+    }
+
 }
 
 
