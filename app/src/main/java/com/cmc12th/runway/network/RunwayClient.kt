@@ -20,9 +20,6 @@ class RunwayClient @Inject constructor(
 
     suspend fun checkNickname(nickname: String) = loginService.checkNickname(nickname)
 
-    suspend fun duplicatedPhoneNumberCheck(phone: String) =
-        loginService.duplicatedPhoneNumberCheck(phone)
-
     suspend fun kakaoLogin(oauthLoginRequest: OauthLoginRequest) =
         loginService.kakaoLogin(oauthLoginRequest)
 

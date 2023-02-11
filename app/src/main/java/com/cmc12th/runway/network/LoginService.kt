@@ -23,10 +23,6 @@ interface LoginService {
     @GET("/login/check/nickname")
     suspend fun checkNickname(@Query("nickname") nickname: String): DefaultResponse
 
-    /** 유저 전화번호 중복체크 */
-    @GET("/login/check/phone")
-    suspend fun duplicatedPhoneNumberCheck(@Query("phone") phone: String): DefaultResponse
-
     /** 카카오 로그인 */
     @POST("/login/kakao")
     suspend fun kakaoLogin(@Body oauthLoginRequest: OauthLoginRequest): NetworkResponse<LoginResponse>
