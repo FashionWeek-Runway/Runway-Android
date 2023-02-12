@@ -98,6 +98,12 @@ val Button1 = TextStyle(
     fontSize = 16.sp,
 )
 
+val Button2 = TextStyle(
+    fontFamily = SpoqaHansSansNeo,
+    fontWeight = FontWeight.Medium,
+    fontSize = 12.sp,
+)
+
 // Set of Material typography styles to start with
 val Typography = Typography(
     bodyLarge = TextStyle(
