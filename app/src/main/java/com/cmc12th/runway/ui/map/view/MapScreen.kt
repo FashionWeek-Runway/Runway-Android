@@ -1,4 +1,4 @@
-@file:OptIn(ExperimentalNaverMapApi::class)
+@file:OptIn(ExperimentalNaverMapApi::class, ExperimentalMaterialApi::class)
 
 package com.cmc12th.runway.ui.map.view
 
@@ -6,38 +6,37 @@ import android.util.Log
 import android.widget.TextView
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.compose.animation.*
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.*
 import androidx.compose.material3.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.cmc12th.runway.data.model.NaverItem
 import com.cmc12th.runway.R
 import com.cmc12th.runway.ui.components.HeightSpacer
 import com.cmc12th.runway.ui.components.WidthSpacer
-import com.cmc12th.runway.ui.signin.components.StyleCategoryCheckBox
+import com.cmc12th.runway.ui.map.components.BottomGradient
+import com.cmc12th.runway.ui.map.components.NaverMapSearch
 import com.cmc12th.runway.ui.theme.*
-import com.cmc12th.runway.utils.Constants.CATEGORYS
 import com.naver.maps.map.compose.DisposableMapEffect
 import com.naver.maps.map.compose.ExperimentalNaverMapApi
 import com.naver.maps.map.compose.NaverMap
 import com.naver.maps.map.overlay.Marker
 import com.naver.maps.map.overlay.OverlayImage
+import kotlinx.coroutines.launch
 import ted.gun0912.clustering.naver.TedNaverClustering
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun MapScreen() {
 
@@ -59,89 +58,81 @@ fun MapScreen() {
         mutableStateOf(false)
     }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-    ) {
-        /** 네이버 지도 */
-        RunwayNaverMap(items)
-        /** 검색 및 필터 */
-        Column(
-            modifier = Modifier.align(Alignment.TopCenter)
-        ) {
-            NaverMapSearch(onSearch = { onSearching.value = true })
-            Box(
+    val bottomSheetScaffoldState =
+        rememberBottomSheetScaffoldState()
+    val coroutineScope = rememberCoroutineScope()
+    val configuration = LocalConfiguration.current
+    val screenHeight = configuration.screenHeightDp.dp
+
+    LaunchedEffect(key1 = bottomSheetScaffoldState.bottomSheetState.currentValue) {
+        Log.i("dlgocks1", bottomSheetScaffoldState.bottomSheetState.currentValue.toString())
+    }
+    LaunchedEffect(key1 = onSearching.value) {
+        if (onSearching.value) bottomSheetScaffoldState.bottomSheetState.collapse()
+    }
+
+    BottomSheetScaffold(
+        modifier = Modifier.fillMaxSize(),
+        sheetPeekHeight = if (onSearching.value) 0.dp else 60.dp,
+        scaffoldState = bottomSheetScaffoldState,
+        sheetShape = RoundedCornerShape(topStart = 15.dp, topEnd = 15.dp),
+        sheetContent = {
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(20.dp)
-                    .background(
-                        brush = Brush.verticalGradient(listOf(Color.White, Color.Transparent)),
-                        alpha = 0.8f
-                    )
-            )
-        }
-
-        /** 검색 스크린을 위에 깔아버리기 */
-        AnimatedVisibility(
-            visible = onSearching.value,
-            enter = fadeIn(),
-            exit = fadeOut()
-        ) {
-            MapSearchScreen {
-                onSearching.value = false
+                    .height(screenHeight - 200.dp)
+                    .padding(20.dp, 10.dp)
+            ) {
+                Spacer(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(5.dp))
+                        .height(3.dp)
+                        .width(36.dp)
+                        .background(Gray200)
+                        .align(Alignment.CenterHorizontally)
+                )
+                HeightSpacer(height = 10.dp)
+                Text(text = "성수동 둘러보기", style = Body1M, color = Color.Black)
+                AnimatedVisibility(
+                    visible = bottomSheetScaffoldState.bottomSheetState.isExpanded,
+                    enter = fadeIn(),
+                    exit = fadeOut()
+                ) {
+                    Column {
+                        Text(text = "보텀쉿테스트")
+                        Text(text = "보텀쉿테스트")
+                        Text(text = "보텀쉿테스트")
+                        Text(text = "보텀쉿테스트")
+                    }
+                }
             }
         }
-    }
-}
-
-@Composable
-private fun NaverMapSearch(onSearch: () -> Unit) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(Color.White)
     ) {
         Box(
             modifier = Modifier
-                .padding(start = 20.dp, end = 20.dp, top = 20.dp, bottom = 4.dp)
-                .clip(RoundedCornerShape(4.dp))
-                .border(BorderStroke(1.dp, Gray300), RoundedCornerShape(4.dp))
-                .clickable {
-                    onSearch()
-                },
+                .fillMaxSize()
         ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(15.dp, 13.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+            /** 네이버 지도 */
+            RunwayNaverMap(items)
+            /** 검색 및 필터 */
+            Column(
+                modifier = Modifier.align(Alignment.TopCenter)
             ) {
-                Text(text = "지역, 매장명 검색", style = Body1, color = Gray300)
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_baseline_search_24),
-                    contentDescription = "IC_SEARCH",
-                    modifier = Modifier.size(24.dp),
-                    tint = Gray700
-                )
+                NaverMapSearch(onSearch = {
+                    onSearching.value = true
+                })
+                BottomGradient()
             }
-        }
-        HeightSpacer(height = 15.dp)
-        LazyRow(
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            items(CATEGORYS) {
-                val surfaceColor: State<Color> = animateColorAsState(
-//                    if (categoryTag.isSelected) Primary else
-                    White
-                )
-                StyleCategoryCheckBox(
-                    isSelected = false,
-                    color = surfaceColor.value,
-                    onClicked = { /*TODO*/ },
-                    title = it
-                )
-                WidthSpacer(width = 10.dp)
+
+            /** 검색 스크린을 위에 깔아버리기 */
+            AnimatedVisibility(
+                visible = onSearching.value,
+                enter = fadeIn(),
+                exit = fadeOut()
+            ) {
+                MapSearchScreen {
+                    onSearching.value = false
+                }
             }
         }
     }

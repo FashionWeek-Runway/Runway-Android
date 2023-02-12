@@ -118,11 +118,16 @@ fun OnSearching() {
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.Top
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.img_dummy),
-                    contentDescription = "IC_DUMMY",
+                IconButton(
+                    onClick = { /*TODO*/ },
                     modifier = Modifier.size(24.dp)
-                )
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_search_location),
+                        contentDescription = "IC_DUMMY",
+                        tint = Color.Unspecified
+                    )
+                }
                 WidthSpacer(width = 4.dp)
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
@@ -173,11 +178,17 @@ private fun RecentSearches() {
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.img_dummy),
-                        contentDescription = "IC_DUMMY",
+                    IconButton(
+                        onClick = { /*TODO*/ },
                         modifier = Modifier.size(24.dp)
-                    )
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_search_location),
+                            contentDescription = "IC_DUMMY",
+                            tint = Color.Unspecified
+                        )
+                    }
+
                     WidthSpacer(width = 4.dp)
                     Text(
                         text = it,
