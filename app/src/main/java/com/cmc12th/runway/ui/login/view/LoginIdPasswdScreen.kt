@@ -190,7 +190,11 @@ private fun PhoneTextField(
         fontSize = 16.sp,
         value = phone.number,
         placeholderText = "전화번호 입력",
-        onvalueChanged = updatePhoneNumber,
+        onvalueChanged = {
+            if (it.length <= Phone.PHONE_NUMBER_LENGTH) {
+                updatePhoneNumber(it)
+            }
+        },
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Number,
             imeAction = ImeAction.Next
