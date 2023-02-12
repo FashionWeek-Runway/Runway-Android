@@ -30,6 +30,7 @@ import com.cmc12th.runway.ui.signin.model.CategoryTag
 import com.cmc12th.runway.ui.signin.model.SignInType
 import com.cmc12th.runway.ui.theme.*
 import com.cmc12th.runway.utils.Constants.SIGNIN_COMPLETE_ROUTE
+import com.cmc12th.runway.utils.Constants.SIGNIN_GRAPH
 import kotlin.math.sign
 
 @Composable
@@ -83,7 +84,11 @@ fun SignInCategoryScreen(
             shape = RectangleShape,
             colors = ButtonDefaults.buttonColors(if (uiState.anyCategorySelected()) Color.Black else Gray300),
             onClick = {
-                val onSuccess = { appState.navigate(SIGNIN_COMPLETE_ROUTE) }
+                val onSuccess = {
+                    appState.navController.navigate(SIGNIN_COMPLETE_ROUTE) {
+                        popUpTo(SIGNIN_GRAPH)
+                    }
+                }
                 val onError: (ErrorResponse) -> Unit = { appState.showSnackbar(it.message) }
                 when (uiState.signInType) {
                     SignInType.Phone -> signInViewModel.signUp(

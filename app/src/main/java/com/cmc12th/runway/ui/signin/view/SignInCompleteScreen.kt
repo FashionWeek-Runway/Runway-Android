@@ -3,6 +3,7 @@
 package com.cmc12th.runway.ui.signin.view
 
 import android.net.Uri
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.animateContentSize
@@ -100,6 +101,13 @@ fun SignInCompleteScreen(
 
     val uiState by signInViewModel.complteUiState.collectAsStateWithLifecycle()
 
+    BackHandler {
+        appState.navController.navigate(MAIN_GRAPH) {
+            popUpTo(LOGIN_GRAPH) {
+                inclusive = true
+            }
+        }
+    }
     Column(
         modifier = Modifier
             .fillMaxSize()
