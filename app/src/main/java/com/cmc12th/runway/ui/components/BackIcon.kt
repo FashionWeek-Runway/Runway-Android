@@ -17,7 +17,7 @@ fun BackIcon(onClick: () -> Unit = {}) {
         onClick = onClick,
     ) {
         Icon(
-            painter = painterResource(id = R.drawable.ic_arrow),
+            painter = painterResource(id = R.drawable.ic_left_runway),
             contentDescription = "IC_ARROW"
         )
     }
