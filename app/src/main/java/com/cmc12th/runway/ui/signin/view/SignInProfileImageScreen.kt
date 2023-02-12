@@ -1,6 +1,9 @@
 package com.cmc12th.runway.ui.signin.view
 
+import android.app.Activity
+import android.content.Intent
 import android.net.Uri
+import android.provider.MediaStore
 import android.util.Log
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -68,6 +71,9 @@ fun SignInProfileImageScreen(
             }
         }
     }
+    val errorMessage = remember {
+        mutableStateOf("")
+    }
 
     val isKeyboardOpen by keyboardAsState() // Keyboard.Opened or Keyboard.Closed
     val profileSize by animateFloatAsState(
@@ -91,8 +97,17 @@ fun SignInProfileImageScreen(
                 signInViewModel.updateProfileImage(image)
             }
         }
-    val errorMessage = remember {
-        mutableStateOf("")
+    val onDone = {
+        errorMessage.value = ""
+        signInViewModel.checkNickname(
+            onSuccess = {
+                appState.navController.navigate(SIGNIN_CATEGORY_ROUTE)
+            },
+            onError = {
+                errorMessage.value = it.message
+                appState.showSnackbar(it.message)
+            }
+        )
     }
 
     Column(
@@ -111,12 +126,7 @@ fun SignInProfileImageScreen(
                 .verticalScroll(rememberScrollState())
         ) {
             HeightSpacer(height = 20.dp)
-            Row(modifier = Modifier.clickable {
-                signInViewModel.updateProfileImage(
-                    ProfileImageType.SOCIAL(profileImage)
-                )
-            }) {
-
+            Row {
                 Text(text = "프로필", style = HeadLine3)
                 Text(text = "을 설정해주세요.", fontSize = 20.sp, fontWeight = FontWeight.Normal)
             }
@@ -133,27 +143,26 @@ fun SignInProfileImageScreen(
                 updateNickName = {
                     errorMessage.value = ""
                     signInViewModel.updateNickName(it)
+                },
+                onDone = {
+                    if (uiState.nickName.text.isNotBlank() && uiState.nickName.checkValidate()) {
+                        onDone()
+                    }
                 }
             )
+
         }
 
+        /** 다음 버튼 */
         Button(
             onClick = {
-                errorMessage.value = ""
-                signInViewModel.checkNickname(
-                    onSuccess = {
-                        appState.navController.navigate(SIGNIN_CATEGORY_ROUTE)
-                    },
-                    onError = {
-                        errorMessage.value = it.message
-                        appState.showSnackbar(it.message)
-                    }
-                )
+                onDone()
             },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(50.dp),
             shape = RectangleShape,
+            enabled = uiState.nickName.text.isNotBlank() && uiState.nickName.checkValidate(),
             colors = ButtonDefaults.buttonColors(
                 if (uiState.nickName.text.isNotBlank() && uiState.nickName.checkValidate()) Black else Gray300
             )
@@ -165,10 +174,7 @@ fun SignInProfileImageScreen(
                 fontSize = 16.sp
             )
         }
-
     }
-
-
 }
 
 
@@ -177,6 +183,7 @@ fun InputNickname(
     nickname: Nickname,
     updateNickName: (String) -> Unit,
     errorMessage: String,
+    onDone: () -> Unit,
 ) {
     CustomTextField(
         modifier = Modifier
@@ -192,6 +199,7 @@ fun InputNickname(
             imeAction = ImeAction.Done
         ),
         keyboardActions = KeyboardActions(onDone = {
+            onDone()
         }),
         onErrorState = errorMessage.isNotBlank() || (nickname.text.isNotBlank() && !nickname.checkValidate()),
         errorMessage = errorMessage.ifBlank { "닉네임은 한글, 영어 혼합 2~10글자 입니다." }
@@ -219,11 +227,13 @@ fun ProfileImageIcon(
         ) {
             when (profileImageType) {
                 is ProfileImageType.DEFAULT -> DefaultProfileImage(galleryLauncher)
-                is ProfileImageType.LOCAL -> SelectedProfileImage(profileImageType, galleryLauncher)
-                is ProfileImageType.SOCIAL -> SelectedProfileImage(
-                    profileImageType,
-                    galleryLauncher
-                )
+                else -> {
+                    SelectedProfileImage(
+                        profileImageType,
+                        galleryLauncher
+                    )
+                }
+
             }
         }
     }
@@ -236,11 +246,9 @@ private fun SelectedProfileImage(
 ) {
     Box {
         if (selectedImage is ProfileImageType.SOCIAL) {
-            Log.i("dlgocks1", selectedImage.imgUrl)
             AsyncImage(
                 modifier = Modifier.fillMaxSize(),
                 model = ImageRequest.Builder(LocalContext.current)
-//                    .data("https://mblogthumb-phinf.pstatic.net/MjAyMjA1MjRfMjMg/MDAxNjUzMzgwMjMxOTg2.Yonm6xZ1a7Dcn_-RMtwP52vnr9SPF7oaLeyzdik4Tosg.V21pJWyKrrrr5h85A1R4SnXB0LK938eJG9oZdsRxOi8g.JPEG.bhybabo/KakaoTalk_20220524_145551442.jpg?type=w800")
                     .data(selectedImage.imgUrl)
                     .crossfade(true)
                     .build(),

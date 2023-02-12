@@ -48,6 +48,14 @@ class SignInRepositoryImpl @Inject constructor(
         runwayClient.signUp(feedPostReqeust, categoryList, multipartFile)
     }
 
+    override fun kakaoSignUp(
+        feedPostReqeust: HashMap<String, RequestBody>,
+        categoryList: List<MultipartBody.Part>,
+        multipartFile: MultipartBody.Part?
+    ): Flow<ApiWrapper<SignUpResponse>> = safeFlow {
+        runwayClient.kakoSignUp(feedPostReqeust, categoryList, multipartFile)
+    }
+
     override fun kakaoLogin(oauthLoginRequest: OauthLoginRequest): Flow<ApiWrapper<LoginResponse>> =
         safeFlow {
             runwayClient.kakaoLogin(oauthLoginRequest)

@@ -33,8 +33,7 @@ class SignInViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
 ) : ViewModel() {
 
-    private val _signInType: MutableState<SignInType> = mutableStateOf(SignInType.Phone)
-    private val signInType: State<SignInType> get() = _signInType
+    private val _signInType: MutableStateFlow<SignInType> = MutableStateFlow(SignInType.Phone)
     private val _kakaoId = mutableStateOf("")
     val kakaoId: State<String> = _kakaoId
 
@@ -117,9 +116,7 @@ class SignInViewModel @Inject constructor(
 
         /** List형태 MultiPart 설정 */
         val categoryList: ArrayList<MultipartBody.Part> = ArrayList()
-        _categoryTags.value.filter { it.isSelected }.forEach {
-            categoryList.add(MultipartBody.Part.createFormData("categoryList", it.id.toString()))
-        }
+        categoryToMultipartBody(categoryList)
 
         /** 단일 인자 MultiPart 설정 */
         val feedPostReqeust = hashMapOf<String, RequestBody>()
@@ -145,17 +142,48 @@ class SignInViewModel @Inject constructor(
     }
 
 
-    fun kakaoSignUp(image: Uri) = viewModelScope.launch {
-        val params = hashMapOf<String, RequestBody>()
+    fun kakaoSignUp(
+        onSuccess: () -> Unit,
+        onError: (ErrorResponse) -> Unit
+    ) = viewModelScope.launch {
+        /** List형태 MultiPart 설정 */
+        val categoryList: ArrayList<MultipartBody.Part> = ArrayList()
+        categoryToMultipartBody(categoryList)
 
-        params["gender"] = "남".toPlainRequestBody()
-        params["name"] = "이름".toPlainRequestBody()
-        params["nickname"] = "닉네임".toPlainRequestBody()
-        params["password"] = "패스워드".toPlainRequestBody()
-        params["phone"] = "전화번호".toPlainRequestBody()
-        params["profileImgUrl"] = "프로필ImageURL".toPlainRequestBody()
-        val categoryList = _categoryTags.value.filter { it.isSelected }.map {
-            MultipartBody.Part.createFormData("categoryList", it.name)
+        /** 단일 인자 MultiPart 설정 */
+        val feedPostReqeust = hashMapOf<String, RequestBody>()
+        feedPostReqeust["nickname"] = _nickName.value.text.toPlainRequestBody()
+        feedPostReqeust["socialId"] = _kakaoId.value.toPlainRequestBody()
+        feedPostReqeust["type"] = "KAKAO".toPlainRequestBody()
+        feedPostReqeust["profileImgUrl"] = when (val profileImage = _profileImage.value) {
+            is ProfileImageType.SOCIAL -> profileImage.imgUrl
+            else -> ""
+        }.toPlainRequestBody()
+
+        /** 이미지 파일 변환 */
+        val multipartFile = convetProfileImageToMultipartFile()
+
+        signInRepository.kakaoSignUp(
+            multipartFile = multipartFile,
+            feedPostReqeust = feedPostReqeust,
+            categoryList = categoryList
+        ).collect {
+            it.onSuccess {
+                onSuccess()
+            }
+            it.onError(onError)
+        }
+
+    }
+
+    private fun categoryToMultipartBody(categoryList: ArrayList<MultipartBody.Part>) {
+        _categoryTags.value.filter { it.isSelected }.forEach {
+            categoryList.add(
+                MultipartBody.Part.createFormData(
+                    "categoryList",
+                    it.id.toString()
+                )
+            )
         }
     }
 
@@ -294,8 +322,12 @@ class SignInViewModel @Inject constructor(
         )
 
     val categoryUiState: StateFlow<SignInCategoryUiState> =
-        combine(_nickName, _categoryTags) { nickName, categoryTags ->
-            SignInCategoryUiState(nickName = nickName, categoryTags = categoryTags)
+        combine(_nickName, _categoryTags, _signInType) { nickName, categoryTags, signInType ->
+            SignInCategoryUiState(
+                nickName = nickName,
+                categoryTags = categoryTags,
+                signInType = signInType
+            )
         }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),

@@ -3,6 +3,7 @@ package com.cmc12th.runway.network
 import com.cmc12th.runway.data.request.*
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import retrofit2.http.Part
 import javax.inject.Inject
 
 class RunwayClient @Inject constructor(
@@ -35,7 +36,8 @@ class RunwayClient @Inject constructor(
     suspend fun kakoSignUp(
         feedPostReqeust: HashMap<String, RequestBody>,
         categoryList: List<MultipartBody.Part>,
-    ) = loginService.kakoSignUp(feedPostReqeust, categoryList)
+        multipartFile: MultipartBody.Part?,
+    ) = loginService.kakoSignUp(feedPostReqeust, categoryList, multipartFile)
 
 
 }

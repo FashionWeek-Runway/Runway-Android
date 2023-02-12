@@ -27,6 +27,12 @@ interface SignInRepository {
         multipartFile: MultipartBody.Part?,
     ): Flow<ApiWrapper<SignUpResponse>>
 
+    fun kakaoSignUp(
+        feedPostReqeust: HashMap<String, RequestBody>,
+        categoryList: List<MultipartBody.Part>,
+        multipartFile: MultipartBody.Part?,
+    ): Flow<ApiWrapper<SignUpResponse>>
+
     fun kakaoLogin(oauthLoginRequest: OauthLoginRequest): Flow<ApiWrapper<LoginResponse>>
 
 }

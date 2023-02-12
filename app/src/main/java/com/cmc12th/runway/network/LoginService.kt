@@ -50,5 +50,6 @@ interface LoginService {
     suspend fun kakoSignUp(
         @PartMap feedPostReqeust: HashMap<String, RequestBody>,
         @Part categoryList: List<MultipartBody.Part>,
+        @Part multipartFile: MultipartBody.Part?,
     ): NetworkResponse<SignUpResponse>
 }

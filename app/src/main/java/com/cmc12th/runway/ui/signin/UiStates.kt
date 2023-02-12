@@ -48,6 +48,7 @@ data class SignInCategoryUiState(
     val categoryTags: MutableList<CategoryTag> = CATEGORYS.mapIndexed { index, name ->
         CategoryTag(index + 1, name)
     }.toMutableList(),
+    val signInType: SignInType = SignInType.Phone
 ) {
     fun anyCategorySelected() = categoryTags.any { it.isSelected }
 }

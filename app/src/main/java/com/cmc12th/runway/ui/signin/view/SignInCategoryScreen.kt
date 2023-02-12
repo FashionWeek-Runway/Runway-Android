@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.cmc12th.runway.data.response.ErrorResponse
 import com.cmc12th.runway.ui.components.BackIcon
 import com.cmc12th.runway.ui.components.HeightSpacer
 import com.cmc12th.runway.ui.domain.model.ApplicationState
@@ -26,8 +27,10 @@ import com.cmc12th.runway.ui.signin.SignInViewModel
 import com.cmc12th.runway.ui.signin.components.OnBoardStep
 import com.cmc12th.runway.ui.signin.components.StyleCategoryCheckBox
 import com.cmc12th.runway.ui.signin.model.CategoryTag
+import com.cmc12th.runway.ui.signin.model.SignInType
 import com.cmc12th.runway.ui.theme.*
 import com.cmc12th.runway.utils.Constants.SIGNIN_COMPLETE_ROUTE
+import kotlin.math.sign
 
 @Composable
 fun SignInCategoryScreen(
@@ -80,14 +83,19 @@ fun SignInCategoryScreen(
             shape = RectangleShape,
             colors = ButtonDefaults.buttonColors(if (uiState.anyCategorySelected()) Color.Black else Gray300),
             onClick = {
-                signInViewModel.signUp(
-                    onSuccess = {
-                        appState.navigate(SIGNIN_COMPLETE_ROUTE)
-                    },
-                    onError = {
-                        appState.showSnackbar(it.message)
-                    }
-                )
+                val onSuccess = { appState.navigate(SIGNIN_COMPLETE_ROUTE) }
+                val onError: (ErrorResponse) -> Unit = { appState.showSnackbar(it.message) }
+                when (uiState.signInType) {
+                    SignInType.Phone -> signInViewModel.signUp(
+                        onSuccess = onSuccess,
+                        onError = onError
+                    )
+                    SignInType.SOCIAL -> signInViewModel.kakaoSignUp(
+                        onSuccess = onSuccess,
+                        onError = onError
+                    )
+                }
+
             }
         ) {
             Text(text = "다음", modifier = Modifier.padding(0.dp, 5.dp), fontSize = 16.sp)
