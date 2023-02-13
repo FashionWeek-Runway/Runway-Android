@@ -33,19 +33,6 @@ class AuthRepositoryImpl @Inject constructor(
             }
     }
 
-    override fun loginCheck(): Flow<Boolean> =
-        preferenceDataStore.data.catch { exception ->
-            if (exception is IOException) {
-                exception.printStackTrace()
-                emit(emptyPreferences())
-            } else {
-                throw exception
-            }
-        }.map { prefs ->
-            prefs[LOGIN_CHECK] ?: false
-        }
-
-
     companion object PreferenceKeys {
         val ACCESS_TOKEN = stringPreferencesKey("access_token")
         val REFRESH_TOKEN = stringPreferencesKey("refresh_token")

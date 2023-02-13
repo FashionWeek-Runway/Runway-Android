@@ -18,27 +18,18 @@ class SplashViewModel @Inject constructor(
     @DispatcherModule.MainDispatcher private val MainDispatcher: CoroutineDispatcher,
 ) : ViewModel() {
 
-
-    private fun setToken(onSuccess: () -> Unit) = viewModelScope.launch {
-        val token = withContext(IODispatcher) {
-            authRepository.getToken(ACCESS_TOKEN).first()
-        }
-        authToken = token
-        launch(MainDispatcher) {
-            onSuccess()
-        }
-    }
-
     fun loginCheck(navigateToMain: () -> Unit, navigateToLogin: () -> Unit) =
         viewModelScope.launch {
-            val isLogin = withContext(IODispatcher) { authRepository.loginCheck().first() }
-            if (isLogin) {
-                setToken {
-                    navigateToMain()
-                }
+            val token = withContext(IODispatcher) {
+                authRepository.getToken(ACCESS_TOKEN).first()
+            }
+            authToken = token
+            // 토큰이 빈 값이 아니라면 (로그인이 되어 있다면)
+            if (token.isNotBlank()) {
+                launch(MainDispatcher) { navigateToMain() }
             } else {
                 launch(MainDispatcher) { navigateToLogin() }
             }
         }
-    
+
 }

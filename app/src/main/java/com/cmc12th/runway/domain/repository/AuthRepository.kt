@@ -10,5 +10,4 @@ interface AuthRepository {
 
     fun getToken(type: Preferences.Key<String>): Flow<String>
     suspend fun setToken(type: Preferences.Key<String>, value: String)
-    fun loginCheck(): Flow<Boolean>
 }

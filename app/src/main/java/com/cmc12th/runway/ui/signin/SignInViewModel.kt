@@ -5,9 +5,12 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.cmc12th.runway.data.repository.AuthRepositoryImpl.PreferenceKeys.ACCESS_TOKEN
+import com.cmc12th.runway.data.repository.AuthRepositoryImpl.PreferenceKeys.REFRESH_TOKEN
 import com.cmc12th.runway.data.request.LoginCheckRequest
 import com.cmc12th.runway.data.request.SendVerifyMessageRequest
 import com.cmc12th.runway.data.response.ErrorResponse
+import com.cmc12th.runway.domain.repository.AuthRepository
 import com.cmc12th.runway.domain.repository.SignInRepository
 import com.cmc12th.runway.utils.toPlainRequestBody
 import com.cmc12th.runway.ui.signin.model.*
@@ -28,6 +31,7 @@ import javax.inject.Inject
 @HiltViewModel
 class SignInViewModel @Inject constructor(
     private val signInRepository: SignInRepository,
+    private val authRepository: AuthRepository,
     @ApplicationContext private val context: Context,
 ) : ViewModel() {
 
@@ -131,14 +135,14 @@ class SignInViewModel @Inject constructor(
             multipartFile = multipartFile,
             feedPostReqeust = feedPostReqeust,
             categoryList = categoryList
-        ).collect {
-            it.onSuccess {
+        ).collect { apiWrapper ->
+            apiWrapper.onSuccess {
+                onSignInComplete(it.result.accessToken, it.result.refreshToken)
                 onSuccess()
             }
-            it.onError(onError)
+            apiWrapper.onError(onError)
         }
     }
-
 
     fun kakaoSignUp(
         onSuccess: () -> Unit,
@@ -165,14 +169,20 @@ class SignInViewModel @Inject constructor(
             multipartFile = multipartFile,
             feedPostReqeust = feedPostReqeust,
             categoryList = categoryList
-        ).collect {
-            it.onSuccess {
+        ).collect { apiWrapper ->
+            apiWrapper.onSuccess {
+                onSignInComplete(it.result.accessToken, it.result.refreshToken)
                 onSuccess()
             }
-            it.onError(onError)
+            apiWrapper.onError(onError)
         }
-
     }
+
+    private fun onSignInComplete(accessToken: String, refreshToken: String) =
+        viewModelScope.launch {
+            authRepository.setToken(ACCESS_TOKEN, accessToken)
+            authRepository.setToken(REFRESH_TOKEN, refreshToken)
+        }
 
     private fun categoryToMultipartBody(categoryList: ArrayList<MultipartBody.Part>) {
         _categoryTags.value.filter { it.isSelected }.forEach {
