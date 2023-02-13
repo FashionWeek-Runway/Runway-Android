@@ -32,10 +32,13 @@ class TokenAuthenticator @Inject constructor() : Authenticator {
 //        }
 //        Log.i("AuthenticatorToken", token.toString())
         val newAccessToken = refreshTokenService.refreshToken()
-        Log.i("Authenticator2", newAccessToken.toString())
-        return response.request.newBuilder().apply {
-            addHeader("X-AUTH-TOKEN", newAccessToken)
-        }.build();
+//        Log.i("Authenticator2", newAccessToken)
+//        Log.i("Authenticator-ERROR_CODE", response.toString())
+        if (response.code == 200) return null
+        return response.request.newBuilder()
+            .removeHeader("X-AUTH-TOKEN").apply {
+                addHeader("X-AUTH-TOKEN", newAccessToken)
+            }.build()
     }
 }
 
@@ -56,26 +59,29 @@ class RefreshTokenService {
 
     fun refreshToken(): String {
         var newAccessToken = ""
-        refreshService.tokenReissuance(ServiceInterceptor.refreshToken)
-            .enqueue(object : retrofit2.Callback<ResponseWrapper<OauthLoginRequest>> {
-                override fun onResponse(
-                    call: Call<ResponseWrapper<OauthLoginRequest>>,
-                    response: retrofit2.Response<ResponseWrapper<OauthLoginRequest>>
-                ) {
-                    Log.i("Authenticator1", response.body().toString())
-                    if (response.isSuccessful) {
-                        newAccessToken = response.body()?.result?.accessToken ?: ""
-                        accessToken = response.body()?.result?.accessToken ?: ""
+        runBlocking {
+            refreshService.tokenReissuance(ServiceInterceptor.refreshToken)
+                .enqueue(object : retrofit2.Callback<ResponseWrapper<OauthLoginRequest>> {
+                    override fun onResponse(
+                        call: Call<ResponseWrapper<OauthLoginRequest>>,
+                        response: retrofit2.Response<ResponseWrapper<OauthLoginRequest>>
+                    ) {
+                        Log.i("Authenticator1", response.body().toString())
+                        if (response.isSuccessful) {
+                            newAccessToken = response.body()?.result?.accessToken ?: ""
+                            accessToken = response.body()?.result?.accessToken ?: ""
+                        }
                     }
-                }
 
-                override fun onFailure(
-                    call: Call<ResponseWrapper<OauthLoginRequest>>,
-                    t: Throwable
-                ) {
-                    t.printStackTrace()
-                }
-            })
+                    override fun onFailure(
+                        call: Call<ResponseWrapper<OauthLoginRequest>>,
+                        t: Throwable
+                    ) {
+                        t.printStackTrace()
+                    }
+                })
+            delay(200L)
+        }
         return newAccessToken
     }
 }
