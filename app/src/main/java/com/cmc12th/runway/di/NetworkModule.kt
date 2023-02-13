@@ -1,9 +1,10 @@
 package com.cmc12th.runway.di
 
-import com.cmc12th.runway.network.LoginService
+import com.cmc12th.runway.network.service.LoginService
 import com.cmc12th.runway.network.RunwayClient
-import com.cmc12th.runway.network.ServiceInterceptor
-import com.skydoves.sandwich.adapters.ApiResponseCallAdapterFactory
+import com.cmc12th.runway.network.model.ServiceInterceptor
+import com.cmc12th.runway.network.model.TokenAuthenticator
+import com.cmc12th.runway.network.service.AuthService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -20,7 +21,7 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
-    private val DEV_SERVER = "https://dev.runwayserver.shop/"
+    val DEV_SERVER = "https://dev.runwayserver.shop/"
     private val httpLoggingInterceptor =
         HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
 
@@ -46,6 +47,7 @@ object NetworkModule {
         return OkHttpClient.Builder()
             .addInterceptor(httpLoggingInterceptor)
             .addInterceptor(ServiceInterceptor()) // TODO Splash뷰 단에서 Token을 넣어주깅
+            .authenticator(TokenAuthenticator())
             .connectTimeout(20, TimeUnit.SECONDS)
             .readTimeout(20, TimeUnit.SECONDS)
             .writeTimeout(20, TimeUnit.SECONDS)
@@ -63,7 +65,6 @@ object NetworkModule {
             .baseUrl(DEV_SERVER)
             .addConverterFactory(GsonConverterFactory.create())
             .addConverterFactory(MoshiConverterFactory.create())
-            .addCallAdapterFactory(ApiResponseCallAdapterFactory.create())
             .build()
     }
 
@@ -77,10 +78,20 @@ object NetworkModule {
 
     @Provides
     @Singleton
+    fun provideAuthService(
+        @RunwayRetrofit retrofit: Retrofit,
+    ): AuthService {
+        return retrofit.create(AuthService::class.java)
+    }
+
+
+    @Provides
+    @Singleton
     fun provideRunwayClient(
-        loginService: LoginService
+        loginService: LoginService,
+        authService: AuthService,
     ): RunwayClient {
-        return RunwayClient(loginService = loginService)
+        return RunwayClient(loginService = loginService, authService = authService)
     }
 
 }

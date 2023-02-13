@@ -1,4 +1,4 @@
-package com.cmc12th.runway.network
+package com.cmc12th.runway.network.model
 
 import com.cmc12th.runway.data.response.ErrorResponse
 

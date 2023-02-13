@@ -1,9 +1,7 @@
-package com.cmc12th.runway.network
+package com.cmc12th.runway.network.model
 
-import com.cmc12th.runway.data.response.ErrorResponse
 import com.cmc12th.runway.data.response.ResponseWrapper
 import com.cmc12th.runway.utils.GsonHelper
-import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow

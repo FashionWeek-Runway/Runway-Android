@@ -1,4 +1,4 @@
-package com.cmc12th.runway.network
+package com.cmc12th.runway.network.service
 
 import com.cmc12th.runway.data.request.*
 import com.cmc12th.runway.data.response.LoginResponse

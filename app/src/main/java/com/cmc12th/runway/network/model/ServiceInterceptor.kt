@@ -1,4 +1,4 @@
-package com.cmc12th.runway.network
+package com.cmc12th.runway.network.model
 
 import okhttp3.Interceptor
 import okhttp3.Response
