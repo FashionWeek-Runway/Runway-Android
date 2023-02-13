@@ -5,6 +5,7 @@ import com.cmc12th.runway.network.RunwayClient
 import com.cmc12th.runway.network.model.ServiceInterceptor
 import com.cmc12th.runway.network.model.TokenAuthenticator
 import com.cmc12th.runway.network.service.AuthService
+import com.cmc12th.runway.network.service.StoreService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -46,8 +47,8 @@ object NetworkModule {
     fun provideRunwayInterceptorOkHttpClient(): OkHttpClient {
         return OkHttpClient.Builder()
             .addInterceptor(httpLoggingInterceptor)
-            .addInterceptor(ServiceInterceptor()) // TODO Splash뷰 단에서 Token을 넣어주깅
-            .authenticator(TokenAuthenticator())
+//            .authenticator(TokenAuthenticator())
+            .addInterceptor(ServiceInterceptor())
             .connectTimeout(20, TimeUnit.SECONDS)
             .readTimeout(20, TimeUnit.SECONDS)
             .writeTimeout(20, TimeUnit.SECONDS)
@@ -84,14 +85,26 @@ object NetworkModule {
         return retrofit.create(AuthService::class.java)
     }
 
+    @Provides
+    @Singleton
+    fun provideStoreService(
+        @RunwayRetrofit retrofit: Retrofit,
+    ): StoreService {
+        return retrofit.create(StoreService::class.java)
+    }
 
     @Provides
     @Singleton
     fun provideRunwayClient(
         loginService: LoginService,
         authService: AuthService,
+        storeService: StoreService,
     ): RunwayClient {
-        return RunwayClient(loginService = loginService, authService = authService)
+        return RunwayClient(
+            loginService = loginService,
+            authService = authService,
+            storeService = storeService
+        )
     }
 
 }

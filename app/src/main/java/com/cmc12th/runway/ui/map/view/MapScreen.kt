@@ -19,10 +19,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.cmc12th.runway.data.model.NaverItem
 import com.cmc12th.runway.R
 import com.cmc12th.runway.ui.components.HeightSpacer
 import com.cmc12th.runway.ui.domain.model.ApplicationState
+import com.cmc12th.runway.ui.map.MapViewModel
 import com.cmc12th.runway.ui.map.components.BottomGradient
 import com.cmc12th.runway.ui.map.components.NaverMapSearch
 import com.cmc12th.runway.ui.theme.*
@@ -36,6 +38,8 @@ import ted.gun0912.clustering.naver.TedNaverClustering
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun MapScreen(appState: ApplicationState) {
+
+    val mapViewModel: MapViewModel = hiltViewModel()
 
     val items = listOf<NaverItem>(
         NaverItem(37.542258155004774, 127.05653993251198).apply { title = "아더 성수스페이스" },
@@ -66,6 +70,10 @@ fun MapScreen(appState: ApplicationState) {
     val coroutineScope = rememberCoroutineScope()
     val configuration = LocalConfiguration.current
     val screenHeight = configuration.screenHeightDp.dp
+
+    LaunchedEffect(key1 = Unit) {
+        mapViewModel.stores()
+    }
 
     LaunchedEffect(key1 = onSearching.value) {
         if (onSearching.value) peekHeight.value = 0.dp

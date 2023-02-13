@@ -5,6 +5,7 @@ import com.cmc12th.runway.data.response.ResponseWrapper
 import com.cmc12th.runway.utils.DefaultResponse
 import com.cmc12th.runway.utils.NetworkResponse
 import retrofit2.Call
+import retrofit2.http.Header
 import retrofit2.http.POST
 
 interface AuthService {
@@ -15,6 +16,6 @@ interface AuthService {
 
     /** 유저 인증번호 전송 */
     @POST("/user/refresh")
-    fun refreshToken(): Call<ResponseWrapper<OauthLoginRequest>>
+    fun refreshToken(@Header("X-REFRESH-TOKEN") refreshToken: String): Call<ResponseWrapper<OauthLoginRequest>>
 
 }

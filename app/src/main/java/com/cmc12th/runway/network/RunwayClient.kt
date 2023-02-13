@@ -3,6 +3,7 @@ package com.cmc12th.runway.network
 import com.cmc12th.runway.data.request.*
 import com.cmc12th.runway.network.service.AuthService
 import com.cmc12th.runway.network.service.LoginService
+import com.cmc12th.runway.network.service.StoreService
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import javax.inject.Inject
@@ -10,6 +11,7 @@ import javax.inject.Inject
 class RunwayClient @Inject constructor(
     private val loginService: LoginService,
     private val authService: AuthService,
+    private val storeService: StoreService,
 ) {
 
     suspend fun login(loginRequest: LoginRequest) =
@@ -43,6 +45,9 @@ class RunwayClient @Inject constructor(
 
     suspend fun logout() = authService.logout()
 
-    fun refreshToken() = authService.refreshToken()
+    /** 안쓸 듯 */
+//    fun refreshToken() = authService.refreshToken()
+
+    suspend fun stores() = storeService.stores()
 
 }
