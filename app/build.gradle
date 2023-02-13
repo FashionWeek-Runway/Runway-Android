@@ -111,7 +111,6 @@ dependencies {
     implementation("io.coil-kt:coil-compose:2.2.2")
 
     // Retrofit2
-    implementation 'com.github.skydoves:sandwich:1.2.6'
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.retrofit2:converter-moshi:2.9.0'
     implementation 'com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.3'
@@ -121,5 +120,8 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.9.0'
 
     // Kakao Login
-    implementation "com.kakao.sdk:v2-user:2.12.1" // 카카오 로그인
+    implementation "com.kakao.sdk:v2-user:2.12.1"
+
+    // DataStore
+    implementation 'androidx.datastore:datastore-preferences:1.0.0'
 }
