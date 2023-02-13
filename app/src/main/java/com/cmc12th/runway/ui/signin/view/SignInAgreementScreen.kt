@@ -48,7 +48,9 @@ fun SignInAgreementScreen(
             .fillMaxSize()
     ) {
         Box(modifier = Modifier.padding(20.dp)) {
-            BackIcon()
+            BackIcon {
+                appState.navController.popBackStack()
+            }
         }
         OnBoardStep(4)
         Column(

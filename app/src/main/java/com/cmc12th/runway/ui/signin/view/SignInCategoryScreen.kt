@@ -46,7 +46,9 @@ fun SignInCategoryScreen(
             .fillMaxSize()
     ) {
         Box(modifier = Modifier.padding(20.dp)) {
-            BackIcon()
+            BackIcon {
+                appState.navController.popBackStack()
+            }
         }
         OnBoardStep(6)
 

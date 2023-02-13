@@ -52,7 +52,9 @@ fun SignInPasswordScreen(
             .imePadding() // 버튼 같이 올라오게 하기 위해서
     ) {
         Box(modifier = Modifier.padding(20.dp)) {
-            BackIcon()
+            BackIcon {
+                appState.navController.popBackStack()
+            }
         }
         OnBoardStep(3)
         Column(
