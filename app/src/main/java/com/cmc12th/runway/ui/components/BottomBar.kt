@@ -1,6 +1,7 @@
 package com.cmc12th.runway.ui.components
 
 import androidx.compose.animation.*
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
@@ -26,13 +27,11 @@ fun BottomBar(
 ) {
     AnimatedVisibility(
         visible = appState.bottomBarState.value,
-        enter = fadeIn() + expandVertically(),
-        exit = fadeOut() + shrinkVertically(),
+        enter = slideInVertically { it },
+        exit = slideOutVertically { it },
         modifier = Modifier.background(color = Color.White),
     ) {
         BottomNavigation(
-//            modifier = Modifier
-//                .clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp)),
             backgroundColor = Color.White,
         ) {
             val navBackStackEntry by appState.navController.currentBackStackEntryAsState()
@@ -53,9 +52,6 @@ fun BottomBar(
                         }
                     },
                     label = null,
-                    /** 타이틀 달것이면 여기 */
-                    /** 타이틀 달것이면 여기 */
-                    /** 타이틀 달것이면 여기 */
                     /** 타이틀 달것이면 여기 */
 //                    if (isSelected) {
 //                        { Text(text = stringResource(screen.stringResId), color = Color.White) }

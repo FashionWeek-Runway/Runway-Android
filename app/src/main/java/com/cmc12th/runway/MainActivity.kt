@@ -54,7 +54,8 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier
                         .statusBarsPadding()
                         .navigationBarsPadding()
-                        .fillMaxSize(),
+                        .fillMaxSize()
+                        .background(Color.Transparent),
                     color = MaterialTheme.colorScheme.background
                 ) {
                     RootNavhost(appState)
@@ -111,7 +112,9 @@ private fun RootNavhost(
 ) {
     Scaffold(
         scaffoldState = appState.scaffoldState,
-        bottomBar = { BottomBar(appState) },
+        bottomBar = {
+            if (appState.bottomBarState.value) BottomBar(appState)
+        },
     ) { innerPadding ->
         NavHost(
             appState.navController,
