@@ -1,4 +1,4 @@
-package com.cmc12th.runway.ui.photoreview
+package com.cmc12th.runway.ui.detail.photoreview
 
 import android.app.Activity
 import android.graphics.Bitmap
@@ -66,7 +66,6 @@ fun PhotoReviewScreen(appState: ApplicationState) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-//            .scrollable(rememberScrollState(), Orientation.Vertical)
     ) {
         Row(
             modifier = Modifier
@@ -101,7 +100,7 @@ fun PhotoReviewScreen(appState: ApplicationState) {
 private fun ColumnScope.ModifyImage(
     selectImages: Uri,
     event: Boolean,
-    generateBitmap: (Bitmap) -> Unit
+    generateBitmap: (Bitmap) -> Unit,
 ) {
     val view = LocalView.current
     val activity = LocalContext.current as Activity
@@ -163,7 +162,6 @@ private fun TestTextField() {
                 }
             },
     ) {
-
         Column() {
             Row(modifier = Modifier.align(Alignment.End)) {
                 Text(text = "검정색", modifier = Modifier.clickable {

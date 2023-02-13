@@ -9,13 +9,9 @@ object Constants {
     const val SNS_INTENT_ACTION = "android.provider.Telephony.SMS_RECEIVED"
 
     /** navigation id */
-    // HomeNavigation
     const val HOME_ROUTE = "nav-home"
     const val MAP_ROUTE = "nav-map"
     const val MYPAGE_ROUTE = "nav-mypage"
-
-    const val PHOTO_REVIEW_ROUTE = "nav-photo-review"
-    const val PHOTO_REVIEW_RESULT_ROUTE = "nav-photo-result-review"
 
     const val LOGIN_BASE_ROUTE = "nav-login"
     const val LOGIN_ID_PW_ROUTE = "nav-login_id_pw"
@@ -30,8 +26,14 @@ object Constants {
     const val SIGNIN_CATEGORY_ROUTE = "nav-signin-category"
     const val SIGNIN_COMPLETE_ROUTE = "nav-signin-complete"
 
+    const val DETAIL_BASE_ROUTE = "nav-detail-base"
+    const val PHOTO_REVIEW_ROUTE = "nav-photo-review"
+    const val PHOTO_REVIEW_RESULT_ROUTE = "nav-photo-result-review"
+
     /** Graph Id */
     const val MAIN_GRAPH = "main-graph"
     const val LOGIN_GRAPH = "login-graph"
     const val SIGNIN_GRAPH = "signin-graph"
+    const val DETAIL_GRAPH = "detail-graph"
+
 }

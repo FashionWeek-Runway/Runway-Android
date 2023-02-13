@@ -1,10 +1,14 @@
 package com.cmc12th.runway.ui
 
+import android.graphics.Bitmap
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.*
 import androidx.navigation.compose.composable
+import com.cmc12th.runway.ui.detail.DetailScreen
+import com.cmc12th.runway.ui.detail.PhotoReviewResultScreen
+import com.cmc12th.runway.ui.detail.photoreview.PhotoReviewScreen
 import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.home.HomeScreen
 import com.cmc12th.runway.ui.login.LoginIdPasswdScreen
@@ -12,6 +16,9 @@ import com.cmc12th.runway.ui.login.view.LoginBaseScreen
 import com.cmc12th.runway.ui.map.view.MapScreen
 import com.cmc12th.runway.ui.mypage.MypageScreen
 import com.cmc12th.runway.ui.signin.view.*
+import com.cmc12th.runway.utils.Constants
+import com.cmc12th.runway.utils.Constants.DETAIL_BASE_ROUTE
+import com.cmc12th.runway.utils.Constants.DETAIL_GRAPH
 import com.cmc12th.runway.utils.Constants.LOGIN_BASE_ROUTE
 import com.cmc12th.runway.utils.Constants.LOGIN_GRAPH
 import com.cmc12th.runway.utils.Constants.LOGIN_ID_PW_ROUTE
@@ -34,6 +41,22 @@ fun NavGraphBuilder.mainGraph(
         composable(Screen.Home.route) { HomeScreen() }
         composable(Screen.Map.route) { MapScreen() }
         composable(Screen.Mypage.route) { MypageScreen(appState) }
+    }
+}
+
+fun NavGraphBuilder.detailGraph(
+    appState: ApplicationState,
+) {
+    navigation(startDestination = DETAIL_BASE_ROUTE, route = DETAIL_GRAPH) {
+        composable(DETAIL_BASE_ROUTE) { DetailScreen() }
+        composable(Constants.PHOTO_REVIEW_ROUTE) {
+            PhotoReviewScreen(appState)
+        }
+        composable(Constants.PHOTO_REVIEW_RESULT_ROUTE) {
+            val userObject =
+                appState.navController.previousBackStackEntry?.arguments?.getParcelable<Bitmap>("bitmap")
+            PhotoReviewResultScreen(appState, userObject!!)
+        }
     }
 }
 

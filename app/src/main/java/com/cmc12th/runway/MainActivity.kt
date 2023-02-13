@@ -2,7 +2,6 @@ package com.cmc12th.runway
 
 import android.Manifest
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -14,7 +13,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
@@ -25,19 +23,16 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.cmc12th.runway.ui.components.BottomBar
-import com.cmc12th.runway.ui.detail.PhotoReviewResultScreen
 import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.loginGraph
 import com.cmc12th.runway.ui.mainGraph
-import com.cmc12th.runway.ui.photoreview.PhotoReviewScreen
+import com.cmc12th.runway.ui.detailGraph
 import com.cmc12th.runway.ui.signInGraph
 import com.cmc12th.runway.ui.splash.SplashScreen
 import com.cmc12th.runway.ui.theme.RunwayTheme
 import com.cmc12th.runway.utils.Constants.HOME_ROUTE
 import com.cmc12th.runway.utils.Constants.MAP_ROUTE
 import com.cmc12th.runway.utils.Constants.MYPAGE_ROUTE
-import com.cmc12th.runway.utils.Constants.PHOTO_REVIEW_RESULT_ROUTE
-import com.cmc12th.runway.utils.Constants.PHOTO_REVIEW_ROUTE
 import com.cmc12th.runway.utils.Constants.SPLASH_ROUTE
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import dagger.hilt.android.AndroidEntryPoint
@@ -47,7 +42,7 @@ import kotlinx.coroutines.CoroutineScope
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        requirePerms()
+        requestSMSReceivePermission()
         setContent {
             val appState = rememberApplicationState()
             val navBackStackEntry by appState.navController.currentBackStackEntryAsState()
@@ -69,8 +64,8 @@ class MainActivity : ComponentActivity() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
     }
 
-    fun requirePerms() {
-        val permissions = arrayOf<String>(Manifest.permission.RECEIVE_SMS)
+    fun requestSMSReceivePermission() {
+        val permissions = arrayOf(Manifest.permission.RECEIVE_SMS)
         val permissionCheck =
             ContextCompat.checkSelfPermission(this, Manifest.permission.RECEIVE_SMS)
         if (permissionCheck == PackageManager.PERMISSION_DENIED) {
@@ -86,7 +81,7 @@ private fun rememberApplicationState(
     bottomBarState: MutableState<Boolean> = mutableStateOf(false),
     navController: NavHostController = rememberNavController(),
     scaffoldState: ScaffoldState = rememberScaffoldState(),
-    coroutineScope: CoroutineScope = rememberCoroutineScope()
+    coroutineScope: CoroutineScope = rememberCoroutineScope(),
 ) = remember(Unit) {
     ApplicationState(
         bottomBarState,
@@ -128,19 +123,10 @@ private fun RootNavhost(
             composable(SPLASH_ROUTE) {
                 SplashScreen(appState)
             }
-            composable(PHOTO_REVIEW_ROUTE) {
-                PhotoReviewScreen(appState)
-            }
-            composable(PHOTO_REVIEW_RESULT_ROUTE) {
-                val userObject =
-                    appState.navController.previousBackStackEntry?.arguments?.getParcelable<Bitmap>(
-                        "bitmap"
-                    )
-                PhotoReviewResultScreen(appState, userObject!!)
-            }
             mainGraph(appState)
             loginGraph(appState)
             signInGraph(appState)
+            detailGraph(appState)
         }
     }
 }
