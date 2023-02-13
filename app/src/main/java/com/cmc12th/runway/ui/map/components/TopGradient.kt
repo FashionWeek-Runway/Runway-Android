@@ -9,16 +9,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 
 @Composable
-fun BottomGradient(height: Dp, alpha: Float = 0.8f, modifier: Modifier = Modifier) {
+fun TopGradient(modifier: Modifier = Modifier, height: Dp, alpha: Float = 0.8f) {
     Box(
         modifier = modifier
             .fillMaxWidth()
             .height(height)
             .background(
-                brush = Brush.verticalGradient(listOf(Color.White, Color.Transparent)),
-                alpha = alpha
+                brush = Brush.verticalGradient(listOf(Color.Transparent, Color.White)),
+                alpha = 0.8f
             )
     )
 }

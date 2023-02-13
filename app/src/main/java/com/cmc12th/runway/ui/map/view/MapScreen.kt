@@ -2,7 +2,6 @@
 
 package com.cmc12th.runway.ui.map.view
 
-import android.util.Log
 import android.widget.TextView
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.compose.animation.*
@@ -11,7 +10,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material3.*
-import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -24,7 +22,6 @@ import androidx.compose.ui.unit.dp
 import com.cmc12th.runway.data.model.NaverItem
 import com.cmc12th.runway.R
 import com.cmc12th.runway.ui.components.HeightSpacer
-import com.cmc12th.runway.ui.components.WidthSpacer
 import com.cmc12th.runway.ui.map.components.BottomGradient
 import com.cmc12th.runway.ui.map.components.NaverMapSearch
 import com.cmc12th.runway.ui.theme.*
@@ -33,7 +30,6 @@ import com.naver.maps.map.compose.ExperimentalNaverMapApi
 import com.naver.maps.map.compose.NaverMap
 import com.naver.maps.map.overlay.Marker
 import com.naver.maps.map.overlay.OverlayImage
-import kotlinx.coroutines.launch
 import ted.gun0912.clustering.naver.TedNaverClustering
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -64,10 +60,8 @@ fun MapScreen() {
     val configuration = LocalConfiguration.current
     val screenHeight = configuration.screenHeightDp.dp
 
-    LaunchedEffect(key1 = bottomSheetScaffoldState.bottomSheetState.currentValue) {
-        Log.i("dlgocks1", bottomSheetScaffoldState.bottomSheetState.currentValue.toString())
-    }
     LaunchedEffect(key1 = onSearching.value) {
+        /** 검색바가 올라오면 무조건 boTTomState는 Collaps되야한다.? */
         if (onSearching.value) bottomSheetScaffoldState.bottomSheetState.collapse()
     }
 
@@ -121,7 +115,7 @@ fun MapScreen() {
                 NaverMapSearch(onSearch = {
                     onSearching.value = true
                 })
-                BottomGradient()
+                BottomGradient(20.dp)
             }
 
             /** 검색 스크린을 위에 깔아버리기 */
