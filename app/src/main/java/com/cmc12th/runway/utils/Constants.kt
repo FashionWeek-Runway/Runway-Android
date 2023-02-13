@@ -8,6 +8,8 @@ object Constants {
     val CATEGORYS = listOf("미니멀", "캐주얼", "시티보이", "스트릿", "빈티지", "페미닌")
     const val SNS_INTENT_ACTION = "android.provider.Telephony.SMS_RECEIVED"
 
+    const val RUNWAY_DATASTORE = "runway-dataStore"
+
     /** navigation id */
     const val HOME_ROUTE = "nav-home"
     const val MAP_ROUTE = "nav-map"

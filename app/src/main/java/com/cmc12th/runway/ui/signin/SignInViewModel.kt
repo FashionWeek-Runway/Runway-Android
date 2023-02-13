@@ -1,8 +1,6 @@
 package com.cmc12th.runway.ui.signin
 
 import android.content.Context
-import android.net.Uri
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -11,7 +9,7 @@ import com.cmc12th.runway.data.request.LoginCheckRequest
 import com.cmc12th.runway.data.request.SendVerifyMessageRequest
 import com.cmc12th.runway.data.response.ErrorResponse
 import com.cmc12th.runway.domain.repository.SignInRepository
-import com.cmc12th.runway.network.toPlainRequestBody
+import com.cmc12th.runway.utils.toPlainRequestBody
 import com.cmc12th.runway.ui.signin.model.*
 import com.cmc12th.runway.utils.Constants.CATEGORYS
 import com.cmc12th.runway.utils.fileFromContentUri
@@ -144,7 +142,7 @@ class SignInViewModel @Inject constructor(
 
     fun kakaoSignUp(
         onSuccess: () -> Unit,
-        onError: (ErrorResponse) -> Unit
+        onError: (ErrorResponse) -> Unit,
     ) = viewModelScope.launch {
         /** List형태 MultiPart 설정 */
         val categoryList: ArrayList<MultipartBody.Part> = ArrayList()
