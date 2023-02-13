@@ -1,4 +1,7 @@
-@file:OptIn(ExperimentalNaverMapApi::class, ExperimentalMaterialApi::class)
+@file:OptIn(
+    ExperimentalNaverMapApi::class, ExperimentalMaterialApi::class,
+    ExperimentalMaterialApi::class
+)
 
 package com.cmc12th.runway.ui.map.view
 
@@ -8,7 +11,9 @@ import androidx.compose.animation.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.material.BottomSheetScaffold
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.rememberBottomSheetScaffoldState
 import androidx.compose.material3.*
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -119,6 +124,9 @@ fun MapScreen(appState: ApplicationState) {
                     exit = fadeOut()
                 ) {
                     Column {
+                        Button(onClick = { mapViewModel.setAccessTokenDummy() }) {
+                            Text(text = "엑세스토큰에 이상한값 넣기")
+                        }
                         Text(text = "보텀쉿테스트")
                         Text(text = "보텀쉿테스트")
                         Text(text = "보텀쉿테스트")

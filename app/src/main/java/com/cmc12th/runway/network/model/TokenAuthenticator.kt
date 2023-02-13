@@ -1,17 +1,19 @@
 package com.cmc12th.runway.network.model
 
+import android.util.Log
 import com.cmc12th.runway.data.request.OauthLoginRequest
 import com.cmc12th.runway.data.response.ResponseWrapper
 import com.cmc12th.runway.di.NetworkModule.DEV_SERVER
-import com.cmc12th.runway.domain.repository.AuthRepository
+import com.cmc12th.runway.network.model.ServiceInterceptor.Companion.accessToken
 import com.cmc12th.runway.network.service.AuthService
+import kotlinx.coroutines.*
 import okhttp3.*
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
-import retrofit2.Callback
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 /**
@@ -22,16 +24,23 @@ class TokenAuthenticator @Inject constructor() : Authenticator {
 
     override fun authenticate(route: Route?, response: Response): Request? {
         val refreshTokenService = RefreshTokenService()
+//        val newAccessToken = GlobalScope.async(Dispatchers.Default) {
+//            refreshTokenService.refreshToken()
+//        }
+//        val token = runBlocking {
+//            newAccessToken.await()
+//        }
+//        Log.i("AuthenticatorToken", token.toString())
         val newAccessToken = refreshTokenService.refreshToken()
-        ServiceInterceptor.accessToken = newAccessToken
-        
+        Log.i("Authenticator2", newAccessToken.toString())
         return response.request.newBuilder().apply {
             addHeader("X-AUTH-TOKEN", newAccessToken)
         }.build();
     }
 }
 
-class RefreshTokenService() {
+class RefreshTokenService {
+
     private val refreshRetrofit = Retrofit.Builder()
         .baseUrl(DEV_SERVER)
         .client(
@@ -46,25 +55,27 @@ class RefreshTokenService() {
     private val refreshService = refreshRetrofit.create(AuthService::class.java)
 
     fun refreshToken(): String {
-        var accessToken = ""
-        refreshService.refreshToken(ServiceInterceptor.refreshToken)
-            .enqueue(object : Callback<ResponseWrapper<OauthLoginRequest>> {
+        var newAccessToken = ""
+        refreshService.tokenReissuance(ServiceInterceptor.refreshToken)
+            .enqueue(object : retrofit2.Callback<ResponseWrapper<OauthLoginRequest>> {
                 override fun onResponse(
                     call: Call<ResponseWrapper<OauthLoginRequest>>,
-                    response: retrofit2.Response<ResponseWrapper<OauthLoginRequest>>,
+                    response: retrofit2.Response<ResponseWrapper<OauthLoginRequest>>
                 ) {
+                    Log.i("Authenticator1", response.body().toString())
                     if (response.isSuccessful) {
+                        newAccessToken = response.body()?.result?.accessToken ?: ""
                         accessToken = response.body()?.result?.accessToken ?: ""
                     }
                 }
 
                 override fun onFailure(
                     call: Call<ResponseWrapper<OauthLoginRequest>>,
-                    t: Throwable,
+                    t: Throwable
                 ) {
                     t.printStackTrace()
                 }
             })
-        return accessToken
+        return newAccessToken
     }
 }

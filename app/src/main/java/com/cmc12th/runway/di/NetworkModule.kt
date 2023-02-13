@@ -47,7 +47,7 @@ object NetworkModule {
     fun provideRunwayInterceptorOkHttpClient(): OkHttpClient {
         return OkHttpClient.Builder()
             .addInterceptor(httpLoggingInterceptor)
-//            .authenticator(TokenAuthenticator())
+            .authenticator(TokenAuthenticator())
             .addInterceptor(ServiceInterceptor())
             .connectTimeout(20, TimeUnit.SECONDS)
             .readTimeout(20, TimeUnit.SECONDS)
