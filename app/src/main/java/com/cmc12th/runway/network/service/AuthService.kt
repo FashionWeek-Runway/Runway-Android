@@ -1,6 +1,7 @@
 package com.cmc12th.runway.network.service
 
 import com.cmc12th.runway.data.request.OauthLoginRequest
+import com.cmc12th.runway.data.response.LoginResponse
 import com.cmc12th.runway.data.response.ResponseWrapper
 import com.cmc12th.runway.utils.DefaultResponse
 import com.cmc12th.runway.utils.NetworkResponse
@@ -14,8 +15,8 @@ interface AuthService {
     @POST("/user/logout")
     suspend fun logout(): DefaultResponse
 
-    /** 유저 인증번호 전송 */
-    @POST("/user/refresh")
-    fun refreshToken(@Header("X-REFRESH-TOKEN") refreshToken: String): Call<ResponseWrapper<OauthLoginRequest>>
+    /** 리프레쉬 토큰 유효성 검증  */
+    @POST("/login/refresh")
+    suspend fun loginRefresh(@Header("X-REFRESH-TOKEN") refreshToken: String): NetworkResponse<LoginResponse>
 
 }

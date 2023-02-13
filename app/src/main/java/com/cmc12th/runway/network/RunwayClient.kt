@@ -45,8 +45,7 @@ class RunwayClient @Inject constructor(
 
     suspend fun logout() = authService.logout()
 
-    /** 안쓸 듯 */
-//    fun refreshToken() = authService.refreshToken()
+    suspend fun loginRefresh(refreshToken: String) = authService.loginRefresh(refreshToken)
 
     suspend fun stores() = storeService.stores()
 

@@ -1,6 +1,7 @@
 package com.cmc12th.runway.ui.splash
 
 import android.util.Log
+import androidx.datastore.preferences.core.Preferences
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cmc12th.runway.data.repository.AuthRepositoryImpl.PreferenceKeys.ACCESS_TOKEN
@@ -28,16 +29,39 @@ class SplashViewModel @Inject constructor(
             val refreshToken = withContext(IODispatcher) {
                 authRepository.getToken(REFRESH_TOKEN).first()
             }
-            Log.i("ACCESS-TOKEN", accessToken)
-            Log.i("REFRESH-TOKEN", refreshToken)
-            ServiceInterceptor.accessToken = accessToken
-            ServiceInterceptor.refreshToken = refreshToken
-            // 토큰이 빈 값이 아니라면 (로그인이 되어 있다면)
             if (accessToken.isNotBlank()) {
-                launch(MainDispatcher) { navigateToMain() }
+                // 엑세스토큰이 빈 값이 아니라면 (로그인이 되어 있다면) 프레시토큰 검증을한다.
+                validateRefreshToken(navigateToLogin, navigateToMain, refreshToken)
             } else {
                 launch(MainDispatcher) { navigateToLogin() }
             }
         }
+
+    private fun validateRefreshToken(
+        navigateToLogin: () -> Unit,
+        navigateToMain: () -> Unit,
+        refreshToken: String
+    ) = viewModelScope.launch {
+        authRepository.validateRefreshToken(refreshToken).collect { apiState ->
+            apiState.onSuccess {
+                val newAccessToken = it.result.accessToken
+                val newRrefreshToken = it.result.refreshToken
+                Log.i("ACCESS-TOKEN", newAccessToken)
+                Log.i("REFRESH-TOKEN", newRrefreshToken)
+                setToken(ACCESS_TOKEN, newAccessToken)
+                setToken(REFRESH_TOKEN, newRrefreshToken)
+                ServiceInterceptor.accessToken = newAccessToken
+                ServiceInterceptor.refreshToken = newRrefreshToken
+                launch(MainDispatcher) { navigateToMain() }
+            }
+            apiState.onError {
+                launch(MainDispatcher) { navigateToLogin() }
+            }
+        }
+    }
+
+    private fun setToken(type: Preferences.Key<String>, token: String) = viewModelScope.launch {
+        authRepository.setToken(type, token)
+    }
 
 }

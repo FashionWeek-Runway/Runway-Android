@@ -2,7 +2,11 @@ package com.cmc12th.runway.data.repository
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.*
+import com.cmc12th.runway.data.response.LoginResponse
 import com.cmc12th.runway.domain.repository.AuthRepository
+import com.cmc12th.runway.network.model.safeFlow
+import com.cmc12th.runway.network.service.AuthService
+import com.cmc12th.runway.utils.ApiWrapper
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
@@ -11,6 +15,7 @@ import javax.inject.Inject
 
 class AuthRepositoryImpl @Inject constructor(
     private val preferenceDataStore: DataStore<Preferences>,
+    private val authService: AuthService,
 ) : AuthRepository {
 
     override suspend fun setToken(type: Preferences.Key<String>, value: String) {
@@ -32,6 +37,11 @@ class AuthRepositoryImpl @Inject constructor(
                 prefs[type] ?: ""
             }
     }
+
+    override fun validateRefreshToken(refreshToken: String): Flow<ApiWrapper<LoginResponse>> =
+        safeFlow {
+            authService.loginRefresh(refreshToken)
+        }
 
     companion object PreferenceKeys {
         val ACCESS_TOKEN = stringPreferencesKey("access_token")
