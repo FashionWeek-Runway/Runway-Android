@@ -1,6 +1,7 @@
 package com.cmc12th.runway.ui.splash
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -13,6 +14,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.cmc12th.runway.R
 import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.utils.Constants
@@ -24,14 +26,28 @@ import kotlinx.coroutines.delay
 @Composable
 fun SplashScreen(appState: ApplicationState) {
 
+    val splashViewModel: SplashViewModel = hiltViewModel()
+
     LaunchedEffect(key1 = Unit) {
-        delay(300L)
-        appState.navController.navigate(LOGIN_GRAPH) {
-            popUpTo(SPLASH_ROUTE) {
-                this.inclusive = true
+        delay(200L)
+        splashViewModel.loginCheck(
+            navigateToMain = {
+                appState.navController.navigate(MAIN_GRAPH) {
+                    popUpTo(SPLASH_ROUTE) {
+                        this.inclusive = true
+                    }
+                }
+            },
+            navigateToLogin = {
+                appState.navController.navigate(LOGIN_GRAPH) {
+                    popUpTo(SPLASH_ROUTE) {
+                        this.inclusive = true
+                    }
+                }
             }
-        }
+        )
     }
+
     Box(
         modifier = Modifier
             .statusBarsPadding()
