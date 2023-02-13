@@ -5,7 +5,7 @@ import com.cmc12th.runway.data.response.LoginResponse
 import com.cmc12th.runway.data.response.SignUpResponse
 import com.cmc12th.runway.domain.repository.SignInRepository
 import com.cmc12th.runway.network.RunwayClient
-import com.cmc12th.runway.network.safeFlow
+import com.cmc12th.runway.network.model.safeFlow
 import com.cmc12th.runway.utils.ApiWrapper
 import com.cmc12th.runway.utils.DefaultApiWrapper
 import kotlinx.coroutines.flow.Flow
@@ -14,7 +14,7 @@ import okhttp3.RequestBody
 import javax.inject.Inject
 
 class SignInRepositoryImpl @Inject constructor(
-    private val runwayClient: RunwayClient
+    private val runwayClient: RunwayClient,
 ) : SignInRepository {
 
     override fun login(loginRequest: LoginRequest): Flow<ApiWrapper<LoginResponse>> =
@@ -43,7 +43,7 @@ class SignInRepositoryImpl @Inject constructor(
     override fun signUp(
         feedPostReqeust: HashMap<String, RequestBody>,
         categoryList: List<MultipartBody.Part>,
-        multipartFile: MultipartBody.Part?
+        multipartFile: MultipartBody.Part?,
     ): Flow<ApiWrapper<SignUpResponse>> = safeFlow {
         runwayClient.signUp(feedPostReqeust, categoryList, multipartFile)
     }
@@ -51,7 +51,7 @@ class SignInRepositoryImpl @Inject constructor(
     override fun kakaoSignUp(
         feedPostReqeust: HashMap<String, RequestBody>,
         categoryList: List<MultipartBody.Part>,
-        multipartFile: MultipartBody.Part?
+        multipartFile: MultipartBody.Part?,
     ): Flow<ApiWrapper<SignUpResponse>> = safeFlow {
         runwayClient.kakoSignUp(feedPostReqeust, categoryList, multipartFile)
     }

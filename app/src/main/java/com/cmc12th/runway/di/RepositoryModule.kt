@@ -1,6 +1,8 @@
 package com.cmc12th.runway.di
 
+import com.cmc12th.runway.data.repository.AuthRepositoryImpl
 import com.cmc12th.runway.data.repository.SignInRepositoryImpl
+import com.cmc12th.runway.domain.repository.AuthRepository
 import com.cmc12th.runway.domain.repository.SignInRepository
 import dagger.Binds
 import dagger.Module
@@ -15,7 +17,13 @@ abstract class RepositoryModule {
     @Binds
     @ViewModelScoped
     abstract fun bindsSignInRepository(
-        signInRepositoryImpl: SignInRepositoryImpl
+        signInRepositoryImpl: SignInRepositoryImpl,
     ): SignInRepository
+
+    @Binds
+    @ViewModelScoped
+    abstract fun bindsAuthRepository(
+        authRepositoryImpl: AuthRepositoryImpl,
+    ): AuthRepository
 
 }
