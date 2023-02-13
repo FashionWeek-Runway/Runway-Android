@@ -1,13 +1,15 @@
+@file:OptIn(ExperimentalMaterialApi::class)
+
 package com.cmc12th.runway.ui.signin.view
 
-import android.app.Activity
-import android.content.Intent
+import android.content.Context
+import android.graphics.Bitmap
 import android.net.Uri
 import android.provider.MediaStore
-import android.util.Log
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.result.launch
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
@@ -17,6 +19,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -39,18 +43,25 @@ import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.cmc12th.runway.R
 import com.cmc12th.runway.ui.components.BackIcon
+import com.cmc12th.runway.ui.components.CustomBottomSheet
 import com.cmc12th.runway.ui.components.CustomTextField
 import com.cmc12th.runway.ui.components.HeightSpacer
 import com.cmc12th.runway.ui.domain.keyboardAsState
-import com.cmc12th.runway.ui.signin.components.OnBoardStep
 import com.cmc12th.runway.ui.domain.model.ApplicationState
+import com.cmc12th.runway.ui.domain.model.BottomSheetContent
+import com.cmc12th.runway.ui.domain.model.BottomSheetContentItem
 import com.cmc12th.runway.ui.domain.model.KeyboardStatus
+import com.cmc12th.runway.ui.domain.rememberBottomSheet
 import com.cmc12th.runway.ui.signin.SignInViewModel
+import com.cmc12th.runway.ui.signin.components.OnBoardStep
 import com.cmc12th.runway.ui.signin.model.Nickname
 import com.cmc12th.runway.ui.signin.model.ProfileImageType
 import com.cmc12th.runway.ui.theme.*
 import com.cmc12th.runway.utils.Constants.MAX_NICKNAME_LENGTH
 import com.cmc12th.runway.utils.Constants.SIGNIN_CATEGORY_ROUTE
+import kotlinx.coroutines.launch
+import java.io.ByteArrayOutputStream
+
 
 @Composable
 fun SignInProfileImageScreen(
@@ -90,13 +101,27 @@ fun SignInProfileImageScreen(
             easing = FastOutSlowInEasing
         )
     )
+
+    val context = LocalContext.current
+
     val galleryLauncher =
-        rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { url ->
-            if (url != null) {
-                val image = ProfileImageType.LOCAL(uri = url)
+        rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+            if (uri != null) {
+                val image = ProfileImageType.LOCAL(uri = uri)
                 signInViewModel.updateProfileImage(image)
             }
         }
+
+    val takePhotoFromCameraLauncher = // 카메라로 사진 찍어서 가져오기
+        rememberLauncherForActivityResult(ActivityResultContracts.TakePicturePreview()) { takenPhoto ->
+            if (takenPhoto != null) {
+                getImageUri(context = context, bitmap = takenPhoto)?.let {
+                    val image = ProfileImageType.LOCAL(uri = it)
+                    signInViewModel.updateProfileImage(image)
+                }
+            }
+        }
+
     val onDone = {
         errorMessage.value = ""
         signInViewModel.checkNickname(
@@ -109,74 +134,101 @@ fun SignInProfileImageScreen(
             }
         )
     }
-
-    Column(
-        modifier = Modifier
-            .imePadding()
-    ) {
-        Box(modifier = Modifier.padding(20.dp)) {
-            BackIcon()
-        }
-        OnBoardStep(5)
-
-        Column(
-            modifier = Modifier
-                .padding(20.dp)
-                .weight(1f)
-                .verticalScroll(rememberScrollState())
-        ) {
-            HeightSpacer(height = 20.dp)
-            Row {
-                Text(text = "프로필", style = HeadLine3)
-                Text(text = "을 설정해주세요.", fontSize = 20.sp, fontWeight = FontWeight.Normal)
-            }
-            HeightSpacer(height = 40.dp)
-
-            /** 프로필이미지 아이콘 */
-            ProfileImageIcon(uiState.profileImage, profileSize, galleryLauncher)
-
-            /** 닉네임 입력 칸 */
-            HeightSpacer(height = heightSpacerSize)
-            InputNickname(
-                nickname = uiState.nickName,
-                errorMessage = errorMessage.value,
-                updateNickName = {
-                    errorMessage.value = ""
-                    signInViewModel.updateNickName(it)
-                },
-                onDone = {
-                    if (uiState.nickName.text.isNotBlank() && uiState.nickName.checkValidate()) {
-                        onDone()
-                    }
-                }
-            )
-
-        }
-
-        /** 다음 버튼 */
-        Button(
-            onClick = {
-                onDone()
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(50.dp),
-            shape = RectangleShape,
-            enabled = uiState.nickName.text.isNotBlank() && uiState.nickName.checkValidate(),
-            colors = ButtonDefaults.buttonColors(
-                if (uiState.nickName.text.isNotBlank() && uiState.nickName.checkValidate()) Black else Gray300
-            )
-        ) {
-            Text(
-                text = "다음",
-                textAlign = TextAlign.Center,
-                color = Color.White,
-                fontSize = 16.sp
-            )
+    val coroutineScope = rememberCoroutineScope()
+    val bottomsheetState = rememberBottomSheet()
+    val showBottomSheet: (BottomSheetContent) -> Unit = {
+        coroutineScope.launch {
+            bottomsheetState.bottomsheetContent.value = it
+            bottomsheetState.modalSheetState.animateTo(ModalBottomSheetValue.Expanded)
         }
     }
+
+    CustomBottomSheet(
+        bottomsheetState
+    ) {
+        Column(
+            modifier = Modifier
+                .imePadding()
+        ) {
+            Box(modifier = Modifier.padding(20.dp)) {
+                BackIcon()
+            }
+            OnBoardStep(5)
+
+            Column(
+                modifier = Modifier
+                    .padding(20.dp)
+                    .weight(1f)
+                    .verticalScroll(rememberScrollState())
+            ) {
+                HeightSpacer(height = 20.dp)
+                Row {
+                    Text(text = "프로필", style = HeadLine3)
+                    Text(text = "을 설정해주세요.", fontSize = 20.sp, fontWeight = FontWeight.Normal)
+                }
+                HeightSpacer(height = 40.dp)
+
+                /** 프로필이미지 아이콘 */
+                ProfileImageIcon(
+                    uiState.profileImage,
+                    profileSize,
+                    galleryLauncher,
+                    takePhotoFromCameraLauncher,
+                    showBottomSheet
+                )
+
+                /** 닉네임 입력 칸 */
+                HeightSpacer(height = heightSpacerSize)
+                InputNickname(
+                    nickname = uiState.nickName,
+                    errorMessage = errorMessage.value,
+                    updateNickName = {
+                        errorMessage.value = ""
+                        signInViewModel.updateNickName(it)
+                    },
+                    onDone = {
+                        if (uiState.nickName.text.isNotBlank() && uiState.nickName.checkValidate()) {
+                            onDone()
+                        }
+                    }
+                )
+
+            }
+
+            /** 다음 버튼 */
+            Button(
+                onClick = {
+                    onDone()
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(50.dp),
+                shape = RectangleShape,
+                enabled = uiState.nickName.text.isNotBlank() && uiState.nickName.checkValidate(),
+                colors = ButtonDefaults.buttonColors(
+                    if (uiState.nickName.text.isNotBlank() && uiState.nickName.checkValidate()) Black else Gray300
+                )
+            ) {
+                Text(
+                    text = "다음",
+                    textAlign = TextAlign.Center,
+                    color = Color.White,
+                    fontSize = 16.sp
+                )
+            }
+        }
+    }
+
+
 }
 
+fun getImageUri(context: Context, bitmap: Bitmap): Uri? {
+    val bytes = ByteArrayOutputStream()
+    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
+    val path =
+        MediaStore.Images.Media.insertImage(context.contentResolver, bitmap, "Title", null)
+    return Uri.parse(path)
+}
 
 @Composable
 fun InputNickname(
@@ -211,6 +263,8 @@ fun ProfileImageIcon(
     profileImageType: ProfileImageType,
     profileSize: Float,
     galleryLauncher: ManagedActivityResultLauncher<String, Uri?>,
+    takePhotoFromCameraLauncher: ManagedActivityResultLauncher<Void?, Bitmap?>,
+    showBottomSheet: (BottomSheetContent) -> Unit,
 ) {
 
     Box(
@@ -226,11 +280,19 @@ fun ProfileImageIcon(
             shape = CircleShape
         ) {
             when (profileImageType) {
-                is ProfileImageType.DEFAULT -> DefaultProfileImage(galleryLauncher)
+                is ProfileImageType.DEFAULT -> {
+                    DefaultProfileImage(
+                        galleryLauncher,
+                        takePhotoFromCameraLauncher,
+                        showBottomSheet
+                    )
+                }
                 else -> {
                     SelectedProfileImage(
                         profileImageType,
-                        galleryLauncher
+                        takePhotoFromCameraLauncher,
+                        galleryLauncher,
+                        showBottomSheet
                     )
                 }
 
@@ -242,7 +304,9 @@ fun ProfileImageIcon(
 @Composable
 private fun SelectedProfileImage(
     selectedImage: ProfileImageType,
+    takePhotoFromCameraLauncher: ManagedActivityResultLauncher<Void?, Bitmap?>,
     galleryLauncher: ManagedActivityResultLauncher<String, Uri?>,
+    showBottomSheet: (BottomSheetContent) -> Unit,
 ) {
     Box {
         if (selectedImage is ProfileImageType.SOCIAL) {
@@ -277,7 +341,22 @@ private fun SelectedProfileImage(
                 modifier = Modifier
                     .fillMaxSize()
                     .clickable {
-                        galleryLauncher.launch("image/*")
+                        showBottomSheet(
+                            BottomSheetContent(
+                                title = "", itemList = listOf(
+                                    BottomSheetContentItem(
+                                        itemName = "사진 촬영",
+                                        onItemClick = { galleryLauncher.launch("image/*") },
+                                        isSeleceted = false
+                                    ),
+                                    BottomSheetContentItem(
+                                        itemName = "사진 가져오기",
+                                        onItemClick = { takePhotoFromCameraLauncher.launch() },
+                                        isSeleceted = false
+                                    )
+                                )
+                            )
+                        )
                     }
             ) {
                 drawRect(color = Color(0x600A0A0A))
@@ -294,7 +373,11 @@ private fun SelectedProfileImage(
 }
 
 @Composable
-private fun DefaultProfileImage(galleryLauncher: ManagedActivityResultLauncher<String, Uri?>) {
+private fun DefaultProfileImage(
+    galleryLauncher: ManagedActivityResultLauncher<String, Uri?>,
+    takePhotoFromCameraLauncher: ManagedActivityResultLauncher<Void?, Bitmap?>,
+    showBottomSheet: (BottomSheetContent) -> Unit
+) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -320,7 +403,22 @@ private fun DefaultProfileImage(galleryLauncher: ManagedActivityResultLauncher<S
                     modifier = Modifier
                         .fillMaxSize()
                         .clickable {
-                            galleryLauncher.launch("image/*")
+                            showBottomSheet(
+                                BottomSheetContent(
+                                    title = "", itemList = listOf(
+                                        BottomSheetContentItem(
+                                            itemName = "사진 촬영",
+                                            onItemClick = { galleryLauncher.launch("image/*") },
+                                            isSeleceted = false
+                                        ),
+                                        BottomSheetContentItem(
+                                            itemName = "사진 가져오기",
+                                            onItemClick = { takePhotoFromCameraLauncher.launch() },
+                                            isSeleceted = false
+                                        )
+                                    )
+                                )
+                            )
                         }
                 ) {
                     drawRect(color = Gray600)

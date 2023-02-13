@@ -30,12 +30,20 @@ fun CustomBottomSheet(
         sheetState = bottomsheetState.modalSheetState,
         sheetShape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
         sheetContent = {
-            Column(modifier = Modifier
-                .fillMaxWidth()
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
             ) {
-                androidx.compose.material3.Text(text = bottomsheetState.bottomsheetContent.value.title,
-                    style = HeadLine4,
-                    modifier = Modifier.padding(20.dp, 30.dp))
+                if (bottomsheetState.bottomsheetContent.value.title.isNotBlank()) {
+                    androidx.compose.material3.Text(
+                        text = bottomsheetState.bottomsheetContent.value.title,
+                        style = HeadLine4,
+                        modifier = Modifier.padding(20.dp, 30.dp)
+                    )
+                }
+                if (bottomsheetState.bottomsheetContent.value.title.isBlank()) {
+                    HeightSpacer(height = 10.dp)
+                }
                 bottomsheetState.bottomsheetContent.value.itemList.forEach {
                     Row(
                         modifier = Modifier
@@ -59,7 +67,8 @@ fun CustomBottomSheet(
                             color = Color.Black
                         )
                         if (it.isSeleceted) {
-                            androidx.compose.material3.Icon(painter = painterResource(id = com.cmc12th.runway.R.drawable.ic_check),
+                            androidx.compose.material3.Icon(
+                                painter = painterResource(id = com.cmc12th.runway.R.drawable.ic_check),
                                 contentDescription = "IC_CHECK",
                                 tint = Primary,
                                 modifier = Modifier
