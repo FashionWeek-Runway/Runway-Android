@@ -76,7 +76,6 @@ fun LoginBaseScreen(
             kakaoLogin = {
                 loginViewModel.getKakaoToken(
                     alreadyRegistered = {
-                        // TODO 토큰 내부 DB에 저장하기
                         navigateToMain()
                     },
                     notRegistered = { profiletImage, kakaoId ->

@@ -4,11 +4,13 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.cmc12th.runway.data.repository.AuthRepositoryImpl
 import com.cmc12th.runway.data.request.LoginRequest
 import com.cmc12th.runway.data.request.OauthLoginRequest
 import com.cmc12th.runway.data.response.ErrorResponse
 import com.cmc12th.runway.data.response.NotRegisteredResponse
 import com.cmc12th.runway.data.response.ResponseWrapper
+import com.cmc12th.runway.domain.repository.AuthRepository
 import com.cmc12th.runway.domain.repository.SignInRepository
 import com.cmc12th.runway.ui.signin.model.Password
 import com.cmc12th.runway.ui.signin.model.Phone
@@ -26,13 +28,14 @@ import javax.inject.Inject
 
 data class LoginIdPasswordUiState(
     val phoneNumber: Phone = Phone.default(),
-    val password: Password = Password.default()
+    val password: Password = Password.default(),
 )
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val signInRepository: SignInRepository
+    private val signInRepository: SignInRepository,
+    private val authRepository: AuthRepository,
 ) : ViewModel() {
     private val _phoneNumber = MutableStateFlow(Phone.default())
     private val _password = MutableStateFlow(Password.default())
@@ -59,18 +62,25 @@ class LoginViewModel @Inject constructor(
                 password = _password.value.value,
                 phone = _phoneNumber.value.number
             )
-        ).collectLatest {
-            it.onSuccess {
+        ).collectLatest { apiWrapper ->
+            apiWrapper.onSuccess {
+                onSignInComplete(it.result.accessToken, it.result.refreshToken)
                 onSuccess()
             }
-            it.onError(onError)
+            apiWrapper.onError(onError)
         }
     }
+
+    private fun onSignInComplete(accessToken: String, refreshToken: String) =
+        viewModelScope.launch {
+            authRepository.setToken(AuthRepositoryImpl.ACCESS_TOKEN, accessToken)
+            authRepository.setToken(AuthRepositoryImpl.REFRESH_TOKEN, refreshToken)
+        }
 
     fun getKakaoToken(
         alreadyRegistered: () -> Unit,
         notRegistered: (profileImageUrl: String, kakaoId: String) -> Unit,
-        onError: (ErrorResponse) -> Unit
+        onError: (ErrorResponse) -> Unit,
     ) {
         // 카카오계정으로 로그인 공통 callback 구성
         // 카카오톡으로 로그인 할 수 없어 카카오계정으로 로그인할 경우 사용됨
@@ -87,7 +97,6 @@ class LoginViewModel @Inject constructor(
             UserApiClient.instance.loginWithKakaoTalk(context) { token, error ->
                 if (error != null) {
                     Log.e(TAG, "카카오톡으로 로그인 실패", error)
-
                     // 사용자가 카카오톡 설치 후 디바이스 권한 요청 화면에서 로그인을 취소한 경우,
                     // 의도적인 로그인 취소로 보고 카카오계정으로 로그인 시도 없이 로그인 취소로 처리 (예: 뒤로 가기)
                     if (error is ClientError && error.reason == ClientErrorCause.Cancelled) {
@@ -110,29 +119,30 @@ class LoginViewModel @Inject constructor(
         accessToken: String,
         alreadyRegistered: () -> Unit,
         notRegistered: (profileImageUrl: String, kakaoId: String) -> Unit,
-        onError: (ErrorResponse) -> Unit
+        onError: (ErrorResponse) -> Unit,
     ) = viewModelScope.launch {
-        signInRepository.kakaoLogin(OauthLoginRequest(accessToken = accessToken)).collect {
-            it.onSuccess {
-                // TODO 내부 DB에 토큰 저장
-                alreadyRegistered()
-            }
-            it.onError { errorResponse ->
-                if (errorResponse.code == "U022") {
-                    // errorBody로 오는 String은 따로 파싱하여 사용해야 할 듯함
-                    // 도저히 구현이 안됨
-                    /** Json을 refied를 사용하여 Generic Obejct로 파싱 */
-                    val notRegisteredResponse: ResponseWrapper<NotRegisteredResponse> =
-                        GsonHelper.fromJson(errorResponse.totalResponse)
-                    notRegistered(
-                        notRegisteredResponse.result.profileImgUrl,
-                        notRegisteredResponse.result.kakaoId
-                    )
-                } else {
-                    onError(errorResponse)
+        signInRepository.kakaoLogin(OauthLoginRequest(accessToken = accessToken))
+            .collect { apiWrapper ->
+                apiWrapper.onSuccess {
+                    onSignInComplete(it.result.accessToken, it.result.refreshToken)
+                    alreadyRegistered()
+                }
+                apiWrapper.onError { errorResponse ->
+                    // 등록이 안되있는 유저일 때
+                    if (errorResponse.code == "U022") {
+                        // errorBody로 오는 String은 따로 파싱하여 사용해야 할 듯 도저히 구현이 안됨
+                        /** Json을 refied를 사용하여 Generic Obejct로 파싱 */
+                        val notRegisteredResponse: ResponseWrapper<NotRegisteredResponse> =
+                            GsonHelper.fromJson(errorResponse.totalResponse)
+                        notRegistered(
+                            notRegisteredResponse.result.profileImgUrl,
+                            notRegisteredResponse.result.kakaoId
+                        )
+                    } else {
+                        onError(errorResponse)
+                    }
                 }
             }
-        }
     }
 
 
