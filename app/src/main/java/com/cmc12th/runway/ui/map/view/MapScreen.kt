@@ -124,9 +124,6 @@ fun MapScreen(appState: ApplicationState) {
                     exit = fadeOut()
                 ) {
                     Column {
-                        Button(onClick = { mapViewModel.setAccessTokenDummy() }) {
-                            Text(text = "엑세스토큰에 이상한값 넣기")
-                        }
                         Text(text = "보텀쉿테스트")
                         Text(text = "보텀쉿테스트")
                         Text(text = "보텀쉿테스트")
