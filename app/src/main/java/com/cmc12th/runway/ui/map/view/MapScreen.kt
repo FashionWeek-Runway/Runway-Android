@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import com.cmc12th.runway.data.model.NaverItem
 import com.cmc12th.runway.R
 import com.cmc12th.runway.ui.components.HeightSpacer
+import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.map.components.BottomGradient
 import com.cmc12th.runway.ui.map.components.NaverMapSearch
 import com.cmc12th.runway.ui.theme.*
@@ -34,7 +35,7 @@ import ted.gun0912.clustering.naver.TedNaverClustering
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun MapScreen() {
+fun MapScreen(appState: ApplicationState) {
 
     val items = listOf<NaverItem>(
         NaverItem(37.542258155004774, 127.05653993251198).apply { title = "아더 성수스페이스" },
@@ -53,6 +54,12 @@ fun MapScreen() {
     val onSearching = remember {
         mutableStateOf(false)
     }
+    val peekHeight = remember {
+        mutableStateOf(60.dp)
+    }
+    val onZoom = remember {
+        mutableStateOf(false)
+    }
 
     val bottomSheetScaffoldState =
         rememberBottomSheetScaffoldState()
@@ -61,13 +68,24 @@ fun MapScreen() {
     val screenHeight = configuration.screenHeightDp.dp
 
     LaunchedEffect(key1 = onSearching.value) {
-        /** 검색바가 올라오면 무조건 boTTomState는 Collaps되야한다.? */
-        if (onSearching.value) bottomSheetScaffoldState.bottomSheetState.collapse()
+        if (onSearching.value) peekHeight.value = 0.dp
+        else peekHeight.value = 60.dp
+    }
+
+    LaunchedEffect(key1 = onZoom.value) {
+        if (onZoom.value) {
+            peekHeight.value = 0.dp
+            appState.changeBottomBarVisibility(false)
+            bottomSheetScaffoldState.bottomSheetState.collapse()
+        } else {
+            peekHeight.value = 60.dp
+            appState.changeBottomBarVisibility(true)
+        }
     }
 
     BottomSheetScaffold(
         modifier = Modifier.fillMaxSize(),
-        sheetPeekHeight = if (onSearching.value) 0.dp else 60.dp,
+        sheetPeekHeight = peekHeight.value,
         scaffoldState = bottomSheetScaffoldState,
         sheetShape = RoundedCornerShape(topStart = 15.dp, topEnd = 15.dp),
         sheetContent = {
@@ -107,15 +125,26 @@ fun MapScreen() {
                 .fillMaxSize()
         ) {
             /** 네이버 지도 */
-            RunwayNaverMap(items)
-            /** 검색 및 필터 */
-            Column(
-                modifier = Modifier.align(Alignment.TopCenter)
-            ) {
-                NaverMapSearch(onSearch = {
-                    onSearching.value = true
+            RunwayNaverMap(
+                items = items,
+                hideBottomTap = {
+                    onZoom.value = !onZoom.value
                 })
-                BottomGradient(20.dp)
+
+            /** 검색 및 필터 */
+            AnimatedVisibility(
+                visible = !onZoom.value,
+                enter = slideInVertically { -it },
+                exit = slideOutVertically { -it }
+            ) {
+                Column(
+                    modifier = Modifier.align(Alignment.TopCenter)
+                ) {
+                    NaverMapSearch(onSearch = {
+                        onSearching.value = true
+                    })
+                    BottomGradient(20.dp)
+                }
             }
 
             /** 검색 스크린을 위에 깔아버리기 */
@@ -137,10 +166,16 @@ fun MapScreen() {
  *  https://github.com/fornewid/naver-map-compose */
 @Composable
 @OptIn(ExperimentalNaverMapApi::class)
-private fun RunwayNaverMap(items: List<NaverItem>) {
+private fun RunwayNaverMap(
+    items: List<NaverItem>,
+    hideBottomTap: () -> Unit,
+) {
     NaverMap(
         modifier = Modifier
-            .fillMaxSize()
+            .fillMaxSize(),
+        onMapClick = { _, _ ->
+            hideBottomTap()
+        }
     ) {
         val context = LocalContext.current
         var clusterManager by remember { mutableStateOf<TedNaverClustering<NaverItem>?>(null) }

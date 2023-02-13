@@ -39,7 +39,7 @@ fun NavGraphBuilder.mainGraph(
 ) {
     navigation(startDestination = Screen.Home.route, route = MAIN_GRAPH) {
         composable(Screen.Home.route) { HomeScreen() }
-        composable(Screen.Map.route) { MapScreen() }
+        composable(Screen.Map.route) { MapScreen(appState) }
         composable(Screen.Mypage.route) { MypageScreen(appState) }
     }
 }

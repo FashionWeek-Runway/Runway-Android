@@ -4,8 +4,6 @@ import androidx.compose.material.ScaffoldState
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.ExperimentalComposeUiApi
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.navigation.NavHostController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -18,6 +16,11 @@ class ApplicationState(
     val scaffoldState: ScaffoldState,
     private val coroutineScope: CoroutineScope,
 ) {
+
+    fun changeBottomBarVisibility(visibility: Boolean) {
+        bottomBarState.value = visibility
+    }
+
     fun showSnackbar(message: String) {
         coroutineScope.launch {
             scaffoldState.snackbarHostState.showSnackbar(message)
