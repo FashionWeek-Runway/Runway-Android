@@ -59,6 +59,7 @@ import com.cmc12th.runway.ui.signin.model.ProfileImageType
 import com.cmc12th.runway.ui.theme.*
 import com.cmc12th.runway.utils.Constants.MAX_NICKNAME_LENGTH
 import com.cmc12th.runway.utils.Constants.SIGNIN_CATEGORY_ROUTE
+import com.cmc12th.runway.utils.getImageUri
 import kotlinx.coroutines.launch
 import java.io.ByteArrayOutputStream
 
@@ -220,16 +221,6 @@ fun SignInProfileImageScreen(
             }
         }
     }
-
-
-}
-
-fun getImageUri(context: Context, bitmap: Bitmap): Uri? {
-    val bytes = ByteArrayOutputStream()
-    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
-    val path =
-        MediaStore.Images.Media.insertImage(context.contentResolver, bitmap, "Title", null)
-    return Uri.parse(path)
 }
 
 @Composable
@@ -348,12 +339,12 @@ private fun SelectedProfileImage(
                                 title = "", itemList = listOf(
                                     BottomSheetContentItem(
                                         itemName = "사진 촬영",
-                                        onItemClick = { galleryLauncher.launch("image/*") },
+                                        onItemClick = { takePhotoFromCameraLauncher.launch() },
                                         isSeleceted = false
                                     ),
                                     BottomSheetContentItem(
                                         itemName = "사진 가져오기",
-                                        onItemClick = { takePhotoFromCameraLauncher.launch() },
+                                        onItemClick = { galleryLauncher.launch("image/*") },
                                         isSeleceted = false
                                     )
                                 )
@@ -410,12 +401,12 @@ private fun DefaultProfileImage(
                                     title = "", itemList = listOf(
                                         BottomSheetContentItem(
                                             itemName = "사진 촬영",
-                                            onItemClick = { galleryLauncher.launch("image/*") },
+                                            onItemClick = { takePhotoFromCameraLauncher.launch() },
                                             isSeleceted = false
                                         ),
                                         BottomSheetContentItem(
                                             itemName = "사진 가져오기",
-                                            onItemClick = { takePhotoFromCameraLauncher.launch() },
+                                            onItemClick = { galleryLauncher.launch("image/*") },
                                             isSeleceted = false
                                         )
                                     )
