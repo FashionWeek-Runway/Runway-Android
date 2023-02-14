@@ -74,6 +74,7 @@ fun SignInPhoneVerifyScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .systemBarsPadding()
             .imePadding()
     ) {
         Box(modifier = Modifier.padding(20.dp)) {

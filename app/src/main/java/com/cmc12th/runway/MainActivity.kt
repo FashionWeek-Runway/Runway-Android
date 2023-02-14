@@ -5,6 +5,10 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
@@ -13,6 +17,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
@@ -52,8 +57,7 @@ class MainActivity : ComponentActivity() {
                 ManageBottomBarState(navBackStackEntry, appState)
                 Surface(
                     modifier = Modifier
-                        .statusBarsPadding()
-                        .navigationBarsPadding()
+//                        .navigationBarsPadding()
                         .fillMaxSize()
                         .background(Color.Transparent),
                     color = MaterialTheme.colorScheme.background
@@ -110,26 +114,34 @@ private fun ManageBottomBarState(
 private fun RootNavhost(
     appState: ApplicationState,
 ) {
+
     Scaffold(
         scaffoldState = appState.scaffoldState,
         bottomBar = {
-            if (appState.bottomBarState.value) BottomBar(appState)
+//            if (appState.bottomBarState.value) BottomBar(appState)
         },
     ) { innerPadding ->
-        NavHost(
-            appState.navController,
-            startDestination = SPLASH_ROUTE,
-            Modifier
-                .padding(innerPadding)
-                .background(color = Color.White),
+
+        Box(
+            modifier = Modifier.fillMaxSize(),
         ) {
-            composable(SPLASH_ROUTE) {
-                SplashScreen(appState)
+            NavHost(
+                appState.navController,
+                startDestination = SPLASH_ROUTE,
+                Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+                    .background(color = Color.White),
+            ) {
+                composable(SPLASH_ROUTE) {
+                    SplashScreen(appState)
+                }
+                mainGraph(appState)
+                loginGraph(appState)
+                signInGraph(appState)
+                detailGraph(appState)
             }
-            mainGraph(appState)
-            loginGraph(appState)
-            signInGraph(appState)
-            detailGraph(appState)
+            if (appState.bottomBarState.value) BottomBar(appState)
         }
     }
 }

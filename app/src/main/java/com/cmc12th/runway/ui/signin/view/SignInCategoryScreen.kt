@@ -44,6 +44,8 @@ fun SignInCategoryScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .statusBarsPadding()
+
     ) {
         Box(modifier = Modifier.padding(20.dp)) {
             BackIcon {

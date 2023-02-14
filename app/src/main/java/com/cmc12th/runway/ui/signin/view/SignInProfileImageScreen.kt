@@ -149,6 +149,7 @@ fun SignInProfileImageScreen(
     ) {
         Column(
             modifier = Modifier
+                .systemBarsPadding()
                 .imePadding()
         ) {
             Box(modifier = Modifier.padding(20.dp)) {

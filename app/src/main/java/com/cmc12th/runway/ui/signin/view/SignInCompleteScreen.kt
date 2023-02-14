@@ -112,6 +112,8 @@ fun SignInCompleteScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.Black)
+            .statusBarsPadding()
+
     ) {
         Column(
             modifier = Modifier

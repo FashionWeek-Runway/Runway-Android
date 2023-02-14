@@ -5,6 +5,7 @@
 
 package com.cmc12th.runway.ui.map.view
 
+import android.util.Log
 import android.widget.TextView
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.compose.animation.*
@@ -14,7 +15,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.BottomSheetScaffold
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.rememberBottomSheetScaffoldState
-import androidx.compose.material3.*
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -33,6 +33,8 @@ import com.cmc12th.runway.ui.map.MapViewModel
 import com.cmc12th.runway.ui.map.components.BottomGradient
 import com.cmc12th.runway.ui.map.components.NaverMapSearch
 import com.cmc12th.runway.ui.theme.*
+import com.cmc12th.runway.utils.Constants.STATUSBAR_HEIGHT
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.naver.maps.map.compose.DisposableMapEffect
 import com.naver.maps.map.compose.ExperimentalNaverMapApi
 import com.naver.maps.map.compose.NaverMap
@@ -75,7 +77,7 @@ fun MapScreen(appState: ApplicationState) {
     val coroutineScope = rememberCoroutineScope()
     val configuration = LocalConfiguration.current
     val screenHeight = configuration.screenHeightDp.dp
-
+    val context = LocalContext.current
     LaunchedEffect(key1 = Unit) {
         mapViewModel.stores()
     }
@@ -85,19 +87,24 @@ fun MapScreen(appState: ApplicationState) {
         else peekHeight.value = 60.dp
     }
 
+    val systemUiController = rememberSystemUiController()
     LaunchedEffect(key1 = onZoom.value) {
         if (onZoom.value) {
+            systemUiController.setSystemBarsColor(Color.Transparent)
+            systemUiController.setNavigationBarColor(Color.Transparent)
             peekHeight.value = 0.dp
             appState.changeBottomBarVisibility(false)
             bottomSheetScaffoldState.bottomSheetState.collapse()
         } else {
+            systemUiController.setSystemBarsColor(Color.White)
             peekHeight.value = 60.dp
             appState.changeBottomBarVisibility(true)
         }
     }
 
     BottomSheetScaffold(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize(),
         sheetPeekHeight = peekHeight.value,
         scaffoldState = bottomSheetScaffoldState,
         sheetShape = RoundedCornerShape(topStart = 15.dp, topEnd = 15.dp),
@@ -140,7 +147,7 @@ fun MapScreen(appState: ApplicationState) {
             /** 네이버 지도 */
             RunwayNaverMap(
                 items = items,
-                hideBottomTap = {
+                onMapClick = {
                     onZoom.value = !onZoom.value
                 })
 
@@ -151,7 +158,9 @@ fun MapScreen(appState: ApplicationState) {
                 exit = slideOutVertically { -it }
             ) {
                 Column(
-                    modifier = Modifier.align(Alignment.TopCenter)
+                    modifier = Modifier
+                        .align(Alignment.TopCenter)
+                        .padding(top = STATUSBAR_HEIGHT)
                 ) {
                     NaverMapSearch(onSearch = {
                         onSearching.value = true
@@ -181,13 +190,13 @@ fun MapScreen(appState: ApplicationState) {
 @OptIn(ExperimentalNaverMapApi::class)
 private fun RunwayNaverMap(
     items: List<NaverItem>,
-    hideBottomTap: () -> Unit,
+    onMapClick: () -> Unit,
 ) {
     NaverMap(
         modifier = Modifier
             .fillMaxSize(),
         onMapClick = { _, _ ->
-            hideBottomTap()
+            onMapClick()
         }
     ) {
         val context = LocalContext.current

@@ -28,6 +28,7 @@ fun AgreementDetailScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .statusBarsPadding()
     ) {
         Box(modifier = Modifier.padding(20.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
