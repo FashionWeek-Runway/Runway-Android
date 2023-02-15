@@ -6,7 +6,7 @@ import androidx.compose.runtime.remember
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.*
 import androidx.navigation.compose.composable
-import com.cmc12th.runway.ui.detail.DetailScreen
+import com.cmc12th.runway.ui.detail.view.DetailScreen
 import com.cmc12th.runway.ui.detail.PhotoReviewResultScreen
 import com.cmc12th.runway.ui.detail.photoreview.PhotoReviewScreen
 import com.cmc12th.runway.ui.domain.model.ApplicationState
@@ -16,13 +16,14 @@ import com.cmc12th.runway.ui.login.view.LoginBaseScreen
 import com.cmc12th.runway.ui.map.view.MapScreen
 import com.cmc12th.runway.ui.mypage.MypageScreen
 import com.cmc12th.runway.ui.signin.view.*
-import com.cmc12th.runway.utils.Constants
-import com.cmc12th.runway.utils.Constants.DETAIL_BASE_ROUTE
 import com.cmc12th.runway.utils.Constants.DETAIL_GRAPH
+import com.cmc12th.runway.utils.Constants.DETAIL_ROUTE
 import com.cmc12th.runway.utils.Constants.LOGIN_BASE_ROUTE
 import com.cmc12th.runway.utils.Constants.LOGIN_GRAPH
 import com.cmc12th.runway.utils.Constants.LOGIN_ID_PW_ROUTE
 import com.cmc12th.runway.utils.Constants.MAIN_GRAPH
+import com.cmc12th.runway.utils.Constants.PHOTO_REVIEW_RESULT_ROUTE
+import com.cmc12th.runway.utils.Constants.PHOTO_REVIEW_ROUTE
 import com.cmc12th.runway.utils.Constants.SIGNIN_AGREEMENT_DETAIL_ROUTE
 import com.cmc12th.runway.utils.Constants.SIGNIN_AGREEMENT_ROUTE
 import com.cmc12th.runway.utils.Constants.SIGNIN_CATEGORY_ROUTE
@@ -47,12 +48,21 @@ fun NavGraphBuilder.mainGraph(
 fun NavGraphBuilder.detailGraph(
     appState: ApplicationState,
 ) {
-    navigation(startDestination = DETAIL_BASE_ROUTE, route = DETAIL_GRAPH) {
-        composable(DETAIL_BASE_ROUTE) { DetailScreen() }
-        composable(Constants.PHOTO_REVIEW_ROUTE) {
+    navigation(startDestination = DETAIL_ROUTE, route = DETAIL_GRAPH) {
+        composable(route = "$DETAIL_ROUTE?idx={idx}",
+            arguments = listOf(
+                navArgument("idx") {
+                    type = NavType.IntType
+                }
+            )
+        ) { entry ->
+            val idx = entry.arguments?.getInt("idx") ?: 0
+            DetailScreen(appState, idx)
+        }
+        composable(PHOTO_REVIEW_ROUTE) {
             PhotoReviewScreen(appState)
         }
-        composable(Constants.PHOTO_REVIEW_RESULT_ROUTE) {
+        composable(PHOTO_REVIEW_RESULT_ROUTE) {
             val userObject =
                 appState.navController.previousBackStackEntry?.arguments?.getParcelable<Bitmap>("bitmap")
             PhotoReviewResultScreen(appState, userObject!!)

@@ -21,11 +21,14 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.cmc12th.runway.R
 import com.cmc12th.runway.ui.components.HeightSpacer
+import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.theme.*
+import com.cmc12th.runway.utils.Constants
 import com.cmc12th.runway.utils.Constants.BOTTOM_NAVIGATION_HEIGHT
+import com.cmc12th.runway.utils.Constants.DETAIL_ROUTE
 
 @Composable
-fun MapViewBottomSheetContent(screenHeight: Dp) {
+fun MapViewBottomSheetContent(appState: ApplicationState, screenHeight: Dp) {
     val shopList = remember {
         mutableStateOf(listOf("매장1", "매장2", "매장3", "매장4"))
 //        mutableStateOf(emptyList<String>())
@@ -60,7 +63,10 @@ fun MapViewBottomSheetContent(screenHeight: Dp) {
         if (shopList.value.isNotEmpty()) {
             LazyColumn {
                 items(shopList.value) {
-                    Column {
+                    Column(modifier = Modifier.clickable {
+                        appState.navigate("$DETAIL_ROUTE?idx=1")
+//                        appState.navigate("${Constants.SIGNIN_PROFILE_IMAGE_ROUTE}?profileImage=$profileImage&kakaoId=$kakaoId")
+                    }) {
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()

@@ -31,7 +31,7 @@ object Constants {
     const val SIGNIN_CATEGORY_ROUTE = "nav-signin-category"
     const val SIGNIN_COMPLETE_ROUTE = "nav-signin-complete"
 
-    const val DETAIL_BASE_ROUTE = "nav-detail-base"
+    const val DETAIL_ROUTE = "nav-detail"
     const val PHOTO_REVIEW_ROUTE = "nav-photo-review"
     const val PHOTO_REVIEW_RESULT_ROUTE = "nav-photo-result-review"
 

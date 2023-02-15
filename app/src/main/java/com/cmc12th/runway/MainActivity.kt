@@ -5,10 +5,6 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
@@ -17,7 +13,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
@@ -27,12 +22,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.cmc12th.runway.ui.*
 import com.cmc12th.runway.ui.components.BottomBar
 import com.cmc12th.runway.ui.domain.model.ApplicationState
-import com.cmc12th.runway.ui.loginGraph
-import com.cmc12th.runway.ui.mainGraph
-import com.cmc12th.runway.ui.detailGraph
-import com.cmc12th.runway.ui.signInGraph
 import com.cmc12th.runway.ui.splash.SplashScreen
 import com.cmc12th.runway.ui.theme.RunwayTheme
 import com.cmc12th.runway.utils.Constants.HOME_ROUTE
@@ -57,7 +49,6 @@ class MainActivity : ComponentActivity() {
                 ManageBottomBarState(navBackStackEntry, appState)
                 Surface(
                     modifier = Modifier
-//                        .navigationBarsPadding()
                         .fillMaxSize()
                         .background(Color.Transparent),
                     color = MaterialTheme.colorScheme.background
