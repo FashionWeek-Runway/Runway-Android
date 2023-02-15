@@ -86,6 +86,12 @@ val Body2 = TextStyle(
     fontSize = 14.sp,
 )
 
+val Body2B = TextStyle(
+    fontFamily = SpoqaHansSansNeo,
+    fontWeight = FontWeight.Bold,
+    fontSize = 14.sp,
+)
+
 val Caption = TextStyle(
     fontFamily = SpoqaHansSansNeo,
     fontWeight = FontWeight.Normal,
