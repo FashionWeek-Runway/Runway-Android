@@ -39,6 +39,7 @@ fun MapSearchScreen(onBackPrseed: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .statusBarsPadding()
             .background(Color.White)
     ) {
         TopSearchBar(onBackPrseed, searchTextField.value) { searchTextField.value = it }
