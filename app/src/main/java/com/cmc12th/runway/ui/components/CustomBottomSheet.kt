@@ -33,6 +33,7 @@ fun CustomBottomSheet(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .navigationBarsPadding()
             ) {
                 if (bottomsheetState.bottomsheetContent.value.title.isNotBlank()) {
                     androidx.compose.material3.Text(

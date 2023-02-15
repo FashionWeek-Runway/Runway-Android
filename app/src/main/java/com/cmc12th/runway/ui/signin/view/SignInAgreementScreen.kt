@@ -47,6 +47,7 @@ fun SignInAgreementScreen(
         modifier = Modifier
             .fillMaxSize()
             .statusBarsPadding()
+            .navigationBarsPadding()
     ) {
         Box(modifier = Modifier.padding(20.dp)) {
             BackIcon {

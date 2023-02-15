@@ -133,8 +133,10 @@ private fun UserVerificationContents(
                 onDismissRequest = closeInitialDialog,
                 title = "만 14세 이상인가요?",
                 descrption = "RUNWAY는 만 14세 이사 이용 가능합니다.\n해당 데이터는 저장되지 않으며,\n만 14세 이상임을 증명하는데만 사용됩니다.",
-                positiveButton = DialogButtonContent(title = "네, 만 14세 이상입니다.",
-                    onClick = closeInitialDialog),
+                positiveButton = DialogButtonContent(
+                    title = "네, 만 14세 이상입니다.",
+                    onClick = closeInitialDialog
+                ),
                 negativeButton = DialogButtonContent(title = "아니요, 만 14세 이하입니다.") {
                     closeInitialDialog()
                     beforeFourteenYearsDialogVisiblity.value = true

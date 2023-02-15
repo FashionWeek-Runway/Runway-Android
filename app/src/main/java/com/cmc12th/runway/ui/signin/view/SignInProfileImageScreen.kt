@@ -1,9 +1,10 @@
-@file:OptIn(ExperimentalMaterialApi::class)
+@file:OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class)
 
 package com.cmc12th.runway.ui.signin.view
 
 import android.graphics.Bitmap
 import android.net.Uri
+import android.util.Log
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -22,11 +23,13 @@ import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -58,6 +61,7 @@ import com.cmc12th.runway.ui.theme.*
 import com.cmc12th.runway.utils.Constants.MAX_NICKNAME_LENGTH
 import com.cmc12th.runway.utils.Constants.SIGNIN_CATEGORY_ROUTE
 import com.cmc12th.runway.utils.getImageUri
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
@@ -134,7 +138,9 @@ fun SignInProfileImageScreen(
     }
     val coroutineScope = rememberCoroutineScope()
     val bottomsheetState = rememberBottomSheet()
+    val keyboardController = LocalSoftwareKeyboardController.current
     val showBottomSheet: (BottomSheetContent) -> Unit = {
+        keyboardController?.hide()
         coroutineScope.launch {
             bottomsheetState.bottomsheetContent.value = it
             bottomsheetState.modalSheetState.animateTo(ModalBottomSheetValue.Expanded)
@@ -146,6 +152,7 @@ fun SignInProfileImageScreen(
     ) {
         Column(
             modifier = Modifier
+                .fillMaxSize()
                 .systemBarsPadding()
                 .imePadding()
         ) {
@@ -167,8 +174,8 @@ fun SignInProfileImageScreen(
                     Text(text = "프로필", style = HeadLine3)
                     Text(text = "을 설정해주세요.", fontSize = 20.sp, fontWeight = FontWeight.Normal)
                 }
-                HeightSpacer(height = 40.dp)
 
+                HeightSpacer(height = 40.dp)
                 /** 프로필이미지 아이콘 */
                 ProfileImageIcon(
                     profileImageType = uiState.profileImage,

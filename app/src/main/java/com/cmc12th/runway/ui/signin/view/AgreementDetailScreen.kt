@@ -32,7 +32,9 @@ fun AgreementDetailScreen(
     ) {
         Box(modifier = Modifier.padding(20.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                BackIcon()
+                BackIcon {
+                    appState.popBackStack()
+                }
                 WidthSpacer(width = 20.dp)
                 Text(text = "이용약관 동의(필수)", style = Body1M)
             }
