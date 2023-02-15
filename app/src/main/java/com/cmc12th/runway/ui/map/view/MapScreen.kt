@@ -97,7 +97,7 @@ fun MapScreen(appState: ApplicationState) {
             bottomSheetScaffoldState.bottomSheetState.collapse()
         } else {
             systemUiController.setSystemBarsColor(Color.White)
-            peekHeight.value = 60.dp
+            peekHeight.value = 140.dp
             appState.changeBottomBarVisibility(true)
         }
     }
@@ -112,7 +112,8 @@ fun MapScreen(appState: ApplicationState) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(screenHeight - 200.dp)
+                    .navigationBarsPadding()
+                    .height(screenHeight - 170.dp)
                     .padding(20.dp, 10.dp)
             ) {
                 Spacer(

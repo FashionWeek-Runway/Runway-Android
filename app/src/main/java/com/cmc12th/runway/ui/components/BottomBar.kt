@@ -8,6 +8,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
@@ -32,23 +33,23 @@ fun BoxScope.BottomBar(
     appState: ApplicationState,
     bottomNavItems: List<Screen> = Constants.BOTTOM_NAV_ITEMS,
 ) {
-    val bottomHeight = remember {
-        mutableStateOf(48.dp)
-    }
-    val animatedScale = animateDpAsState(
-        targetValue = bottomHeight.value,
-        animationSpec = tween(
-            durationMillis = 100,
-            easing = FastOutSlowInEasing
-        )
-    )
-    LaunchedEffect(key1 = appState.bottomBarState.value) {
-        if (appState.bottomBarState.value) {
-            bottomHeight.value = 48.dp
-        } else {
-            bottomHeight.value = 0.dp
-        }
-    }
+//    val bottomHeight = remember {
+//        mutableStateOf(48.dp)
+//    }
+//    val animatedScale = animateDpAsState(
+//        targetValue = bottomHeight.value,
+//        animationSpec = tween(
+//            durationMillis = 100,
+//            easing = FastOutSlowInEasing
+//        )
+//    )
+//    LaunchedEffect(key1 = appState.bottomBarState.value) {
+//        if (appState.bottomBarState.value) {
+//            bottomHeight.value = 48.dp
+//        } else {
+//            bottomHeight.value = 0.dp
+//        }
+//    }
 
     AnimatedVisibility(
         visible = appState.bottomBarState.value,
@@ -57,11 +58,12 @@ fun BoxScope.BottomBar(
         modifier = Modifier
             .fillMaxWidth()
             .align(Alignment.BottomCenter)
-            .background(color = Color.White)
-            .padding(bottom = animatedScale.value),
+            .background(color = Color.Transparent)
+            .navigationBarsPadding(),
     ) {
         BottomNavigation(
             backgroundColor = Color.White,
+            elevation = 0.dp
         ) {
             val navBackStackEntry by appState.navController.currentBackStackEntryAsState()
             val currentDestination = navBackStackEntry?.destination

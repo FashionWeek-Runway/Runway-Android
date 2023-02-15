@@ -121,7 +121,6 @@ private fun RootNavhost(
 //            if (appState.bottomBarState.value) BottomBar(appState)
         },
     ) { innerPadding ->
-
         Box(
             modifier = Modifier.fillMaxSize(),
         ) {
@@ -141,7 +140,7 @@ private fun RootNavhost(
                 signInGraph(appState)
                 detailGraph(appState)
             }
-            if (appState.bottomBarState.value) BottomBar(appState)
+            BottomBar(appState)
         }
     }
 }
