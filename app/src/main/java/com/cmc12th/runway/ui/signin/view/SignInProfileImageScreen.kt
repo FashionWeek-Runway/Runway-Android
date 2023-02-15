@@ -2,10 +2,8 @@
 
 package com.cmc12th.runway.ui.signin.view
 
-import android.content.Context
 import android.graphics.Bitmap
 import android.net.Uri
-import android.provider.MediaStore
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -61,7 +59,6 @@ import com.cmc12th.runway.utils.Constants.MAX_NICKNAME_LENGTH
 import com.cmc12th.runway.utils.Constants.SIGNIN_CATEGORY_ROUTE
 import com.cmc12th.runway.utils.getImageUri
 import kotlinx.coroutines.launch
-import java.io.ByteArrayOutputStream
 
 
 @Composable
@@ -174,11 +171,12 @@ fun SignInProfileImageScreen(
 
                 /** 프로필이미지 아이콘 */
                 ProfileImageIcon(
-                    uiState.profileImage,
-                    profileSize,
-                    galleryLauncher,
-                    takePhotoFromCameraLauncher,
-                    showBottomSheet
+                    profileImageType = uiState.profileImage,
+                    profileSize = profileSize,
+                    galleryLauncher = galleryLauncher,
+                    takePhotoFromCameraLauncher = takePhotoFromCameraLauncher,
+                    showBottomSheet = showBottomSheet,
+                    setDefaultProfileImage = { signInViewModel.updateProfileImage(ProfileImageType.DEFAULT) }
                 )
 
                 /** 닉네임 입력 칸 */
@@ -259,6 +257,7 @@ fun ProfileImageIcon(
     galleryLauncher: ManagedActivityResultLauncher<String, Uri?>,
     takePhotoFromCameraLauncher: ManagedActivityResultLauncher<Void?, Bitmap?>,
     showBottomSheet: (BottomSheetContent) -> Unit,
+    setDefaultProfileImage: () -> Unit,
 ) {
 
     Box(
@@ -276,20 +275,20 @@ fun ProfileImageIcon(
             when (profileImageType) {
                 is ProfileImageType.DEFAULT -> {
                     DefaultProfileImage(
-                        galleryLauncher,
-                        takePhotoFromCameraLauncher,
-                        showBottomSheet
+                        galleryLauncher = galleryLauncher,
+                        takePhotoFromCameraLauncher = takePhotoFromCameraLauncher,
+                        showBottomSheet = showBottomSheet
                     )
                 }
                 else -> {
                     SelectedProfileImage(
-                        profileImageType,
-                        takePhotoFromCameraLauncher,
-                        galleryLauncher,
-                        showBottomSheet
+                        selectedImage = profileImageType,
+                        takePhotoFromCameraLauncher = takePhotoFromCameraLauncher,
+                        galleryLauncher = galleryLauncher,
+                        showBottomSheet = showBottomSheet,
+                        setDefaultProfileImage = setDefaultProfileImage
                     )
                 }
-
             }
         }
     }
@@ -301,6 +300,7 @@ private fun SelectedProfileImage(
     takePhotoFromCameraLauncher: ManagedActivityResultLauncher<Void?, Bitmap?>,
     galleryLauncher: ManagedActivityResultLauncher<String, Uri?>,
     showBottomSheet: (BottomSheetContent) -> Unit,
+    setDefaultProfileImage: () -> Unit,
 ) {
     Box {
         if (selectedImage is ProfileImageType.SOCIAL) {
@@ -339,6 +339,11 @@ private fun SelectedProfileImage(
                             BottomSheetContent(
                                 title = "", itemList = listOf(
                                     BottomSheetContentItem(
+                                        itemName = "기본 이미지로 변경",
+                                        onItemClick = { setDefaultProfileImage() },
+                                        isSeleceted = false
+                                    ),
+                                    BottomSheetContentItem(
                                         itemName = "사진 촬영",
                                         onItemClick = { takePhotoFromCameraLauncher.launch() },
                                         isSeleceted = false
@@ -370,7 +375,7 @@ private fun SelectedProfileImage(
 private fun DefaultProfileImage(
     galleryLauncher: ManagedActivityResultLauncher<String, Uri?>,
     takePhotoFromCameraLauncher: ManagedActivityResultLauncher<Void?, Bitmap?>,
-    showBottomSheet: (BottomSheetContent) -> Unit
+    showBottomSheet: (BottomSheetContent) -> Unit,
 ) {
     Box(
         modifier = Modifier
