@@ -6,6 +6,7 @@ import com.cmc12th.runway.ui.Screen
 object Constants {
     const val MAX_NICKNAME_LENGTH = 10
     val STATUSBAR_HEIGHT = 24.dp
+    val BOTTOM_NAVIGATION_HEIGHT = 56.dp
     val BOTTOM_NAV_ITEMS = listOf<Screen>(Screen.Home, Screen.Map, Screen.Mypage)
     val CATEGORYS = listOf("미니멀", "캐주얼", "시티보이", "스트릿", "빈티지", "페미닌")
     const val SNS_INTENT_ACTION = "android.provider.Telephony.SMS_RECEIVED"

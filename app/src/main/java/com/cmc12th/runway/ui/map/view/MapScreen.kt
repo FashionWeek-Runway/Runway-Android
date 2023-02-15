@@ -32,6 +32,7 @@ import com.cmc12th.runway.ui.map.MapViewModel
 import com.cmc12th.runway.ui.map.components.BottomGradient
 import com.cmc12th.runway.ui.map.components.SearchBoxAndTagCategory
 import com.cmc12th.runway.ui.theme.*
+import com.cmc12th.runway.utils.Constants.BOTTOM_NAVIGATION_HEIGHT
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.naver.maps.map.compose.DisposableMapEffect
 import com.naver.maps.map.compose.ExperimentalNaverMapApi
@@ -77,12 +78,12 @@ fun MapScreen(appState: ApplicationState) {
     val screenHeight = configuration.screenHeightDp.dp
     val context = LocalContext.current
     LaunchedEffect(key1 = Unit) {
-        mapViewModel.stores()
+//        mapViewModel.stores()
     }
 
     LaunchedEffect(key1 = onSearching.value) {
         if (onSearching.value) peekHeight.value = 0.dp
-        else peekHeight.value = 60.dp
+        else peekHeight.value = BOTTOM_NAVIGATION_HEIGHT + 100.dp
     }
 
     val systemUiController = rememberSystemUiController()
@@ -95,7 +96,7 @@ fun MapScreen(appState: ApplicationState) {
             bottomSheetScaffoldState.bottomSheetState.collapse()
         } else {
             systemUiController.setSystemBarsColor(Color.White)
-            peekHeight.value = 140.dp
+            peekHeight.value = BOTTOM_NAVIGATION_HEIGHT + 100.dp
             appState.changeBottomBarVisibility(true)
         }
     }
@@ -112,7 +113,12 @@ fun MapScreen(appState: ApplicationState) {
                     .fillMaxWidth()
                     .navigationBarsPadding()
                     .height(screenHeight - 170.dp)
-                    .padding(20.dp, 10.dp)
+                    .padding(
+                        start = 20.dp,
+                        end = 20.dp,
+                        top = 10.dp,
+                        bottom = BOTTOM_NAVIGATION_HEIGHT
+                    )
             ) {
                 Spacer(
                     modifier = Modifier
