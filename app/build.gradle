@@ -3,6 +3,7 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
+    id 'com.google.gms.google-services'
 }
 Properties properties = new Properties()
 properties.load(project.rootProject.file('local.properties').newDataInputStream())
@@ -124,4 +125,8 @@ dependencies {
 
     // DataStore
     implementation 'androidx.datastore:datastore-preferences:1.0.0'
+
+    // Firebase
+    implementation platform('com.google.firebase:firebase-bom:31.2.1')
+
 }
