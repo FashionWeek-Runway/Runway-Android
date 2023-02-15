@@ -19,7 +19,7 @@ fun TopGradient(modifier: Modifier = Modifier, height: Dp, alpha: Float = 0.8f) 
             .height(height)
             .background(
                 brush = Brush.verticalGradient(listOf(Color.Transparent, Color.White)),
-                alpha = 0.8f
+                alpha = alpha
             )
     )
 }
