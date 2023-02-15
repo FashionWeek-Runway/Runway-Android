@@ -22,12 +22,18 @@ import androidx.compose.ui.unit.dp
 import com.cmc12th.runway.R
 import com.cmc12th.runway.ui.components.HeightSpacer
 import com.cmc12th.runway.ui.components.WidthSpacer
-import com.cmc12th.runway.ui.signin.components.StyleCategoryCheckBox
+import com.cmc12th.runway.ui.signin.model.CategoryTag
 import com.cmc12th.runway.ui.theme.*
-import com.cmc12th.runway.utils.Constants
 
 @Composable
-fun SearchBoxAndTagCategory(onSearch: () -> Unit) {
+fun SearchBoxAndTagCategory(
+    isBookmarked: Boolean,
+    categoryItems: List<CategoryTag>,
+    updateCategoryTags: (CategoryTag) -> Unit,
+    updateIsBookmarked: (Boolean) -> Unit,
+    onSearch: () -> Unit
+) {
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -36,7 +42,7 @@ fun SearchBoxAndTagCategory(onSearch: () -> Unit) {
         /** 상단 검색 바 */
         Box(
             modifier = Modifier
-                .padding(start = 20.dp, end = 20.dp, top = 20.dp, bottom = 4.dp)
+                .padding(start = 20.dp, end = 20.dp, top = 0.dp, bottom = 4.dp)
                 .clip(RoundedCornerShape(4.dp))
                 .border(BorderStroke(1.dp, Gray300), RoundedCornerShape(4.dp))
                 .clickable {
@@ -64,7 +70,8 @@ fun SearchBoxAndTagCategory(onSearch: () -> Unit) {
         /** 카테고리 리스트 */
         LazyRow(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(10.dp)
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
             item {
                 WidthSpacer(width = 10.dp)
@@ -72,39 +79,27 @@ fun SearchBoxAndTagCategory(onSearch: () -> Unit) {
 
             item {
                 val surfaceColor: State<Color> = animateColorAsState(
-//                    if (categoryTag.isSelected) Primary else
-                    White
+                    if (isBookmarked) Primary else Gray50
                 )
                 /** 즐겨찾기 아이콘 */
-                Box(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(5.dp))
-                        .border(1.dp,
-                            if (false) Primary else Gray200,
-                            RoundedCornerShape(5.dp))
-                        .background(surfaceColor.value)
-                        .clickable {
-                        }
-                ) {
-                    Icon(
-                        modifier = Modifier.padding(10.dp),
-                        painter = painterResource(id = R.drawable.ic_baseline_bookmark_24),
-                        contentDescription = "IC_BASELINE_BOOKMAR",
-                        tint = Primary
-                    )
-                }
+                BookmarkIcon(
+                    isBookmarked = isBookmarked,
+                    surfaceColor = surfaceColor,
+                    updateIsBookmarked = updateIsBookmarked
+                )
             }
 
-            items(Constants.CATEGORYS) {
+            items(categoryItems) {
                 val surfaceColor: State<Color> = animateColorAsState(
-//                    if (categoryTag.isSelected) Primary else
-                    White
+                    if (it.isSelected) Primary else White
                 )
                 StyleCategoryCheckBoxInMapView(
-                    isSelected = false,
+                    isSelected = it.isSelected,
                     color = surfaceColor.value,
-                    onClicked = { /*TODO*/ },
-                    title = it,
+                    onClicked = {
+                        updateCategoryTags(it)
+                    },
+                    title = it.name,
                 )
             }
 
@@ -112,6 +107,34 @@ fun SearchBoxAndTagCategory(onSearch: () -> Unit) {
                 WidthSpacer(width = 10.dp)
             }
         }
+    }
+}
+
+@Composable
+private fun BookmarkIcon(
+    isBookmarked: Boolean,
+    surfaceColor: State<Color>,
+    updateIsBookmarked: (Boolean) -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .clip(RoundedCornerShape(5.dp))
+            .border(
+                1.dp,
+                if (isBookmarked) Primary else Gray200,
+                RoundedCornerShape(5.dp)
+            )
+            .background(surfaceColor.value)
+            .clickable {
+                updateIsBookmarked(!isBookmarked)
+            }
+    ) {
+        Icon(
+            modifier = Modifier.padding(8.dp), // TODO 높이 값 바꿔야 될 수도 있음
+            painter = painterResource(id = R.drawable.ic_baseline_bookmark_24),
+            contentDescription = "IC_BASELINE_BOOKMAR",
+            tint = if (isBookmarked) Point else Gray400
+        )
     }
 }
 

@@ -40,8 +40,8 @@ fun StyleCategoryCheckBoxInMapView(
         ) {
             Text(
                 text = title,
-                style = if (isSelected) Body1B else Body1,
-                color = if (isSelected) White else Gray600
+                style = if (isSelected) Body2B else Body2,
+                color = if (isSelected) Point else Gray600
             )
         }
     }

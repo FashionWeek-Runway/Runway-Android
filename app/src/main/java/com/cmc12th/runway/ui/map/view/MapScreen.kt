@@ -8,30 +8,26 @@ package com.cmc12th.runway.ui.map.view
 import android.widget.TextView
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.compose.animation.*
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.BottomSheetScaffold
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.rememberBottomSheetScaffoldState
-import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.cmc12th.runway.data.model.NaverItem
 import com.cmc12th.runway.R
-import com.cmc12th.runway.ui.components.HeightSpacer
 import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.map.MapViewModel
 import com.cmc12th.runway.ui.map.components.BottomGradient
 import com.cmc12th.runway.ui.map.components.SearchBoxAndTagCategory
-import com.cmc12th.runway.ui.theme.*
 import com.cmc12th.runway.utils.Constants.BOTTOM_NAVIGATION_HEIGHT
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.naver.maps.map.compose.DisposableMapEffect
@@ -46,21 +42,6 @@ import ted.gun0912.clustering.naver.TedNaverClustering
 fun MapScreen(appState: ApplicationState) {
 
     val mapViewModel: MapViewModel = hiltViewModel()
-
-    val items = listOf<NaverItem>(
-        NaverItem(37.542258155004774, 127.05653993251198).apply { title = "아더 성수스페이스" },
-        NaverItem(37.541397589495894, 127.06127752698968).apply { title = "세터하우스" },
-        NaverItem(37.54122227689786, 127.06053623897719).apply { title = "옵스큐라" },
-        NaverItem(37.540791, 127.096306),
-        NaverItem(37.550791, 127.076306),
-        NaverItem(37.560791, 127.066306),
-        NaverItem(37.550791, 127.166306),
-        NaverItem(37.540791, 127.176306),
-        NaverItem(37.520791, 127.166306),
-        NaverItem(37.510791, 127.016306),
-        NaverItem(37.570791, 127.046306),
-    )
-
     val onSearching = remember {
         mutableStateOf(false)
     }
@@ -73,11 +54,13 @@ fun MapScreen(appState: ApplicationState) {
 
     val bottomSheetScaffoldState =
         rememberBottomSheetScaffoldState()
-    val coroutineScope = rememberCoroutineScope()
     val configuration = LocalConfiguration.current
     val screenHeight = configuration.screenHeightDp.dp
-    val context = LocalContext.current
+
+    val uiState by mapViewModel.mapUiState.collectAsStateWithLifecycle()
+
     LaunchedEffect(key1 = Unit) {
+        // TODO 사용자 정보 가져오기 및 위치에 따른 장소 가져오기
 //        mapViewModel.stores()
     }
 
@@ -108,41 +91,7 @@ fun MapScreen(appState: ApplicationState) {
         scaffoldState = bottomSheetScaffoldState,
         sheetShape = RoundedCornerShape(topStart = 15.dp, topEnd = 15.dp),
         sheetContent = {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .navigationBarsPadding()
-                    .height(screenHeight - 170.dp)
-                    .padding(
-                        start = 20.dp,
-                        end = 20.dp,
-                        top = 10.dp,
-                        bottom = BOTTOM_NAVIGATION_HEIGHT
-                    )
-            ) {
-                Spacer(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(5.dp))
-                        .height(3.dp)
-                        .width(36.dp)
-                        .background(Gray200)
-                        .align(Alignment.CenterHorizontally)
-                )
-                HeightSpacer(height = 10.dp)
-                Text(text = "성수동 둘러보기", style = Body1M, color = Color.Black)
-//                AnimatedVisibility(
-//                    visible = bottomSheetScaffoldState.bottomSheetState.isExpanded,
-//                    enter = fadeIn(),
-//                    exit = fadeOut()
-//                ) {
-                Column {
-                    Text(text = "보텀쉿테스트")
-                    Text(text = "보텀쉿테스트")
-                    Text(text = "보텀쉿테스트")
-                    Text(text = "보텀쉿테스트")
-                }
-//                }
-            }
+            MapViewBottomSheetContent(screenHeight)
         }
     ) {
         Box(
@@ -151,7 +100,7 @@ fun MapScreen(appState: ApplicationState) {
         ) {
             /** 네이버 지도 */
             RunwayNaverMap(
-                items = items,
+                items = mapViewModel._markerItems.value,
                 onMapClick = {
                     onZoom.value = !onZoom.value
                 })
@@ -167,9 +116,13 @@ fun MapScreen(appState: ApplicationState) {
                         .align(Alignment.TopCenter)
                         .statusBarsPadding()
                 ) {
-                    SearchBoxAndTagCategory(onSearch = {
-                        onSearching.value = true
-                    })
+                    SearchBoxAndTagCategory(
+                        isBookmarked = uiState.isBookmarked,
+                        categoryItems = uiState.categoryItems,
+                        updateCategoryTags = { mapViewModel.updateCategoryTags(it) },
+                        updateIsBookmarked = { mapViewModel.updateIsBookmarked(it) },
+                        onSearch = { onSearching.value = true }
+                    )
                     BottomGradient(20.dp)
                 }
             }

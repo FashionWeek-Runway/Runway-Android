@@ -12,6 +12,7 @@ import com.cmc12th.runway.data.request.SendVerifyMessageRequest
 import com.cmc12th.runway.data.response.ErrorResponse
 import com.cmc12th.runway.domain.repository.AuthRepository
 import com.cmc12th.runway.domain.repository.SignInRepository
+import com.cmc12th.runway.ui.domain.model.RunwayCategory
 import com.cmc12th.runway.utils.toPlainRequestBody
 import com.cmc12th.runway.ui.signin.model.*
 import com.cmc12th.runway.utils.Constants.CATEGORYS
@@ -66,8 +67,8 @@ class SignInViewModel @Inject constructor(
     private val _nickName = MutableStateFlow(Nickname.default())
     private val _profileImage = MutableStateFlow<ProfileImageType>(ProfileImageType.DEFAULT)
 
-    private val _categoryTags = MutableStateFlow(CATEGORYS.mapIndexed { index, name ->
-        CategoryTag(index + 1, name)
+    private val _categoryTags = MutableStateFlow(RunwayCategory.values().map { category ->
+        CategoryTag(category.iconId, category.visibleName)
     }.toMutableList())
 
 
