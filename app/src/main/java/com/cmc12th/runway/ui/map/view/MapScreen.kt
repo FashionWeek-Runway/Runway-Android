@@ -65,8 +65,14 @@ fun MapScreen(appState: ApplicationState) {
     }
 
     LaunchedEffect(key1 = onSearching.value) {
-        if (onSearching.value) peekHeight.value = 0.dp
-        else peekHeight.value = BOTTOM_NAVIGATION_HEIGHT + 100.dp
+        if (onSearching.value) {
+            bottomSheetScaffoldState.bottomSheetState.collapse()
+            appState.changeBottomBarVisibility(false)
+            peekHeight.value = 0.dp
+        } else {
+            appState.changeBottomBarVisibility(true)
+            peekHeight.value = BOTTOM_NAVIGATION_HEIGHT + 100.dp
+        }
     }
 
     val systemUiController = rememberSystemUiController()
@@ -91,7 +97,7 @@ fun MapScreen(appState: ApplicationState) {
         scaffoldState = bottomSheetScaffoldState,
         sheetShape = RoundedCornerShape(topStart = 15.dp, topEnd = 15.dp),
         sheetContent = {
-            MapViewBottomSheetContent(screenHeight)
+            MapViewBottomSheetContent(appState, screenHeight)
         }
     ) {
         Box(

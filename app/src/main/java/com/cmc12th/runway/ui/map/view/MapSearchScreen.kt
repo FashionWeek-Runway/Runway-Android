@@ -45,7 +45,7 @@ fun MapSearchScreen(onBackPrseed: () -> Unit) {
         modifier = Modifier
             .fillMaxSize()
             .noRippleClickable {}
-            .statusBarsPadding()
+            .navigationBarsPadding()
             .background(Color.White)
     ) {
         TopSearchBar(onBackPrseed, searchTextField.value) { searchTextField.value = it }
