@@ -9,6 +9,11 @@ import android.os.Looper
 import android.view.PixelCopy
 import android.view.View
 import android.view.Window
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.composed
 
 fun captureView(view: View, window: Window, bitmapCallback: (Bitmap) -> Unit) {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -37,5 +42,12 @@ fun captureView(view: View, window: Window, bitmapCallback: (Bitmap) -> Unit) {
         view.draw(canvas)
         canvas.setBitmap(null)
         bitmapCallback.invoke(tBitmap)
+    }
+}
+
+inline fun Modifier.noRippleClickable(crossinline onClick: () -> Unit): Modifier = composed {
+    clickable(indication = null,
+        interactionSource = remember { MutableInteractionSource() }) {
+        onClick()
     }
 }
