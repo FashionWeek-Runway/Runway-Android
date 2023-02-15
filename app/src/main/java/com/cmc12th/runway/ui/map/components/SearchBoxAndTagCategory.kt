@@ -23,19 +23,17 @@ import com.cmc12th.runway.R
 import com.cmc12th.runway.ui.components.HeightSpacer
 import com.cmc12th.runway.ui.components.WidthSpacer
 import com.cmc12th.runway.ui.signin.components.StyleCategoryCheckBox
-import com.cmc12th.runway.ui.theme.Body1
-import com.cmc12th.runway.ui.theme.Gray300
-import com.cmc12th.runway.ui.theme.Gray700
-import com.cmc12th.runway.ui.theme.White
+import com.cmc12th.runway.ui.theme.*
 import com.cmc12th.runway.utils.Constants
 
 @Composable
-fun NaverMapSearch(onSearch: () -> Unit) {
+fun SearchBoxAndTagCategory(onSearch: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .background(Color.White)
     ) {
+        /** 상단 검색 바 */
         Box(
             modifier = Modifier
                 .padding(start = 20.dp, end = 20.dp, top = 20.dp, bottom = 4.dp)
@@ -62,22 +60,58 @@ fun NaverMapSearch(onSearch: () -> Unit) {
             }
         }
         HeightSpacer(height = 15.dp)
+
+        /** 카테고리 리스트 */
         LazyRow(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
         ) {
+            item {
+                WidthSpacer(width = 10.dp)
+            }
+
+            item {
+                val surfaceColor: State<Color> = animateColorAsState(
+//                    if (categoryTag.isSelected) Primary else
+                    White
+                )
+                /** 즐겨찾기 아이콘 */
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(5.dp))
+                        .border(1.dp,
+                            if (false) Primary else Gray200,
+                            RoundedCornerShape(5.dp))
+                        .background(surfaceColor.value)
+                        .clickable {
+                        }
+                ) {
+                    Icon(
+                        modifier = Modifier.padding(10.dp),
+                        painter = painterResource(id = R.drawable.ic_baseline_bookmark_24),
+                        contentDescription = "IC_BASELINE_BOOKMAR",
+                        tint = Primary
+                    )
+                }
+            }
+
             items(Constants.CATEGORYS) {
                 val surfaceColor: State<Color> = animateColorAsState(
 //                    if (categoryTag.isSelected) Primary else
                     White
                 )
-                StyleCategoryCheckBox(
+                StyleCategoryCheckBoxInMapView(
                     isSelected = false,
                     color = surfaceColor.value,
                     onClicked = { /*TODO*/ },
-                    title = it
+                    title = it,
                 )
+            }
+
+            item {
                 WidthSpacer(width = 10.dp)
             }
         }
     }
 }
+

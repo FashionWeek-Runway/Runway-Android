@@ -5,7 +5,6 @@
 
 package com.cmc12th.runway.ui.map.view
 
-import android.util.Log
 import android.widget.TextView
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.compose.animation.*
@@ -31,9 +30,8 @@ import com.cmc12th.runway.ui.components.HeightSpacer
 import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.map.MapViewModel
 import com.cmc12th.runway.ui.map.components.BottomGradient
-import com.cmc12th.runway.ui.map.components.NaverMapSearch
+import com.cmc12th.runway.ui.map.components.SearchBoxAndTagCategory
 import com.cmc12th.runway.ui.theme.*
-import com.cmc12th.runway.utils.Constants.STATUSBAR_HEIGHT
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.naver.maps.map.compose.DisposableMapEffect
 import com.naver.maps.map.compose.ExperimentalNaverMapApi
@@ -126,18 +124,18 @@ fun MapScreen(appState: ApplicationState) {
                 )
                 HeightSpacer(height = 10.dp)
                 Text(text = "성수동 둘러보기", style = Body1M, color = Color.Black)
-                AnimatedVisibility(
-                    visible = bottomSheetScaffoldState.bottomSheetState.isExpanded,
-                    enter = fadeIn(),
-                    exit = fadeOut()
-                ) {
-                    Column {
-                        Text(text = "보텀쉿테스트")
-                        Text(text = "보텀쉿테스트")
-                        Text(text = "보텀쉿테스트")
-                        Text(text = "보텀쉿테스트")
-                    }
+//                AnimatedVisibility(
+//                    visible = bottomSheetScaffoldState.bottomSheetState.isExpanded,
+//                    enter = fadeIn(),
+//                    exit = fadeOut()
+//                ) {
+                Column {
+                    Text(text = "보텀쉿테스트")
+                    Text(text = "보텀쉿테스트")
+                    Text(text = "보텀쉿테스트")
+                    Text(text = "보텀쉿테스트")
                 }
+//                }
             }
         }
     ) {
@@ -161,9 +159,9 @@ fun MapScreen(appState: ApplicationState) {
                 Column(
                     modifier = Modifier
                         .align(Alignment.TopCenter)
-                        .padding(top = STATUSBAR_HEIGHT)
+                        .statusBarsPadding()
                 ) {
-                    NaverMapSearch(onSearch = {
+                    SearchBoxAndTagCategory(onSearch = {
                         onSearching.value = true
                     })
                     BottomGradient(20.dp)
@@ -228,8 +226,6 @@ private fun RunwayNaverMap(
                 clusterManager?.clearItems()
             }
         }
-
-
     }
 }
 
