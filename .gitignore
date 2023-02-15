@@ -97,6 +97,7 @@ Thumbs.db
 .gradle
 .navigation
 output.json
+google-services.json
 
 #NDK
 obj/
