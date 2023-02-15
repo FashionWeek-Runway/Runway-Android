@@ -99,6 +99,15 @@ private fun UserVerificationContents(
         mutableStateOf("")
     }
 
+    val initialDialogVisiblity = remember {
+        mutableStateOf(true)
+    }
+    val closeInitialDialog = { initialDialogVisiblity.value = false }
+
+    val beforeFourteenYearsDialogVisiblity = remember {
+        mutableStateOf(false)
+    }
+
     val sendVerifyMessage: () -> Unit = {
         passwordErrorMessage.value = ""
         keyboardController?.hide()
@@ -122,6 +131,29 @@ private fun UserVerificationContents(
             .systemBarsPadding()
             .imePadding(),
     ) {
+        if (initialDialogVisiblity.value) {
+            RunwayDialog(
+                onDismissRequest = closeInitialDialog,
+                title = "만 14세 이상인가요?",
+                descrption = "RUNWAY는 만 14세 이사 이용 가능합니다.\n해당 데이터는 저장되지 않으며,\n만 14세 이상임을 증명하는데만 사용됩니다.",
+                positiveButton = DialogButtonContent(title = "네, 만 14세 이상입니다.",
+                    onClick = closeInitialDialog),
+                negativeButton = DialogButtonContent(title = "아니요, 만 14세 이하입니다.") {
+                    closeInitialDialog()
+                    beforeFourteenYearsDialogVisiblity.value = true
+                }
+            )
+        }
+        if (beforeFourteenYearsDialogVisiblity.value) {
+            RunwayDialog(
+                onDismissRequest = closeInitialDialog,
+                title = "만 14세 이상 사용 가능합니다.",
+                descrption = "죄송합니다. RUNWAY는 만 14세 이상 사용가능합니다. 우리 나중에 다시 만나요:)",
+                positiveButton = DialogButtonContent(title = "안녕, 또 만나요!",
+                    onClick = { appState.popBackStack() }
+                ),
+            )
+        }
         Box(modifier = Modifier.padding(20.dp)) {
             BackIcon {
                 appState.popBackStack()
