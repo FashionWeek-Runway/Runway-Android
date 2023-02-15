@@ -7,6 +7,7 @@ import com.cmc12th.runway.domain.repository.AuthRepository
 import com.cmc12th.runway.network.model.safeFlow
 import com.cmc12th.runway.network.service.AuthService
 import com.cmc12th.runway.utils.ApiWrapper
+import com.cmc12th.runway.utils.DefaultApiWrapper
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
@@ -42,6 +43,10 @@ class AuthRepositoryImpl @Inject constructor(
         safeFlow {
             authService.loginRefresh(refreshToken)
         }
+
+    override suspend fun logout(): Flow<DefaultApiWrapper> = safeFlow {
+        authService.logout()
+    }
 
     companion object PreferenceKeys {
         val ACCESS_TOKEN = stringPreferencesKey("access_token")

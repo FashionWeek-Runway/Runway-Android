@@ -14,7 +14,7 @@ import com.cmc12th.runway.ui.home.HomeScreen
 import com.cmc12th.runway.ui.login.LoginIdPasswdScreen
 import com.cmc12th.runway.ui.login.view.LoginBaseScreen
 import com.cmc12th.runway.ui.map.view.MapScreen
-import com.cmc12th.runway.ui.mypage.MypageScreen
+import com.cmc12th.runway.ui.mypage.view.MypageScreen
 import com.cmc12th.runway.ui.signin.view.*
 import com.cmc12th.runway.utils.Constants.DETAIL_GRAPH
 import com.cmc12th.runway.utils.Constants.DETAIL_ROUTE
