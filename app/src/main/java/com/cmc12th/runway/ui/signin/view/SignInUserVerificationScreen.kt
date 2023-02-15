@@ -99,10 +99,7 @@ private fun UserVerificationContents(
         mutableStateOf("")
     }
 
-    val initialDialogVisiblity = remember {
-        mutableStateOf(true)
-    }
-    val closeInitialDialog = { initialDialogVisiblity.value = false }
+    val closeInitialDialog = { viewmodel.updateDialogState(false) }
 
     val beforeFourteenYearsDialogVisiblity = remember {
         mutableStateOf(false)
@@ -131,7 +128,7 @@ private fun UserVerificationContents(
             .systemBarsPadding()
             .imePadding(),
     ) {
-        if (initialDialogVisiblity.value) {
+        if (viewmodel.initialDialogVisiblity.value) {
             RunwayDialog(
                 onDismissRequest = closeInitialDialog,
                 title = "만 14세 이상인가요?",

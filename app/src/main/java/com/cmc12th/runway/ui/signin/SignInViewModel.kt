@@ -39,6 +39,9 @@ class SignInViewModel @Inject constructor(
     private val _kakaoId = mutableStateOf("")
     val kakaoId: State<String> = _kakaoId
 
+    private val _initialDialogVisiblity = mutableStateOf(true)
+    val initialDialogVisiblity: State<Boolean> get() = _initialDialogVisiblity
+
     private val _nameAndNationality = MutableStateFlow(NameAndNationality.default())
     private val _gender = MutableStateFlow(Gender.Unknown)
     private val _birth = MutableStateFlow(Birth.default())
@@ -241,6 +244,10 @@ class SignInViewModel @Inject constructor(
 
     fun updateRetryPassword(password: Password) {
         _retryPassword.value = password
+    }
+
+    fun updateDialogState(isvisible: Boolean) {
+        _initialDialogVisiblity.value = isvisible
     }
 
     fun updateName(name: String) {
