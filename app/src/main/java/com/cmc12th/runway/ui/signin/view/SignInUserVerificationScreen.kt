@@ -32,6 +32,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.cmc12th.runway.R
@@ -130,6 +131,7 @@ private fun UserVerificationContents(
     ) {
         if (viewmodel.initialDialogVisiblity.value) {
             RunwayDialog(
+                properties = DialogProperties(dismissOnClickOutside = false),
                 onDismissRequest = closeInitialDialog,
                 title = "만 14세 이상인가요?",
                 descrption = "RUNWAY는 만 14세 이사 이용 가능합니다.\n해당 데이터는 저장되지 않으며,\n만 14세 이상임을 증명하는데만 사용됩니다.",

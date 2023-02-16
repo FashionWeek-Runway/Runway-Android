@@ -14,6 +14,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import com.cmc12th.runway.ui.domain.model.DialogButtonContent
 import com.cmc12th.runway.ui.theme.Body2
 import com.cmc12th.runway.ui.theme.Button1
@@ -27,13 +28,15 @@ import com.cmc12th.runway.ui.theme.Primary
  */
 @Composable
 fun RunwayDialog(
+    properties: DialogProperties = DialogProperties(),
     onDismissRequest: () -> Unit,
     title: String = "",
     descrption: String,
     positiveButton: DialogButtonContent,
     negativeButton: DialogButtonContent = DialogButtonContent.default(),
 ) {
-    Dialog(onDismissRequest = onDismissRequest) {
+    Dialog(onDismissRequest = onDismissRequest,
+        properties = properties) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
