@@ -91,7 +91,7 @@ fun SearchBoxAndTagCategory(
 
             items(categoryItems) {
                 val surfaceColor: State<Color> = animateColorAsState(
-                    if (it.isSelected) Primary else White
+                    if (it.isSelected) Primary else Gray50
                 )
                 StyleCategoryCheckBoxInMapView(
                     isSelected = it.isSelected,
