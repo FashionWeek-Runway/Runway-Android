@@ -106,7 +106,7 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-runtime-compose:2.6.0-alpha05"
 
     // Accompanist - Statusbar Color바꾸기 위해서..
-    implementation "com.google.accompanist:accompanist-systemuicontroller:0.27.0"
+    implementation "com.google.accompanist:accompanist-systemuicontroller:0.28.0"
 
     // Coil
     implementation("io.coil-kt:coil-compose:2.2.2")
