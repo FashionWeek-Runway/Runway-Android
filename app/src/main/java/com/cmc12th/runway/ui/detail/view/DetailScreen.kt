@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
@@ -36,6 +37,7 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 @Composable
 fun DetailScreen(appState: ApplicationState, idx: Int) {
 
+    val scrollState = rememberLazyListState()
     val systemUiController = rememberSystemUiController()
     DisposableEffect(Unit) {
         systemUiController.setSystemBarsColor(
@@ -48,11 +50,17 @@ fun DetailScreen(appState: ApplicationState, idx: Int) {
             )
         }
     }
+    LaunchedEffect(key1 = scrollState.firstVisibleItemScrollOffset) {
+        if (scrollState.firstVisibleItemScrollOffset < 100) systemUiController.setSystemBarsColor(
+            Color.Transparent)
+        else systemUiController.setSystemBarsColor(Color.White)
+    }
 
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .navigationBarsPadding()
+            .navigationBarsPadding(),
+        state = scrollState
     ) {
         item {
             ShowRoomBanner()
