@@ -2,6 +2,7 @@
 
 package com.cmc12th.runway.ui.components
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -34,6 +35,7 @@ fun CustomBottomSheet(
                 modifier = Modifier
                     .fillMaxWidth()
                     .navigationBarsPadding()
+                    .imePadding()
             ) {
                 if (bottomsheetState.bottomsheetContent.value.title.isNotBlank()) {
                     androidx.compose.material3.Text(

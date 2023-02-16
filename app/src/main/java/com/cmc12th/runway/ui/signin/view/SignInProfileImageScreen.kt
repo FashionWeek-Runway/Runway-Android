@@ -4,7 +4,6 @@ package com.cmc12th.runway.ui.signin.view
 
 import android.graphics.Bitmap
 import android.net.Uri
-import android.util.Log
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -29,7 +28,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -61,7 +59,6 @@ import com.cmc12th.runway.ui.theme.*
 import com.cmc12th.runway.utils.Constants.MAX_NICKNAME_LENGTH
 import com.cmc12th.runway.utils.Constants.SIGNIN_CATEGORY_ROUTE
 import com.cmc12th.runway.utils.getImageUri
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
@@ -75,20 +72,32 @@ fun SignInProfileImageScreen(
 
     val uiState by signInViewModel.profileImageUiState.collectAsStateWithLifecycle()
 
-    val someFlag = remember { mutableStateOf(true) }
+    val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
+    val bottomsheetState = rememberBottomSheet()
+    val isKeyboardOpen by keyboardAsState() // Keyboard.Opened or Keyboard.Closed
+
+    val initFlag = remember { mutableStateOf(true) }
     LaunchedEffect(Unit) {
-        if (someFlag.value) {
-            someFlag.value = false
+        if (initFlag.value) {
+            initFlag.value = false
             if (profileImage.isNotBlank() && kakaoId.isNotBlank()) {
                 signInViewModel.updateSignIntypeSocial(profileImage, kakaoId)
             }
         }
     }
+    LaunchedEffect(key1 = isKeyboardOpen) {
+        if (isKeyboardOpen == KeyboardStatus.Closed) {
+            coroutineScope.launch {
+                bottomsheetState.modalSheetState.hide()
+            }
+        }
+    }
+
     val errorMessage = remember {
         mutableStateOf("")
     }
 
-    val isKeyboardOpen by keyboardAsState() // Keyboard.Opened or Keyboard.Closed
     val profileSize by animateFloatAsState(
         targetValue = if (isKeyboardOpen == KeyboardStatus.Opened) 0.4f else 0.66f,
         animationSpec = tween(
@@ -103,8 +112,6 @@ fun SignInProfileImageScreen(
             easing = FastOutSlowInEasing
         )
     )
-
-    val context = LocalContext.current
 
     val galleryLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
@@ -126,21 +133,20 @@ fun SignInProfileImageScreen(
 
     val onDone = {
         errorMessage.value = ""
-        signInViewModel.checkNickname(
-            onSuccess = {
-                appState.navController.navigate(SIGNIN_CATEGORY_ROUTE)
-            },
-            onError = {
-                errorMessage.value = it.message
-                appState.showSnackbar(it.message)
-            }
-        )
+        if (uiState.nickName.text.isNotBlank() && uiState.nickName.checkValidate()) {
+            signInViewModel.checkNickname(
+                onSuccess = {
+                    appState.navController.navigate(SIGNIN_CATEGORY_ROUTE)
+                },
+                onError = {
+                    errorMessage.value = it.message
+                    appState.showSnackbar(it.message)
+                }
+            )
+        }
     }
-    val coroutineScope = rememberCoroutineScope()
-    val bottomsheetState = rememberBottomSheet()
-    val keyboardController = LocalSoftwareKeyboardController.current
+
     val showBottomSheet: (BottomSheetContent) -> Unit = {
-        keyboardController?.hide()
         coroutineScope.launch {
             bottomsheetState.bottomsheetContent.value = it
             bottomsheetState.modalSheetState.animateTo(ModalBottomSheetValue.Expanded)
@@ -154,6 +160,7 @@ fun SignInProfileImageScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .systemBarsPadding()
+                .navigationBarsPadding()
                 .imePadding()
         ) {
             Box(modifier = Modifier.padding(20.dp)) {
@@ -167,7 +174,6 @@ fun SignInProfileImageScreen(
                 modifier = Modifier
                     .padding(20.dp)
                     .weight(1f)
-                    .verticalScroll(rememberScrollState())
             ) {
                 HeightSpacer(height = 20.dp)
                 Row {
@@ -201,7 +207,6 @@ fun SignInProfileImageScreen(
                         }
                     }
                 )
-
             }
 
             /** 다음 버튼 */
