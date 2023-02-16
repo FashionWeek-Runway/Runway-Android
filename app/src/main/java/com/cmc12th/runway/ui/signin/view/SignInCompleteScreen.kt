@@ -2,23 +2,17 @@
 
 package com.cmc12th.runway.ui.signin.view
 
-import android.net.Uri
 import androidx.activity.compose.BackHandler
-import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -26,40 +20,31 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
-import coil.request.ImageRequest
 import com.cmc12th.runway.R
-import com.cmc12th.runway.ui.components.HeightSpacer
 import com.cmc12th.runway.ui.components.WidthSpacerLine
 import com.cmc12th.runway.ui.domain.model.ApplicationState
-import com.cmc12th.runway.ui.domain.model.KeyboardStatus
 import com.cmc12th.runway.ui.signin.SignInViewModel
 import com.cmc12th.runway.ui.signin.model.CategoryTag
 import com.cmc12th.runway.ui.signin.model.Nickname
 import com.cmc12th.runway.ui.signin.model.ProfileImageType
 import com.cmc12th.runway.ui.theme.*
-import com.cmc12th.runway.utils.Constants
 import com.cmc12th.runway.utils.Constants.LOGIN_GRAPH
 import com.cmc12th.runway.utils.Constants.MAIN_GRAPH
-import com.cmc12th.runway.utils.Constants.SIGNIN_GRAPH
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.delay
 
 @Composable
 fun SignInCompleteScreen(
     appState: ApplicationState,
-    signInViewModel: SignInViewModel = hiltViewModel()
+    signInViewModel: SignInViewModel = hiltViewModel(),
 ) {
 
     /** Bouncing 애니메이션 적용 */
@@ -113,7 +98,7 @@ fun SignInCompleteScreen(
             .fillMaxSize()
             .background(Color.Black)
             .statusBarsPadding()
-
+            .navigationBarsPadding()
     ) {
         Column(
             modifier = Modifier
@@ -137,7 +122,7 @@ fun SignInCompleteScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             ProfileBox(
-                animatedScale = animatedScale,
+                animatedScale = animatedScale.value,
                 nickname = uiState.nickName,
                 categoryTags = uiState.categoryTags,
                 image = uiState.profileImage
@@ -166,20 +151,27 @@ fun SignInCompleteScreen(
         }
     }
 
+}
 
+@Composable
+@Preview
+fun ProfileBoxPreview() {
+    ProfileBox(
+        1f, Nickname("테스트"), emptyList(), ProfileImageType.DEFAULT
+    )
 }
 
 @Composable
 private fun ProfileBox(
-    animatedScale: State<Float>,
+    animatedScale: Float,
     nickname: Nickname,
     categoryTags: List<CategoryTag>,
-    image: ProfileImageType
+    image: ProfileImageType,
 ) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .scale(animatedScale.value)
+            .scale(animatedScale)
             .padding(start = 50.dp, end = 50.dp)
             .clip(RoundedCornerShape(10.dp))
             .background(Color.White)
@@ -237,7 +229,7 @@ private fun ProfileBox(
                 Image(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 3.dp)
+                        .padding(top = 3.dp, bottom = 7.dp)
                         .align(Alignment.CenterHorizontally),
                     contentScale = ContentScale.FillWidth,
                     painter = painterResource(id = R.drawable.img_congratuation),
