@@ -93,6 +93,8 @@ dependencies {
     }
     // MarkerClusting
     implementation 'io.github.ParkSangGwon:tedclustering-naver:1.0.2'
+    // FusedLocatino
+    implementation 'com.google.android.gms:play-services-location:21.0.1'
 
     // Hilt
     implementation "com.google.dagger:hilt-android:2.43.2"
