@@ -17,8 +17,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -90,6 +92,11 @@ fun MapScreen(appState: ApplicationState) {
         }
     }
 
+    val localDensity = LocalDensity.current
+    var topBarHeight by remember {
+        mutableStateOf(0.dp)
+    }
+
     BottomSheetScaffold(
         modifier = Modifier
             .fillMaxSize(),
@@ -97,7 +104,7 @@ fun MapScreen(appState: ApplicationState) {
         scaffoldState = bottomSheetScaffoldState,
         sheetShape = RoundedCornerShape(topStart = 15.dp, topEnd = 15.dp),
         sheetContent = {
-            MapViewBottomSheetContent(appState, screenHeight)
+            MapViewBottomSheetContent(appState, screenHeight - topBarHeight)
         }
     ) {
         Box(
@@ -120,7 +127,11 @@ fun MapScreen(appState: ApplicationState) {
                 Column(
                     modifier = Modifier
                         .align(Alignment.TopCenter)
+                        .wrapContentHeight()
                         .statusBarsPadding()
+                        .onGloballyPositioned { coordinates ->
+                            topBarHeight = with(localDensity) { coordinates.size.height.toDp() }
+                        }
                 ) {
                     SearchBoxAndTagCategory(
                         isBookmarked = uiState.isBookmarked,

@@ -31,7 +31,7 @@ fun SearchBoxAndTagCategory(
     categoryItems: List<CategoryTag>,
     updateCategoryTags: (CategoryTag) -> Unit,
     updateIsBookmarked: (Boolean) -> Unit,
-    onSearch: () -> Unit
+    onSearch: () -> Unit,
 ) {
 
     Column(
@@ -42,7 +42,7 @@ fun SearchBoxAndTagCategory(
         /** 상단 검색 바 */
         Box(
             modifier = Modifier
-                .padding(start = 20.dp, end = 20.dp, top = 0.dp, bottom = 4.dp)
+                .padding(start = 20.dp, end = 20.dp, top = 10.dp, bottom = 4.dp)
                 .clip(RoundedCornerShape(4.dp))
                 .border(BorderStroke(1.dp, Gray300), RoundedCornerShape(4.dp))
                 .clickable {
@@ -65,7 +65,7 @@ fun SearchBoxAndTagCategory(
                 )
             }
         }
-        HeightSpacer(height = 15.dp)
+        HeightSpacer(height = 10.dp)
 
         /** 카테고리 리스트 */
         LazyRow(
@@ -107,6 +107,8 @@ fun SearchBoxAndTagCategory(
                 WidthSpacer(width = 10.dp)
             }
         }
+        HeightSpacer(height = 10.dp)
+
     }
 }
 
@@ -114,7 +116,7 @@ fun SearchBoxAndTagCategory(
 private fun BookmarkIcon(
     isBookmarked: Boolean,
     surfaceColor: State<Color>,
-    updateIsBookmarked: (Boolean) -> Unit
+    updateIsBookmarked: (Boolean) -> Unit,
 ) {
     Box(
         modifier = Modifier

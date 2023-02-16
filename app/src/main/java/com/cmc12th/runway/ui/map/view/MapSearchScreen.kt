@@ -45,6 +45,7 @@ fun MapSearchScreen(onBackPrseed: () -> Unit) {
         modifier = Modifier
             .fillMaxSize()
             .noRippleClickable {}
+            .statusBarsPadding()
             .navigationBarsPadding()
             .background(Color.White)
     ) {
@@ -81,7 +82,7 @@ private fun TopSearchBar(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 20.dp, end = 20.dp, top = 20.dp),
+            .padding(start = 20.dp, end = 20.dp, top = 10.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         BackIcon {
