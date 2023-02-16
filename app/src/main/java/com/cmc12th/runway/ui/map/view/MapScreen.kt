@@ -8,6 +8,7 @@ package com.cmc12th.runway.ui.map.view
 import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.content.pm.PackageManager
+import android.graphics.Typeface
 import android.util.Log
 import android.widget.TextView
 import androidx.activity.compose.ManagedActivityResultLauncher
@@ -29,14 +30,17 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.cmc12th.runway.data.model.NaverItem
 import com.cmc12th.runway.R
 import com.cmc12th.runway.ui.domain.model.ApplicationState
+import com.cmc12th.runway.ui.map.MapUiState
 import com.cmc12th.runway.ui.map.MapViewModel
 import com.cmc12th.runway.ui.map.components.BottomGradient
 import com.cmc12th.runway.ui.map.components.SearchBoxAndTagCategory
+import com.cmc12th.runway.ui.theme.Primary
 import com.cmc12th.runway.utils.Constants.BOTTOM_NAVIGATION_HEIGHT
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.naver.maps.geometry.LatLng
@@ -174,6 +178,7 @@ private fun MapViewContents(
         ) {
             /** 네이버 지도 */
             RunwayNaverMap(
+                uiState = uiState,
                 mapViewModel = mapViewModel,
                 onMapClick = {
                     onZoom.value = !onZoom.value
@@ -227,18 +232,17 @@ private fun MapViewContents(
 private fun RunwayNaverMap(
     onMapClick: () -> Unit,
     mapViewModel: MapViewModel,
+    uiState: MapUiState,
 ) {
 
     val cameraPositionState: CameraPositionState = rememberCameraPositionState {
         position = CameraPosition(LatLng(37.5437, 127.0659), 8.0)
     }
 
-    LaunchedEffect(mapViewModel.userPosition.value) {
-        cameraPositionState.move(
-            CameraUpdate.scrollAndZoomTo(with(mapViewModel.userPosition.value) {
-                LatLng(latitude, longitude)
-            }, 8.0)
-        )
+    LaunchedEffect(uiState.userPosition) {
+//        cameraPositionState.move(
+//            CameraUpdate.scrollAndZoomTo(uiState.userPosition, 8.0)
+//        )
     }
 
     DisposableEffect(Unit) {
@@ -258,17 +262,22 @@ private fun RunwayNaverMap(
     ) {
         val context = LocalContext.current
         var clusterManager by remember { mutableStateOf<TedNaverClustering<NaverItem>?>(null) }
-        DisposableMapEffect(mapViewModel._markerItems.value) { map ->
+        DisposableMapEffect(uiState.markerItems) { map ->
             if (clusterManager == null) {
                 clusterManager = TedNaverClustering.with<NaverItem>(context, map)
                     .customCluster {
+
                         TextView(context).apply {
-                            text = "${it.size}개"
+                            text = it.size.toString()
                             background = AppCompatResources.getDrawable(
                                 context,
                                 R.drawable.circle_clustor
                             )
-                            setPadding(150, 150, 150, 150)
+                            setTextColor(R.color.primary)
+                            setTextAppearance(R.style.clustorText)
+                            typeface = ResourcesCompat.getFont(this.context,
+                                R.font.spoqa_han_sans_neo_bold)
+                            setPadding(100, 100, 100, 100)
                         }
                     }.customMarker {
                         Marker().apply {
@@ -279,7 +288,7 @@ private fun RunwayNaverMap(
                         }
                     }.make()
             }
-            clusterManager?.addItems(mapViewModel._markerItems.value)
+            clusterManager?.addItems(uiState.markerItems)
             onDispose {
                 clusterManager?.clearItems()
             }

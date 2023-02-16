@@ -18,10 +18,12 @@ import com.cmc12th.runway.domain.repository.AuthRepository
 import com.cmc12th.runway.domain.repository.StoreRepository
 import com.cmc12th.runway.network.RunwayClient
 import com.cmc12th.runway.ui.domain.model.RunwayCategory
+import com.cmc12th.runway.ui.map.MapViewModel.Companion.DEFAULT_LATLNG
 import com.cmc12th.runway.ui.signin.SignInUserVerificationUiState
 import com.cmc12th.runway.ui.signin.model.CategoryTag
 import com.cmc12th.runway.utils.Constants
 import com.google.android.gms.location.*
+import com.naver.maps.geometry.LatLng
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.*
@@ -33,6 +35,7 @@ data class MapUiState(
     val markerItems: List<NaverItem> = emptyList(),
     val categoryItems: List<CategoryTag> = emptyList(),
     val isBookmarked: Boolean = false,
+    val userPosition: LatLng = DEFAULT_LATLNG,
 )
 
 @HiltViewModel
@@ -62,18 +65,20 @@ class MapViewModel @Inject constructor(
     private val _movingCameraPosition = MutableStateFlow(DEFAULT_LOCATION)
     val movingCameraPosition: StateFlow<Location> get() = _movingCameraPosition
 
-    private val _userPosition = MutableStateFlow(DEFAULT_LOCATION)
-    val userPosition: StateFlow<Location> get() = _userPosition
+    private val _userPosition = MutableStateFlow(DEFAULT_LATLNG)
+    val userPosition: StateFlow<LatLng> get() = _userPosition
 
     val mapUiState = combine(
         _markerItems,
         _categoryItems,
-        _isBookmarked
-    ) { markerItems, categoryItems, isBookmarked ->
+        _isBookmarked,
+        _userPosition,
+    ) { markerItems, categoryItems, isBookmarked, userPosition ->
         MapUiState(
             markerItems = markerItems,
             categoryItems = categoryItems,
-            isBookmarked = isBookmarked
+            isBookmarked = isBookmarked,
+            userPosition = userPosition,
         )
     }.stateIn(
         scope = viewModelScope,
@@ -120,7 +125,7 @@ class MapViewModel @Inject constructor(
             super.onLocationResult(locationResult)
             locationResult.lastLocation?.let {
                 Log.i("dlgocks1 : User-Position", it.toString())
-                _userPosition.value = it
+                _userPosition.value = LatLng(it.latitude, it.longitude)
                 _movingCameraPosition.value = it
             }
         }
@@ -145,5 +150,6 @@ class MapViewModel @Inject constructor(
             latitude = 37.5437
             longitude = 127.0659
         }
+        val DEFAULT_LATLNG = LatLng(37.5437, 127.0659)
     }
 }
