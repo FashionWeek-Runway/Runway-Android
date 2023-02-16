@@ -11,6 +11,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.mypage.MypageViewModel
 import com.cmc12th.runway.utils.Constants
+import com.cmc12th.runway.utils.Constants.LOGIN_GRAPH
 import com.cmc12th.runway.utils.Constants.MAIN_GRAPH
 import com.cmc12th.runway.utils.Constants.SPLASH_ROUTE
 
@@ -29,8 +30,7 @@ fun MypageScreen(appState: ApplicationState) {
         }
         Button(onClick = {
             mypageViewModel.logout() {
-                appState.showSnackbar("로그아웃 성공")
-                appState.navController.navigate(SPLASH_ROUTE) {
+                appState.navController.navigate(LOGIN_GRAPH) {
                     popUpTo(MAIN_GRAPH) {
                         inclusive = true
                     }

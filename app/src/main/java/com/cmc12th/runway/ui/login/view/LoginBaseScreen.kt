@@ -42,7 +42,11 @@ fun LoginBaseScreen(
     }
 
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(modifier = Modifier
+        .fillMaxSize()
+        .statusBarsPadding()
+        .navigationBarsPadding())
+    {
         /** 배경 */
         Box(
             modifier = Modifier

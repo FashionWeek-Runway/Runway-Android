@@ -12,6 +12,7 @@ import com.cmc12th.runway.data.response.NotRegisteredResponse
 import com.cmc12th.runway.data.response.ResponseWrapper
 import com.cmc12th.runway.domain.repository.AuthRepository
 import com.cmc12th.runway.domain.repository.SignInRepository
+import com.cmc12th.runway.network.model.ServiceInterceptor
 import com.cmc12th.runway.ui.signin.model.Password
 import com.cmc12th.runway.ui.signin.model.Phone
 import com.cmc12th.runway.utils.GsonHelper
@@ -73,6 +74,8 @@ class LoginViewModel @Inject constructor(
 
     private fun onSignInComplete(accessToken: String, refreshToken: String) =
         viewModelScope.launch {
+            ServiceInterceptor.accessToken = accessToken
+            ServiceInterceptor.refreshToken = refreshToken
             authRepository.setToken(AuthRepositoryImpl.ACCESS_TOKEN, accessToken)
             authRepository.setToken(AuthRepositoryImpl.REFRESH_TOKEN, refreshToken)
         }

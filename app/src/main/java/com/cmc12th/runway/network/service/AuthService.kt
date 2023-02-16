@@ -7,13 +7,14 @@ import com.cmc12th.runway.utils.DefaultResponse
 import com.cmc12th.runway.utils.NetworkResponse
 import retrofit2.Call
 import retrofit2.Response
+import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
 
 interface AuthService {
 
     /** 로그아웃 */
-    @POST("/user/logout")
+    @GET("/users/logout")
     suspend fun logout(): DefaultResponse
 
     /** 리프레쉬 토큰 유효성 검증  */

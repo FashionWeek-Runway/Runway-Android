@@ -6,21 +6,22 @@ import com.cmc12th.runway.data.repository.AuthRepositoryImpl.PreferenceKeys.ACCE
 import com.cmc12th.runway.data.repository.AuthRepositoryImpl.PreferenceKeys.REFRESH_TOKEN
 import com.cmc12th.runway.domain.repository.AuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class MypageViewModel @Inject constructor(
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
 ) : ViewModel() {
 
     fun logout(onSuccess: () -> Unit) = viewModelScope.launch {
         authRepository.setToken(ACCESS_TOKEN, "")
         authRepository.setToken(REFRESH_TOKEN, "")
-        authRepository.logout().collectLatest {
+        authRepository.logout().collect {
             it.onSuccess {
-                onSuccess
+                onSuccess()
             }
         }
     }

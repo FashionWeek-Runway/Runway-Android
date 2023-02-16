@@ -40,7 +40,7 @@ class SplashViewModel @Inject constructor(
     private fun validateRefreshToken(
         navigateToLogin: () -> Unit,
         navigateToMain: () -> Unit,
-        refreshToken: String
+        refreshToken: String,
     ) = viewModelScope.launch {
         authRepository.validateRefreshToken(refreshToken).collect { apiState ->
             apiState.onSuccess {

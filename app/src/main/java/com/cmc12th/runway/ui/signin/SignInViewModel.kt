@@ -12,6 +12,9 @@ import com.cmc12th.runway.data.request.SendVerifyMessageRequest
 import com.cmc12th.runway.data.response.ErrorResponse
 import com.cmc12th.runway.domain.repository.AuthRepository
 import com.cmc12th.runway.domain.repository.SignInRepository
+import com.cmc12th.runway.network.model.ServiceInterceptor
+import com.cmc12th.runway.network.model.ServiceInterceptor.Companion.accessToken
+import com.cmc12th.runway.network.model.ServiceInterceptor.Companion.refreshToken
 import com.cmc12th.runway.ui.domain.model.RunwayCategory
 import com.cmc12th.runway.utils.toPlainRequestBody
 import com.cmc12th.runway.ui.signin.model.*
@@ -184,6 +187,8 @@ class SignInViewModel @Inject constructor(
 
     private fun onSignInComplete(accessToken: String, refreshToken: String) =
         viewModelScope.launch {
+            ServiceInterceptor.accessToken = accessToken
+            ServiceInterceptor.refreshToken = refreshToken
             authRepository.setToken(ACCESS_TOKEN, accessToken)
             authRepository.setToken(REFRESH_TOKEN, refreshToken)
         }
