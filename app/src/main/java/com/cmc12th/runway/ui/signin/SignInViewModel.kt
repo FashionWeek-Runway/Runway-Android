@@ -70,9 +70,7 @@ class SignInViewModel @Inject constructor(
     private val _nickName = MutableStateFlow(Nickname.default())
     private val _profileImage = MutableStateFlow<ProfileImageType>(ProfileImageType.DEFAULT)
 
-    private val _categoryTags = MutableStateFlow(RunwayCategory.values().map { category ->
-        CategoryTag(id = category.idx, name = category.visibleName)
-    }.toMutableList())
+    private val _categoryTags = MutableStateFlow(RunwayCategory.generateCategoryTags())
 
 
     private val timer = Timer()

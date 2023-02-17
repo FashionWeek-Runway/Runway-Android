@@ -1,5 +1,6 @@
 package com.cmc12th.runway.ui.signin
 
+import com.cmc12th.runway.ui.domain.model.RunwayCategory
 import com.cmc12th.runway.ui.signin.SignInViewModel.Companion.DEFAULT_RETRY_TIME
 import com.cmc12th.runway.ui.signin.model.*
 import com.cmc12th.runway.utils.Constants
@@ -45,10 +46,8 @@ data class SignInProfileImageUiState(
 
 data class SignInCategoryUiState(
     val nickName: Nickname = Nickname.default(),
-    val categoryTags: MutableList<CategoryTag> = CATEGORYS.mapIndexed { index, name ->
-        CategoryTag(index + 1, name)
-    }.toMutableList(),
-    val signInType: SignInType = SignInType.Phone
+    val categoryTags: MutableList<CategoryTag> = RunwayCategory.generateCategoryTags(),
+    val signInType: SignInType = SignInType.Phone,
 ) {
     fun anyCategorySelected() = categoryTags.any { it.isSelected }
 }
@@ -56,5 +55,5 @@ data class SignInCategoryUiState(
 data class SignInCompleteUiState(
     val nickName: Nickname = Nickname.default(),
     val profileImage: ProfileImageType = ProfileImageType.DEFAULT,
-    val categoryTags: List<CategoryTag> = listOf()
+    val categoryTags: List<CategoryTag> = listOf(),
 )
