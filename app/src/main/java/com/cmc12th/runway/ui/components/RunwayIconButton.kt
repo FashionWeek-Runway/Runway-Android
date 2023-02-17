@@ -8,16 +8,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.cmc12th.runway.R
 
 @Composable
 fun RunwayIconButton(
+    size: Dp = 24.dp,
     @DrawableRes drawable: Int,
-    onCLick: () -> Unit,
+    onCLick: () -> Unit = {},
 ) {
     IconButton(onClick = onCLick,
-        modifier = Modifier.size(24.dp)
+        modifier = Modifier.size(size)
     ) {
         Icon(
             painter = painterResource(id = drawable),
