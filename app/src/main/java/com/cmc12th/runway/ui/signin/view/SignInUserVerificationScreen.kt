@@ -263,7 +263,7 @@ private fun AgeDialog(
 
 @Composable
 fun TestButon(onClick: () -> Unit) {
-    Text(text = "다음화면으로 억지로 이동하기(에러남)",
+    Text(text = "다음화면으로 억지로 이동하기(에러날 수도 있음)",
         modifier = Modifier.clickable {
             onClick()
         })

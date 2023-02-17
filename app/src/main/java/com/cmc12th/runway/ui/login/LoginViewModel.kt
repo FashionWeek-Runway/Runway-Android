@@ -16,7 +16,6 @@ import com.cmc12th.runway.network.model.ServiceInterceptor
 import com.cmc12th.runway.ui.signin.model.Password
 import com.cmc12th.runway.ui.signin.model.Phone
 import com.cmc12th.runway.utils.GsonHelper
-import com.cmc12th.runway.utils.GsonHelper.fromJson
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
@@ -84,6 +83,7 @@ class LoginViewModel @Inject constructor(
         alreadyRegistered: () -> Unit,
         notRegistered: (profileImageUrl: String, kakaoId: String) -> Unit,
         onError: (ErrorResponse) -> Unit,
+        context: Context,
     ) {
         // 카카오계정으로 로그인 공통 callback 구성
         // 카카오톡으로 로그인 할 수 없어 카카오계정으로 로그인할 경우 사용됨
