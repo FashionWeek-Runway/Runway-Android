@@ -1,12 +1,9 @@
 package com.cmc12th.runway.ui.detail.view
 
-import android.util.Log
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.lazy.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
@@ -19,6 +16,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
@@ -27,9 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cmc12th.runway.R
 import com.cmc12th.runway.ui.components.*
-import com.cmc12th.runway.ui.components.util.bottomBorder
 import com.cmc12th.runway.ui.domain.model.ApplicationState
-import com.cmc12th.runway.ui.map.components.BottomGradient
 import com.cmc12th.runway.ui.map.components.TopGradient
 import com.cmc12th.runway.ui.theme.*
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
@@ -38,7 +34,92 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 fun DetailScreen(appState: ApplicationState, idx: Int) {
 
     val scrollState = rememberLazyListState()
+    ManageSystemBarColor(scrollState)
+
+    Box(modifier = Modifier.fillMaxSize()) {
+
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .navigationBarsPadding(),
+            state = scrollState
+        ) {
+            item {
+                ShowRoomBanner()
+                ShowRoomDetail()
+                WidthSpacerLine(height = 1.dp, color = Gray200)
+                ShopNews()
+                WidthSpacerLine(height = 2.dp, color = Black)
+                UserReview()
+                HeightSpacer(height = 20.dp)
+                WidthSpacerLine(height = 8.dp, color = Gray100)
+                BlogReview()
+            }
+            items((0..3).toList()) {
+                BlogReviewItem()
+            }
+        }
+
+        val topbarColorValue = remember {
+            mutableStateOf(Color.Transparent)
+        }
+        val topbarIconColor = remember {
+            mutableStateOf(Color.White)
+        }
+        val topbarColor = animateColorAsState(targetValue = topbarColorValue.value)
+        val screenWidth = LocalConfiguration.current.screenWidthDp.dp
+        if (scrollState.firstVisibleItemScrollOffset >= 100) {
+            topbarColorValue.value = Color.White
+            topbarIconColor.value = Color.Black
+        } else {
+            topbarColorValue.value = Color.Transparent
+            topbarIconColor.value = Color.White
+        }
+
+        Row(modifier = Modifier
+            .fillMaxWidth()
+            .statusBarsPadding()
+            .height(54.dp)
+            .background(topbarColorValue.value)
+            .align(Alignment.TopCenter),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            IconButton(onClick = {}, modifier = Modifier
+                .padding(start = 20.dp)
+                .size(24.dp)) {
+                Icon(painter = painterResource(id = R.drawable.ic_left_runway),
+                    contentDescription = "IC_LEFT_RUNWAY",
+                    tint = topbarIconColor.value)
+            }
+            Row(modifier = Modifier.padding(end = 20.dp),
+                horizontalArrangement = Arrangement.spacedBy(20.dp)) {
+                IconButton(onClick = {}, modifier = Modifier.size(28.dp)) {
+                    Icon(painter = painterResource(id = R.drawable.ic_border_bookamrk_24),
+                        contentDescription = "IC_SHARE",
+                        tint = topbarIconColor.value)
+                }
+                IconButton(onClick = {}, modifier = Modifier.size(28.dp)) {
+                    Icon(painter = painterResource(id = R.drawable.ic_border_share_24),
+                        contentDescription = "IC_SHARE",
+                        tint = topbarIconColor.value)
+                }
+            }
+        }
+    }
+
+}
+
+@Composable
+fun DetailTopBar() {
+
+}
+
+@Composable
+private fun ManageSystemBarColor(scrollState: LazyListState) {
+
     val systemUiController = rememberSystemUiController()
+
     DisposableEffect(Unit) {
         systemUiController.setSystemBarsColor(
             color = Color.Transparent
@@ -54,28 +135,8 @@ fun DetailScreen(appState: ApplicationState, idx: Int) {
         if (scrollState.firstVisibleItemScrollOffset < 100) systemUiController.setSystemBarsColor(
             Color.Transparent)
         else systemUiController.setSystemBarsColor(Color.White)
-    }
 
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .navigationBarsPadding(),
-        state = scrollState
-    ) {
-        item {
-            ShowRoomBanner()
-            ShowRoomDetail()
-            WidthSpacerLine(height = 1.dp, color = Gray200)
-            ShopNews()
-            WidthSpacerLine(height = 2.dp, color = Black)
-            UserReview()
-            HeightSpacer(height = 20.dp)
-            WidthSpacerLine(height = 8.dp, color = Gray100)
-            BlogReview()
-        }
-        items((0..3).toList()) {
-            BlogReviewItem()
-        }
+
     }
 }
 
