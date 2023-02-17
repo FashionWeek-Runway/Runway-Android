@@ -82,6 +82,7 @@ fun LoginIdPasswdScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .statusBarsPadding()
             .navigationBarsPadding()
             .imePadding()
     ) {
