@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalLayoutApi::class)
+
 package com.cmc12th.runway.ui.detail.view
 
 import androidx.compose.foundation.*
@@ -114,34 +116,35 @@ fun DetailScreen(appState: ApplicationState, idx: Int) {
 fun ShowRoomTitle() {
     Column(
         modifier = Modifier
-            .padding(20.dp, 16.dp),
+            .padding(start = 20.dp, end = 20.dp, top = 12.dp, bottom = 16.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
 
         Text(text = "미니멀 무신사 스튜디오 클럽", style = HeadLine2, color = Color.Black)
-        LazyRow(
-            horizontalArrangement = Arrangement.spacedBy(5.dp)
-        ) {
-            items(RunwayCategory.generateCategoryTags()) {
+        FlowRow {
+            RunwayCategory.generateCategoryTags().forEach {
                 ShowRoomTag(it)
             }
         }
+
     }
 }
 
 @Composable
 fun ShowRoomTag(categoryTag: CategoryTag) {
-    Row(modifier = Modifier
-        .padding(8.dp, 5.dp)
-        .clip(RoundedCornerShape(4.dp))
-        .background(Gray50),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-        Icon(painter = painterResource(id = categoryTag.iconId),
-            contentDescription = "IC_CATEGORY",
-            modifier = Modifier.size(12.dp),
-            tint = Primary)
-        Text(text = categoryTag.name, style = Button2, color = Primary)
+    Box(modifier = Modifier.padding(top = 4.dp, end = 6.dp)) {
+        Row(modifier = Modifier
+            .padding(8.dp, 5.dp)
+            .clip(RoundedCornerShape(4.dp))
+            .background(Gray50),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+            Icon(painter = painterResource(id = categoryTag.iconId),
+                contentDescription = "IC_CATEGORY",
+                modifier = Modifier.size(12.dp),
+                tint = Primary)
+            Text(text = categoryTag.name, style = Button2, color = Primary)
+        }
     }
 }
 
@@ -244,15 +247,13 @@ fun ShopNews() {
 
 @Composable
 fun BlogReview() {
-    Column {
-        Column(
-            modifier = Modifier.padding(20.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            Text(text = "블로그 후기", style = Body1M, color = Color.Black)
-        }
-        WidthSpacerLine(height = 1.dp, color = Gray200)
+    Column(
+        modifier = Modifier.padding(20.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        Text(text = "블로그 후기", style = HeadLine4, color = Color.Black)
     }
+    WidthSpacerLine(height = 1.dp, color = Gray200)
 }
 
 
@@ -262,13 +263,21 @@ fun BlogReviewItem() {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
+                .heightIn(108.dp)
                 .padding(20.dp, 14.dp),
         ) {
-            Text(
-                text = "무신사 쇼핑 나들이 (무신사 스튜디오 성수/ 무신사 스탠다드 홍대) 졸리고 힘들다.",
-                modifier = Modifier.weight(1f),
-                style = Body2M
-            )
+            Column(verticalArrangement = Arrangement.spacedBy(4.dp),
+                modifier = Modifier.weight(1f)) {
+                Text(text = "무신사 쇼핑 나들이 (무신사 스튜디오 성수/ 무신사 스탠다드 홍대) 졸리고 힘들다.",
+                    style = Body1M,
+                    color = Gray900,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis)
+                Text(text = "일이 삼사오육 칠 팔구십일이 삼사 오육칠팔 구십 일이삼, 일이 삼사오육 칠 팔구십일이 삼사오육칠팔 구십 일이삼.",
+                    style = Body2,
+                    color = Gray700,
+                    overflow = TextOverflow.Ellipsis)
+            }
             WidthSpacer(width = 20.dp)
             Image(
                 painter = painterResource(id = R.drawable.img_dummy),
@@ -293,8 +302,14 @@ fun UserReview() {
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(text = "사용자 후기", style = Body1M, color = Color.Black)
-            Text(text = "나도 참여", style = Body2, textDecoration = TextDecoration.Underline)
+            Text(text = "사용자 후기", style = HeadLine4, color = Color.Black)
+            Row(verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                RunwayIconButton(drawable = R.drawable.ic_filled_camera_24, size = 24.dp)
+                Text(text = "나도 참여",
+                    style = Body1M,
+                    color = Primary)
+            }
         }
 
         LazyRow(
@@ -335,16 +350,19 @@ private fun ShowRoomDetail() {
             }
         }
         Row(modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(10.dp)) {
             RunwayIconButton(size = 18.dp, drawable = R.drawable.ic_border_time_18)
             Text(text = "월 - 일 09:00 ~ 21:00", style = Body2, color = Color.Black)
         }
         Row(modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(10.dp)) {
             RunwayIconButton(size = 18.dp, drawable = R.drawable.ic_border_call_18)
             Text(text = "0502-1473-3212", style = Body2, color = Color.Black)
         }
         Row(modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(10.dp)) {
             RunwayIconButton(size = 18.dp, drawable = R.drawable.ic_border_instagram_18)
             Text(text = "[안스타그램 아이디]",
@@ -353,6 +371,7 @@ private fun ShowRoomDetail() {
                 color = Color.Black)
         }
         Row(modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(10.dp)) {
             RunwayIconButton(size = 18.dp, drawable = R.drawable.ic_border_web_18)
             Text(text = "[웹사이트 링크]",
