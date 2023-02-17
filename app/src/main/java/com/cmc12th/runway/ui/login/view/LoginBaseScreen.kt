@@ -1,5 +1,6 @@
 package com.cmc12th.runway.ui.login.view
 
+import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -8,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -79,6 +81,7 @@ fun LoginBaseScreen(
         BottomLoginButtons(
             kakaoLogin = {
                 loginViewModel.getKakaoToken(
+                    context = it,
                     alreadyRegistered = {
                         navigateToMain()
                     },
@@ -100,8 +103,9 @@ fun LoginBaseScreen(
 private fun BoxScope.BottomLoginButtons(
     navigateToSignIn: () -> Unit,
     navigateToLogin: () -> Unit,
-    kakaoLogin: () -> Unit,
+    kakaoLogin: (Context) -> Unit,
 ) {
+    val context = LocalContext.current
     Column(
         modifier = Modifier.Companion
             .align(Alignment.BottomCenter)
@@ -119,7 +123,7 @@ private fun BoxScope.BottomLoginButtons(
             Image(
                 modifier = Modifier
                     .size(60.dp)
-                    .clickable { kakaoLogin() },
+                    .clickable { kakaoLogin(context) },
                 painter = painterResource(id = R.drawable.img_kakao_btn),
                 contentDescription = "IMG_KAKAO_BTN"
             )
