@@ -329,13 +329,24 @@ private fun SelectedProfileImage(
             )
         }
         if (selectedImage is ProfileImageType.LOCAL) {
-            Image(
+//            Image(
+//                modifier = Modifier.fillMaxSize(),
+//                painter = rememberAsyncImagePainter(
+//                    model = selectedImage.uri
+//                ),
+//                contentScale = ContentScale.Crop,
+//                contentDescription = "IMG_DUMMY"
+//            )
+            AsyncImage(
                 modifier = Modifier.fillMaxSize(),
-                painter = rememberAsyncImagePainter(
-                    model = selectedImage.uri
-                ),
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(selectedImage.uri)
+                    .crossfade(true)
+                    .build(),
+                placeholder = painterResource(R.drawable.img_dummy),
+                error = painterResource(id = R.drawable.img_dummy),
+                contentDescription = "ASDas",
                 contentScale = ContentScale.Crop,
-                contentDescription = "IMG_DUMMY"
             )
         }
         Box(

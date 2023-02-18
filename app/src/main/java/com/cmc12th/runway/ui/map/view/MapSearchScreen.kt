@@ -1,10 +1,8 @@
 package com.cmc12th.runway.ui.map.view
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -14,7 +12,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.composed
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -32,7 +29,7 @@ import com.cmc12th.runway.utils.noRippleClickable
 
 
 @Composable
-fun MapSearchScreen(onBackPrseed: () -> Unit) {
+fun MapSearchScreen(onBackPrseed: () -> Unit, onShopSearch: () -> Unit) {
     val searchTextField = remember {
         mutableStateOf("")
     }
@@ -62,7 +59,9 @@ fun MapSearchScreen(onBackPrseed: () -> Unit) {
             // TODO 화면제작
         } else {
             /** 검색 중일 때 */
-            OnSearching()
+            OnSearching(
+                onShopSearch = onShopSearch
+            )
         }
     }
 }
@@ -111,7 +110,7 @@ private fun TopSearchBar(
 }
 
 @Composable
-fun OnSearching() {
+fun OnSearching(onShopSearch: () -> Unit) {
 
     val items = CATEGORYS
 
@@ -127,7 +126,7 @@ fun OnSearching() {
                 verticalAlignment = Alignment.Top
             ) {
                 IconButton(
-                    onClick = { /*TODO*/ },
+                    onClick = { },
                     modifier = Modifier.size(24.dp)
                 ) {
                     Icon(
@@ -142,7 +141,11 @@ fun OnSearching() {
                         text = it,
                         style = Body1,
                         color = Black,
-                        textAlign = TextAlign.Start
+                        textAlign = TextAlign.Start,
+                        modifier = Modifier.clickable {
+                            // TODO 매장 클릭 구현
+                            onShopSearch()
+                        }
                     )
                     HeightSpacer(height = 4.dp)
                     Text(

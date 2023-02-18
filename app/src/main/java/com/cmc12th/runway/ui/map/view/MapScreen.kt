@@ -8,7 +8,6 @@ package com.cmc12th.runway.ui.map.view
 import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.content.pm.PackageManager
-import android.graphics.Typeface
 import android.util.Log
 import android.widget.TextView
 import androidx.activity.compose.ManagedActivityResultLauncher
@@ -16,6 +15,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.compose.animation.*
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -35,23 +35,23 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.cmc12th.runway.data.model.NaverItem
 import com.cmc12th.runway.R
+import com.cmc12th.runway.ui.components.RunwayIconButton
 import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.map.MapUiState
 import com.cmc12th.runway.ui.map.MapViewModel
 import com.cmc12th.runway.ui.map.components.BottomGradient
 import com.cmc12th.runway.ui.map.components.SearchBoxAndTagCategory
-import com.cmc12th.runway.ui.theme.Primary
+import com.cmc12th.runway.ui.map.model.MapStatus
+import com.cmc12th.runway.ui.theme.Body1
 import com.cmc12th.runway.utils.Constants.BOTTOM_NAVIGATION_HEIGHT
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraPosition
-import com.naver.maps.map.CameraUpdate
 import com.naver.maps.map.compose.*
 import com.naver.maps.map.overlay.Marker
 import com.naver.maps.map.overlay.OverlayImage
 import ted.gun0912.clustering.naver.TedNaverClustering
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun MapScreen(appState: ApplicationState) {
 
@@ -130,35 +130,54 @@ private fun MapViewContents(
     val peekHeight = remember {
         mutableStateOf(60.dp)
     }
-    val onZoom = remember {
-        mutableStateOf(false)
+    val mapStatus = remember {
+        mutableStateOf<MapStatus>(MapStatus.DEFAULT)
     }
     var topBarHeight by remember {
         mutableStateOf(0.dp)
     }
 
-    LaunchedEffect(key1 = onZoom.value) {
-        if (onZoom.value) {
-            systemUiController.setSystemBarsColor(Color.Transparent)
-            systemUiController.setNavigationBarColor(Color.Transparent)
-            peekHeight.value = 0.dp
-            appState.changeBottomBarVisibility(false)
-            bottomSheetScaffoldState.bottomSheetState.collapse()
-        } else {
-            systemUiController.setSystemBarsColor(Color.White)
-            peekHeight.value = BOTTOM_NAVIGATION_HEIGHT + 100.dp
-            appState.changeBottomBarVisibility(true)
+    val changeZoomStatus: () -> Unit = {
+        if (mapStatus.value == MapStatus.DEFAULT) {
+            mapStatus.value = MapStatus.ZOOM
+        } else if (mapStatus.value == MapStatus.ZOOM) {
+            mapStatus.value = MapStatus.DEFAULT
         }
     }
 
-    LaunchedEffect(key1 = onSearching.value) {
-        if (onSearching.value) {
-            bottomSheetScaffoldState.bottomSheetState.collapse()
-            appState.changeBottomBarVisibility(false)
-            peekHeight.value = 0.dp
-        } else {
-            appState.changeBottomBarVisibility(true)
-            peekHeight.value = BOTTOM_NAVIGATION_HEIGHT + 100.dp
+    LaunchedEffect(key1 = mapStatus.value) {
+        when (mapStatus.value) {
+            MapStatus.DEFAULT -> {
+                onSearching.value = false
+                systemUiController.setSystemBarsColor(Color.White)
+                peekHeight.value = BOTTOM_NAVIGATION_HEIGHT + 100.dp
+                appState.changeBottomBarVisibility(true)
+            }
+            MapStatus.ZOOM -> {
+                onSearching.value = false
+                systemUiController.setSystemBarsColor(Color.Transparent)
+                systemUiController.setNavigationBarColor(Color.Transparent)
+                peekHeight.value = 0.dp
+                appState.changeBottomBarVisibility(false)
+                bottomSheetScaffoldState.bottomSheetState.collapse()
+            }
+            MapStatus.LOCATION_SEARCH -> {
+                onSearching.value = false
+                systemUiController.setSystemBarsColor(Color.White)
+                peekHeight.value = BOTTOM_NAVIGATION_HEIGHT + 200.dp
+                appState.changeBottomBarVisibility(true)
+            }
+            MapStatus.SEARCH_TAB -> {
+                onSearching.value = true
+                bottomSheetScaffoldState.bottomSheetState.collapse()
+                appState.changeBottomBarVisibility(false)
+                peekHeight.value = 0.dp
+            }
+            MapStatus.SHOP_SEARCH -> {
+                onSearching.value = false
+                appState.changeBottomBarVisibility(false)
+                peekHeight.value = BOTTOM_NAVIGATION_HEIGHT + 200.dp
+            }
         }
     }
 
@@ -180,13 +199,11 @@ private fun MapViewContents(
             RunwayNaverMap(
                 uiState = uiState,
                 mapViewModel = mapViewModel,
-                onMapClick = {
-                    onZoom.value = !onZoom.value
-                })
+                onMapClick = changeZoomStatus)
 
             /** 검색 및 필터 */
             AnimatedVisibility(
-                visible = !onZoom.value,
+                visible = mapStatus.value == MapStatus.DEFAULT,
                 enter = slideInVertically { -it },
                 exit = slideOutVertically { -it }
             ) {
@@ -204,10 +221,19 @@ private fun MapViewContents(
                         categoryItems = uiState.categoryItems,
                         updateCategoryTags = { mapViewModel.updateCategoryTags(it) },
                         updateIsBookmarked = { mapViewModel.updateIsBookmarked(it) },
-                        onSearch = { onSearching.value = true }
+                        onSearch = { mapStatus.value = MapStatus.SEARCH_TAB }
                     )
                     BottomGradient(20.dp)
                 }
+            }
+
+            /** 검새 껼과 탑바 */
+            AnimatedVisibility(
+                visible = onSearching.value,
+                enter = fadeIn(),
+                exit = fadeOut()
+            ) {
+                SearchResultBar()
             }
 
             /** 검색 스크린을 위에 깔아버리기 */
@@ -216,9 +242,38 @@ private fun MapViewContents(
                 enter = fadeIn(),
                 exit = fadeOut()
             ) {
-                MapSearchScreen {
-                    onSearching.value = false
-                }
+                MapSearchScreen(
+                    onShopSearch = {
+                        mapStatus.value = MapStatus.SHOP_SEARCH
+                    }, onBackPrseed = {
+                        onSearching.value = false
+                    }
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun SearchResultBar() {
+    Box(modifier = Modifier
+        .statusBarsPadding()
+        .background(Color.White)) {
+        Row(modifier = Modifier
+            .fillMaxWidth()
+            .padding(20.dp, 16.dp),
+            verticalAlignment = Alignment.CenterVertically) {
+            RunwayIconButton(drawable = R.drawable.ic_left_runway) {
+
+            }
+            Text(text = "매장이나 장소 이름명",
+                style = Body1,
+                color = Color.Black,
+                modifier = Modifier.weight(1f))
+            IconButton(onClick = {}, modifier = Modifier.size(24.dp)) {
+                Icon(painter = painterResource(id = R.drawable.ic_close_baseline_small),
+                    contentDescription = "IC_CLOSE_BASELINE_SMALL",
+                    tint = Color.Black)
             }
         }
     }

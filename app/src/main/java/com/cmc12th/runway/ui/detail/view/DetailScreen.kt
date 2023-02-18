@@ -37,7 +37,9 @@ fun DetailScreen(appState: ApplicationState, idx: Int) {
     val scrollState = rememberLazyListState()
     ManageSystemBarColor(scrollState)
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(modifier = Modifier
+        .fillMaxSize()
+        .background(Color.White)) {
 
         LazyColumn(
             modifier = Modifier
