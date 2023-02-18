@@ -35,10 +35,13 @@ object Constants {
     const val PHOTO_REVIEW_ROUTE = "nav-photo-review"
     const val PHOTO_REVIEW_RESULT_ROUTE = "nav-photo-result-review"
 
+    const val PASSWORD_SEARCH_PHONE_ROUTE = "nav-password-search-phone"
+
     /** Graph Id */
     const val MAIN_GRAPH = "main-graph"
     const val LOGIN_GRAPH = "login-graph"
     const val SIGNIN_GRAPH = "signin-graph"
     const val DETAIL_GRAPH = "detail-graph"
+    const val PASSWORD_SEARCH_GRAPH = "password-search-graph"
 
 }

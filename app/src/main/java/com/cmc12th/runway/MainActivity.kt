@@ -25,6 +25,7 @@ import androidx.navigation.compose.rememberNavController
 import com.cmc12th.runway.ui.*
 import com.cmc12th.runway.ui.components.BottomBar
 import com.cmc12th.runway.ui.domain.model.ApplicationState
+import com.cmc12th.runway.ui.domain.rememberApplicationState
 import com.cmc12th.runway.ui.splash.SplashScreen
 import com.cmc12th.runway.ui.theme.RunwayTheme
 import com.cmc12th.runway.utils.Constants.HOME_ROUTE
@@ -72,21 +73,6 @@ class MainActivity : ComponentActivity() {
 }
 
 
-@Composable
-private fun rememberApplicationState(
-    bottomBarState: MutableState<Boolean> = mutableStateOf(false),
-    navController: NavHostController = rememberNavController(),
-    scaffoldState: ScaffoldState = rememberScaffoldState(),
-    coroutineScope: CoroutineScope = rememberCoroutineScope(),
-) = remember(Unit) {
-    ApplicationState(
-        bottomBarState,
-        navController,
-        scaffoldState,
-        coroutineScope,
-    )
-}
-
 /** 바텀 네비게이션에 대한 Visibility를 관리한다. */
 @Composable
 private fun ManageBottomBarState(
@@ -128,6 +114,7 @@ private fun RootNavhost(
                 }
                 mainGraph(appState)
                 loginGraph(appState)
+                passwordSearchGraph(appState)
                 signInGraph(appState)
                 detailGraph(appState)
             }

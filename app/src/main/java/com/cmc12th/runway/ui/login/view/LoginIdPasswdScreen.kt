@@ -4,6 +4,7 @@ package com.cmc12th.runway.ui.login
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -34,6 +35,7 @@ import com.cmc12th.runway.ui.signin.model.Phone
 import com.cmc12th.runway.ui.signin.view.ErrorMessage
 import com.cmc12th.runway.ui.theme.Body2
 import com.cmc12th.runway.ui.theme.HeadLine1
+import com.cmc12th.runway.utils.Constants
 import com.cmc12th.runway.utils.Constants.LOGIN_GRAPH
 import com.cmc12th.runway.utils.Constants.MAIN_GRAPH
 import com.cmc12th.runway.utils.Constants.SIGNIN_GRAPH
@@ -53,6 +55,9 @@ fun LoginIdPasswdScreen(
     }
     val passwordErrorMessage = remember {
         mutableStateOf("")
+    }
+    val navigateToPasswrodSearch = {
+        appState.navigate(Constants.PASSWORD_SEARCH_GRAPH)
     }
 
     val onLogin: () -> Unit = {
@@ -126,7 +131,13 @@ fun LoginIdPasswdScreen(
             }
 
             HeightSpacer(30.dp)
-            Text(text = "비밀번호 찾기", style = Body2, modifier = Modifier.align(Alignment.End))
+            Text(
+                text = "비밀번호 찾기",
+                style = Body2,
+                modifier = Modifier
+                    .align(Alignment.End)
+                    .clickable { navigateToPasswrodSearch() }
+            )
         }
         /** 하단 로그인, 회원가입 */
         BottomButtons(

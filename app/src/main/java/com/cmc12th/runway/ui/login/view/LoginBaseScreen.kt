@@ -23,6 +23,7 @@ import com.cmc12th.runway.utils.Constants
 import com.cmc12th.runway.utils.Constants.LOGIN_GRAPH
 import com.cmc12th.runway.utils.Constants.LOGIN_ID_PW_ROUTE
 import com.cmc12th.runway.utils.Constants.MAIN_GRAPH
+import com.cmc12th.runway.utils.Constants.PASSWORD_SEARCH_GRAPH
 import com.cmc12th.runway.utils.Constants.SIGNIN_GRAPH
 import com.cmc12th.runway.utils.Constants.SIGNIN_PROFILE_IMAGE_ROUTE
 
@@ -52,10 +53,12 @@ fun LoginBaseScreen(
     }
 
 
-    Box(modifier = Modifier
-        .fillMaxSize()
-        .statusBarsPadding()
-        .navigationBarsPadding())
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .statusBarsPadding()
+            .navigationBarsPadding()
+    )
     {
         /** 배경 */
         Box(
