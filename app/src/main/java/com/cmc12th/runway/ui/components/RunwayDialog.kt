@@ -35,8 +35,10 @@ fun RunwayDialog(
     positiveButton: DialogButtonContent,
     negativeButton: DialogButtonContent = DialogButtonContent.default(),
 ) {
-    Dialog(onDismissRequest = onDismissRequest,
-        properties = properties) {
+    Dialog(
+        onDismissRequest = onDismissRequest,
+        properties = properties
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -48,8 +50,10 @@ fun RunwayDialog(
             HeightSpacer(height = 10.dp)
 
             if (title.isNotBlank()) {
-                Text(text = title, style = HeadLine4, color = Color.Black,
-                    modifier = Modifier.padding(top = 14.dp, bottom = 10.dp))
+                Text(
+                    text = title, style = HeadLine4, color = Color.Black,
+                    modifier = Modifier.padding(top = 14.dp, bottom = 10.dp)
+                )
             }
             Text(
                 modifier = Modifier.padding(20.dp, 0.dp),
@@ -60,9 +64,11 @@ fun RunwayDialog(
             )
             HeightSpacer(height = 8.dp)
 
-            Column(modifier = Modifier
-                .padding(14.dp),
-                verticalArrangement = Arrangement.spacedBy(10.dp)) {
+            Column(
+                modifier = Modifier
+                    .padding(14.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
 
                 /** 찬성 버튼 */
                 Button(
@@ -70,12 +76,14 @@ fun RunwayDialog(
                         .fillMaxWidth(),
                     onClick = { positiveButton.onClick() },
                     shape = RoundedCornerShape(5.dp),
-                    colors = ButtonDefaults.buttonColors(Primary)
+                    colors = ButtonDefaults.buttonColors(Color.Black)
                 ) {
-                    Text(text = positiveButton.title,
+                    Text(
+                        text = positiveButton.title,
                         color = Color.White,
                         style = Button1,
-                        modifier = Modifier.padding(0.dp, 5.dp))
+                        modifier = Modifier.padding(0.dp, 5.dp)
+                    )
                 }
 
                 /** 반대 버튼 */
@@ -87,10 +95,12 @@ fun RunwayDialog(
                         shape = RoundedCornerShape(5.dp),
                         colors = ButtonDefaults.buttonColors(Color.Transparent)
                     ) {
-                        Text(text = it.title,
+                        Text(
+                            text = it.title,
                             color = Primary,
                             style = Button1,
-                            modifier = Modifier.padding(0.dp, 5.dp))
+                            modifier = Modifier.padding(0.dp, 5.dp)
+                        )
                     }
                 }
 
