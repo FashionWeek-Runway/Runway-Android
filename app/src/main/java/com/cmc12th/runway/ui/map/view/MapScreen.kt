@@ -292,6 +292,7 @@ private fun MapViewContents(
                     },
                     onBackPrseed = {
                         onSearching.value = false
+                        mapStatus.value = MapStatus.DEFAULT
                     },
                     onLocationSearch = {
                         mapStatus.value = MapStatus.LOCATION_SEARCH
