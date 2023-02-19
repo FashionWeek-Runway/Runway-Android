@@ -8,7 +8,6 @@ package com.cmc12th.runway.ui.map.view
 import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.content.pm.PackageManager
-import android.util.Log
 import android.widget.TextView
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -29,7 +28,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -230,6 +228,7 @@ private fun MapViewContents(
         sheetContent = {
             MapViewBottomSheetContent(
                 appState = appState,
+                contents = uiState.scrollItems,
                 screenHeight = screenHeight - topBarHeight + BOTTOM_NAVIGATION_HEIGHT,
                 isFullScreen = mapStatus.value == MapStatus.LOCATION_SEARCH,
                 isExpanded = bottomSheetScaffoldState.bottomSheetState.targetValue == BottomSheetValue.Expanded,
@@ -410,7 +409,6 @@ private fun RunwayNaverMap(
         var clusterManager by remember { mutableStateOf<TedNaverClustering<NaverItem>?>(null) }
 
         DisposableMapEffect(uiState.markerItems) { map ->
-            Log.i("dlgocks1", "클러스터 업데이트")
             if (clusterManager == null) {
                 clusterManager = TedNaverClustering.with<NaverItem>(context, map)
                     .customCluster {

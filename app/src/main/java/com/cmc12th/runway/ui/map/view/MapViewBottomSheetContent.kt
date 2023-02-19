@@ -1,6 +1,5 @@
 package com.cmc12th.runway.ui.map.view
 
-import android.util.Log
 import androidx.compose.animation.*
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -8,10 +7,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -19,15 +15,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.cmc12th.runway.R
+import com.cmc12th.runway.data.response.map.MapInfoItem
 import com.cmc12th.runway.ui.components.HeightSpacer
 import com.cmc12th.runway.ui.domain.model.ApplicationState
-import com.cmc12th.runway.ui.map.model.MapStatus
 import com.cmc12th.runway.ui.theme.*
 import com.cmc12th.runway.utils.Constants.BOTTOM_NAVIGATION_HEIGHT
 import com.cmc12th.runway.utils.Constants.DETAIL_ROUTE
@@ -40,11 +34,12 @@ fun MapViewBottomSheetContent(
     isExpanded: Boolean,
     setMapStatusOnSearch: () -> Unit,
     setMapStatusDefault: () -> Unit,
+    contents: List<MapInfoItem>,
 ) {
-    val shopList = remember {
-        mutableStateOf(listOf("매장1", "매장2", "매장3", "매장4"))
-//        mutableStateOf(emptyList<String>())
-    }
+//    val contents = remember {
+//        mutableStateOf(listOf("매장1", "매장2", "매장3", "매장4"))
+////        mutableStateOf(emptyList<String>())
+//    }
 
 
     Column(
@@ -86,9 +81,9 @@ fun MapViewBottomSheetContent(
             )
         }
 
-        if (shopList.value.isNotEmpty()) {
+        if (contents.isNotEmpty()) {
             LazyColumn {
-                items(shopList.value) {
+                items(contents) {
                     Column(modifier = Modifier.clickable {
                         appState.navigate("$DETAIL_ROUTE?idx=1")
                     }) {
@@ -118,7 +113,7 @@ fun MapViewBottomSheetContent(
                             }
                         }
                         Text(
-                            text = it,
+                            text = it.storeName,
                             style = HeadLine4,
                             modifier = Modifier.padding(top = 14.dp, bottom = 30.dp)
                         )

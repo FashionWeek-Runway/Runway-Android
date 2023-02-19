@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cmc12th.runway.ui.map.model.NaverItem
 import com.cmc12th.runway.data.request.map.MapFilterRequest
+import com.cmc12th.runway.data.response.map.MapInfoItem
 import com.cmc12th.runway.data.response.map.toNaverMapItem
 import com.cmc12th.runway.domain.repository.MapRepository
 import com.cmc12th.runway.domain.repository.StoreRepository
@@ -33,6 +34,7 @@ data class MapUiState(
     val isBookmarked: Boolean = false,
     val userPosition: LatLng = DEFAULT_LATLNG,
     val movingCameraPosition: Location = DEFAULT_LOCATION,
+    val scrollItems: List<MapInfoItem> = emptyList(),
 )
 
 @HiltViewModel
@@ -54,6 +56,9 @@ class MapViewModel @Inject constructor(
     // 맵에 찍히는 마커 아이템
     private val _markerItems: MutableStateFlow<List<NaverItem>> = MutableStateFlow(emptyList())
 
+    // 맵아래 스크롤 아이템
+    private val _scrollItems: MutableStateFlow<List<MapInfoItem>> = MutableStateFlow(emptyList())
+
     // 검색 탭 및 필터링 되는 아이템들
     private val _categoryItems: MutableStateFlow<List<CategoryTag>> =
         MutableStateFlow(RunwayCategory.generateCategoryTags())
@@ -70,13 +75,16 @@ class MapViewModel @Inject constructor(
         _isBookmarked,
         _userPosition,
         _movingCameraPosition,
-    ) { markerItems, categoryItems, isBookmarked, userPosition, movingCameraPosition ->
+        _scrollItems,
+    ) { resultArr ->
+        @Suppress("UNCHECKED_CAST")
         MapUiState(
-            markerItems = markerItems,
-            categoryItems = categoryItems,
-            isBookmarked = isBookmarked,
-            userPosition = userPosition,
-            movingCameraPosition = movingCameraPosition,
+            markerItems = resultArr[0] as List<NaverItem>,
+            categoryItems = resultArr[1] as List<CategoryTag>,
+            isBookmarked = resultArr[2] as Boolean,
+            userPosition = resultArr[3] as LatLng,
+            movingCameraPosition = resultArr[4] as Location,
+            scrollItems = resultArr[5] as List<MapInfoItem>
         )
     }.stateIn(
         scope = viewModelScope,
@@ -94,6 +102,23 @@ class MapViewModel @Inject constructor(
         )
     }
 
+    fun mapScrollInfo(latLng: LatLng) = viewModelScope.launch {
+        mapRepository.mapInfoPaging(page = 0, size = 10,
+            mapFilterRequest = MapFilterRequest(
+                latitude = latLng.latitude,
+                longitude = latLng.longitude,
+                category = _categoryItems.value.filter { it.isSelected }.map { it.name },
+            )
+        ).collect { apiState ->
+            apiState.onSuccess {
+                _scrollItems.value = it.pagingMetadata.contents
+            }
+            apiState.onError {
+
+            }
+        }
+    }
+
     fun mapFiltering(latLng: LatLng) = viewModelScope.launch {
         mapRepository.mapFiltering(
             MapFilterRequest(
@@ -109,6 +134,10 @@ class MapViewModel @Inject constructor(
 
             }
         }
+    }
+
+    fun updateScrollItems() {
+
     }
 
     fun removeLocationListener() {
@@ -151,6 +180,7 @@ class MapViewModel @Inject constructor(
                 // 초기 1회 진입할 때 마커 불러오기
                 if (initialMarkerLoadFlag) {
                     mapFiltering(LatLng(it.latitude, it.longitude))
+                    mapScrollInfo(LatLng(it.latitude, it.longitude))
                     _movingCameraPosition.value = it
                     initialMarkerLoadFlag = false
                 }
