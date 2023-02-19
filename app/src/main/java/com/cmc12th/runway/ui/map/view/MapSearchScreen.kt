@@ -29,7 +29,11 @@ import com.cmc12th.runway.utils.noRippleClickable
 
 
 @Composable
-fun MapSearchScreen(onBackPrseed: () -> Unit, onShopSearch: () -> Unit) {
+fun MapSearchScreen(
+    onBackPrseed: () -> Unit,
+    onShopSearch: () -> Unit,
+    onLocationSearch: () -> Unit,
+) {
     val searchTextField = remember {
         mutableStateOf("")
     }
@@ -60,7 +64,8 @@ fun MapSearchScreen(onBackPrseed: () -> Unit, onShopSearch: () -> Unit) {
         } else {
             /** 검색 중일 때 */
             OnSearching(
-                onShopSearch = onShopSearch
+                onShopSearch = onShopSearch,
+                onLocationSearch = onLocationSearch,
             )
         }
     }
@@ -110,7 +115,10 @@ private fun TopSearchBar(
 }
 
 @Composable
-fun OnSearching(onShopSearch: () -> Unit) {
+fun OnSearching(
+    onShopSearch: () -> Unit,
+    onLocationSearch: () -> Unit
+) {
 
     val items = CATEGORYS
 
@@ -152,7 +160,11 @@ fun OnSearching(onShopSearch: () -> Unit) {
                         text = "매장 주소",
                         style = Body2,
                         color = Gray500,
-                        textAlign = TextAlign.Start
+                        textAlign = TextAlign.Start,
+                        modifier = Modifier.clickable {
+                            // TODO 지역 클릭 구현
+                            onLocationSearch()
+                        }
                     )
                 }
 

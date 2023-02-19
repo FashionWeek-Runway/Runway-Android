@@ -8,7 +8,6 @@ package com.cmc12th.runway.ui.map.view
 import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.content.pm.PackageManager
-import android.util.Log
 import android.widget.TextView
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -42,7 +41,7 @@ import com.cmc12th.runway.ui.map.MapViewModel
 import com.cmc12th.runway.ui.map.components.BottomGradient
 import com.cmc12th.runway.ui.map.components.SearchBoxAndTagCategory
 import com.cmc12th.runway.ui.map.model.MapStatus
-import com.cmc12th.runway.ui.theme.Body1
+import com.cmc12th.runway.ui.theme.Body1B
 import com.cmc12th.runway.utils.Constants.BOTTOM_NAVIGATION_HEIGHT
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.naver.maps.geometry.LatLng
@@ -50,6 +49,7 @@ import com.naver.maps.map.CameraPosition
 import com.naver.maps.map.compose.*
 import com.naver.maps.map.overlay.Marker
 import com.naver.maps.map.overlay.OverlayImage
+import kotlinx.coroutines.launch
 import ted.gun0912.clustering.naver.TedNaverClustering
 
 @Composable
@@ -123,6 +123,7 @@ private fun MapViewContents(
     val screenHeight = configuration.screenHeightDp.dp
     val localDensity = LocalDensity.current
     val systemUiController = rememberSystemUiController()
+    val coroutineScopre = rememberCoroutineScope()
 
     val onSearching = remember {
         mutableStateOf(false)
@@ -138,21 +139,35 @@ private fun MapViewContents(
     }
 
     val changeZoomStatus: () -> Unit = {
-        if (mapStatus.value == MapStatus.DEFAULT) {
-            mapStatus.value = MapStatus.ZOOM
-        } else if (mapStatus.value == MapStatus.ZOOM) {
-            mapStatus.value = MapStatus.DEFAULT
+        when (mapStatus.value) {
+            MapStatus.DEFAULT -> {
+                mapStatus.value = MapStatus.ZOOM
+            }
+            MapStatus.ZOOM -> {
+                mapStatus.value = MapStatus.DEFAULT
+            }
+            MapStatus.LOCATION_SEARCH -> {
+            }
+            MapStatus.SHOP_SEARCH -> {
+                mapStatus.value = MapStatus.SEARCH_ZOOM
+            }
+            MapStatus.SEARCH_ZOOM -> {
+                mapStatus.value = MapStatus.SHOP_SEARCH
+            }
+            else -> {}
         }
     }
 
     LaunchedEffect(key1 = mapStatus.value) {
         when (mapStatus.value) {
+            /** 기본 상태 */
             MapStatus.DEFAULT -> {
                 onSearching.value = false
                 systemUiController.setSystemBarsColor(Color.White)
                 peekHeight.value = BOTTOM_NAVIGATION_HEIGHT + 100.dp
                 appState.changeBottomBarVisibility(true)
             }
+            /** 한번 클릭했을 때 */
             MapStatus.ZOOM -> {
                 onSearching.value = false
                 systemUiController.setSystemBarsColor(Color.Transparent)
@@ -161,25 +176,42 @@ private fun MapViewContents(
                 appState.changeBottomBarVisibility(false)
                 bottomSheetScaffoldState.bottomSheetState.collapse()
             }
-            MapStatus.LOCATION_SEARCH -> {
-                onSearching.value = false
-                systemUiController.setSystemBarsColor(Color.White)
-                peekHeight.value = BOTTOM_NAVIGATION_HEIGHT + 200.dp
-                appState.changeBottomBarVisibility(true)
-            }
+            /** 검색 탭에 들어갔을 때 */
             MapStatus.SEARCH_TAB -> {
                 onSearching.value = true
                 bottomSheetScaffoldState.bottomSheetState.collapse()
                 appState.changeBottomBarVisibility(false)
                 peekHeight.value = 0.dp
             }
+            /** 지역 클릭 */
+            MapStatus.LOCATION_SEARCH -> {
+                onSearching.value = false
+                appState.changeBottomBarVisibility(false)
+                peekHeight.value = BOTTOM_NAVIGATION_HEIGHT + 100.dp
+            }
+            /** 매장 클릭 */
             MapStatus.SHOP_SEARCH -> {
                 onSearching.value = false
                 appState.changeBottomBarVisibility(false)
                 peekHeight.value = BOTTOM_NAVIGATION_HEIGHT + 200.dp
             }
+            MapStatus.SEARCH_ZOOM -> {
+                systemUiController.setNavigationBarColor(Color.Transparent)
+                peekHeight.value = 0.dp
+                appState.changeBottomBarVisibility(false)
+                bottomSheetScaffoldState.bottomSheetState.collapse()
+            }
         }
     }
+
+
+    val setMapStatusDefault: () -> Unit = {
+        mapStatus.value = MapStatus.DEFAULT
+        coroutineScopre.launch {
+            bottomSheetScaffoldState.bottomSheetState.collapse()
+        }
+    }
+    val setMapStatusOnSearch = { mapStatus.value = MapStatus.SEARCH_TAB }
 
     BottomSheetScaffold(
         modifier = Modifier
@@ -188,7 +220,14 @@ private fun MapViewContents(
         scaffoldState = bottomSheetScaffoldState,
         sheetShape = RoundedCornerShape(topStart = 15.dp, topEnd = 15.dp),
         sheetContent = {
-            MapViewBottomSheetContent(appState, screenHeight - topBarHeight)
+            MapViewBottomSheetContent(
+                appState = appState,
+                screenHeight = screenHeight - topBarHeight,
+                isFullScreen = mapStatus.value == MapStatus.LOCATION_SEARCH,
+                isExpanded = bottomSheetScaffoldState.bottomSheetState.isExpanded,
+                setMapStatusDefault = setMapStatusDefault,
+                setMapStatusOnSearch = setMapStatusOnSearch
+            )
         }
     ) {
         Box(
@@ -199,7 +238,8 @@ private fun MapViewContents(
             RunwayNaverMap(
                 uiState = uiState,
                 mapViewModel = mapViewModel,
-                onMapClick = changeZoomStatus)
+                onMapClick = changeZoomStatus
+            )
 
             /** 검색 및 필터 */
             AnimatedVisibility(
@@ -227,13 +267,17 @@ private fun MapViewContents(
                 }
             }
 
-            /** 검새 껼과 탑바 */
+            /** 검색 결과 탑바 */
             AnimatedVisibility(
-                visible = onSearching.value,
+                visible = mapStatus.value.searchResultTopBarVisiblity(),
                 enter = fadeIn(),
                 exit = fadeOut()
             ) {
-                SearchResultBar()
+                SearchResultBar(
+                    modifier = Modifier.padding(20.dp, 16.dp),
+                    setMapStatusDefault = setMapStatusDefault,
+                    setMapStatusOnSearch = setMapStatusOnSearch
+                )
             }
 
             /** 검색 스크린을 위에 깔아버리기 */
@@ -245,8 +289,12 @@ private fun MapViewContents(
                 MapSearchScreen(
                     onShopSearch = {
                         mapStatus.value = MapStatus.SHOP_SEARCH
-                    }, onBackPrseed = {
+                    },
+                    onBackPrseed = {
                         onSearching.value = false
+                    },
+                    onLocationSearch = {
+                        mapStatus.value = MapStatus.LOCATION_SEARCH
                     }
                 )
             }
@@ -255,25 +303,38 @@ private fun MapViewContents(
 }
 
 @Composable
-private fun SearchResultBar() {
-    Box(modifier = Modifier
-        .statusBarsPadding()
-        .background(Color.White)) {
-        Row(modifier = Modifier
-            .fillMaxWidth()
-            .padding(20.dp, 16.dp),
-            verticalAlignment = Alignment.CenterVertically) {
+fun SearchResultBar(
+    modifier: Modifier = Modifier,
+    setMapStatusDefault: () -> Unit,
+    setMapStatusOnSearch: () -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .statusBarsPadding()
+            .background(Color.White)
+    ) {
+        Row(
+            modifier = modifier
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             RunwayIconButton(drawable = R.drawable.ic_left_runway) {
-
+                setMapStatusOnSearch()
             }
-            Text(text = "매장이나 장소 이름명",
-                style = Body1,
+            Text(
+                text = "매장이나 장소 이름명",
+                style = Body1B,
                 color = Color.Black,
-                modifier = Modifier.weight(1f))
-            IconButton(onClick = {}, modifier = Modifier.size(24.dp)) {
-                Icon(painter = painterResource(id = R.drawable.ic_close_baseline_small),
+                modifier = Modifier.weight(1f)
+            )
+            IconButton(onClick = {
+                setMapStatusDefault()
+            }, modifier = Modifier.size(24.dp)) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_close_baseline_small),
                     contentDescription = "IC_CLOSE_BASELINE_SMALL",
-                    tint = Color.Black)
+                    tint = Color.Black
+                )
             }
         }
     }
@@ -330,8 +391,10 @@ private fun RunwayNaverMap(
                             )
                             setTextColor(R.color.primary)
                             setTextAppearance(R.style.clustorText)
-                            typeface = ResourcesCompat.getFont(this.context,
-                                R.font.spoqa_han_sans_neo_bold)
+                            typeface = ResourcesCompat.getFont(
+                                this.context,
+                                R.font.spoqa_han_sans_neo_bold
+                            )
                             setPadding(100, 100, 100, 100)
                         }
                     }.customMarker {

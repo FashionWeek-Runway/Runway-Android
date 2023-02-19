@@ -1,5 +1,6 @@
 package com.cmc12th.runway.ui.map.view
 
+import androidx.compose.animation.*
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -22,13 +23,20 @@ import androidx.compose.ui.unit.dp
 import com.cmc12th.runway.R
 import com.cmc12th.runway.ui.components.HeightSpacer
 import com.cmc12th.runway.ui.domain.model.ApplicationState
+import com.cmc12th.runway.ui.map.model.MapStatus
 import com.cmc12th.runway.ui.theme.*
-import com.cmc12th.runway.utils.Constants
 import com.cmc12th.runway.utils.Constants.BOTTOM_NAVIGATION_HEIGHT
 import com.cmc12th.runway.utils.Constants.DETAIL_ROUTE
 
 @Composable
-fun MapViewBottomSheetContent(appState: ApplicationState, screenHeight: Dp) {
+fun MapViewBottomSheetContent(
+    appState: ApplicationState,
+    screenHeight: Dp,
+    isFullScreen: Boolean,
+    isExpanded: Boolean,
+    setMapStatusOnSearch: () -> Unit,
+    setMapStatusDefault: () -> Unit,
+) {
     val shopList = remember {
         mutableStateOf(listOf("매장1", "매장2", "매장3", "매장4"))
 //        mutableStateOf(emptyList<String>())
@@ -38,7 +46,8 @@ fun MapViewBottomSheetContent(appState: ApplicationState, screenHeight: Dp) {
         modifier = Modifier
             .fillMaxWidth()
             .navigationBarsPadding()
-            .height(screenHeight)
+            .isFullScreen(isFullScreen, screenHeight)
+            .wrapContentHeight()
             .padding(
                 start = 20.dp,
                 end = 20.dp,
@@ -46,26 +55,38 @@ fun MapViewBottomSheetContent(appState: ApplicationState, screenHeight: Dp) {
                 bottom = BOTTOM_NAVIGATION_HEIGHT
             )
     ) {
-        Spacer(
-            modifier = Modifier
-                .clip(RoundedCornerShape(5.dp))
-                .height(3.dp)
-                .width(36.dp)
-                .background(Gray200)
-                .align(Alignment.CenterHorizontally)
-        )
-        HeightSpacer(height = 10.dp)
-        Text(
-            text = "[성수동] 둘러보기", style = Body1M, color = Color.Black,
-            modifier = Modifier.padding(bottom = 20.dp)
-        )
+        AnimatedVisibility(
+            visible = isFullScreen && isExpanded,
+            enter = fadeIn(),
+        ) {
+            SearchResultBar(
+                modifier = Modifier.padding(0.dp, top = 0.dp, bottom = 16.dp),
+                setMapStatusDefault = setMapStatusDefault,
+                setMapStatusOnSearch = setMapStatusOnSearch
+            )
+        }
+
+        if (!(isFullScreen && isExpanded)) {
+            Spacer(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(5.dp))
+                    .height(3.dp)
+                    .width(36.dp)
+                    .background(Gray200)
+                    .align(Alignment.CenterHorizontally)
+            )
+            HeightSpacer(height = 10.dp)
+            Text(
+                text = "[성수동] 둘러보기", style = Body1M, color = Color.Black,
+                modifier = Modifier.padding(bottom = 20.dp)
+            )
+        }
 
         if (shopList.value.isNotEmpty()) {
             LazyColumn {
                 items(shopList.value) {
                     Column(modifier = Modifier.clickable {
                         appState.navigate("$DETAIL_ROUTE?idx=1")
-//                        appState.navigate("${Constants.SIGNIN_PROFILE_IMAGE_ROUTE}?profileImage=$profileImage&kakaoId=$kakaoId")
                     }) {
                         Box(
                             modifier = Modifier
@@ -104,7 +125,7 @@ fun MapViewBottomSheetContent(appState: ApplicationState, screenHeight: Dp) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .fillMaxHeight(0.6f),
+                    .padding(0.dp, 100.dp),
                 verticalArrangement = Arrangement.Bottom,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -119,5 +140,13 @@ fun MapViewBottomSheetContent(appState: ApplicationState, screenHeight: Dp) {
             }
         }
 
+    }
+}
+
+private fun Modifier.isFullScreen(isFullScreen: Boolean, screenHeight: Dp): Modifier {
+    return if (isFullScreen) {
+        Modifier.fillMaxHeight()
+    } else {
+        Modifier.heightIn(max = screenHeight)
     }
 }
