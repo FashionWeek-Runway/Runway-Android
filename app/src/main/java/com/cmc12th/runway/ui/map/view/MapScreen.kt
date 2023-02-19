@@ -33,7 +33,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.cmc12th.runway.data.model.NaverItem
+import com.cmc12th.runway.ui.map.model.NaverItem
 import com.cmc12th.runway.R
 import com.cmc12th.runway.ui.components.RunwayIconButton
 import com.cmc12th.runway.ui.domain.model.ApplicationState
@@ -375,14 +375,16 @@ private fun RunwayNaverMap(
     cameraPositionState: CameraPositionState,
 ) {
 
-//    LaunchedEffect(uiState.userPosition) {
-//        cameraPositionState.move(
-//            CameraUpdate.scrollAndZoomTo(uiState.userPosition, 8.0)
-//        )
-//    }
-
     LaunchedEffect(key1 = cameraPositionState.position) {
-        Log.i("dlgocks1", cameraPositionState.position.target.toString())
+        // Log.i("dlgocks1", cameraPositionState.position.target.toString())
+    }
+
+    LaunchedEffect(key1 = uiState.movingCameraPosition) {
+        cameraPositionState.animate(
+            update = CameraUpdate.scrollAndZoomTo(
+                LatLng(uiState.movingCameraPosition), 12.0
+            )
+        )
     }
 
     DisposableEffect(Unit) {
@@ -427,9 +429,10 @@ private fun RunwayNaverMap(
                         }
                     }.customMarker {
                         Marker().apply {
-                            icon = OverlayImage.fromResource(R.drawable.ic_nav_mypage_on)
+                            icon =
+                                OverlayImage.fromResource(R.drawable.ic_fill_map_marker_default_24)
                             width = 60
-                            height = 86
+                            height = 60
                             captionText = it.title ?: "제목"
                         }
                     }.make()
