@@ -58,7 +58,6 @@ class MapViewModel @Inject constructor(
 
     /** 해당 값은 변할 시 카메라가 이동함 */
     private val _movingCameraPosition = MutableStateFlow(DEFAULT_LOCATION)
-    val movingCameraPosition: StateFlow<Location> get() = _movingCameraPosition
 
     private val _userPosition = MutableStateFlow(DEFAULT_LATLNG)
 
@@ -135,7 +134,6 @@ class MapViewModel @Inject constructor(
         override fun onLocationResult(locationResult: LocationResult) {
             super.onLocationResult(locationResult)
             locationResult.lastLocation?.let {
-                Log.i("dlgocks1 : User-Position", it.toString())
                 _userPosition.value = LatLng(it.latitude, it.longitude)
                 _movingCameraPosition.value = it
             }

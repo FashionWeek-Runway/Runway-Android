@@ -17,13 +17,11 @@ import androidx.appcompat.content.res.AppCompatResources
 import androidx.compose.animation.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalConfiguration
@@ -42,6 +40,7 @@ import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.map.MapUiState
 import com.cmc12th.runway.ui.map.MapViewModel
 import com.cmc12th.runway.ui.map.components.BottomGradient
+import com.cmc12th.runway.ui.map.components.GpsIcon
 import com.cmc12th.runway.ui.map.components.SearchBoxAndTagCategory
 import com.cmc12th.runway.ui.map.model.MapStatus
 import com.cmc12th.runway.ui.theme.Body1B
@@ -127,7 +126,7 @@ private fun MapViewContents(
     val screenHeight = configuration.screenHeightDp.dp
     val localDensity = LocalDensity.current
     val systemUiController = rememberSystemUiController()
-    val coroutineScopre = rememberCoroutineScope()
+    val coroutineScope = rememberCoroutineScope()
 
     val onSearching = remember {
         mutableStateOf(false)
@@ -162,12 +161,8 @@ private fun MapViewContents(
         }
     }
 
-    LaunchedEffect(key1 = bottomSheetScaffoldState.bottomSheetState.offset.value) {
-        Log.i("dlgocks1", bottomSheetScaffoldState.bottomSheetState.offset.value.toString())
-    }
-
-
     LaunchedEffect(key1 = mapStatus.value) {
+        systemUiController.setNavigationBarColor(Color.White)
         when (mapStatus.value) {
             /** 기본 상태 */
             MapStatus.DEFAULT -> {
@@ -213,15 +208,17 @@ private fun MapViewContents(
         }
     }
 
-
     val setMapStatusDefault: () -> Unit = {
         mapStatus.value = MapStatus.DEFAULT
-        coroutineScopre.launch {
+        coroutineScope.launch {
             bottomSheetScaffoldState.bottomSheetState.collapse()
         }
     }
     val setMapStatusOnSearch = { mapStatus.value = MapStatus.SEARCH_TAB }
 
+    val cameraPositionState: CameraPositionState = rememberCameraPositionState {
+        position = CameraPosition(LatLng(37.5437, 127.0659), 8.0)
+    }
 
     BottomSheetScaffold(
         modifier = Modifier
@@ -232,7 +229,7 @@ private fun MapViewContents(
         sheetContent = {
             MapViewBottomSheetContent(
                 appState = appState,
-                screenHeight = screenHeight - topBarHeight,
+                screenHeight = screenHeight - topBarHeight + BOTTOM_NAVIGATION_HEIGHT,
                 isFullScreen = mapStatus.value == MapStatus.LOCATION_SEARCH,
                 isExpanded = bottomSheetScaffoldState.bottomSheetState.targetValue == BottomSheetValue.Expanded,
                 setMapStatusDefault = setMapStatusDefault,
@@ -246,25 +243,23 @@ private fun MapViewContents(
         ) {
             /** 네이버 지도 */
             RunwayNaverMap(
+                cameraPositionState = cameraPositionState,
                 uiState = uiState,
                 mapViewModel = mapViewModel,
                 onMapClick = changeZoomStatus
             )
-
-            IconButton(modifier = Modifier
-                .align(Alignment.TopEnd)
-                .offset(
-                    x = (-20).dp,
-                    y = with(localDensity) { bottomSheetScaffoldState.bottomSheetState.offset.value.toDp() - 50.dp }
-                )
-                .size(40.dp)
-                .clip(CircleShape)
-                .background(Color.White),
-                onClick = { /*TODO*/ }) {
-                androidx.compose.material3.Icon(
-                    painter = painterResource(id = R.drawable.ic_baseline_location_24),
-                    contentDescription = "IC_BASELINE_LOCATION"
-                )
+            GpsIcon(
+                visiblitiy = mapStatus.value.isGpsIconVisibility() || bottomSheetScaffoldState.bottomSheetState.targetValue == BottomSheetValue.Expanded,
+                offsetY = with(localDensity) { bottomSheetScaffoldState.bottomSheetState.offset.value.toDp() }
+            ) {
+                coroutineScope.launch {
+                    cameraPositionState.animate(
+                        update = CameraUpdate.scrollAndZoomTo(
+                            uiState.userPosition,
+                            15.0
+                        ),
+                    )
+                }
             }
 
             /** 검색 및 필터 */
@@ -329,6 +324,7 @@ private fun MapViewContents(
     }
 }
 
+
 @Composable
 fun SearchResultBar(
     modifier: Modifier = Modifier,
@@ -376,17 +372,14 @@ private fun RunwayNaverMap(
     onMapClick: () -> Unit,
     mapViewModel: MapViewModel,
     uiState: MapUiState,
+    cameraPositionState: CameraPositionState,
 ) {
 
-    val cameraPositionState: CameraPositionState = rememberCameraPositionState {
-        position = CameraPosition(LatLng(37.5437, 127.0659), 8.0)
-    }
-
-    LaunchedEffect(uiState.userPosition) {
-        cameraPositionState.move(
-            CameraUpdate.scrollAndZoomTo(uiState.userPosition, 8.0)
-        )
-    }
+//    LaunchedEffect(uiState.userPosition) {
+//        cameraPositionState.move(
+//            CameraUpdate.scrollAndZoomTo(uiState.userPosition, 8.0)
+//        )
+//    }
 
     LaunchedEffect(key1 = cameraPositionState.position) {
         Log.i("dlgocks1", cameraPositionState.position.target.toString())
@@ -412,6 +405,7 @@ private fun RunwayNaverMap(
     ) {
         val context = LocalContext.current
         var clusterManager by remember { mutableStateOf<TedNaverClustering<NaverItem>?>(null) }
+
         DisposableMapEffect(uiState.markerItems) { map ->
             if (clusterManager == null) {
                 clusterManager = TedNaverClustering.with<NaverItem>(context, map)

@@ -6,4 +6,7 @@ enum class MapStatus {
     fun searchResultTopBarVisiblity(): Boolean =
         this == SHOP_SEARCH || this == SEARCH_ZOOM || this == LOCATION_SEARCH
 
+    fun isGpsIconVisibility(): Boolean =
+        this == ZOOM || this == SEARCH_ZOOM
+
 }
