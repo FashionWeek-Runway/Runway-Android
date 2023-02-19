@@ -36,9 +36,10 @@ class SignInRepositoryImpl @Inject constructor(
         runwayClient.checkNickname(nickname)
     }
 
-    override fun modifyPassword(passwordAndPhoneNumberRequest: PasswordAndPhoneNumberRequest): Flow<DefaultApiWrapper> {
-        TODO("Not yet implemented")
-    }
+    override fun modifyPassword(passwordAndPhoneNumberRequest: PasswordAndPhoneNumberRequest): Flow<DefaultApiWrapper> =
+        safeFlow {
+            runwayClient.modifyPassword(passwordAndPhoneNumberRequest)
+        }
 
     override fun signUp(
         feedPostReqeust: HashMap<String, RequestBody>,
