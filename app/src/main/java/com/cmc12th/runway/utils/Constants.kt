@@ -36,6 +36,7 @@ object Constants {
     const val PHOTO_REVIEW_RESULT_ROUTE = "nav-photo-result-review"
 
     const val PASSWORD_SEARCH_PHONE_ROUTE = "nav-password-search-phone"
+    const val PASSWORD_SEARCH_PHONE_VERIFY_ROUTE = "nav-password-search-phone_verify"
 
     /** Graph Id */
     const val MAIN_GRAPH = "main-graph"

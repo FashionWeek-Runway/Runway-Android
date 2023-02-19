@@ -3,10 +3,12 @@ package com.cmc12th.runway.ui.login.passwordsearch
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.cmc12th.runway.data.request.LoginCheckRequest
 import com.cmc12th.runway.data.request.SendVerifyMessageRequest
 import com.cmc12th.runway.data.response.ErrorResponse
 import com.cmc12th.runway.domain.repository.SignInRepository
 import com.cmc12th.runway.ui.login.LoginIdPasswordUiState
+import com.cmc12th.runway.ui.signin.SignInPhoneVerifyUiState
 import com.cmc12th.runway.ui.signin.SignInViewModel
 import com.cmc12th.runway.ui.signin.model.MobileCarrier
 import com.cmc12th.runway.ui.signin.model.Phone
@@ -45,6 +47,15 @@ class PasswordSearchViewModel @Inject constructor(
             initialValue = SearchPasswordPhoneUiState()
         )
 
+    val phoneVerifyUiState: StateFlow<SignInPhoneVerifyUiState> =
+        combine(_phone, _verifyCode, _retryTime) { phone, verifyCode, retryTime ->
+            SignInPhoneVerifyUiState(phone = phone, verifyCode = verifyCode, retryTime = retryTime)
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = SignInPhoneVerifyUiState()
+        )
+
     private val timer = Timer()
     private var timerTask: TimerTask = object : TimerTask() {
         override fun run() {
@@ -80,12 +91,22 @@ class PasswordSearchViewModel @Inject constructor(
 
     fun resetTimer() {
         _retryTime.value = SignInViewModel.DEFAULT_RETRY_TIME
+        startTimer()
     }
 
     fun sendVerifyMessage(onSuccess: () -> Unit, onError: (ErrorResponse) -> Unit) =
         viewModelScope.launch {
             val params = SendVerifyMessageRequest(_phone.value.number)
             signInRepository.sendVerifyMessage(params).collect { apiState ->
+                apiState.onSuccess { onSuccess() }
+                apiState.onError { onError(it) }
+            }
+        }
+
+    fun verifyPhoneNumber(onSuccess: () -> Unit, onError: (ErrorResponse) -> Unit) =
+        viewModelScope.launch {
+            val params = LoginCheckRequest(_verifyCode.value, _phone.value.number)
+            signInRepository.verifyPhoneNumber(params).collect { apiState ->
                 apiState.onSuccess { onSuccess() }
                 apiState.onError { onError(it) }
             }
@@ -98,5 +119,10 @@ class PasswordSearchViewModel @Inject constructor(
     fun updatePhoneNumber(phoneNumber: String) {
         _phone.value = _phone.value.copy(number = phoneNumber)
         checkUserVerificationStatus()
+    }
+
+
+    fun updateVerifyCode(verifyCode: String) {
+        _verifyCode.value = verifyCode
     }
 }

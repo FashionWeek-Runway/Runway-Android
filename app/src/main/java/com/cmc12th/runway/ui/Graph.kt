@@ -13,6 +13,7 @@ import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.home.HomeScreen
 import com.cmc12th.runway.ui.login.LoginIdPasswdScreen
 import com.cmc12th.runway.ui.login.passwordsearch.view.PasswordSearchPhoneScreen
+import com.cmc12th.runway.ui.login.passwordsearch.view.PasswordSearchVerifyScreen
 import com.cmc12th.runway.ui.login.view.LoginBaseScreen
 import com.cmc12th.runway.ui.map.view.MapScreen
 import com.cmc12th.runway.ui.mypage.view.MypageScreen
@@ -25,6 +26,7 @@ import com.cmc12th.runway.utils.Constants.LOGIN_ID_PW_ROUTE
 import com.cmc12th.runway.utils.Constants.MAIN_GRAPH
 import com.cmc12th.runway.utils.Constants.PASSWORD_SEARCH_GRAPH
 import com.cmc12th.runway.utils.Constants.PASSWORD_SEARCH_PHONE_ROUTE
+import com.cmc12th.runway.utils.Constants.PASSWORD_SEARCH_PHONE_VERIFY_ROUTE
 import com.cmc12th.runway.utils.Constants.PHOTO_REVIEW_RESULT_ROUTE
 import com.cmc12th.runway.utils.Constants.PHOTO_REVIEW_ROUTE
 import com.cmc12th.runway.utils.Constants.SIGNIN_AGREEMENT_DETAIL_ROUTE
@@ -96,6 +98,11 @@ fun NavGraphBuilder.passwordSearchGraph(
             val backStackEntry =
                 rememberNavControllerBackEntry(entry, appState, PASSWORD_SEARCH_GRAPH)
             PasswordSearchPhoneScreen(appState, hiltViewModel(backStackEntry))
+        }
+        composable(PASSWORD_SEARCH_PHONE_VERIFY_ROUTE) { entry ->
+            val backStackEntry =
+                rememberNavControllerBackEntry(entry, appState, PASSWORD_SEARCH_GRAPH)
+            PasswordSearchVerifyScreen(appState, hiltViewModel(backStackEntry))
         }
     }
 }

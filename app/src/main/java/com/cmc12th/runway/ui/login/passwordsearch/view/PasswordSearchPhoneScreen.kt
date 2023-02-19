@@ -48,6 +48,7 @@ import com.cmc12th.runway.ui.signin.model.Phone
 import com.cmc12th.runway.ui.signin.model.Phone.Companion.PHONE_NUMBER_LENGTH
 import com.cmc12th.runway.ui.theme.*
 import com.cmc12th.runway.utils.Constants
+import com.cmc12th.runway.utils.Constants.PASSWORD_SEARCH_PHONE_VERIFY_ROUTE
 import kotlinx.coroutines.launch
 
 @Composable
@@ -100,7 +101,7 @@ fun PasswordSearchPhoneContents(
         viewModel.sendVerifyMessage(
             onSuccess = {
                 viewModel.startTimer()
-                //appState.navController.navigate(Constants.SIGNIN_PHONE_VERIFY_ROUTE)
+                appState.navController.navigate(PASSWORD_SEARCH_PHONE_VERIFY_ROUTE)
             },
             onError = {
                 when (it.code) {
@@ -185,8 +186,7 @@ private fun PhoneContainer(
     }
 
     Column {
-        Text(text = "휴대폰 인증", style = Caption, color = Gray700)
-        HeightSpacer(height = 10.dp)
+        HeightSpacer(height = 30.dp)
         Column(modifier = Modifier.fillMaxWidth()) {
             Box(modifier = Modifier.fillMaxWidth()) {
                 Box {
