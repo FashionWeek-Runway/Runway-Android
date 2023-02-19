@@ -73,8 +73,8 @@ class SignInViewModel @Inject constructor(
     private val _categoryTags = MutableStateFlow(RunwayCategory.generateCategoryTags())
 
 
-    private val timer = Timer()
-    private val timerTask = object : TimerTask() {
+    private var timer = Timer()
+    private var timerTask: TimerTask = object : TimerTask() {
         override fun run() {
             _retryTime.update { _retryTime.value - 1 }
             if (_retryTime.value <= 0) {
@@ -83,13 +83,26 @@ class SignInViewModel @Inject constructor(
         }
     }
 
+
     fun startTimer() {
+        _retryTime.value = SignInViewModel.DEFAULT_RETRY_TIME
+        timer = Timer()
+        timerTask = object : TimerTask() {
+            override fun run() {
+                _retryTime.update { _retryTime.value - 1 }
+                if (_retryTime.value <= 0) {
+                    timer.cancel()
+                }
+            }
+        }
         timer.schedule(timerTask, 0, 1000);
     }
 
     fun resetTimer() {
-        _retryTime.value = DEFAULT_RETRY_TIME
+        _retryTime.value = SignInViewModel.DEFAULT_RETRY_TIME
+        startTimer()
     }
+
 
     fun sendVerifyMessage(onSuccess: () -> Unit, onError: (ErrorResponse) -> Unit) =
         viewModelScope.launch {
@@ -367,6 +380,6 @@ class SignInViewModel @Inject constructor(
         )
 
     companion object {
-        const val DEFAULT_RETRY_TIME = 180
+        const val DEFAULT_RETRY_TIME = 300
     }
 }
