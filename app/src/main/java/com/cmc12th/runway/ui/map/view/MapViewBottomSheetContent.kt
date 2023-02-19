@@ -51,7 +51,7 @@ fun MapViewBottomSheetContent(
                 start = 20.dp,
                 end = 20.dp,
                 top = 10.dp,
-                bottom = BOTTOM_NAVIGATION_HEIGHT
+                bottom = BOTTOM_NAVIGATION_HEIGHT * 2
             )
     ) {
         AnimatedVisibility(
