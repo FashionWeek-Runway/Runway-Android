@@ -40,6 +40,7 @@ import com.cmc12th.runway.ui.signin.components.RetryContainer
 import com.cmc12th.runway.ui.signin.view.TestButon
 import com.cmc12th.runway.ui.theme.*
 import com.cmc12th.runway.utils.Constants
+import com.cmc12th.runway.utils.Constants.PASSWORD_SEARCH_PHONE_CHANGE_PASSWORD
 
 @Composable
 fun PasswordSearchVerifyScreen(
@@ -56,7 +57,7 @@ fun PasswordSearchVerifyScreen(
     val verifyPhoneNumber: () -> Unit = {
         keyboardController?.hide()
         passwordSearchViewModel.verifyPhoneNumber(
-            onSuccess = { appState.navController.navigate(Constants.SIGNIN_PASSWORD_ROUTE) },
+            onSuccess = { appState.navController.navigate(PASSWORD_SEARCH_PHONE_CHANGE_PASSWORD) },
             onError = {
                 appState.showSnackbar(it.message)
                 verifyErrorMessage.value = it.message
