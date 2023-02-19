@@ -12,6 +12,7 @@ data class NaverItem(
     val storeName: String,
     var description: String = "",
     var bookmark: Boolean = false,
+    var isClicked: Boolean = false,
 ) : TedClusterItem {
 
     override fun getTedLatLng(): TedLatLng {

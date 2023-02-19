@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.location.Location
 import android.os.Looper
+import android.util.Log
 import androidx.compose.runtime.Stable
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.ViewModel
@@ -128,6 +129,19 @@ class MapViewModel @Inject constructor(
         _markerItems.value = naverItems
     }
 
+    fun updateMarker(copy: NaverItem) {
+        // TODO 로직 수정 필요
+        val temp = mutableListOf<NaverItem>()
+        _markerItems.value.forEach {
+            if (it.storeId == copy.storeId) {
+                temp.add(it.copy(isClicked = copy.isClicked))
+            } else {
+                temp.add(it.copy(isClicked = false))
+            }
+        }
+        _markerItems.value = temp
+    }
+
     var initialMarkerLoadFlag = true
 
     inner class CustomLocationCallback : LocationCallback() {
@@ -147,6 +161,14 @@ class MapViewModel @Inject constructor(
 
     companion object {
         val DUMMY_NAVER_ITEM = listOf<NaverItem>(
+//            NaverItem(37.540791, 127.096306),
+//            NaverItem(37.550791, 127.076306),
+//            NaverItem(37.560791, 127.066306),
+//            NaverItem(37.550791, 127.166306),
+//            NaverItem(37.540791, 127.176306),
+//            NaverItem(37.520791, 127.166306),
+//            NaverItem(37.510791, 127.016306),
+//            NaverItem(37.570791, 127.046306),
         )
 
         val DEFAULT_LOCATION = Location("성수").apply {

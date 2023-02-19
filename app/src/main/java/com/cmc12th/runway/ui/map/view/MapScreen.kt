@@ -29,6 +29,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -403,16 +404,16 @@ private fun RunwayNaverMap(
         cameraPositionState = cameraPositionState,
         properties = MapProperties(
             locationTrackingMode = LocationTrackingMode.Follow,
-        )
+        ),
     ) {
         val context = LocalContext.current
         var clusterManager by remember { mutableStateOf<TedNaverClustering<NaverItem>?>(null) }
 
         DisposableMapEffect(uiState.markerItems) { map ->
+            Log.i("dlgocks1", "클러스터 업데이트")
             if (clusterManager == null) {
                 clusterManager = TedNaverClustering.with<NaverItem>(context, map)
                     .customCluster {
-
                         TextView(context).apply {
                             text = it.size.toString()
                             background = AppCompatResources.getDrawable(
@@ -431,13 +432,18 @@ private fun RunwayNaverMap(
                         Marker().apply {
                             icon =
                                 OverlayImage.fromResource(R.drawable.ic_fill_map_marker_default_24)
-                            width = 60
-                            height = 60
-                            captionText = it.title ?: "제목"
+                            width = if (it.isClicked) 100 else 60
+                            height = if (it.isClicked) 100 else 60
+                            captionText = it.title
                         }
-                    }.make()
+                    }.markerClickListener {
+                        mapViewModel.updateMarker(it.copy(isClicked = !it.isClicked))
+                    }
+                    .make()
             }
+
             clusterManager?.addItems(uiState.markerItems)
+
             onDispose {
                 clusterManager?.clearItems()
             }
@@ -446,7 +452,7 @@ private fun RunwayNaverMap(
             state = MarkerState(position = uiState.userPosition),
             icon = OverlayImage.fromResource(R.drawable.ic_map_user),
             height = 24.dp,
-            width = 24.dp
+            width = 24.dp,
         )
     }
 }
