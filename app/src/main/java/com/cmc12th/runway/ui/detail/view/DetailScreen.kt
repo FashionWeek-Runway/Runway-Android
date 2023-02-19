@@ -2,11 +2,12 @@
 
 package com.cmc12th.runway.ui.detail.view
 
+import android.util.Log
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -30,16 +31,45 @@ import com.cmc12th.runway.ui.map.components.TopGradient
 import com.cmc12th.runway.ui.signin.model.CategoryTag
 import com.cmc12th.runway.ui.theme.*
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import java.lang.Float.min
 
 @Composable
 fun DetailScreen(appState: ApplicationState, idx: Int) {
 
     val scrollState = rememberLazyListState()
-    ManageSystemBarColor(scrollState)
 
-    Box(modifier = Modifier
-        .fillMaxSize()
-        .background(Color.White)) {
+    val topbarColor = remember {
+        mutableStateOf(Color.Transparent)
+    }
+    val topbarIconColor = remember {
+        mutableStateOf(Color.White)
+    }
+    val topbarIconAnimateColor = animateColorAsState(targetValue = topbarIconColor.value)
+    LaunchedEffect(key1 = scrollState.firstVisibleItemScrollOffset) {
+        if (scrollState.firstVisibleItemScrollOffset < 100) {
+            if (scrollState.firstVisibleItemScrollOffset < 10) {
+                topbarColor.value = Color.Transparent
+            } else {
+                topbarColor.value = Color.White.copy(
+                    alpha = min(
+                        (scrollState.firstVisibleItemScrollOffset.toFloat()) / 100f,
+                        100f
+                    )
+                )
+            }
+            topbarIconColor.value = Color.White
+        } else {
+            topbarColor.value = Color.White
+            topbarIconColor.value = Color.Black
+        }
+    }
+    ManageSystemBarColor(scrollState, topbarColor.value)
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.White)
+    ) {
 
         LazyColumn(
             modifier = Modifier
@@ -66,52 +96,59 @@ fun DetailScreen(appState: ApplicationState, idx: Int) {
             }
         }
 
-        val topbarColor = remember {
-            mutableStateOf(Color.Transparent)
-        }
-        val topbarIconColor = remember {
-            mutableStateOf(Color.White)
-        }
-        if (scrollState.firstVisibleItemScrollOffset >= 100) {
-            topbarColor.value = Color.White
-            topbarIconColor.value = Color.Black
-        } else {
-            topbarColor.value = Color.Transparent
-            topbarIconColor.value = Color.White
-        }
 
-        Row(modifier = Modifier
+        DetailTopBar(
+            topbarColor = topbarColor.value,
+            topbarIconAnimateColor = topbarIconAnimateColor.value
+        )
+    }
+
+}
+
+@Composable
+private fun BoxScope.DetailTopBar(topbarColor: Color, topbarIconAnimateColor: Color) {
+
+    Row(
+        modifier = Modifier
             .fillMaxWidth()
             .statusBarsPadding()
             .height(54.dp)
-            .background(topbarColor.value)
+            .background(topbarColor)
             .align(Alignment.TopCenter),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            IconButton(onClick = {}, modifier = Modifier
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        IconButton(
+            onClick = {}, modifier = Modifier
                 .padding(start = 20.dp)
-                .size(24.dp)) {
-                Icon(painter = painterResource(id = R.drawable.ic_left_runway),
-                    contentDescription = "IC_LEFT_RUNWAY",
-                    tint = topbarIconColor.value)
+                .size(24.dp)
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_left_runway),
+                contentDescription = "IC_LEFT_RUNWAY",
+                tint = topbarIconAnimateColor
+            )
+        }
+        Row(
+            modifier = Modifier.padding(end = 20.dp),
+            horizontalArrangement = Arrangement.spacedBy(20.dp)
+        ) {
+            IconButton(onClick = {}, modifier = Modifier.size(28.dp)) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_border_bookamrk_24),
+                    contentDescription = "IC_SHARE",
+                    tint = topbarIconAnimateColor
+                )
             }
-            Row(modifier = Modifier.padding(end = 20.dp),
-                horizontalArrangement = Arrangement.spacedBy(20.dp)) {
-                IconButton(onClick = {}, modifier = Modifier.size(28.dp)) {
-                    Icon(painter = painterResource(id = R.drawable.ic_border_bookamrk_24),
-                        contentDescription = "IC_SHARE",
-                        tint = topbarIconColor.value)
-                }
-                IconButton(onClick = {}, modifier = Modifier.size(28.dp)) {
-                    Icon(painter = painterResource(id = R.drawable.ic_border_share_24),
-                        contentDescription = "IC_SHARE",
-                        tint = topbarIconColor.value)
-                }
+            IconButton(onClick = {}, modifier = Modifier.size(28.dp)) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_border_share_24),
+                    contentDescription = "IC_SHARE",
+                    tint = topbarIconAnimateColor
+                )
             }
         }
     }
-
 }
 
 @Composable
@@ -135,16 +172,20 @@ fun ShowRoomTitle() {
 @Composable
 fun ShowRoomTag(categoryTag: CategoryTag) {
     Box(modifier = Modifier.padding(top = 4.dp, end = 6.dp)) {
-        Row(modifier = Modifier
-            .padding(8.dp, 5.dp)
-            .clip(RoundedCornerShape(4.dp))
-            .background(Gray50),
+        Row(
+            modifier = Modifier
+                .padding(8.dp, 5.dp)
+                .clip(RoundedCornerShape(4.dp))
+                .background(Gray50),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-            Icon(painter = painterResource(id = categoryTag.iconId),
+            horizontalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            Icon(
+                painter = painterResource(id = categoryTag.iconId),
                 contentDescription = "IC_CATEGORY",
                 modifier = Modifier.size(12.dp),
-                tint = Primary)
+                tint = Primary
+            )
             Text(text = categoryTag.name, style = Button2, color = Primary)
         }
     }
@@ -152,27 +193,22 @@ fun ShowRoomTag(categoryTag: CategoryTag) {
 
 
 @Composable
-private fun ManageSystemBarColor(scrollState: LazyListState) {
+private fun ManageSystemBarColor(scrollState: LazyListState, topbarColor: Color) {
 
     val systemUiController = rememberSystemUiController()
 
     DisposableEffect(Unit) {
-        systemUiController.setSystemBarsColor(
-            color = Color.Transparent
-        )
+        systemUiController.setSystemBarsColor(color = Color.Transparent)
         systemUiController.setNavigationBarColor(color = Color.White)
         onDispose {
-            systemUiController.setSystemBarsColor(
-                color = Color.White
-            )
+            systemUiController.setSystemBarsColor(color = Color.White)
         }
     }
     LaunchedEffect(key1 = scrollState.firstVisibleItemScrollOffset) {
-        if (scrollState.firstVisibleItemScrollOffset < 100) systemUiController.setSystemBarsColor(
-            Color.Transparent)
-        else systemUiController.setSystemBarsColor(Color.White)
-
-
+        if (scrollState.firstVisibleItemScrollOffset < 100) {
+            systemUiController.setSystemBarsColor(topbarColor)
+            systemUiController.setNavigationBarColor(color = Color.White)
+        } else systemUiController.setSystemBarsColor(Color.White)
     }
 }
 
@@ -268,17 +304,23 @@ fun BlogReviewItem() {
                 .heightIn(108.dp)
                 .padding(20.dp, 14.dp),
         ) {
-            Column(verticalArrangement = Arrangement.spacedBy(4.dp),
-                modifier = Modifier.weight(1f)) {
-                Text(text = "무신사 쇼핑 나들이 (무신사 스튜디오 성수/ 무신사 스탠다드 홍대) 졸리고 힘들다.",
+            Column(
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+                modifier = Modifier.weight(1f)
+            ) {
+                Text(
+                    text = "무신사 쇼핑 나들이 (무신사 스튜디오 성수/ 무신사 스탠다드 홍대) 졸리고 힘들다.",
                     style = Body1M,
                     color = Gray900,
                     maxLines = 2,
-                    overflow = TextOverflow.Ellipsis)
-                Text(text = "일이 삼사오육 칠 팔구십일이 삼사 오육칠팔 구십 일이삼, 일이 삼사오육 칠 팔구십일이 삼사오육칠팔 구십 일이삼.",
+                    overflow = TextOverflow.Ellipsis
+                )
+                Text(
+                    text = "일이 삼사오육 칠 팔구십일이 삼사 오육칠팔 구십 일이삼, 일이 삼사오육 칠 팔구십일이 삼사오육칠팔 구십 일이삼.",
                     style = Body2,
                     color = Gray700,
-                    overflow = TextOverflow.Ellipsis)
+                    overflow = TextOverflow.Ellipsis
+                )
             }
             WidthSpacer(width = 20.dp)
             Image(
@@ -305,12 +347,16 @@ fun UserReview() {
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(text = "사용자 후기", style = HeadLine4, color = Color.Black)
-            Row(verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
                 RunwayIconButton(drawable = R.drawable.ic_filled_camera_24, size = 24.dp)
-                Text(text = "나도 참여",
+                Text(
+                    text = "나도 참여",
                     style = Body1M,
-                    color = Primary)
+                    color = Primary
+                )
             }
         }
 
@@ -339,9 +385,11 @@ private fun ShowRoomDetail() {
         modifier = Modifier.padding(20.dp, 16.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
-        Row(modifier = Modifier.fillMaxWidth(),
+        Row(
+            modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
             RunwayIconButton(size = 18.dp, drawable = R.drawable.ic_border_map_18)
             Text(text = "주소가 들어가 예정 강동구, 아해찬-이이이", style = Body2, color = Color.Black)
             Row(
@@ -351,35 +399,47 @@ private fun ShowRoomDetail() {
                 Text(text = "복사", style = Button2, color = Blue900)
             }
         }
-        Row(modifier = Modifier.fillMaxWidth(),
+        Row(
+            modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
             RunwayIconButton(size = 18.dp, drawable = R.drawable.ic_border_time_18)
             Text(text = "월 - 일 09:00 ~ 21:00", style = Body2, color = Color.Black)
         }
-        Row(modifier = Modifier.fillMaxWidth(),
+        Row(
+            modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
             RunwayIconButton(size = 18.dp, drawable = R.drawable.ic_border_call_18)
             Text(text = "0502-1473-3212", style = Body2, color = Color.Black)
         }
-        Row(modifier = Modifier.fillMaxWidth(),
+        Row(
+            modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
             RunwayIconButton(size = 18.dp, drawable = R.drawable.ic_border_instagram_18)
-            Text(text = "[안스타그램 아이디]",
+            Text(
+                text = "[안스타그램 아이디]",
                 textDecoration = TextDecoration.Underline,
                 style = Body2,
-                color = Color.Black)
+                color = Color.Black
+            )
         }
-        Row(modifier = Modifier.fillMaxWidth(),
+        Row(
+            modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
             RunwayIconButton(size = 18.dp, drawable = R.drawable.ic_border_web_18)
-            Text(text = "[웹사이트 링크]",
+            Text(
+                text = "[웹사이트 링크]",
                 textDecoration = TextDecoration.Underline,
                 style = Body2,
-                color = Color.Black)
+                color = Color.Black
+            )
         }
     }
 
@@ -387,9 +447,11 @@ private fun ShowRoomDetail() {
 
 @Composable
 private fun ShowRoomBanner() {
-    Box(modifier = Modifier
-        .fillMaxWidth()
-        .height(IntrinsicSize.Max)) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(IntrinsicSize.Max)
+    ) {
         Image(
             painter = painterResource(id = R.drawable.img_dummy),
             contentDescription = "SHOP_IMAGE",
