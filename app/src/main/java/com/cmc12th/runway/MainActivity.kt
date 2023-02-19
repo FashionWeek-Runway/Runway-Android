@@ -17,11 +17,9 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import androidx.navigation.NavBackStackEntry
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
 import com.cmc12th.runway.ui.*
 import com.cmc12th.runway.ui.components.BottomBar
 import com.cmc12th.runway.ui.domain.model.ApplicationState
@@ -34,7 +32,6 @@ import com.cmc12th.runway.utils.Constants.MYPAGE_ROUTE
 import com.cmc12th.runway.utils.Constants.SPLASH_ROUTE
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -54,7 +51,7 @@ class MainActivity : ComponentActivity() {
                         .background(Color.Transparent),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    RootNavhost(appState)
+                    RootNavhost(navBackStackEntry, appState)
                 }
             }
         }
@@ -89,17 +86,19 @@ private fun ManageBottomBarState(
 /** NavHost를 정의하여 Navigation을 관리한다. */
 @Composable
 private fun RootNavhost(
+    navBackStackEntry: NavBackStackEntry?,
     appState: ApplicationState,
 ) {
-
     Scaffold(
         scaffoldState = appState.scaffoldState,
+        modifier = Modifier.customNavigationBarPaading(navBackStackEntry, appState),
         bottomBar = {
 //            if (appState.bottomBarState.value) BottomBar(appState)
         },
     ) { innerPadding ->
         Box(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
         ) {
             NavHost(
                 appState.navController,
@@ -121,4 +120,17 @@ private fun RootNavhost(
             BottomBar(appState)
         }
     }
+}
+
+private fun Modifier.customNavigationBarPaading(
+    navBackStackEntry: NavBackStackEntry?,
+    appState: ApplicationState
+): Modifier {
+    if (navBackStackEntry?.destination?.route == MAP_ROUTE) {
+        return Modifier
+    }
+    if (appState.bottomBarState.value) {
+        return Modifier
+    }
+    return Modifier.navigationBarsPadding()
 }
