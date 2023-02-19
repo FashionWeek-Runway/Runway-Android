@@ -1,9 +1,11 @@
 package com.cmc12th.runway.di
 
 import com.cmc12th.runway.data.repository.AuthRepositoryImpl
+import com.cmc12th.runway.data.repository.MapRepositoryImpl
 import com.cmc12th.runway.data.repository.SignInRepositoryImpl
 import com.cmc12th.runway.data.repository.StoreRepositoryImpl
 import com.cmc12th.runway.domain.repository.AuthRepository
+import com.cmc12th.runway.domain.repository.MapRepository
 import com.cmc12th.runway.domain.repository.SignInRepository
 import com.cmc12th.runway.domain.repository.StoreRepository
 import dagger.Binds
@@ -33,4 +35,10 @@ abstract class RepositoryModule {
     abstract fun bindsStoreRepository(
         storeRepositoryImpl: StoreRepositoryImpl,
     ): StoreRepository
+
+    @Binds
+    @ViewModelScoped
+    abstract fun bindMapRepository(
+        mapRepositoryImpl: MapRepositoryImpl
+    ): MapRepository
 }
