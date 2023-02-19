@@ -1,5 +1,6 @@
 package com.cmc12th.runway.data.response
 
+import com.google.gson.annotations.SerializedName
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
@@ -11,6 +12,6 @@ data class PagingResponse<out T>(
     val isSuccess: Boolean,
     @Json(name = "message")
     val message: String,
-    @Json(name = "result")
+    @SerializedName("result")
     val pagingMetadata: PagingMetadata<T>
 )
