@@ -8,6 +8,7 @@ package com.cmc12th.runway.ui.map.view
 import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.content.pm.PackageManager
+import android.util.Log
 import android.widget.TextView
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -16,11 +17,13 @@ import androidx.appcompat.content.res.AppCompatResources
 import androidx.compose.animation.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalConfiguration
@@ -46,6 +49,7 @@ import com.cmc12th.runway.utils.Constants.BOTTOM_NAVIGATION_HEIGHT
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraPosition
+import com.naver.maps.map.CameraUpdate
 import com.naver.maps.map.compose.*
 import com.naver.maps.map.overlay.Marker
 import com.naver.maps.map.overlay.OverlayImage
@@ -158,6 +162,11 @@ private fun MapViewContents(
         }
     }
 
+    LaunchedEffect(key1 = bottomSheetScaffoldState.bottomSheetState.offset.value) {
+        Log.i("dlgocks1", bottomSheetScaffoldState.bottomSheetState.offset.value.toString())
+    }
+
+
     LaunchedEffect(key1 = mapStatus.value) {
         when (mapStatus.value) {
             /** 기본 상태 */
@@ -213,6 +222,7 @@ private fun MapViewContents(
     }
     val setMapStatusOnSearch = { mapStatus.value = MapStatus.SEARCH_TAB }
 
+
     BottomSheetScaffold(
         modifier = Modifier
             .fillMaxSize(),
@@ -224,7 +234,7 @@ private fun MapViewContents(
                 appState = appState,
                 screenHeight = screenHeight - topBarHeight,
                 isFullScreen = mapStatus.value == MapStatus.LOCATION_SEARCH,
-                isExpanded = bottomSheetScaffoldState.bottomSheetState.isExpanded,
+                isExpanded = bottomSheetScaffoldState.bottomSheetState.targetValue == BottomSheetValue.Expanded,
                 setMapStatusDefault = setMapStatusDefault,
                 setMapStatusOnSearch = setMapStatusOnSearch
             )
@@ -240,6 +250,22 @@ private fun MapViewContents(
                 mapViewModel = mapViewModel,
                 onMapClick = changeZoomStatus
             )
+
+            IconButton(modifier = Modifier
+                .align(Alignment.TopEnd)
+                .offset(
+                    x = (-20).dp,
+                    y = with(localDensity) { bottomSheetScaffoldState.bottomSheetState.offset.value.toDp() - 50.dp }
+                )
+                .size(40.dp)
+                .clip(CircleShape)
+                .background(Color.White),
+                onClick = { /*TODO*/ }) {
+                androidx.compose.material3.Icon(
+                    painter = painterResource(id = R.drawable.ic_baseline_location_24),
+                    contentDescription = "IC_BASELINE_LOCATION"
+                )
+            }
 
             /** 검색 및 필터 */
             AnimatedVisibility(
@@ -357,9 +383,13 @@ private fun RunwayNaverMap(
     }
 
     LaunchedEffect(uiState.userPosition) {
-//        cameraPositionState.move(
-//            CameraUpdate.scrollAndZoomTo(uiState.userPosition, 8.0)
-//        )
+        cameraPositionState.move(
+            CameraUpdate.scrollAndZoomTo(uiState.userPosition, 8.0)
+        )
+    }
+
+    LaunchedEffect(key1 = cameraPositionState.position) {
+        Log.i("dlgocks1", cameraPositionState.position.target.toString())
     }
 
     DisposableEffect(Unit) {
@@ -375,7 +405,10 @@ private fun RunwayNaverMap(
         onMapClick = { _, _ ->
             onMapClick()
         },
-        cameraPositionState = cameraPositionState
+        cameraPositionState = cameraPositionState,
+        properties = MapProperties(
+            locationTrackingMode = LocationTrackingMode.Follow,
+        )
     ) {
         val context = LocalContext.current
         var clusterManager by remember { mutableStateOf<TedNaverClustering<NaverItem>?>(null) }
@@ -412,6 +445,12 @@ private fun RunwayNaverMap(
                 clusterManager?.clearItems()
             }
         }
+        Marker(
+            state = MarkerState(position = uiState.userPosition),
+            icon = OverlayImage.fromResource(R.drawable.ic_map_user),
+            height = 24.dp,
+            width = 24.dp
+        )
     }
 }
 

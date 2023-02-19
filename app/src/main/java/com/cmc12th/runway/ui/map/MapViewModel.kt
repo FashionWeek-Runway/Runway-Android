@@ -5,23 +5,17 @@ import android.content.Context
 import android.location.Location
 import android.os.Looper
 import android.util.Log
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.Stable
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cmc12th.runway.data.model.NaverItem
-import com.cmc12th.runway.domain.repository.AuthRepository
+import com.cmc12th.runway.data.request.map.MapFilterRequest
+import com.cmc12th.runway.domain.repository.MapRepository
 import com.cmc12th.runway.domain.repository.StoreRepository
-import com.cmc12th.runway.network.RunwayClient
 import com.cmc12th.runway.ui.domain.model.RunwayCategory
 import com.cmc12th.runway.ui.map.MapViewModel.Companion.DEFAULT_LATLNG
-import com.cmc12th.runway.ui.signin.SignInUserVerificationUiState
 import com.cmc12th.runway.ui.signin.model.CategoryTag
-import com.cmc12th.runway.utils.Constants
 import com.google.android.gms.location.*
 import com.naver.maps.geometry.LatLng
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -42,31 +36,31 @@ data class MapUiState(
 class MapViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val storeRepository: StoreRepository,
+    private val mapRepository: MapRepository
 ) : ViewModel(), LifecycleObserver {
 
     private val fusedLocationClient: FusedLocationProviderClient =
         LocationServices.getFusedLocationProviderClient(context)
 
     private val locationRequest: LocationRequest =
-        LocationRequest.Builder(Long.MAX_VALUE) // 초기 1회만 가져오고 Long.MAX_VALUE 만큼 기다림
+        LocationRequest.Builder(5000) // 초기 1회만 가져오고 Long.MAX_VALUE 만큼 기다림
             .setPriority(Priority.PRIORITY_HIGH_ACCURACY)
             .build()
-    private val myLocationCallback: MyLocationCallback = MyLocationCallback()
+    private val locationCallback: CustomLocationCallback = CustomLocationCallback()
 
     // 맵에 찍히는 마커 아이템
-    val _markerItems: MutableStateFlow<List<NaverItem>> = MutableStateFlow(DUMMY_NAVER_ITEM)
+    private val _markerItems: MutableStateFlow<List<NaverItem>> = MutableStateFlow(DUMMY_NAVER_ITEM)
 
     // 검색 탭 및 필터링 되는 아이템들
-    val _categoryItems: MutableStateFlow<List<CategoryTag>> =
+    private val _categoryItems: MutableStateFlow<List<CategoryTag>> =
         MutableStateFlow(RunwayCategory.generateCategoryTags())
-    val _isBookmarked: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    private val _isBookmarked: MutableStateFlow<Boolean> = MutableStateFlow(false)
 
     /** 해당 값은 변할 시 카메라가 이동함 */
     private val _movingCameraPosition = MutableStateFlow(DEFAULT_LOCATION)
     val movingCameraPosition: StateFlow<Location> get() = _movingCameraPosition
 
     private val _userPosition = MutableStateFlow(DEFAULT_LATLNG)
-    val userPosition: StateFlow<LatLng> get() = _userPosition
 
     val mapUiState = combine(
         _markerItems,
@@ -91,13 +85,30 @@ class MapViewModel @Inject constructor(
     fun addLocationListener() {
         fusedLocationClient.requestLocationUpdates(
             locationRequest,
-            myLocationCallback,
+            locationCallback,
             Looper.getMainLooper(),
         )
     }
 
+    fun mapFiltering(latLng: LatLng) = viewModelScope.launch {
+        mapRepository.mapFiltering(
+            MapFilterRequest(
+                category = _categoryItems.value.filter { it.isSelected }.map { it.name },
+                latitude = latLng.latitude,
+                longitude = latLng.longitude
+            )
+        ).collect { apiState ->
+            apiState.onSuccess {
+                it.result
+            }
+            apiState.onError {
+
+            }
+        }
+    }
+
     fun removeLocationListener() {
-        fusedLocationClient.removeLocationUpdates(myLocationCallback)
+        fusedLocationClient.removeLocationUpdates(locationCallback)
     }
 
     fun updateIsBookmarked(isBookmarked: Boolean) {
@@ -120,7 +131,7 @@ class MapViewModel @Inject constructor(
         _markerItems.value = naverItems
     }
 
-    inner class MyLocationCallback : LocationCallback() {
+    inner class CustomLocationCallback : LocationCallback() {
         override fun onLocationResult(locationResult: LocationResult) {
             super.onLocationResult(locationResult)
             locationResult.lastLocation?.let {
