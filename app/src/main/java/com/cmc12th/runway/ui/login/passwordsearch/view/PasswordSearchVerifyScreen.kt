@@ -1,13 +1,16 @@
-@file:OptIn(ExperimentalComposeUiApi::class)
+@file:OptIn(ExperimentalComposeUiApi::class, ExperimentalComposeUiApi::class)
 
-package com.cmc12th.runway.ui.signin.view
+package com.cmc12th.runway.ui.login.passwordsearch.view
 
-import androidx.compose.foundation.*
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -22,7 +25,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.cmc12th.runway.broadcast.SystemBroadcastReceiver
 import com.cmc12th.runway.broadcast.parseSmsMessage
@@ -30,30 +32,31 @@ import com.cmc12th.runway.ui.components.BackIcon
 import com.cmc12th.runway.ui.components.CustomTextField
 import com.cmc12th.runway.ui.components.HeightSpacer
 import com.cmc12th.runway.ui.components.WidthSpacer
-import com.cmc12th.runway.ui.signin.components.OnBoardStep
 import com.cmc12th.runway.ui.domain.model.ApplicationState
-import com.cmc12th.runway.ui.signin.SignInViewModel
+import com.cmc12th.runway.ui.login.passwordsearch.PasswordSearchViewModel
 import com.cmc12th.runway.ui.signin.components.OnBoardHeadLine
+import com.cmc12th.runway.ui.signin.components.OnBoardStep
 import com.cmc12th.runway.ui.signin.components.RetryContainer
+import com.cmc12th.runway.ui.signin.view.TestButon
 import com.cmc12th.runway.ui.theme.*
 import com.cmc12th.runway.utils.Constants
-import com.cmc12th.runway.utils.Constants.SIGNIN_PASSWORD_ROUTE
 
 @Composable
-fun SignInPhoneVerifyScreen(
+fun PasswordSearchVerifyScreen(
     appState: ApplicationState,
-    signInViewModel: SignInViewModel = hiltViewModel(),
+    passwordSearchViewModel: PasswordSearchViewModel
 ) {
-
-    val uiState by signInViewModel.phoneVerifyUiState.collectAsStateWithLifecycle()
     val verifyErrorMessage = remember {
         mutableStateOf("")
     }
+
+    val uiState by passwordSearchViewModel.phoneVerifyUiState.collectAsStateWithLifecycle()
     val keyboardController = LocalSoftwareKeyboardController.current
+
     val verifyPhoneNumber: () -> Unit = {
         keyboardController?.hide()
-        signInViewModel.verifyPhoneNumber(
-            onSuccess = { appState.navController.navigate(SIGNIN_PASSWORD_ROUTE) },
+        passwordSearchViewModel.verifyPhoneNumber(
+            onSuccess = { appState.navController.navigate(Constants.SIGNIN_PASSWORD_ROUTE) },
             onError = {
                 appState.showSnackbar(it.message)
                 verifyErrorMessage.value = it.message
@@ -68,7 +71,7 @@ fun SignInPhoneVerifyScreen(
             // 문자메세지 내용 추출
             val contents = messages[0]?.messageBody.toString()
             val regex = Regex("""[^0-9]""")
-            signInViewModel.updateVerifyCode(contents.replace(regex, ""))
+            passwordSearchViewModel.updateVerifyCode(contents.replace(regex, ""))
         }
     }
 
@@ -78,14 +81,14 @@ fun SignInPhoneVerifyScreen(
             .systemBarsPadding()
             .imePadding()
     ) {
-        Box(modifier = Modifier.padding(20.dp)) {
+        Row(
+            modifier = Modifier.padding(20.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             BackIcon {
-                appState.navController.popBackStack()
+                appState.popBackStack()
             }
-        }
-        OnBoardStep(2)
-        TestButon {
-            appState.navController.navigate(SIGNIN_PASSWORD_ROUTE)
+            Text(text = "비밀번호 찾기", style = Body1B, color = Color.Black)
         }
         Column(
             modifier = Modifier
@@ -109,9 +112,9 @@ fun SignInPhoneVerifyScreen(
                 verifyCode = uiState.verifyCode,
                 resendMessage = {
                     keyboardController?.hide()
-                    signInViewModel.sendVerifyMessage(
+                    passwordSearchViewModel.sendVerifyMessage(
                         onSuccess = {
-                            signInViewModel.resetTimer()
+                            passwordSearchViewModel.resetTimer()
                             appState.showSnackbar("인증번호를 재요청 했습니다.")
                         },
                         onError = {
@@ -120,7 +123,7 @@ fun SignInPhoneVerifyScreen(
                     )
                 },
                 verifyPhonNumber = { if (uiState.verifyCode.length == 6) verifyPhoneNumber() },
-                updateVerifyCode = { signInViewModel.updateVerifyCode(it) }
+                updateVerifyCode = { passwordSearchViewModel.updateVerifyCode(it) }
             )
         }
         Button(
@@ -141,6 +144,7 @@ fun SignInPhoneVerifyScreen(
         }
     }
 }
+
 
 @Composable
 private fun InputVerificationCode(
@@ -185,5 +189,3 @@ private fun InputVerificationCode(
         }
     }
 }
-
-
