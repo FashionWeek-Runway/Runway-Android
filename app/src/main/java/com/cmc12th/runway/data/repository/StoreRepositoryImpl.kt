@@ -1,12 +1,17 @@
 package com.cmc12th.runway.data.repository
 
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.*
+import com.cmc12th.runway.data.response.store.BlogReview
+import com.cmc12th.runway.data.response.store.StoreDetail
+import com.cmc12th.runway.data.response.store.UserReview
 import com.cmc12th.runway.domain.repository.StoreRepository
 import com.cmc12th.runway.network.RunwayClient
 import com.cmc12th.runway.network.model.safeFlow
+import com.cmc12th.runway.network.model.safePagingFlow
+import com.cmc12th.runway.utils.ApiWrapper
 import com.cmc12th.runway.utils.DefaultApiWrapper
+import com.cmc12th.runway.utils.PagingApiWrapper
 import kotlinx.coroutines.flow.Flow
+import okhttp3.MultipartBody
 import javax.inject.Inject
 
 class StoreRepositoryImpl @Inject constructor(
@@ -16,6 +21,30 @@ class StoreRepositoryImpl @Inject constructor(
     override fun store(): Flow<DefaultApiWrapper> = safeFlow {
         runwayClient.stores()
     }
+
+    override fun getBlogReview(
+        storeId: Int,
+        storeName: String
+    ): Flow<ApiWrapper<List<BlogReview>>> = safeFlow {
+        runwayClient.getBlogReview(storeId, storeName)
+    }
+
+    override fun getDetail(storeId: Int): Flow<ApiWrapper<StoreDetail>> = safeFlow {
+        runwayClient.getDetail(storeId)
+    }
+
+    override fun getUserReview(
+        storeId: Int,
+        page: Int,
+        size: Int
+    ): Flow<PagingApiWrapper<UserReview>> = safePagingFlow {
+        runwayClient.getUserReview(storeId, page, size)
+    }
+
+    override fun writeUserReview(storeId: Int, img: MultipartBody.Part): Flow<DefaultApiWrapper> =
+        safeFlow {
+            runwayClient.writeUserReview(storeId, img)
+        }
 
 
 }

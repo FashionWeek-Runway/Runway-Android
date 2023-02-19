@@ -7,6 +7,7 @@ import com.cmc12th.runway.data.response.store.StoreDetail
 import com.cmc12th.runway.data.response.store.UserReview
 import com.cmc12th.runway.utils.DefaultResponse
 import com.cmc12th.runway.utils.NetworkResponse
+import com.cmc12th.runway.utils.PagingNetworkResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.http.*
@@ -43,7 +44,7 @@ interface StoreService {
         @Path("storeId") storeId: Int,
         @Query("page") page: Int,
         @Query("size") size: Int,
-    ): NetworkResponse<PagingResponse<UserReview>>
+    ): PagingNetworkResponse<UserReview>
 
     /** 쇼룸 후기 작성 */
     @Multipart
