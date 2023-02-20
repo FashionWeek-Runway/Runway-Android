@@ -18,4 +18,10 @@ data class NaverItem(
     override fun getTedLatLng(): TedLatLng {
         return TedLatLng(position.latitude, position.longitude)
     }
+
+    companion object {
+        fun default(): NaverItem = NaverItem(
+            LatLng(0.0, 0.0), "", -999, "", ""
+        )
+    }
 }

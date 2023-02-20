@@ -6,6 +6,8 @@ import android.location.Location
 import android.os.Looper
 import android.util.Log
 import androidx.compose.runtime.Stable
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -41,7 +43,7 @@ data class MapUiState(
 class MapViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val storeRepository: StoreRepository,
-    private val mapRepository: MapRepository
+    private val mapRepository: MapRepository,
 ) : ViewModel(), LifecycleObserver {
 
     private val fusedLocationClient: FusedLocationProviderClient =

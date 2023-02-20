@@ -347,7 +347,7 @@ private fun MapViewContents(
 fun SearchResultBar(
     modifier: Modifier = Modifier,
     setMapStatusDefault: () -> Unit,
-    setMapStatusOnSearch: () -> Unit
+    setMapStatusOnSearch: () -> Unit,
 ) {
     Box(
         modifier = Modifier
@@ -448,11 +448,13 @@ private fun RunwayNaverMap(
                         Marker().apply {
                             icon =
                                 OverlayImage.fromResource(R.drawable.ic_fill_map_marker_default_24)
-                            width = if (it.isClicked) 100 else 60
-                            height = if (it.isClicked) 100 else 60
+                            width = if (it.isClicked) 120 else 60
+                            height = if (it.isClicked) 120 else 60
                             captionText = it.title
                         }
-                    }.markerClickListener {
+                    }
+                    .clusterAnimation(false)
+                    .markerClickListener {
                         mapViewModel.updateMarker(it.copy(isClicked = !it.isClicked))
                     }
                     .make()
@@ -464,11 +466,15 @@ private fun RunwayNaverMap(
                 clusterManager?.clearItems()
             }
         }
+
         Marker(
             state = MarkerState(position = uiState.userPosition),
             icon = OverlayImage.fromResource(R.drawable.ic_map_user),
             height = 24.dp,
             width = 24.dp,
+            onClick = {
+                true
+            }
         )
     }
 }
