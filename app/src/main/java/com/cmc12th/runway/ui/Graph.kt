@@ -11,7 +11,7 @@ import com.cmc12th.runway.ui.detail.PhotoReviewResultScreen
 import com.cmc12th.runway.ui.detail.photoreview.PhotoReviewScreen
 import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.home.HomeScreen
-import com.cmc12th.runway.ui.login.LoginIdPasswdScreen
+import com.cmc12th.runway.ui.login.view.LoginIdPasswdScreen
 import com.cmc12th.runway.ui.login.passwordsearch.view.PasswordSearchChagnePasswordScreen
 import com.cmc12th.runway.ui.login.passwordsearch.view.PasswordSearchPhoneScreen
 import com.cmc12th.runway.ui.login.passwordsearch.view.PasswordSearchVerifyScreen

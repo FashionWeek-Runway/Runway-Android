@@ -1,9 +1,8 @@
 @file:OptIn(ExperimentalComposeUiApi::class)
 
-package com.cmc12th.runway.ui.login
+package com.cmc12th.runway.ui.login.view
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -29,12 +28,13 @@ import com.cmc12th.runway.ui.components.HeightSpacer
 import com.cmc12th.runway.ui.components.LastPasswordVisibleCustomTextField
 import com.cmc12th.runway.ui.domain.keyboardAsState
 import com.cmc12th.runway.ui.domain.model.ApplicationState
-import com.cmc12th.runway.ui.domain.model.KeyboardStatus
+import com.cmc12th.runway.ui.login.LoginViewModel
 import com.cmc12th.runway.ui.signin.model.Password
 import com.cmc12th.runway.ui.signin.model.Phone
 import com.cmc12th.runway.ui.signin.view.ErrorMessage
+import com.cmc12th.runway.ui.theme.Body1B
 import com.cmc12th.runway.ui.theme.Body2
-import com.cmc12th.runway.ui.theme.HeadLine1
+import com.cmc12th.runway.ui.theme.Gray200
 import com.cmc12th.runway.utils.Constants
 import com.cmc12th.runway.utils.Constants.LOGIN_GRAPH
 import com.cmc12th.runway.utils.Constants.MAIN_GRAPH
@@ -92,103 +92,96 @@ fun LoginIdPasswdScreen(
             .imePadding()
     ) {
         /** 상단 뒤로가기 */
-        Box(modifier = Modifier.padding(20.dp)) {
+        Row(modifier = Modifier.padding(20.dp)) {
             BackIcon {
                 appState.popBackStack()
             }
+            Text(text = "로그인", style = Body1B)
         }
+        if (passwordErrorMessage.value.isNotBlank() || phoneErrorMessage.value.isNotBlank()) {
+            Box(modifier = Modifier.align(Alignment.CenterHorizontally)) {
+                ErrorMessage(message = passwordErrorMessage.value + phoneErrorMessage.value)
+            }
+        }
+
+        HeightSpacer(height = 20.dp)
         /** 로그인 본문 */
         Column(
             modifier = Modifier
-                .padding(start = 20.dp, end = 20.dp, top = 60.dp)
-                .weight(1f),
+                .padding(start = 20.dp, end = 20.dp, top = 20.dp),
         ) {
-            Text(text = "로그인", style = HeadLine1)
 
             /** 핸드폰 텍스트 필드 */
-            HeightSpacer(60.dp)
             PhoneTextField(
                 phone = loginIdPasswordUiState.phoneNumber,
                 phoneErrorMessage = phoneErrorMessage.value,
                 updatePhoneNumber = {
                     phoneErrorMessage.value = ""
+                    passwordErrorMessage.value = ""
                     loginViewModel.updatePhoneNumber(it)
                 })
 
             /** 비밀번호 텍스트 필드 */
-            HeightSpacer(30.dp)
+            HeightSpacer(20.dp)
             PasswordTextField(
                 password = loginIdPasswordUiState.password,
                 errorState = passwordErrorMessage.value.isNotBlank(),
                 updatePassword = {
                     passwordErrorMessage.value = ""
+                    phoneErrorMessage.value = ""
                     loginViewModel.updatePassword(it)
                 },
                 onDone = onLogin
             )
-            if (passwordErrorMessage.value.isNotBlank()) {
-                ErrorMessage(message = passwordErrorMessage.value)
+
+
+            HeightSpacer(20.dp)
+            /** 하단 로그인, 회원가입 */
+            BottomButtons(onLogin = onLogin)
+
+            Row(modifier = Modifier
+                .align(Alignment.CenterHorizontally)
+                .height(IntrinsicSize.Max),
+                horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                Text(
+                    text = "비밀번호 찾기",
+                    style = Body2,
+                    modifier = Modifier
+                        .clickable { navigateToPasswrodSearch() }
+                )
+                Spacer(modifier = Modifier
+                    .width(1.dp)
+                    .fillMaxHeight()
+                    .padding(0.dp, 2.dp)
+                    .background(Gray200))
+                Text(
+                    text = "회원가입",
+                    style = Body2,
+                    modifier = Modifier
+                        .clickable { onSignin() }
+                )
             }
-
-            HeightSpacer(30.dp)
-            Text(
-                text = "비밀번호 찾기",
-                style = Body2,
-                modifier = Modifier
-                    .align(Alignment.End)
-                    .clickable { navigateToPasswrodSearch() }
-            )
         }
-        /** 하단 로그인, 회원가입 */
-        BottomButtons(
-            onkeyboardState == KeyboardStatus.Opened,
-            onLogin = onLogin,
-            onSignin = onSignin
-        )
     }
-
-
 }
 
 @Composable
 private fun BottomButtons(
-    onLoginFocused: Boolean,
     onLogin: () -> Unit,
-    onSignin: () -> Unit,
 ) {
-    Column(
-        modifier = Modifier.padding(bottom = if (onLoginFocused) 0.dp else 30.dp)
+    Button(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(0.dp, 20.dp)
+            .clip(shape = RoundedCornerShape(4.dp))
+            .background(Color.Black),
+        shape = RoundedCornerShape(4.dp),
+        onClick = onLogin,
+        colors = ButtonDefaults.buttonColors(Color.Black)
     ) {
-        Button(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(
-                    horizontal = if (!onLoginFocused) 20.dp else 0.dp,
-                    vertical = if (!onLoginFocused) 10.dp else 0.dp
-                )
-                .clip(shape = RoundedCornerShape(if (!onLoginFocused) 5.dp else 0.dp))
-                .background(Color.Black),
-            onClick = onLogin,
-            colors = ButtonDefaults.buttonColors(Color.Black)
-        ) {
-            Text(text = "로그인", color = Color.White, fontSize = 16.sp)
-        }
-        if (!onLoginFocused) {
-            Button(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(20.dp, 0.dp)
-                    .clip(shape = RoundedCornerShape(5.dp))
-                    .background(Color.White)
-                    .border(1.dp, Color.Black, shape = RoundedCornerShape(5.dp)),
-                onClick = onSignin,
-                colors = ButtonDefaults.buttonColors(Color.Transparent)
-            ) {
-                Text(text = "회원가입", color = Color.Black, fontSize = 16.sp)
-            }
-        }
-
+        Text(text = "로그인", color = Color.White, fontSize = 16.sp)
     }
+
 }
 
 @Composable
@@ -215,7 +208,7 @@ private fun PhoneTextField(
         keyboardActions = KeyboardActions(onDone = {
         }),
         onErrorState = phoneErrorMessage.isNotBlank(),
-        errorMessage = phoneErrorMessage
+//        errorMessage = phoneErrorMessage
     )
 }
 

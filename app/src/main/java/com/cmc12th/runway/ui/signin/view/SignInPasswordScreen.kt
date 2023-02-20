@@ -3,6 +3,7 @@
 package com.cmc12th.runway.ui.signin.view
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
@@ -66,14 +67,14 @@ fun SignInPasswordScreen(
             OnBoardHeadLine(main = "비밀번호", sub = "를 입력해주세요.")
 
             /** 패스워드 입력 */
-            HeightSpacer(height = 30.dp)
+            HeightSpacer(height = 13.dp)
             InputPassword(
                 requestFocus = { retryFocusRequest.requestFocus() },
                 password = uiState.password,
                 updatePassword = { signInViewModel.updatePassword(it) }
             )
             /** 패스워드 확인 */
-            HeightSpacer(height = 30.dp)
+            HeightSpacer(height = 10.dp)
             CheckPassword(
                 password = uiState.retryPassword,
                 onDone = { appState.navController.navigate(Constants.SIGNIN_AGREEMENT_ROUTE) },
@@ -88,15 +89,16 @@ fun SignInPasswordScreen(
             },
             modifier = Modifier
                 .fillMaxWidth()
-                .height(50.dp),
+                .padding(20.dp),
             enabled = uiState.checkValidate(),
-            shape = RectangleShape,
+            shape = RoundedCornerShape(4.dp),
             colors = ButtonDefaults.buttonColors(
                 if (uiState.checkValidate()) Color.Black else Gray300
             )
         ) {
             Text(
                 text = "다음",
+                modifier = Modifier.padding(0.dp, 5.dp),
                 textAlign = TextAlign.Center,
                 color = Color.White,
                 fontSize = 16.sp

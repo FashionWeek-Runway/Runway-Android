@@ -6,6 +6,7 @@
 package com.cmc12th.runway.ui.login.passwordsearch.view
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.ExperimentalMaterialApi
@@ -54,7 +55,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun PasswordSearchPhoneScreen(
     appState: ApplicationState,
-    passwordSearchViewModel: PasswordSearchViewModel = hiltViewModel()
+    passwordSearchViewModel: PasswordSearchViewModel = hiltViewModel(),
 ) {
     val coroutineScope = rememberCoroutineScope()
     val bottomsheetState = rememberBottomSheet()
@@ -83,7 +84,7 @@ fun PasswordSearchPhoneScreen(
 fun PasswordSearchPhoneContents(
     appState: ApplicationState,
     viewModel: PasswordSearchViewModel,
-    showBottomSheet: (BottomSheetContent) -> Unit
+    showBottomSheet: (BottomSheetContent) -> Unit,
 ) {
 
     val uiState by viewModel.searchPasswordPhoneUiState.collectAsStateWithLifecycle()
@@ -156,9 +157,10 @@ fun PasswordSearchPhoneContents(
 
         /** 인증 요청 */
         Button(modifier = Modifier
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .padding(20.dp, 10.dp),
+            shape = RoundedCornerShape(4.dp),
             enabled = uiState.userPhoneVerificationStatus,
-            shape = RectangleShape,
             colors = ButtonDefaults.buttonColors(if (uiState.userPhoneVerificationStatus) Color.Black else Gray300),
             onClick = { sendVerifyMessage() }) {
             Text(

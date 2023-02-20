@@ -97,7 +97,7 @@ fun RunwayDialog(
                     ) {
                         Text(
                             text = it.title,
-                            color = Primary,
+                            color = Color.Black,
                             style = Button1,
                             modifier = Modifier.padding(0.dp, 5.dp)
                         )

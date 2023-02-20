@@ -207,8 +207,9 @@ private fun UserVerificationContents(
         ) {
             /** 인증 요청 */
             Button(modifier = Modifier
-                .fillMaxWidth(),
-                shape = RectangleShape,
+                .fillMaxWidth()
+                .padding(20.dp),
+                shape = RoundedCornerShape(4.dp),
                 enabled = uiState.userVerificationStatus,
                 colors = ButtonDefaults.buttonColors(
                     if (uiState.userVerificationStatus) Color.Black else Gray300
@@ -216,7 +217,7 @@ private fun UserVerificationContents(
                 onClick = { sendVerifyMessage() }) {
                 Text(
                     modifier = Modifier.padding(0.dp, 5.dp),
-                    text = "인증 요청",
+                    text = "인증 문자 요청",
                     fontSize = 16.sp,
                     color = Color.White
                 )

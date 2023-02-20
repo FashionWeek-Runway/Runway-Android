@@ -173,6 +173,6 @@ fun CustomTextField(
             },
             visualTransformation = VisualTransformation.None,
         )
-        if (onErrorState) ErrorMessage(message = errorMessage)
+        if (onErrorState && errorMessage.isNotBlank()) ErrorMessage(message = errorMessage)
     }
 }

@@ -3,6 +3,7 @@
 package com.cmc12th.runway.ui.login.passwordsearch.view
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
@@ -33,7 +34,7 @@ import kotlinx.coroutines.Job
 @Composable
 fun PasswordSearchChagnePasswordScreen(
     appState: ApplicationState,
-    passwordSearchViewModel: PasswordSearchViewModel
+    passwordSearchViewModel: PasswordSearchViewModel,
 ) {
 
     val uiState by passwordSearchViewModel.passwordUiState.collectAsStateWithLifecycle()
@@ -91,7 +92,7 @@ fun PasswordSearchChagnePasswordScreen(
                 updatePassword = { passwordSearchViewModel.updatePassword(it) }
             )
             /** 패스워드 확인 */
-            HeightSpacer(height = 30.dp)
+            HeightSpacer(height = 10.dp)
             CheckPassword(
                 password = uiState.retryPassword,
                 onDone = {
@@ -110,15 +111,16 @@ fun PasswordSearchChagnePasswordScreen(
             },
             modifier = Modifier
                 .fillMaxWidth()
-                .height(50.dp),
+                .padding(20.dp, 10.dp),
+            shape = RoundedCornerShape(4.dp),
             enabled = uiState.checkValidate(),
-            shape = RectangleShape,
             colors = ButtonDefaults.buttonColors(
                 if (uiState.checkValidate()) Color.Black else Gray300
             )
         ) {
             Text(
-                text = "다음",
+                text = "비밀번호 변경",
+                modifier = Modifier.padding(0.dp, 5.dp),
                 textAlign = TextAlign.Center,
                 color = Color.White,
                 fontSize = 16.sp
@@ -130,7 +132,7 @@ fun PasswordSearchChagnePasswordScreen(
 @Composable
 private fun CompleteDialog(
     completeDialogVisiblitiy: Boolean,
-    appState: ApplicationState
+    appState: ApplicationState,
 ) {
     if (completeDialogVisiblitiy) {
         RunwayDialog(

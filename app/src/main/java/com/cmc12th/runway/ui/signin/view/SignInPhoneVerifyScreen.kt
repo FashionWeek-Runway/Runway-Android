@@ -38,6 +38,7 @@ import com.cmc12th.runway.ui.signin.components.RetryContainer
 import com.cmc12th.runway.ui.theme.*
 import com.cmc12th.runway.utils.Constants
 import com.cmc12th.runway.utils.Constants.SIGNIN_PASSWORD_ROUTE
+import java.math.RoundingMode
 
 @Composable
 fun SignInPhoneVerifyScreen(
@@ -127,13 +128,14 @@ fun SignInPhoneVerifyScreen(
             onClick = verifyPhoneNumber,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(50.dp),
-            shape = RectangleShape,
+                .padding(20.dp),
+            shape = RoundedCornerShape(4.dp),
             enabled = uiState.verifyCode.length == 6,
             colors = ButtonDefaults.buttonColors(if (uiState.verifyCode.length == 6) Color.Black else Gray300)
         ) {
             Text(
                 text = "인증 확인",
+                modifier = Modifier.padding(0.dp, 5.dp),
                 textAlign = TextAlign.Center,
                 color = Color.White,
                 fontSize = 16.sp

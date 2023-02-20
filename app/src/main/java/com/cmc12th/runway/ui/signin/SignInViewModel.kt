@@ -380,6 +380,6 @@ class SignInViewModel @Inject constructor(
         )
 
     companion object {
-        const val DEFAULT_RETRY_TIME = 300
+        const val DEFAULT_RETRY_TIME = 180
     }
 }

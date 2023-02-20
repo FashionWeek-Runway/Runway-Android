@@ -5,6 +5,7 @@ import androidx.compose.foundation.*
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -83,7 +84,7 @@ fun SignInAgreementScreen(
                     }
                 )
                 WidthSpacerLine(1.dp, Gray300)
-                HeightSpacer(height = 10.dp)
+                HeightSpacer(height = 14.dp)
 
                 /** 개별 약관 동의 */
                 uiState.agreements.forEachIndexed { index, value ->
@@ -101,7 +102,7 @@ fun SignInAgreementScreen(
                 HeightSpacer(height = 60.dp)
                 Button(
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RectangleShape,
+                    shape = RoundedCornerShape(4.dp),
                     enabled = uiState.isAllChcked(),
                     colors = ButtonDefaults.buttonColors(if (uiState.isAllChcked()) Black else Gray300),
                     onClick = {
@@ -139,7 +140,8 @@ fun AgreementComponent(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(10.dp), verticalAlignment = Alignment.CenterVertically
+            .padding(10.dp, 6.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
         AgreementCheckBox(checkState = isChecked,
             onChecked = { onCheck() })

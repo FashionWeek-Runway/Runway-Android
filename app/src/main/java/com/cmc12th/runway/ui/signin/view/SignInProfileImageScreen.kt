@@ -15,6 +15,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.ExperimentalMaterialApi
@@ -24,6 +25,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
@@ -99,14 +101,14 @@ fun SignInProfileImageScreen(
     }
 
     val profileSize by animateFloatAsState(
-        targetValue = if (isKeyboardOpen == KeyboardStatus.Opened) 0.4f else 0.66f,
+        targetValue = if (isKeyboardOpen == KeyboardStatus.Opened) 0.35f else 0.66f,
         animationSpec = tween(
             durationMillis = 200,
             easing = FastOutSlowInEasing
         )
     )
     val heightSpacerSize by animateDpAsState(
-        targetValue = if (isKeyboardOpen == KeyboardStatus.Opened) 20.dp else 50.dp,
+        targetValue = if (isKeyboardOpen == KeyboardStatus.Opened) 10.dp else 30.dp,
         animationSpec = tween(
             durationMillis = 200,
             easing = FastOutSlowInEasing
@@ -172,7 +174,7 @@ fun SignInProfileImageScreen(
 
             Column(
                 modifier = Modifier
-                    .padding(20.dp)
+                    .padding(start = 20.dp, end = 20.dp, top = 20.dp)
                     .weight(1f)
             ) {
                 HeightSpacer(height = 20.dp)
@@ -181,7 +183,7 @@ fun SignInProfileImageScreen(
                     Text(text = "을 설정해주세요.", fontSize = 20.sp, fontWeight = FontWeight.Normal)
                 }
 
-                HeightSpacer(height = 40.dp)
+                HeightSpacer(height = 30.dp)
                 /** 프로필이미지 아이콘 */
                 ProfileImageIcon(
                     profileImageType = uiState.profileImage,
@@ -216,8 +218,8 @@ fun SignInProfileImageScreen(
                 },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(50.dp),
-                shape = RectangleShape,
+                    .padding(20.dp),
+                shape = RoundedCornerShape(4.dp),
                 enabled = uiState.nickName.text.isNotBlank() && uiState.nickName.checkValidate(),
                 colors = ButtonDefaults.buttonColors(
                     if (uiState.nickName.text.isNotBlank() && uiState.nickName.checkValidate()) Black else Gray300
@@ -225,6 +227,7 @@ fun SignInProfileImageScreen(
             ) {
                 Text(
                     text = "다음",
+                    modifier = Modifier.padding(0.dp, 5.dp),
                     textAlign = TextAlign.Center,
                     color = Color.White,
                     fontSize = 16.sp

@@ -45,7 +45,7 @@ import com.cmc12th.runway.utils.Constants.PASSWORD_SEARCH_PHONE_CHANGE_PASSWORD
 @Composable
 fun PasswordSearchVerifyScreen(
     appState: ApplicationState,
-    passwordSearchViewModel: PasswordSearchViewModel
+    passwordSearchViewModel: PasswordSearchViewModel,
 ) {
     val verifyErrorMessage = remember {
         mutableStateOf("")
@@ -131,14 +131,15 @@ fun PasswordSearchVerifyScreen(
             onClick = verifyPhoneNumber,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(50.dp),
-            shape = RectangleShape,
+                .padding(20.dp, 10.dp),
+            shape = RoundedCornerShape(4.dp),
             enabled = uiState.verifyCode.length == 6,
             colors = ButtonDefaults.buttonColors(if (uiState.verifyCode.length == 6) Color.Black else Gray300)
         ) {
             Text(
                 text = "인증 확인",
                 textAlign = TextAlign.Center,
+                modifier = Modifier.padding(0.dp, 5.dp),
                 color = Color.White,
                 fontSize = 16.sp
             )

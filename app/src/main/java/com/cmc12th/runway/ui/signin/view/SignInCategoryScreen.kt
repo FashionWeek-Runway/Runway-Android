@@ -5,6 +5,7 @@ package com.cmc12th.runway.ui.signin.view
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
@@ -85,7 +86,7 @@ fun SignInCategoryScreen(
                 .fillMaxWidth()
                 .padding(20.dp),
             enabled = uiState.anyCategorySelected(),
-            shape = RectangleShape,
+            shape = RoundedCornerShape(4.dp),
             colors = ButtonDefaults.buttonColors(if (uiState.anyCategorySelected()) Color.Black else Gray300),
             onClick = {
                 val onSuccess = {
@@ -122,7 +123,7 @@ fun CategoryGroup(
             Row(horizontalArrangement = Arrangement.spacedBy(15.dp)) {
                 item.forEach { categoryTag ->
                     val surfaceColor: State<Color> = animateColorAsState(
-                        if (categoryTag.isSelected) Primary else White
+                        if (categoryTag.isSelected) Blue200 else White
                     )
                     StyleCategoryCheckBox(
                         isSelected = categoryTag.isSelected,
