@@ -23,13 +23,16 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.cmc12th.runway.R
 import com.cmc12th.runway.ui.components.*
+import com.cmc12th.runway.ui.detail.DetailVIewModel
 import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.domain.model.RunwayCategory
 import com.cmc12th.runway.ui.map.components.TopGradient
 import com.cmc12th.runway.ui.signin.model.CategoryTag
 import com.cmc12th.runway.ui.theme.*
+import com.cmc12th.runway.utils.Constants.PHOTO_REVIEW_ROUTE
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import java.lang.Float.min
 
@@ -37,6 +40,7 @@ import java.lang.Float.min
 fun DetailScreen(appState: ApplicationState, idx: Int) {
 
     val scrollState = rememberLazyListState()
+    val detailVIewModel: DetailVIewModel = hiltViewModel()
 
     val topbarColor = remember {
         mutableStateOf(Color.Transparent)
@@ -45,6 +49,11 @@ fun DetailScreen(appState: ApplicationState, idx: Int) {
         mutableStateOf(Color.White)
     }
     val topbarIconAnimateColor = animateColorAsState(targetValue = topbarIconColor.value)
+
+    LaunchedEffect(key1 = Unit) {
+        detailVIewModel.getDetailInfo()
+    }
+
     LaunchedEffect(key1 = scrollState.firstVisibleItemScrollOffset) {
         if (scrollState.firstVisibleItemScrollOffset < 100) {
             if (scrollState.firstVisibleItemScrollOffset < 10) {
@@ -86,7 +95,9 @@ fun DetailScreen(appState: ApplicationState, idx: Int) {
                 WidthSpacerLine(height = 1.dp, color = Gray200)
                 ShopNews()
                 WidthSpacerLine(height = 2.dp, color = Black)
-                UserReview()
+                UserReview {
+                    appState.navigate(PHOTO_REVIEW_ROUTE)
+                }
                 HeightSpacer(height = 20.dp)
                 WidthSpacerLine(height = 8.dp, color = Gray100)
                 BlogReview()
@@ -337,7 +348,7 @@ fun BlogReviewItem() {
 
 
 @Composable
-fun UserReview() {
+fun UserReview(navigateToWriteScreen: () -> Unit) {
     Column {
         Row(
             modifier = Modifier
@@ -348,6 +359,9 @@ fun UserReview() {
         ) {
             Text(text = "사용자 후기", style = HeadLine4, color = Color.Black)
             Row(
+                modifier = Modifier.clickable {
+                    navigateToWriteScreen()
+                },
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(6.dp)
             ) {

@@ -35,6 +35,7 @@ fun MapViewBottomSheetContent(
     setMapStatusOnSearch: () -> Unit,
     setMapStatusDefault: () -> Unit,
     contents: BottomSheetContent,
+    navigateToDetail: () -> Unit,
 ) {
 //    val contents = remember {
 //        mutableStateOf(listOf("매장1", "매장2", "매장3", "매장4"))
@@ -104,7 +105,8 @@ fun MapViewBottomSheetContent(
                 LazyColumn {
                     items(contents.getData()) {
                         Column(modifier = Modifier.clickable {
-                            appState.navigate("$DETAIL_ROUTE?idx=1")
+                            navigateToDetail()
+                            // appState.navigate("$DETAIL_ROUTE?idx=1")
                         }) {
                             Box(
                                 modifier = Modifier
@@ -144,7 +146,8 @@ fun MapViewBottomSheetContent(
                 LazyColumn {
                     items(contents.getData()) {
                         Column(modifier = Modifier.clickable {
-                            appState.navigate("$DETAIL_ROUTE?idx=1")
+                            navigateToDetail()
+//                            appState.navigate("$DETAIL_ROUTE?idx=1")
                         }) {
                             Box(
                                 modifier = Modifier
@@ -181,7 +184,7 @@ fun MapViewBottomSheetContent(
                 }
             }
             BottomSheetContent.LOADING -> {
-                
+
             }
         }
 

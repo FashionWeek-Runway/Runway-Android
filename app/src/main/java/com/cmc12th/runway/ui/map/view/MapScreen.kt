@@ -37,6 +37,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.cmc12th.runway.ui.map.model.NaverItem
 import com.cmc12th.runway.R
 import com.cmc12th.runway.ui.components.RunwayIconButton
+import com.cmc12th.runway.ui.detail.view.DetailScreen
 import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.map.MapUiState
 import com.cmc12th.runway.ui.map.MapViewModel
@@ -137,6 +138,11 @@ private fun MapViewContents(
     val onSearching = remember {
         mutableStateOf(false)
     }
+
+    val onDetail = remember {
+        mutableStateOf(false)
+    }
+
     val peekHeight = remember {
         mutableStateOf(60.dp)
     }
@@ -210,7 +216,7 @@ private fun MapViewContents(
                 isExpanded = bottomSheetScaffoldState.bottomSheetState.targetValue == BottomSheetValue.Expanded,
                 setMapStatusDefault = setMapStatusDefault,
                 setMapStatusOnSearch = setMapStatusOnSearch
-            )
+            ) { onDetail.value = true }
         }
     ) {
         Box(
@@ -224,8 +230,7 @@ private fun MapViewContents(
                 mapViewModel = mapViewModel,
                 onMapClick = onMapClick,
                 onMarkerClick = onMarkerClick,
-                onSearching = onSearching
-
+                onSearching = onSearching,
             )
 
             RefreshIcon(
@@ -289,9 +294,14 @@ private fun MapViewContents(
                 )
             }
 
-
         }
     }
+
+
+    if (onDetail.value) {
+        DetailScreen(appState, 1)
+    }
+
 }
 
 @Composable
