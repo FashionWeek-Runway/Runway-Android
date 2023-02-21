@@ -58,7 +58,7 @@ fun NavGraphBuilder.mainGraph(
                 )
             ) { entry ->
                 val idx = entry.arguments?.getInt("idx") ?: 0
-                DetailScreen(appState, idx)
+//                DetailScreen(appState, idx, detailVIewModel = detailVIewModel)
             }
             composable(PHOTO_REVIEW_ROUTE) {
                 PhotoReviewScreen(appState)
@@ -73,30 +73,30 @@ fun NavGraphBuilder.mainGraph(
     }
 }
 
-fun NavGraphBuilder.detailGraph(
-    appState: ApplicationState,
-) {
-    navigation(startDestination = DETAIL_ROUTE, route = DETAIL_GRAPH) {
-        composable(route = "$DETAIL_ROUTE?idx={idx}",
-            arguments = listOf(
-                navArgument("idx") {
-                    type = NavType.IntType
-                }
-            )
-        ) { entry ->
-            val idx = entry.arguments?.getInt("idx") ?: 0
-            DetailScreen(appState, idx)
-        }
-        composable(PHOTO_REVIEW_ROUTE) {
-            PhotoReviewScreen(appState)
-        }
-        composable(PHOTO_REVIEW_RESULT_ROUTE) {
-            val userObject =
-                appState.navController.previousBackStackEntry?.arguments?.getParcelable<Bitmap>("bitmap")
-            PhotoReviewResultScreen(appState, userObject!!)
-        }
-    }
-}
+//fun NavGraphBuilder.detailGraph(
+//    appState: ApplicationState,
+//) {
+//    navigation(startDestination = DETAIL_ROUTE, route = DETAIL_GRAPH) {
+//        composable(route = "$DETAIL_ROUTE?idx={idx}",
+//            arguments = listOf(
+//                navArgument("idx") {
+//                    type = NavType.IntType
+//                }
+//            )
+//        ) { entry ->
+//            val idx = entry.arguments?.getInt("idx") ?: 0
+//            DetailScreen(appState, idx, detailVIewModel = detailVIewModel)
+//        }
+//        composable(PHOTO_REVIEW_ROUTE) {
+//            PhotoReviewScreen(appState)
+//        }
+//        composable(PHOTO_REVIEW_RESULT_ROUTE) {
+//            val userObject =
+//                appState.navController.previousBackStackEntry?.arguments?.getParcelable<Bitmap>("bitmap")
+//            PhotoReviewResultScreen(appState, userObject!!)
+//        }
+//    }
+//}
 
 fun NavGraphBuilder.loginGraph(
     appState: ApplicationState,

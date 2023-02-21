@@ -2,7 +2,7 @@
 
 package com.cmc12th.runway.ui.detail.view
 
-import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
@@ -23,7 +23,6 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.cmc12th.runway.R
 import com.cmc12th.runway.ui.components.*
 import com.cmc12th.runway.ui.detail.DetailVIewModel
@@ -37,10 +36,14 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import java.lang.Float.min
 
 @Composable
-fun DetailScreen(appState: ApplicationState, idx: Int) {
+fun DetailScreen(
+    appState: ApplicationState,
+    idx: Int,
+    onBackPress: () -> Unit = {},
+    detailVIewModel: DetailVIewModel,
+) {
 
     val scrollState = rememberLazyListState()
-    val detailVIewModel: DetailVIewModel = hiltViewModel()
 
     val topbarColor = remember {
         mutableStateOf(Color.Transparent)
@@ -70,6 +73,15 @@ fun DetailScreen(appState: ApplicationState, idx: Int) {
         } else {
             topbarColor.value = Color.White
             topbarIconColor.value = Color.Black
+        }
+    }
+    BackHandler {
+        onBackPress()
+    }
+    DisposableEffect(Unit) {
+        appState.bottomBarState.value = false
+        onDispose {
+            appState.bottomBarState.value = true
         }
     }
     ManageSystemBarColor(scrollState, topbarColor.value)
@@ -110,14 +122,19 @@ fun DetailScreen(appState: ApplicationState, idx: Int) {
 
         DetailTopBar(
             topbarColor = topbarColor.value,
-            topbarIconAnimateColor = topbarIconAnimateColor.value
+            topbarIconAnimateColor = topbarIconAnimateColor.value,
+            onBackPress = onBackPress
         )
     }
 
 }
 
 @Composable
-private fun BoxScope.DetailTopBar(topbarColor: Color, topbarIconAnimateColor: Color) {
+private fun BoxScope.DetailTopBar(
+    topbarColor: Color,
+    topbarIconAnimateColor: Color,
+    onBackPress: () -> Unit,
+) {
 
     Row(
         modifier = Modifier
@@ -130,7 +147,7 @@ private fun BoxScope.DetailTopBar(topbarColor: Color, topbarIconAnimateColor: Co
         verticalAlignment = Alignment.CenterVertically
     ) {
         IconButton(
-            onClick = {}, modifier = Modifier
+            onClick = { onBackPress() }, modifier = Modifier
                 .padding(start = 20.dp)
                 .size(24.dp)
         ) {

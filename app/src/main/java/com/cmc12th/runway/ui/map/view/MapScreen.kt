@@ -37,6 +37,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.cmc12th.runway.ui.map.model.NaverItem
 import com.cmc12th.runway.R
 import com.cmc12th.runway.ui.components.RunwayIconButton
+import com.cmc12th.runway.ui.detail.DetailVIewModel
 import com.cmc12th.runway.ui.detail.view.DetailScreen
 import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.map.MapUiState
@@ -127,6 +128,7 @@ private fun MapViewContents(
 //        position = CameraPosition(LatLng(37.5437, 127.0659), 8.0)
 //    }
 
+    val detailViewModel: DetailVIewModel = hiltViewModel()
     val bottomSheetScaffoldState =
         rememberBottomSheetScaffoldState()
     val configuration = LocalConfiguration.current
@@ -139,9 +141,6 @@ private fun MapViewContents(
         mutableStateOf(false)
     }
 
-    val onDetail = remember {
-        mutableStateOf(false)
-    }
 
     val peekHeight = remember {
         mutableStateOf(60.dp)
@@ -216,7 +215,7 @@ private fun MapViewContents(
                 isExpanded = bottomSheetScaffoldState.bottomSheetState.targetValue == BottomSheetValue.Expanded,
                 setMapStatusDefault = setMapStatusDefault,
                 setMapStatusOnSearch = setMapStatusOnSearch
-            ) { onDetail.value = true }
+            ) { mapViewModel.onDetail.value = true }
         }
     ) {
         Box(
@@ -298,8 +297,12 @@ private fun MapViewContents(
     }
 
 
-    if (onDetail.value) {
-        DetailScreen(appState, 1)
+    if (mapViewModel.onDetail.value) {
+        DetailScreen(appState = appState,
+            idx = 1,
+            detailVIewModel = detailViewModel,
+            onBackPress = { mapViewModel.onDetail.value = false }
+        )
     }
 
 }
