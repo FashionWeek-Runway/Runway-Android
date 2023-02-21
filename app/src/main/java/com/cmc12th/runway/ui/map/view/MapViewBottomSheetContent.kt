@@ -19,9 +19,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.cmc12th.runway.R
-import com.cmc12th.runway.data.response.map.MapInfoItem
 import com.cmc12th.runway.ui.components.HeightSpacer
 import com.cmc12th.runway.ui.domain.model.ApplicationState
+import com.cmc12th.runway.ui.map.model.BottomSheetContent
 import com.cmc12th.runway.ui.theme.*
 import com.cmc12th.runway.utils.Constants.BOTTOM_NAVIGATION_HEIGHT
 import com.cmc12th.runway.utils.Constants.DETAIL_ROUTE
@@ -34,7 +34,7 @@ fun MapViewBottomSheetContent(
     isExpanded: Boolean,
     setMapStatusOnSearch: () -> Unit,
     setMapStatusDefault: () -> Unit,
-    contents: List<MapInfoItem>,
+    contents: BottomSheetContent,
 ) {
 //    val contents = remember {
 //        mutableStateOf(listOf("매장1", "매장2", "매장3", "매장4"))
@@ -81,61 +81,107 @@ fun MapViewBottomSheetContent(
             )
         }
 
-        if (contents.isNotEmpty()) {
-            LazyColumn {
-                items(contents) {
-                    Column(modifier = Modifier.clickable {
-                        appState.navigate("$DETAIL_ROUTE?idx=1")
-                    }) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .aspectRatio(1.6f)
-                        ) {
-                            Image(
-                                painter = painterResource(id = R.drawable.img_dummy),
-                                contentDescription = "SHOP_IMAGE",
-                                modifier = Modifier.fillMaxSize(),
-                                contentScale = ContentScale.Crop
-                            )
-                            Row(modifier = Modifier.align(Alignment.BottomStart)) {
-                                (0..2).map {
-                                    Text(
-                                        text = "태그명",
-                                        style = Button2,
-                                        color = Gray700,
-                                        modifier = Modifier
-                                            .padding(8.dp, 5.dp)
-                                            .clip(RoundedCornerShape(4.dp))
-                                            .background(Color.White)
-                                    )
+        when (contents) {
+            BottomSheetContent.DEFAULT -> {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(0.dp, 100.dp),
+                    verticalArrangement = Arrangement.Bottom,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.img_dummy),
+                        contentDescription = "IMG_DUMMY",
+                        modifier = Modifier.size(100.dp)
+                    )
+                    HeightSpacer(height = 30.dp)
+                    Text(text = "아직 등록된 매장이 없습니다.", style = Body1, color = Black)
+                    Text(text = "위치를 이동하거나 필터를 변경해보세요.", style = Body2, color = Gray500)
+                }
+            }
+            is BottomSheetContent.MULTI -> {
+                LazyColumn {
+                    items(contents.getData()) {
+                        Column(modifier = Modifier.clickable {
+                            appState.navigate("$DETAIL_ROUTE?idx=1")
+                        }) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .aspectRatio(1.6f)
+                            ) {
+                                Image(
+                                    painter = painterResource(id = R.drawable.img_dummy),
+                                    contentDescription = "SHOP_IMAGE",
+                                    modifier = Modifier.fillMaxSize(),
+                                    contentScale = ContentScale.Crop
+                                )
+                                Row(modifier = Modifier.align(Alignment.BottomStart)) {
+                                    (0..2).map {
+                                        Text(
+                                            text = "태그명",
+                                            style = Button2,
+                                            color = Gray700,
+                                            modifier = Modifier
+                                                .padding(8.dp, 5.dp)
+                                                .clip(RoundedCornerShape(4.dp))
+                                                .background(Color.White)
+                                        )
+                                    }
                                 }
                             }
+                            Text(
+                                text = it.storeName,
+                                style = HeadLine4,
+                                modifier = Modifier.padding(top = 14.dp, bottom = 30.dp)
+                            )
                         }
-                        Text(
-                            text = it.storeName,
-                            style = HeadLine4,
-                            modifier = Modifier.padding(top = 14.dp, bottom = 30.dp)
-                        )
                     }
                 }
             }
-        } else {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(0.dp, 100.dp),
-                verticalArrangement = Arrangement.Bottom,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.img_dummy),
-                    contentDescription = "IMG_DUMMY",
-                    modifier = Modifier.size(100.dp)
-                )
-                HeightSpacer(height = 30.dp)
-                Text(text = "아직 등록된 매장이 없습니다.", style = Body1, color = Black)
-                Text(text = "위치를 이동하거나 필터를 변경해보세요.", style = Body2, color = Gray500)
+            is BottomSheetContent.SINGLE -> {
+                LazyColumn {
+                    items(contents.getData()) {
+                        Column(modifier = Modifier.clickable {
+                            appState.navigate("$DETAIL_ROUTE?idx=1")
+                        }) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .aspectRatio(1.6f)
+                            ) {
+                                Image(
+                                    painter = painterResource(id = R.drawable.img_dummy),
+                                    contentDescription = "SHOP_IMAGE",
+                                    modifier = Modifier.fillMaxSize(),
+                                    contentScale = ContentScale.Crop
+                                )
+                                Row(modifier = Modifier.align(Alignment.BottomStart)) {
+                                    (0..2).map {
+                                        Text(
+                                            text = "태그명",
+                                            style = Button2,
+                                            color = Gray700,
+                                            modifier = Modifier
+                                                .padding(8.dp, 5.dp)
+                                                .clip(RoundedCornerShape(4.dp))
+                                                .background(Color.White)
+                                        )
+                                    }
+                                }
+                            }
+                            Text(
+                                text = it.storeName,
+                                style = HeadLine4,
+                                modifier = Modifier.padding(top = 14.dp, bottom = 30.dp)
+                            )
+                        }
+                    }
+                }
+            }
+            BottomSheetContent.LOADING -> {
+                
             }
         }
 

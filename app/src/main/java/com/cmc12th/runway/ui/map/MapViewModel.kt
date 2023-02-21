@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.location.Location
 import android.os.Looper
-import android.util.Log
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
@@ -20,6 +19,7 @@ import com.cmc12th.runway.domain.repository.StoreRepository
 import com.cmc12th.runway.ui.domain.model.RunwayCategory
 import com.cmc12th.runway.ui.map.MapViewModel.Companion.DEFAULT_LATLNG
 import com.cmc12th.runway.ui.map.MapViewModel.Companion.DEFAULT_LOCATION
+import com.cmc12th.runway.ui.map.model.BottomSheetContent
 import com.cmc12th.runway.ui.signin.model.CategoryTag
 import com.google.android.gms.location.*
 import com.naver.maps.geometry.LatLng
@@ -36,7 +36,7 @@ data class MapUiState(
     val isBookmarked: Boolean = false,
     val userPosition: LatLng = DEFAULT_LATLNG,
     val movingCameraPosition: Location = DEFAULT_LOCATION,
-    val scrollItems: List<MapInfoItem> = emptyList(),
+    val bottomSheetContents: BottomSheetContent = BottomSheetContent.DEFAULT,
 )
 
 @HiltViewModel
@@ -58,8 +58,9 @@ class MapViewModel @Inject constructor(
     // 맵에 찍히는 마커 아이템
     private val _markerItems: MutableStateFlow<List<NaverItem>> = MutableStateFlow(emptyList())
 
-    // 맵아래 스크롤 아이템
-    private val _scrollItems: MutableStateFlow<List<MapInfoItem>> = MutableStateFlow(emptyList())
+    // 바텀 시트 아이템
+    private val _bottomsheetItem: MutableStateFlow<BottomSheetContent> =
+        MutableStateFlow(BottomSheetContent.DEFAULT)
 
     // 검색 탭 및 필터링 되는 아이템들
     private val _categoryItems: MutableStateFlow<List<CategoryTag>> =
@@ -77,7 +78,7 @@ class MapViewModel @Inject constructor(
         _isBookmarked,
         _userPosition,
         _movingCameraPosition,
-        _scrollItems,
+        _bottomsheetItem,
     ) { resultArr ->
         @Suppress("UNCHECKED_CAST")
         MapUiState(
@@ -86,7 +87,7 @@ class MapViewModel @Inject constructor(
             isBookmarked = resultArr[2] as Boolean,
             userPosition = resultArr[3] as LatLng,
             movingCameraPosition = resultArr[4] as Location,
-            scrollItems = resultArr[5] as List<MapInfoItem>
+            bottomSheetContents = resultArr[5] as BottomSheetContent
         )
     }.stateIn(
         scope = viewModelScope,
@@ -104,6 +105,7 @@ class MapViewModel @Inject constructor(
         )
     }
 
+    /** 맵 스크롤 정보(여러개) 가져오기 */
     fun mapScrollInfo(latLng: LatLng) = viewModelScope.launch {
         mapRepository.mapInfoPaging(page = 0, size = 10,
             mapFilterRequest = MapFilterRequest(
@@ -113,7 +115,7 @@ class MapViewModel @Inject constructor(
             )
         ).collect { apiState ->
             apiState.onSuccess {
-                _scrollItems.value = it.pagingMetadata.contents
+                _bottomsheetItem.value = BottomSheetContent.MULTI(it.pagingMetadata.contents)
             }
             apiState.onError {
 
@@ -138,8 +140,17 @@ class MapViewModel @Inject constructor(
         }
     }
 
-    fun updateScrollItems() {
-
+    /** 단일 맵 정보 가져오기 */
+    fun mapInfo(storeId: Int) = viewModelScope.launch {
+        updateBottomSheetItem(BottomSheetContent.LOADING)
+        mapRepository.mapInfo(storeId).collect { apiState ->
+            apiState.onSuccess {
+                updateBottomSheetItem(BottomSheetContent.SINGLE(it.result))
+            }
+            apiState.onError {
+                updateBottomSheetItem(BottomSheetContent.DEFAULT)
+            }
+        }
     }
 
     fun removeLocationListener() {
@@ -156,7 +167,7 @@ class MapViewModel @Inject constructor(
         }.toMutableList()
     }
 
-    fun updateMarkerItems(naverItems: List<NaverItem>) {
+    private fun updateMarkerItems(naverItems: List<NaverItem>) {
         _markerItems.value = naverItems
     }
 
@@ -173,6 +184,25 @@ class MapViewModel @Inject constructor(
         _markerItems.value = temp
     }
 
+    fun resetSelectedMarkers() {
+        // TODO 로직 수정 필요
+        val temp = mutableListOf<NaverItem>()
+        _markerItems.value.forEach {
+            temp.add(it.copy(isClicked = false))
+        }
+        _markerItems.value = temp
+    }
+
+    private fun updateBottomSheetItem(bottomsheetItem: BottomSheetContent) {
+        _bottomsheetItem.value = bottomsheetItem
+    }
+
+    private val _testMarkers = mutableStateOf(NaverItem.default())
+    val testMarkers: State<NaverItem> get() = _testMarkers
+    fun setTestMarker(naverItem: NaverItem) {
+        _testMarkers.value = naverItem
+    }
+
     var initialMarkerLoadFlag = true
 
     inner class CustomLocationCallback : LocationCallback() {
@@ -183,8 +213,8 @@ class MapViewModel @Inject constructor(
                 if (initialMarkerLoadFlag) {
                     mapFiltering(LatLng(it.latitude, it.longitude))
                     mapScrollInfo(LatLng(it.latitude, it.longitude))
-                    _movingCameraPosition.value = it
                     initialMarkerLoadFlag = false
+//                    _movingCameraPosition.value = it
                 }
                 _userPosition.value = LatLng(it.latitude, it.longitude)
             }
