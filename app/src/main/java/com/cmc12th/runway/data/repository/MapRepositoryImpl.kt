@@ -25,7 +25,7 @@ class MapRepositoryImpl @Inject constructor(
     override fun mapInfoPaging(
         page: Int,
         size: Int,
-        mapFilterRequest: MapFilterRequest
+        mapFilterRequest: MapFilterRequest,
     ): Flow<PagingApiWrapper<MapInfoItem>> = safePagingFlow {
         runwayClient.mapsInfoPaging(page, size, mapFilterRequest)
     }
@@ -34,4 +34,8 @@ class MapRepositoryImpl @Inject constructor(
         safeFlow {
             runwayClient.mapSearch(mapSearchRequest)
         }
+
+    override fun mapInfo(storeId: Int): Flow<ApiWrapper<MapInfoItem>> = safeFlow {
+        runwayClient.mapInfo(storeId)
+    }
 }
