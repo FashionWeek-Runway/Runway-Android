@@ -11,12 +11,12 @@ class SearchRepositoryImpl @Inject constructor(
 ) : SearchRepository {
     override fun getRecentSearchAll(): Flow<List<RecentStr>> = recentStrDao.getRecentStrAll()
 
-    override suspend fun addSearchStr(seartchStr: String) {
-        return recentStrDao.insert(RecentStr(seartchStr))
+    override suspend fun addSearchStr(recentStr: RecentStr) {
+        return recentStrDao.insert(recentStr)
     }
 
-    override suspend fun removeSearchStr(searchStr: RecentStr) {
-        return recentStrDao.delete(searchStr)
+    override suspend fun removeSearchStr(recentStr: RecentStr) {
+        return recentStrDao.delete(recentStr)
     }
 
     override suspend fun removeAllSearchStr() {

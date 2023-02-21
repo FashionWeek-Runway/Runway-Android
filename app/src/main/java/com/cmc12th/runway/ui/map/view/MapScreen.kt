@@ -37,13 +37,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.cmc12th.runway.ui.map.model.NaverItem
 import com.cmc12th.runway.R
+import com.cmc12th.runway.data.model.SearchType
 import com.cmc12th.runway.ui.components.RunwayIconButton
 import com.cmc12th.runway.ui.detail.DetailVIewModel
 import com.cmc12th.runway.ui.detail.view.DetailScreen
 import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.map.MapUiState
 import com.cmc12th.runway.ui.map.MapViewModel
-import com.cmc12th.runway.ui.map.SearchUiState
 import com.cmc12th.runway.ui.map.components.BottomGradient
 import com.cmc12th.runway.ui.map.components.GpsIcon
 import com.cmc12th.runway.ui.map.components.RefreshIcon
@@ -535,6 +535,10 @@ private fun RunwayNaverMap(
             onShopSearch = {
                 mapViewModel.updateMapStatus(MapStatus.SHOP_SEARCH)
 //                mapViewModel.mapInfo()
+                mapViewModel.addRecentStr(
+                    it.storeName,
+                    SearchType(it.storeId, SearchType.STORE_TYPE)
+                )
             },
             onBackPrseed = {
                 mapViewModel.updateSearchText(TextFieldValue(""))

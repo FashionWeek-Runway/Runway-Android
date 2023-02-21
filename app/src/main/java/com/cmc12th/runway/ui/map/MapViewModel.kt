@@ -6,22 +6,21 @@ import android.location.Location
 import android.os.Looper
 import android.util.Log
 import androidx.compose.runtime.Stable
-import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.cmc12th.runway.data.model.RecentStr
+import com.cmc12th.runway.data.model.SearchType
 import com.cmc12th.runway.ui.map.model.NaverItem
 import com.cmc12th.runway.data.request.map.MapFilterRequest
 import com.cmc12th.runway.data.request.map.MapSearchRequest
-import com.cmc12th.runway.data.response.map.MapInfoItem
 import com.cmc12th.runway.data.response.map.RegionSearch
 import com.cmc12th.runway.data.response.map.StoreSearch
 import com.cmc12th.runway.data.response.map.toNaverMapItem
 import com.cmc12th.runway.domain.repository.MapRepository
-import com.cmc12th.runway.domain.repository.StoreRepository
+import com.cmc12th.runway.domain.repository.SearchRepository
 import com.cmc12th.runway.ui.domain.model.RunwayCategory
 import com.cmc12th.runway.ui.map.MapViewModel.Companion.DEFAULT_LATLNG
 import com.cmc12th.runway.ui.map.model.BottomSheetContent
@@ -36,6 +35,8 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 @Stable
@@ -54,12 +55,14 @@ data class SearchUiState(
     val searchText: TextFieldValue = TextFieldValue(""),
     val regionSearchs: List<RegionSearch> = emptyList(),
     val storeSearchs: List<StoreSearch> = emptyList(),
+    val recentSearchs: List<RecentStr> = emptyList(),
 )
 
 @HiltViewModel
 class MapViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val mapRepository: MapRepository,
+    private val searchRepository: SearchRepository
 ) : ViewModel(), LifecycleObserver {
 
     private val fusedLocationClient: FusedLocationProviderClient =
@@ -123,15 +126,28 @@ class MapViewModel @Inject constructor(
     private val _regionSearch = MutableStateFlow(listOf<RegionSearch>())
     private val _storeSearch = MutableStateFlow(listOf<StoreSearch>())
 
+    private val _recentSearchs = MutableStateFlow(emptyList<RecentStr>())
+
+    init {
+        viewModelScope.launch {
+            searchRepository.getRecentSearchAll().collectLatest { recentList ->
+                Log.i("dlgocks1-recentSearch", recentList.toString())
+                _recentSearchs.value = recentList
+            }
+        }
+    }
+
     val searchUiState = combine(
         _searchText,
         _regionSearch,
-        _storeSearch
+        _storeSearch,
+        _recentSearchs
     ) { flowArr ->
         SearchUiState(
             searchText = flowArr[0] as TextFieldValue,
             regionSearchs = flowArr[1] as List<RegionSearch>,
-            storeSearchs = flowArr[2] as List<StoreSearch>
+            storeSearchs = flowArr[2] as List<StoreSearch>,
+            recentSearchs = flowArr[3] as List<RecentStr>
         )
     }.stateIn(
         scope = viewModelScope,
@@ -248,6 +264,37 @@ class MapViewModel @Inject constructor(
             }
             else -> {}
         }
+    }
+
+
+    fun addRecentStr(searchStr: String, searchType: SearchType) = viewModelScope.launch {
+        val dateInfo = LocalDateTime.now()
+            .format(DateTimeFormatter.ofPattern("MM.dd"))
+        val dbItem = _recentSearchs.value.find {
+            it.value == searchStr
+        }
+        if (dbItem == null) {
+            searchRepository.addSearchStr(RecentStr(searchStr, dateInfo, searchType))
+        }
+//        recentStrDuplicateCheck(searchStr)?.let {
+//            searchRepository.addSearchStr(RecentStr(searchStr, dateInfo))
+//        }
+    }
+
+    fun removeRecentStr(id: Int) = viewModelScope.launch {
+        _recentSearchs.value.find {
+            it.id == id
+        }?.let {
+            searchRepository.removeSearchStr(it)
+        }
+    }
+
+    fun removeAllRecentStr() = viewModelScope.launch {
+        searchRepository.removeAllSearchStr()
+    }
+
+    private fun recentStrDuplicateCheck(searchStr: String) = _recentSearchs.value.find {
+        it.value == searchStr
     }
 
     fun updateMovingCamera(movingCameraPosition: MovingCameraWrapper) {

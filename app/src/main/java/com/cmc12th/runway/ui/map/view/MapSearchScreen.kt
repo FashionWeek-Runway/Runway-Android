@@ -26,6 +26,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.cmc12th.runway.R
+import com.cmc12th.runway.data.model.RecentStr
 import com.cmc12th.runway.data.response.map.RegionSearch
 import com.cmc12th.runway.data.response.map.StoreSearch
 import com.cmc12th.runway.ui.components.BackIcon
@@ -35,14 +36,14 @@ import com.cmc12th.runway.ui.components.WidthSpacerLine
 import com.cmc12th.runway.ui.map.MapViewModel
 import com.cmc12th.runway.ui.map.components.SearchTextField
 import com.cmc12th.runway.ui.theme.*
-import com.cmc12th.runway.utils.Constants.CATEGORYS
 import com.cmc12th.runway.utils.noRippleClickable
+import kotlinx.coroutines.Job
 
 
 @Composable
 fun MapSearchScreen(
     onBackPrseed: () -> Unit,
-    onShopSearch: () -> Unit,
+    onShopSearch: (StoreSearch) -> Unit,
     onLocationSearch: () -> Unit,
     mapViewModel: MapViewModel,
 ) {
@@ -71,9 +72,18 @@ fun MapSearchScreen(
 
         /** 검색어를 입력하지 않았을 때 */
         if (searchUiState.searchText.text.isBlank()) {
-            /** 최근 검색어가 있으면 */
-            RecentSearches()
-            // TODO 화면제작
+            /** 최근 검색어가 없으면 */
+            if (searchUiState.recentSearchs.isEmpty()) {
+                EmptyRecentSearches()
+            } else {
+                /** 최근 검색어가 있으면 */
+                RecentSearches(
+                    recentSearchs = searchUiState.recentSearchs,
+                    removeRecentStr = {
+                        mapViewModel.removeRecentStr(it)
+                    }
+                )
+            }
         } else {
             /** 검색 중일 때 */
             OnSearching(
@@ -84,6 +94,24 @@ fun MapSearchScreen(
                 searchText = searchUiState.searchText
             )
         }
+    }
+}
+
+@Composable
+fun EmptyRecentSearches() {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .imePadding(),
+        verticalArrangement = Arrangement.spacedBy(14.dp, Alignment.CenterVertically),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.img_dummy),
+            contentDescription = "IC_DUMMY",
+            modifier = Modifier.size(100.dp)
+        )
+        Text(text = "최근 검색어가 없습니다.", style = Body1, color = Black)
     }
 }
 
@@ -141,7 +169,7 @@ private fun TopSearchBar(
 
 @Composable
 fun OnSearching(
-    onShopSearch: () -> Unit,
+    onShopSearch: (StoreSearch) -> Unit,
     onLocationSearch: () -> Unit,
     regionSearchs: List<RegionSearch>,
     storeSearchs: List<StoreSearch>,
@@ -181,7 +209,7 @@ private fun EmptyResult(searchText: TextFieldValue) {
 private fun ResultItems(
     regionSearchs: List<RegionSearch>,
     searchText: TextFieldValue,
-    onShopSearch: () -> Unit,
+    onShopSearch: (StoreSearch) -> Unit,
     onLocationSearch: () -> Unit,
     storeSearchs: List<StoreSearch>
 ) {
@@ -232,7 +260,7 @@ private fun ResultItems(
                             textAlign = TextAlign.Start,
                             modifier = Modifier.clickable {
                                 // TODO 매장 클릭 구현
-                                onShopSearch()
+//                                onShopSearch()
                             }
                         )
                         HeightSpacer(height = 4.dp)
@@ -243,7 +271,7 @@ private fun ResultItems(
                             textAlign = TextAlign.Start,
                             modifier = Modifier.clickable {
                                 // TODO 지역 클릭 구현
-                                onLocationSearch()
+//                                onLocationSearch()
                             }
                         )
                     }
@@ -292,7 +320,7 @@ private fun ResultItems(
                             textAlign = TextAlign.Start,
                             modifier = Modifier.clickable {
                                 // TODO 매장 클릭 구현
-                                onShopSearch()
+                                onShopSearch(it)
                             }
                         )
                         HeightSpacer(height = 4.dp)
@@ -303,7 +331,7 @@ private fun ResultItems(
                             textAlign = TextAlign.Start,
                             modifier = Modifier.clickable {
                                 // TODO 지역 클릭 구현
-                                onLocationSearch()
+                                // onLocationSearch()
                             }
                         )
                     }
@@ -316,9 +344,7 @@ private fun ResultItems(
 }
 
 @Composable
-private fun RecentSearches() {
-
-    val items = CATEGORYS
+private fun RecentSearches(recentSearchs: List<RecentStr>, removeRecentStr: (Int) -> Unit) {
 
     Column(
         modifier = Modifier
@@ -337,7 +363,7 @@ private fun RecentSearches() {
             modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
-            items(items) {
+            items(recentSearchs) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
@@ -355,16 +381,18 @@ private fun RecentSearches() {
 
                     WidthSpacer(width = 4.dp)
                     Text(
-                        text = it,
+                        text = it.value,
                         style = Body1,
                         color = Black,
                         modifier = Modifier.weight(1f),
                         textAlign = TextAlign.Start
                     )
-                    Text(text = "02.12", style = Caption, color = Gray500)
+                    Text(text = it.dateInfo, style = Caption, color = Gray500)
                     WidthSpacer(width = 2.dp)
                     IconButton(
-                        onClick = { /*TODO*/ },
+                        onClick = {
+                            removeRecentStr(it.id)
+                        },
                         modifier = Modifier.size(24.dp)
                     ) {
                         Icon(
