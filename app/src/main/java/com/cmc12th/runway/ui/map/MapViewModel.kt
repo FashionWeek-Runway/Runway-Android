@@ -13,6 +13,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cmc12th.runway.ui.map.model.NaverItem
 import com.cmc12th.runway.data.request.map.MapFilterRequest
+import com.cmc12th.runway.data.response.map.MapInfoItem
 import com.cmc12th.runway.data.response.map.toNaverMapItem
 import com.cmc12th.runway.domain.repository.MapRepository
 import com.cmc12th.runway.domain.repository.StoreRepository
@@ -70,10 +71,11 @@ class MapViewModel @Inject constructor(
     private val _isBookmarked: MutableStateFlow<Boolean> = MutableStateFlow(false)
 
     /** 해당 값은 변할 시 카메라가 이동함 */
-    val _movingCameraPosition: MutableStateFlow<MovingCameraWrapper> =
+    private val _movingCameraPosition: MutableStateFlow<MovingCameraWrapper> =
         MutableStateFlow(MovingCameraWrapper.DEFAULT)
 
-    val _mapStatus: MutableStateFlow<MapStatus> = MutableStateFlow<MapStatus>(MapStatus.DEFAULT)
+    private val _mapStatus: MutableStateFlow<MapStatus> =
+        MutableStateFlow<MapStatus>(MapStatus.DEFAULT)
 
     private val _userPosition = MutableStateFlow(DEFAULT_LATLNG)
 
@@ -130,6 +132,22 @@ class MapViewModel @Inject constructor(
         }
     }
 
+    private var scrollTemp: BottomSheetContent = BottomSheetContent.DEFAULT
+
+    /** 단일 스크롤 정보(단일) 가져오기 */
+    fun mapInfo(storeId: Int) = viewModelScope.launch {
+        updateBottomSheetItem(BottomSheetContent.LOADING)
+        mapRepository.mapInfo(storeId).collect { apiState ->
+            apiState.onSuccess {
+                scrollTemp = _bottomsheetItem.value
+                updateBottomSheetItem(BottomSheetContent.SINGLE(it.result))
+            }
+            apiState.onError {
+                updateBottomSheetItem(BottomSheetContent.DEFAULT)
+            }
+        }
+    }
+
     fun mapFiltering(latLng: LatLng) = viewModelScope.launch {
         mapRepository.mapFiltering(
             MapFilterRequest(
@@ -147,20 +165,7 @@ class MapViewModel @Inject constructor(
         }
     }
 
-    /** 단일 맵 정보 가져오기 */
-    fun mapInfo(storeId: Int) = viewModelScope.launch {
-        updateBottomSheetItem(BottomSheetContent.LOADING)
-        mapRepository.mapInfo(storeId).collect { apiState ->
-            apiState.onSuccess {
-                updateBottomSheetItem(BottomSheetContent.SINGLE(it.result))
-            }
-            apiState.onError {
-                updateBottomSheetItem(BottomSheetContent.DEFAULT)
-            }
-        }
-    }
-
-    fun changeMapStatus() {
+    fun onMapClick() {
         when (_mapStatus.value) {
             MapStatus.DEFAULT -> {
                 resetSelectedMarkers()
@@ -179,10 +184,16 @@ class MapViewModel @Inject constructor(
             }
             MapStatus.MARKER_CLICKED -> {
                 _mapStatus.value = MapStatus.DEFAULT
+                // 단일 항목을 클릭했다가 돌아올 때 복구
+                updateBottomSheetItem(scrollTemp)
                 resetSelectedMarkers()
             }
             else -> {}
         }
+    }
+
+    fun updateMovingCamera(movingCameraPosition: MovingCameraWrapper) {
+        _movingCameraPosition.value = movingCameraPosition
     }
 
     fun updateMapStatus(mapStatus: MapStatus) {

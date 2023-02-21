@@ -34,14 +34,12 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.cmc12th.runway.ui.map.model.NaverItem
 import com.cmc12th.runway.R
 import com.cmc12th.runway.ui.components.RunwayIconButton
 import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.map.MapUiState
 import com.cmc12th.runway.ui.map.MapViewModel
-import com.cmc12th.runway.ui.map.MapViewModel.Companion.DEFAULT_LOCATION
 import com.cmc12th.runway.ui.map.components.BottomGradient
 import com.cmc12th.runway.ui.map.components.GpsIcon
 import com.cmc12th.runway.ui.map.components.RefreshIcon
@@ -142,18 +140,23 @@ private fun MapViewContents(
     val peekHeight = remember {
         mutableStateOf(60.dp)
     }
-//    val mapStatus = remember {
-//        mutableStateOf<MapStatus>(MapStatus.DEFAULT)
-//    }
+
     var topBarHeight by remember {
         mutableStateOf(0.dp)
     }
 
-    val changeZoomStatus: () -> Unit = {
-        mapViewModel.changeMapStatus()
+    val onMarkerClick: (NaverItem) -> Unit = {
+        mapViewModel.updateMapStatus(MapStatus.MARKER_CLICKED)
+        mapViewModel.updateMarker(it.copy(isClicked = !it.isClicked))
+        mapViewModel.mapInfo(it.storeId)
+        coroutineScope.launch {
+            bottomSheetScaffoldState.bottomSheetState.expand()
+        }
+    }
+
+    val onMapClick: () -> Unit = {
         when (uiState.mapStatus) {
             MapStatus.DEFAULT -> {
-                mapViewModel.resetSelectedMarkers()
             }
             MapStatus.ZOOM -> {
             }
@@ -164,7 +167,6 @@ private fun MapViewContents(
             MapStatus.SEARCH_ZOOM -> {
             }
             MapStatus.MARKER_CLICKED -> {
-                mapViewModel.resetSelectedMarkers()
                 mapViewModel.mapScrollInfo(appState.cameraPositionState.position.target)
                 coroutineScope.launch {
                     bottomSheetScaffoldState.bottomSheetState.collapse()
@@ -172,16 +174,18 @@ private fun MapViewContents(
             }
             else -> {}
         }
+        mapViewModel.onMapClick()
     }
 
     /** 맵 인터렉션 관리 */
-    ManageMapStatus(uiState.mapStatus,
+    ManageMapStatus(
+        uiState.mapStatus,
         systemUiController,
         onSearching,
         peekHeight,
         appState,
         bottomSheetScaffoldState,
-        viewModel = mapViewModel)
+    )
 
     val setMapStatusDefault: () -> Unit = {
         mapViewModel.updateMapStatus(MapStatus.DEFAULT)
@@ -218,13 +222,9 @@ private fun MapViewContents(
                 cameraPositionState = appState.cameraPositionState,
                 uiState = uiState,
                 mapViewModel = mapViewModel,
-                onMapClick = changeZoomStatus,
-                onMarkerClick = {
-                    mapViewModel.updateMapStatus(MapStatus.MARKER_CLICKED)
-                    coroutineScope.launch {
-                        bottomSheetScaffoldState.bottomSheetState.expand()
-                    }
-                }
+                onMapClick = onMapClick,
+                onMarkerClick = onMarkerClick
+
             )
 
             RefreshIcon(
@@ -319,7 +319,6 @@ private fun ManageMapStatus(
     peekHeight: MutableState<Dp>,
     appState: ApplicationState,
     bottomSheetScaffoldState: BottomSheetScaffoldState,
-    viewModel: MapViewModel,
 ) {
     LaunchedEffect(key1 = mapStatus) {
         Log.i("mapStatus", mapStatus.toString())
@@ -429,7 +428,7 @@ private fun RunwayNaverMap(
     mapViewModel: MapViewModel,
     uiState: MapUiState,
     cameraPositionState: CameraPositionState,
-    onMarkerClick: () -> Unit,
+    onMarkerClick: (NaverItem) -> Unit,
 ) {
 
     LaunchedEffect(key1 = cameraPositionState.position) {
@@ -448,7 +447,7 @@ private fun RunwayNaverMap(
                         LatLng(uiState.movingCameraPosition.location), 12.0
                     )
                 )
-                mapViewModel._movingCameraPosition.value = MovingCameraWrapper.DEFAULT
+                mapViewModel.updateMovingCamera(MovingCameraWrapper.DEFAULT)
             }
         }
     }
@@ -507,9 +506,7 @@ private fun RunwayNaverMap(
                     }
                     .clusterAnimation(false)
                     .markerClickListener {
-                        mapViewModel.updateMarker(it.copy(isClicked = !it.isClicked))
-                        mapViewModel.mapInfo(it.storeId)
-                        onMarkerClick()
+                        onMarkerClick(it)
                     }
                     .make()
             }
