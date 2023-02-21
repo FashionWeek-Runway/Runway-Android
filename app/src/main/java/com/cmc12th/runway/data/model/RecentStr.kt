@@ -6,6 +6,8 @@ import androidx.room.PrimaryKey
 @Entity
 data class RecentStr(
     val value: String,
+    val dateInfo: String,
+    val searchType: SearchType
 ) {
     @PrimaryKey(autoGenerate = true)
     var id = 0
