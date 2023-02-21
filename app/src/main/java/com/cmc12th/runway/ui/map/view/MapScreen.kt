@@ -8,6 +8,7 @@ package com.cmc12th.runway.ui.map.view
 import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.content.pm.PackageManager
+import android.util.Log
 import android.widget.TextView
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -15,14 +16,12 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.compose.animation.*
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalConfiguration
@@ -35,27 +34,23 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.cmc12th.runway.ui.map.model.NaverItem
 import com.cmc12th.runway.R
 import com.cmc12th.runway.ui.components.RunwayIconButton
-import com.cmc12th.runway.ui.components.WidthSpacer
 import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.map.MapUiState
 import com.cmc12th.runway.ui.map.MapViewModel
+import com.cmc12th.runway.ui.map.MapViewModel.Companion.DEFAULT_LOCATION
 import com.cmc12th.runway.ui.map.components.BottomGradient
 import com.cmc12th.runway.ui.map.components.GpsIcon
 import com.cmc12th.runway.ui.map.components.RefreshIcon
 import com.cmc12th.runway.ui.map.components.SearchBoxAndTagCategory
 import com.cmc12th.runway.ui.map.model.MapStatus
-import com.cmc12th.runway.ui.theme.Blue500
-import com.cmc12th.runway.ui.theme.Blue600
 import com.cmc12th.runway.ui.theme.Body1B
-import com.cmc12th.runway.ui.theme.Body2
 import com.cmc12th.runway.utils.Constants.BOTTOM_NAVIGATION_HEIGHT
+import com.google.accompanist.systemuicontroller.SystemUiController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.naver.maps.geometry.LatLng
-import com.naver.maps.map.CameraPosition
 import com.naver.maps.map.CameraUpdate
 import com.naver.maps.map.compose.*
 import com.naver.maps.map.overlay.Marker
@@ -127,6 +122,9 @@ private fun MapViewContents(
     mapViewModel: MapViewModel,
 ) {
     val uiState by mapViewModel.mapUiState.collectAsStateWithLifecycle()
+//    val cameraPositionState: CameraPositionState = rememberCameraPositionState {
+//        position = CameraPosition(LatLng(37.5437, 127.0659), 8.0)
+//    }
 
     val bottomSheetScaffoldState =
         rememberBottomSheetScaffoldState()
@@ -152,6 +150,7 @@ private fun MapViewContents(
     val changeZoomStatus: () -> Unit = {
         when (mapStatus.value) {
             MapStatus.DEFAULT -> {
+                mapViewModel.resetSelectedMarkers()
                 mapStatus.value = MapStatus.ZOOM
             }
             MapStatus.ZOOM -> {
@@ -165,56 +164,26 @@ private fun MapViewContents(
             MapStatus.SEARCH_ZOOM -> {
                 mapStatus.value = MapStatus.SHOP_SEARCH
             }
+            MapStatus.MARKER_CLICKED -> {
+                mapStatus.value = MapStatus.DEFAULT
+                mapViewModel.resetSelectedMarkers()
+                mapViewModel.mapScrollInfo(appState.cameraPositionState.position.target)
+                coroutineScope.launch {
+                    bottomSheetScaffoldState.bottomSheetState.collapse()
+                }
+            }
             else -> {}
         }
     }
 
-    LaunchedEffect(key1 = mapStatus.value) {
-        systemUiController.setNavigationBarColor(Color.White)
-        when (mapStatus.value) {
-            /** 기본 상태 */
-            MapStatus.DEFAULT -> {
-                onSearching.value = false
-                systemUiController.setSystemBarsColor(Color.White)
-                peekHeight.value = BOTTOM_NAVIGATION_HEIGHT + 100.dp
-                appState.changeBottomBarVisibility(true)
-            }
-            /** 한번 클릭했을 때 */
-            MapStatus.ZOOM -> {
-                onSearching.value = false
-                systemUiController.setSystemBarsColor(Color.Transparent)
-                systemUiController.setNavigationBarColor(Color.Transparent)
-                peekHeight.value = 0.dp
-                appState.changeBottomBarVisibility(false)
-                bottomSheetScaffoldState.bottomSheetState.collapse()
-            }
-            /** 검색 탭에 들어갔을 때 */
-            MapStatus.SEARCH_TAB -> {
-                onSearching.value = true
-                bottomSheetScaffoldState.bottomSheetState.collapse()
-                appState.changeBottomBarVisibility(false)
-                peekHeight.value = 0.dp
-            }
-            /** 지역 클릭 */
-            MapStatus.LOCATION_SEARCH -> {
-                onSearching.value = false
-                appState.changeBottomBarVisibility(false)
-                peekHeight.value = BOTTOM_NAVIGATION_HEIGHT + 100.dp
-            }
-            /** 매장 클릭 */
-            MapStatus.SHOP_SEARCH -> {
-                onSearching.value = false
-                appState.changeBottomBarVisibility(false)
-                peekHeight.value = BOTTOM_NAVIGATION_HEIGHT + 200.dp
-            }
-            MapStatus.SEARCH_ZOOM -> {
-                systemUiController.setNavigationBarColor(Color.Transparent)
-                peekHeight.value = 0.dp
-                appState.changeBottomBarVisibility(false)
-                bottomSheetScaffoldState.bottomSheetState.collapse()
-            }
-        }
-    }
+    /** 맵 인터렉션 관리 */
+    ManageMapStatus(mapStatus,
+        systemUiController,
+        onSearching,
+        peekHeight,
+        appState,
+        bottomSheetScaffoldState,
+        viewModel = mapViewModel)
 
     val setMapStatusDefault: () -> Unit = {
         mapStatus.value = MapStatus.DEFAULT
@@ -224,9 +193,7 @@ private fun MapViewContents(
     }
     val setMapStatusOnSearch = { mapStatus.value = MapStatus.SEARCH_TAB }
 
-    val cameraPositionState: CameraPositionState = rememberCameraPositionState {
-        position = CameraPosition(LatLng(37.5437, 127.0659), 8.0)
-    }
+
 
     BottomSheetScaffold(
         modifier = Modifier
@@ -237,7 +204,7 @@ private fun MapViewContents(
         sheetContent = {
             MapViewBottomSheetContent(
                 appState = appState,
-                contents = uiState.scrollItems,
+                contents = uiState.bottomSheetContents,
                 screenHeight = screenHeight - topBarHeight + BOTTOM_NAVIGATION_HEIGHT,
                 isFullScreen = mapStatus.value == MapStatus.LOCATION_SEARCH,
                 isExpanded = bottomSheetScaffoldState.bottomSheetState.targetValue == BottomSheetValue.Expanded,
@@ -252,17 +219,23 @@ private fun MapViewContents(
         ) {
             /** 네이버 지도 */
             RunwayNaverMap(
-                cameraPositionState = cameraPositionState,
+                cameraPositionState = appState.cameraPositionState,
                 uiState = uiState,
                 mapViewModel = mapViewModel,
-                onMapClick = changeZoomStatus
+                onMapClick = changeZoomStatus,
+                onMarkerClick = {
+                    mapStatus.value = MapStatus.MARKER_CLICKED
+                    coroutineScope.launch {
+                        bottomSheetScaffoldState.bottomSheetState.expand()
+                    }
+                }
             )
 
             RefreshIcon(
                 visibility = mapStatus.value == MapStatus.DEFAULT,
                 yOffset = topBarHeight + 12.dp,
                 onClick = {
-                    mapViewModel.mapFiltering(cameraPositionState.position.target)
+                    mapViewModel.mapFiltering(appState.cameraPositionState.position.target)
                 }
             )
 
@@ -271,7 +244,7 @@ private fun MapViewContents(
                 offsetY = with(localDensity) { bottomSheetScaffoldState.bottomSheetState.offset.value.toDp() }
             ) {
                 coroutineScope.launch {
-                    cameraPositionState.animate(
+                    appState.cameraPositionState.animate(
                         update = CameraUpdate.scrollAndZoomTo(
                             uiState.userPosition,
                             15.0
@@ -342,6 +315,74 @@ private fun MapViewContents(
     }
 }
 
+@Composable
+private fun ManageMapStatus(
+    mapStatus: MutableState<MapStatus>,
+    systemUiController: SystemUiController,
+    onSearching: MutableState<Boolean>,
+    peekHeight: MutableState<Dp>,
+    appState: ApplicationState,
+    bottomSheetScaffoldState: BottomSheetScaffoldState,
+    viewModel: MapViewModel,
+) {
+    LaunchedEffect(key1 = mapStatus.value) {
+        systemUiController.setNavigationBarColor(Color.White)
+        when (mapStatus.value) {
+            /** 기본 상태 */
+            MapStatus.DEFAULT -> {
+                onSearching.value = false
+                systemUiController.setSystemBarsColor(Color.White)
+                peekHeight.value = BOTTOM_NAVIGATION_HEIGHT + 100.dp
+                appState.changeBottomBarVisibility(true)
+            }
+            /** 한번 클릭했을 때 */
+            MapStatus.ZOOM -> {
+                onSearching.value = false
+                systemUiController.setSystemBarsColor(Color.Transparent)
+                systemUiController.setNavigationBarColor(Color.Transparent)
+                peekHeight.value = 0.dp
+                appState.changeBottomBarVisibility(false)
+                bottomSheetScaffoldState.bottomSheetState.collapse()
+            }
+            /** 검색 탭에 들어갔을 때 */
+            MapStatus.SEARCH_TAB -> {
+                onSearching.value = true
+                bottomSheetScaffoldState.bottomSheetState.collapse()
+                appState.changeBottomBarVisibility(false)
+                peekHeight.value = 0.dp
+            }
+            /** 지역 클릭 */
+            MapStatus.LOCATION_SEARCH -> {
+                onSearching.value = false
+                appState.changeBottomBarVisibility(false)
+                peekHeight.value = BOTTOM_NAVIGATION_HEIGHT + 100.dp
+            }
+            /** 매장 클릭 */
+            MapStatus.SHOP_SEARCH -> {
+                onSearching.value = false
+                appState.changeBottomBarVisibility(false)
+                peekHeight.value = BOTTOM_NAVIGATION_HEIGHT + 200.dp
+            }
+            MapStatus.SEARCH_ZOOM -> {
+                systemUiController.setNavigationBarColor(Color.Transparent)
+                peekHeight.value = 0.dp
+                appState.changeBottomBarVisibility(false)
+                bottomSheetScaffoldState.bottomSheetState.collapse()
+            }
+            /** 장소 검색에서 마커 클릭 */
+            MapStatus.LOCATION_SEARCH_MARKER_CLICKED -> {
+
+            }
+            /** 마커 클릭 */
+            MapStatus.MARKER_CLICKED -> {
+                bottomSheetScaffoldState.bottomSheetState.expand()
+                peekHeight.value = BOTTOM_NAVIGATION_HEIGHT + 100.dp
+                // TODO 바텀바 내용 변경
+            }
+        }
+    }
+}
+
 
 @Composable
 fun SearchResultBar(
@@ -391,18 +432,27 @@ private fun RunwayNaverMap(
     mapViewModel: MapViewModel,
     uiState: MapUiState,
     cameraPositionState: CameraPositionState,
+    onMarkerClick: () -> Unit,
 ) {
 
     LaunchedEffect(key1 = cameraPositionState.position) {
-        // Log.i("dlgocks1", cameraPositionState.position.target.toString())
+        Log.i("dlgocks1", cameraPositionState.position.target.toString())
     }
 
     LaunchedEffect(key1 = uiState.movingCameraPosition) {
+        if (uiState.movingCameraPosition == DEFAULT_LOCATION) return@LaunchedEffect
         cameraPositionState.animate(
             update = CameraUpdate.scrollAndZoomTo(
                 LatLng(uiState.movingCameraPosition), 12.0
             )
         )
+    }
+
+    val context = LocalContext.current
+    var clusterManager by remember { mutableStateOf<TedNaverClustering<NaverItem>?>(null) }
+
+    val resetSelectedMakrer: () -> Unit = {
+        mapViewModel.resetSelectedMarkers()
     }
 
     DisposableEffect(Unit) {
@@ -420,12 +470,9 @@ private fun RunwayNaverMap(
         },
         cameraPositionState = cameraPositionState,
         properties = MapProperties(
-            locationTrackingMode = LocationTrackingMode.Follow,
+            locationTrackingMode = LocationTrackingMode.None,
         ),
     ) {
-        val context = LocalContext.current
-        var clusterManager by remember { mutableStateOf<TedNaverClustering<NaverItem>?>(null) }
-
         DisposableMapEffect(uiState.markerItems) { map ->
             if (clusterManager == null) {
                 clusterManager = TedNaverClustering.with<NaverItem>(context, map)
@@ -456,6 +503,8 @@ private fun RunwayNaverMap(
                     .clusterAnimation(false)
                     .markerClickListener {
                         mapViewModel.updateMarker(it.copy(isClicked = !it.isClicked))
+                        mapViewModel.mapInfo(it.storeId)
+                        onMarkerClick()
                     }
                     .make()
             }

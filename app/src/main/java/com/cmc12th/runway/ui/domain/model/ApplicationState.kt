@@ -5,6 +5,10 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.navigation.NavHostController
+import com.naver.maps.geometry.LatLng
+import com.naver.maps.map.CameraPosition
+import com.naver.maps.map.compose.CameraPositionState
+import com.naver.maps.map.compose.rememberCameraPositionState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -14,6 +18,7 @@ class ApplicationState(
     val bottomBarState: MutableState<Boolean>,
     val navController: NavHostController,
     val scaffoldState: ScaffoldState,
+    val cameraPositionState: CameraPositionState,
     private val coroutineScope: CoroutineScope,
 ) {
 
