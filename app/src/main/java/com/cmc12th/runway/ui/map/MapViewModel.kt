@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.location.Location
 import android.os.Looper
+import android.util.Log
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
@@ -20,6 +21,7 @@ import com.cmc12th.runway.ui.domain.model.RunwayCategory
 import com.cmc12th.runway.ui.map.MapViewModel.Companion.DEFAULT_LATLNG
 import com.cmc12th.runway.ui.map.MapViewModel.Companion.DEFAULT_LOCATION
 import com.cmc12th.runway.ui.map.model.BottomSheetContent
+import com.cmc12th.runway.ui.map.model.MovingCameraWrapper
 import com.cmc12th.runway.ui.signin.model.CategoryTag
 import com.google.android.gms.location.*
 import com.naver.maps.geometry.LatLng
@@ -35,7 +37,7 @@ data class MapUiState(
     val categoryItems: List<CategoryTag> = emptyList(),
     val isBookmarked: Boolean = false,
     val userPosition: LatLng = DEFAULT_LATLNG,
-    val movingCameraPosition: Location = DEFAULT_LOCATION,
+    val movingCameraPosition: MovingCameraWrapper = MovingCameraWrapper.DEFAULT,
     val bottomSheetContents: BottomSheetContent = BottomSheetContent.DEFAULT,
 )
 
@@ -68,7 +70,8 @@ class MapViewModel @Inject constructor(
     private val _isBookmarked: MutableStateFlow<Boolean> = MutableStateFlow(false)
 
     /** 해당 값은 변할 시 카메라가 이동함 */
-    private val _movingCameraPosition = MutableStateFlow(DEFAULT_LOCATION)
+    val _movingCameraPosition: MutableStateFlow<MovingCameraWrapper> =
+        MutableStateFlow(MovingCameraWrapper.DEFAULT)
 
     private val _userPosition = MutableStateFlow(DEFAULT_LATLNG)
 
@@ -86,7 +89,7 @@ class MapViewModel @Inject constructor(
             categoryItems = resultArr[1] as List<CategoryTag>,
             isBookmarked = resultArr[2] as Boolean,
             userPosition = resultArr[3] as LatLng,
-            movingCameraPosition = resultArr[4] as Location,
+            movingCameraPosition = resultArr[4] as MovingCameraWrapper,
             bottomSheetContents = resultArr[5] as BottomSheetContent
         )
     }.stateIn(
@@ -203,18 +206,17 @@ class MapViewModel @Inject constructor(
         _testMarkers.value = naverItem
     }
 
-    var initialMarkerLoadFlag = true
-
     inner class CustomLocationCallback : LocationCallback() {
         override fun onLocationResult(locationResult: LocationResult) {
             super.onLocationResult(locationResult)
             locationResult.lastLocation?.let {
+                Log.i("dlgocks1", initialMarkerLoadFlag.toString())
                 // 초기 1회 진입할 때 마커 불러오기
                 if (initialMarkerLoadFlag) {
                     mapFiltering(LatLng(it.latitude, it.longitude))
                     mapScrollInfo(LatLng(it.latitude, it.longitude))
                     initialMarkerLoadFlag = false
-//                    _movingCameraPosition.value = it
+                    _movingCameraPosition.value = MovingCameraWrapper.MOVING(it)
                 }
                 _userPosition.value = LatLng(it.latitude, it.longitude)
             }
@@ -222,6 +224,8 @@ class MapViewModel @Inject constructor(
     }
 
     companion object {
+        var initialMarkerLoadFlag = true
+
         val DUMMY_NAVER_ITEM = listOf<NaverItem>(
 //            NaverItem(37.540791, 127.096306),
 //            NaverItem(37.550791, 127.076306),

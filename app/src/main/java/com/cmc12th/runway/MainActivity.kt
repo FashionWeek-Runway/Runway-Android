@@ -115,7 +115,7 @@ private fun RootNavhost(
                 loginGraph(appState)
                 passwordSearchGraph(appState)
                 signInGraph(appState)
-                detailGraph(appState)
+//                detailGraph(appState)
             }
             BottomBar(appState)
         }
@@ -124,7 +124,7 @@ private fun RootNavhost(
 
 private fun Modifier.customNavigationBarPaading(
     navBackStackEntry: NavBackStackEntry?,
-    appState: ApplicationState
+    appState: ApplicationState,
 ): Modifier {
     if (navBackStackEntry?.destination?.route == MAP_ROUTE) {
         return Modifier

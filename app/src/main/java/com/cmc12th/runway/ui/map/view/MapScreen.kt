@@ -46,6 +46,7 @@ import com.cmc12th.runway.ui.map.components.GpsIcon
 import com.cmc12th.runway.ui.map.components.RefreshIcon
 import com.cmc12th.runway.ui.map.components.SearchBoxAndTagCategory
 import com.cmc12th.runway.ui.map.model.MapStatus
+import com.cmc12th.runway.ui.map.model.MovingCameraWrapper
 import com.cmc12th.runway.ui.theme.Body1B
 import com.cmc12th.runway.utils.Constants.BOTTOM_NAVIGATION_HEIGHT
 import com.google.accompanist.systemuicontroller.SystemUiController
@@ -440,12 +441,20 @@ private fun RunwayNaverMap(
     }
 
     LaunchedEffect(key1 = uiState.movingCameraPosition) {
-        if (uiState.movingCameraPosition == DEFAULT_LOCATION) return@LaunchedEffect
-        cameraPositionState.animate(
-            update = CameraUpdate.scrollAndZoomTo(
-                LatLng(uiState.movingCameraPosition), 12.0
-            )
-        )
+        Log.i("dlgocks1", uiState.movingCameraPosition.toString())
+        when (uiState.movingCameraPosition) {
+            MovingCameraWrapper.DEFAULT -> {}
+            is MovingCameraWrapper.MOVING -> {
+                Log.i("dlgocks1", uiState.movingCameraPosition.location.toString())
+                Log.i("dlgocks1", "카메라 움직임")
+                cameraPositionState.animate(
+                    update = CameraUpdate.scrollAndZoomTo(
+                        LatLng(uiState.movingCameraPosition.location), 12.0
+                    )
+                )
+                mapViewModel._movingCameraPosition.value = MovingCameraWrapper.DEFAULT
+            }
+        }
     }
 
     val context = LocalContext.current
