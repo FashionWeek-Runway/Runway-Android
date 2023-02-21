@@ -28,6 +28,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
@@ -42,6 +43,7 @@ import com.cmc12th.runway.ui.detail.view.DetailScreen
 import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.map.MapUiState
 import com.cmc12th.runway.ui.map.MapViewModel
+import com.cmc12th.runway.ui.map.SearchUiState
 import com.cmc12th.runway.ui.map.components.BottomGradient
 import com.cmc12th.runway.ui.map.components.GpsIcon
 import com.cmc12th.runway.ui.map.components.RefreshIcon
@@ -123,7 +125,7 @@ private fun MapViewContents(
     appState: ApplicationState,
     mapViewModel: MapViewModel,
 ) {
-    val uiState by mapViewModel.mapUiState.collectAsStateWithLifecycle()
+    val mapUiState by mapViewModel.mapUiState.collectAsStateWithLifecycle()
 //    val cameraPositionState: CameraPositionState = rememberCameraPositionState {
 //        position = CameraPosition(LatLng(37.5437, 127.0659), 8.0)
 //    }
@@ -160,7 +162,7 @@ private fun MapViewContents(
     }
 
     val onMapClick: () -> Unit = {
-        when (uiState.mapStatus) {
+        when (mapUiState.mapStatus) {
             MapStatus.DEFAULT -> {
             }
             MapStatus.ZOOM -> {
@@ -184,7 +186,7 @@ private fun MapViewContents(
 
     /** 맵 인터렉션 관리 */
     ManageMapStatus(
-        uiState.mapStatus,
+        mapUiState.mapStatus,
         systemUiController,
         onSearching,
         peekHeight,
@@ -209,9 +211,9 @@ private fun MapViewContents(
         sheetContent = {
             MapViewBottomSheetContent(
                 appState = appState,
-                contents = uiState.bottomSheetContents,
+                contents = mapUiState.bottomSheetContents,
                 screenHeight = screenHeight - topBarHeight + BOTTOM_NAVIGATION_HEIGHT,
-                isFullScreen = uiState.mapStatus == MapStatus.LOCATION_SEARCH,
+                isFullScreen = mapUiState.mapStatus == MapStatus.LOCATION_SEARCH,
                 isExpanded = bottomSheetScaffoldState.bottomSheetState.targetValue == BottomSheetValue.Expanded,
                 setMapStatusDefault = setMapStatusDefault,
                 setMapStatusOnSearch = setMapStatusOnSearch
@@ -225,7 +227,7 @@ private fun MapViewContents(
             /** 네이버 지도 */
             RunwayNaverMap(
                 cameraPositionState = appState.cameraPositionState,
-                uiState = uiState,
+                uiState = mapUiState,
                 mapViewModel = mapViewModel,
                 onMapClick = onMapClick,
                 onMarkerClick = onMarkerClick,
@@ -233,7 +235,7 @@ private fun MapViewContents(
             )
 
             RefreshIcon(
-                visibility = uiState.mapStatus == MapStatus.DEFAULT,
+                visibility = mapUiState.mapStatus == MapStatus.DEFAULT,
                 yOffset = topBarHeight + 12.dp,
                 onClick = {
                     mapViewModel.mapFiltering(appState.cameraPositionState.position.target)
@@ -241,13 +243,13 @@ private fun MapViewContents(
             )
 
             GpsIcon(
-                visiblitiy = uiState.mapStatus.isGpsIconVisibility() || bottomSheetScaffoldState.bottomSheetState.targetValue == BottomSheetValue.Expanded,
+                visiblitiy = mapUiState.mapStatus.isGpsIconVisibility() || bottomSheetScaffoldState.bottomSheetState.targetValue == BottomSheetValue.Expanded,
                 offsetY = with(localDensity) { bottomSheetScaffoldState.bottomSheetState.offset.value.toDp() }
             ) {
                 coroutineScope.launch {
                     appState.cameraPositionState.animate(
                         update = CameraUpdate.scrollAndZoomTo(
-                            uiState.userPosition,
+                            mapUiState.userPosition,
                             15.0
                         ),
                     )
@@ -256,7 +258,7 @@ private fun MapViewContents(
 
             /** 검색 및 필터 */
             AnimatedVisibility(
-                visible = uiState.mapStatus == MapStatus.DEFAULT,
+                visible = mapUiState.mapStatus == MapStatus.DEFAULT,
                 enter = slideInVertically { -it },
                 exit = slideOutVertically { -it }
             ) {
@@ -270,8 +272,8 @@ private fun MapViewContents(
                         }
                 ) {
                     SearchBoxAndTagCategory(
-                        isBookmarked = uiState.isBookmarked,
-                        categoryItems = uiState.categoryItems,
+                        isBookmarked = mapUiState.isBookmarked,
+                        categoryItems = mapUiState.categoryItems,
                         updateCategoryTags = { mapViewModel.updateCategoryTags(it) },
                         updateIsBookmarked = { mapViewModel.updateIsBookmarked(it) },
                         onSearch = { mapViewModel.updateMapStatus(MapStatus.SEARCH_TAB) }
@@ -282,7 +284,7 @@ private fun MapViewContents(
 
             /** 검색 결과 탑바 */
             AnimatedVisibility(
-                visible = uiState.mapStatus.searchResultTopBarVisiblity(),
+                visible = mapUiState.mapStatus.searchResultTopBarVisiblity(),
                 enter = fadeIn(),
                 exit = fadeOut()
             ) {
@@ -429,16 +431,13 @@ private fun RunwayNaverMap(
 ) {
 
     LaunchedEffect(key1 = cameraPositionState.position) {
-        Log.i("dlgocks1", cameraPositionState.position.target.toString())
+        // Log.i("dlgocks1", cameraPositionState.position.target.toString())
     }
 
     LaunchedEffect(key1 = uiState.movingCameraPosition) {
-        Log.i("dlgocks1", uiState.movingCameraPosition.toString())
         when (uiState.movingCameraPosition) {
             MovingCameraWrapper.DEFAULT -> {}
             is MovingCameraWrapper.MOVING -> {
-                Log.i("dlgocks1", uiState.movingCameraPosition.location.toString())
-                Log.i("dlgocks1", "카메라 움직임")
                 cameraPositionState.animate(
                     update = CameraUpdate.scrollAndZoomTo(
                         LatLng(uiState.movingCameraPosition.location), 12.0
@@ -538,12 +537,14 @@ private fun RunwayNaverMap(
 //                mapViewModel.mapInfo()
             },
             onBackPrseed = {
+                mapViewModel.updateSearchText(TextFieldValue(""))
                 onSearching.value = false
                 mapViewModel.updateMapStatus(MapStatus.DEFAULT)
             },
             onLocationSearch = {
                 mapViewModel.updateMapStatus(MapStatus.LOCATION_SEARCH)
-            }
+            },
+            mapViewModel = mapViewModel
         )
     }
 }

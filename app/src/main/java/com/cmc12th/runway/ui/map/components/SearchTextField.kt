@@ -20,6 +20,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
@@ -68,6 +69,61 @@ fun SearchTextField(
                 if (leadingIcon != null) leadingIcon()
                 Box(Modifier.weight(1f)) {
                     if (value.isEmpty()) {
+                        Text(
+                            placeholderText,
+                            style = LocalTextStyle.current.copy(
+                                color = Color.Black.copy(alpha = 0.3f),
+                                fontSize = fontSize,
+                            ),
+                        )
+                    }
+                    innerTextField()
+                }
+                if (trailingIcon != null) trailingIcon()
+            }
+        },
+        visualTransformation = VisualTransformation.None,
+    )
+}
+
+
+@Composable
+fun SearchTextField(
+    value: TextFieldValue,
+    onvalueChanged: (TextFieldValue) -> Unit,
+    modifier: Modifier = Modifier,
+    leadingIcon: @Composable() (() -> Unit)? = null,
+    trailingIcon: @Composable() (() -> Unit)? = null,
+    placeholderText: String = "",
+    fontSize: TextUnit = 16.sp,
+    focusRequest: FocusRequester? = null,
+    keyboardOptions: KeyboardOptions? = null,
+    keyboardActions: KeyboardActions? = null,
+    onFocuseChange: (Boolean) -> Unit = {},
+) {
+    BasicTextField(
+        modifier = modifier
+            .onFocusChanged {
+                onFocuseChange(it.isFocused)
+            }
+            .focusRequester(focusRequest ?: FocusRequester()),
+        value = value,
+        onValueChange = {
+            if (it.text.length <= 25) onvalueChanged(it)
+        },
+        singleLine = true,
+        cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
+        textStyle = Body1M,
+        keyboardOptions = keyboardOptions ?: KeyboardOptions(),
+        keyboardActions = keyboardActions ?: KeyboardActions(),
+        decorationBox = { innerTextField ->
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(0.dp, 15.dp)
+            ) {
+                if (leadingIcon != null) leadingIcon()
+                Box(Modifier.weight(1f)) {
+                    if (value.text.isEmpty()) {
                         Text(
                             placeholderText,
                             style = LocalTextStyle.current.copy(

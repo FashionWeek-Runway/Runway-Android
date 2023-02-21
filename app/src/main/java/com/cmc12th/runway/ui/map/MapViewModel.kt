@@ -9,12 +9,16 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cmc12th.runway.ui.map.model.NaverItem
 import com.cmc12th.runway.data.request.map.MapFilterRequest
+import com.cmc12th.runway.data.request.map.MapSearchRequest
 import com.cmc12th.runway.data.response.map.MapInfoItem
+import com.cmc12th.runway.data.response.map.RegionSearch
+import com.cmc12th.runway.data.response.map.StoreSearch
 import com.cmc12th.runway.data.response.map.toNaverMapItem
 import com.cmc12th.runway.domain.repository.MapRepository
 import com.cmc12th.runway.domain.repository.StoreRepository
@@ -28,6 +32,8 @@ import com.google.android.gms.location.*
 import com.naver.maps.geometry.LatLng
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -43,10 +49,16 @@ data class MapUiState(
     val mapStatus: MapStatus = MapStatus.DEFAULT,
 )
 
+@Stable
+data class SearchUiState(
+    val searchText: TextFieldValue = TextFieldValue(""),
+    val regionSearchs: List<RegionSearch> = emptyList(),
+    val storeSearchs: List<StoreSearch> = emptyList(),
+)
+
 @HiltViewModel
 class MapViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val storeRepository: StoreRepository,
     private val mapRepository: MapRepository,
 ) : ViewModel(), LifecycleObserver {
 
@@ -107,6 +119,25 @@ class MapViewModel @Inject constructor(
         initialValue = MapUiState()
     )
 
+    private val _searchText = MutableStateFlow<TextFieldValue>(TextFieldValue(""))
+    private val _regionSearch = MutableStateFlow(listOf<RegionSearch>())
+    private val _storeSearch = MutableStateFlow(listOf<StoreSearch>())
+
+    val searchUiState = combine(
+        _searchText,
+        _regionSearch,
+        _storeSearch
+    ) { flowArr ->
+        SearchUiState(
+            searchText = flowArr[0] as TextFieldValue,
+            regionSearchs = flowArr[1] as List<RegionSearch>,
+            storeSearchs = flowArr[2] as List<StoreSearch>
+        )
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = SearchUiState()
+    )
 
     @SuppressLint("MissingPermission")
     fun addLocationListener() {
@@ -115,6 +146,30 @@ class MapViewModel @Inject constructor(
             locationCallback,
             Looper.getMainLooper(),
         )
+    }
+
+    private var searchJob: Job? = null
+
+    /** 검색 탭 검색 */
+    fun mapSearch() {
+        searchJob?.cancel()
+        searchJob = viewModelScope.launch {
+            delay(200) // 디바운싱 0.2초 적용
+            if (_searchText.value.text.isNotBlank()) {
+                mapRepository.mapSearch(
+                    MapSearchRequest(
+                        content = _searchText.value.text,
+                        latitude = _userPosition.value.latitude,
+                        longitude = _userPosition.value.longitude
+                    )
+                ).collect { apiState ->
+                    apiState.onSuccess {
+                        _storeSearch.value = it.result.storeSearchList
+                        _regionSearch.value = it.result.regionSearchList
+                    }
+                }
+            }
+        }
     }
 
     /** 맵 스크롤 정보(여러개) 가져오기 */
@@ -243,21 +298,19 @@ class MapViewModel @Inject constructor(
         _markerItems.value = temp
     }
 
+
     private fun updateBottomSheetItem(bottomsheetItem: BottomSheetContent) {
         _bottomsheetItem.value = bottomsheetItem
     }
 
-    private val _testMarkers = mutableStateOf(NaverItem.default())
-    val testMarkers: State<NaverItem> get() = _testMarkers
-    fun setTestMarker(naverItem: NaverItem) {
-        _testMarkers.value = naverItem
+    fun updateSearchText(searchText: TextFieldValue) {
+        _searchText.value = searchText
     }
 
     inner class CustomLocationCallback : LocationCallback() {
         override fun onLocationResult(locationResult: LocationResult) {
             super.onLocationResult(locationResult)
             locationResult.lastLocation?.let {
-                Log.i("dlgocks1", initialMarkerLoadFlag.toString())
                 // 초기 1회 진입할 때 마커 불러오기
                 if (initialMarkerLoadFlag) {
                     mapFiltering(LatLng(it.latitude, it.longitude))
