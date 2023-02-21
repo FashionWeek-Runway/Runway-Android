@@ -1,6 +1,7 @@
 package com.cmc12th.runway.ui.map.view
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -123,7 +124,9 @@ private fun TopSearchBar(
                 IconButton(
                     modifier = Modifier
                         .size(24.dp),
-                    onClick = { },
+                    onClick = {
+                        updateSearchText(TextFieldValue(""))
+                    },
                 ) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_close_fill_circle),
@@ -161,7 +164,7 @@ private fun EmptyResult(searchText: TextFieldValue) {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Icon(
+        Image(
             painter = painterResource(id = R.drawable.img_dummy),
             contentDescription = "IC_DUMMY",
             modifier = Modifier.size(100.dp)
