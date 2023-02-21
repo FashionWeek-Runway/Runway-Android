@@ -223,7 +223,8 @@ private fun MapViewContents(
                 uiState = uiState,
                 mapViewModel = mapViewModel,
                 onMapClick = onMapClick,
-                onMarkerClick = onMarkerClick
+                onMarkerClick = onMarkerClick,
+                onSearching = onSearching
 
             )
 
@@ -288,25 +289,7 @@ private fun MapViewContents(
                 )
             }
 
-            /** 검색 스크린을 위에 깔아버리기 */
-            AnimatedVisibility(
-                visible = onSearching.value,
-                enter = fadeIn(),
-                exit = fadeOut()
-            ) {
-                MapSearchScreen(
-                    onShopSearch = {
-                        mapViewModel.updateMapStatus(MapStatus.SHOP_SEARCH)
-                    },
-                    onBackPrseed = {
-                        onSearching.value = false
-                        mapViewModel.updateMapStatus(MapStatus.DEFAULT)
-                    },
-                    onLocationSearch = {
-                        mapViewModel.updateMapStatus(MapStatus.LOCATION_SEARCH)
-                    }
-                )
-            }
+
         }
     }
 }
@@ -367,13 +350,13 @@ private fun ManageMapStatus(
             }
             /** 장소 검색에서 마커 클릭 */
             MapStatus.LOCATION_SEARCH_MARKER_CLICKED -> {
-
+                bottomSheetScaffoldState.bottomSheetState.expand()
+                peekHeight.value = BOTTOM_NAVIGATION_HEIGHT + 100.dp
             }
             /** 마커 클릭 */
             MapStatus.MARKER_CLICKED -> {
                 bottomSheetScaffoldState.bottomSheetState.expand()
                 peekHeight.value = BOTTOM_NAVIGATION_HEIGHT + 100.dp
-                // TODO 바텀바 내용 변경
             }
         }
     }
@@ -429,6 +412,7 @@ private fun RunwayNaverMap(
     uiState: MapUiState,
     cameraPositionState: CameraPositionState,
     onMarkerClick: (NaverItem) -> Unit,
+    onSearching: MutableState<Boolean>,
 ) {
 
     LaunchedEffect(key1 = cameraPositionState.position) {
@@ -525,6 +509,27 @@ private fun RunwayNaverMap(
             width = 24.dp,
             onClick = {
                 true
+            }
+        )
+    }
+
+    /** 검색 스크린을 위에 깔아버리기 */
+    AnimatedVisibility(
+        visible = onSearching.value,
+        enter = fadeIn(),
+        exit = fadeOut()
+    ) {
+        MapSearchScreen(
+            onShopSearch = {
+                mapViewModel.updateMapStatus(MapStatus.SHOP_SEARCH)
+//                mapViewModel.mapInfo()
+            },
+            onBackPrseed = {
+                onSearching.value = false
+                mapViewModel.updateMapStatus(MapStatus.DEFAULT)
+            },
+            onLocationSearch = {
+                mapViewModel.updateMapStatus(MapStatus.LOCATION_SEARCH)
             }
         )
     }
