@@ -34,6 +34,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.cmc12th.runway.ui.map.model.NaverItem
 import com.cmc12th.runway.R
 import com.cmc12th.runway.ui.components.RunwayIconButton
@@ -141,32 +142,28 @@ private fun MapViewContents(
     val peekHeight = remember {
         mutableStateOf(60.dp)
     }
-    val mapStatus = remember {
-        mutableStateOf<MapStatus>(MapStatus.DEFAULT)
-    }
+//    val mapStatus = remember {
+//        mutableStateOf<MapStatus>(MapStatus.DEFAULT)
+//    }
     var topBarHeight by remember {
         mutableStateOf(0.dp)
     }
 
     val changeZoomStatus: () -> Unit = {
-        when (mapStatus.value) {
+        mapViewModel.changeMapStatus()
+        when (uiState.mapStatus) {
             MapStatus.DEFAULT -> {
                 mapViewModel.resetSelectedMarkers()
-                mapStatus.value = MapStatus.ZOOM
             }
             MapStatus.ZOOM -> {
-                mapStatus.value = MapStatus.DEFAULT
             }
             MapStatus.LOCATION_SEARCH -> {
             }
             MapStatus.SHOP_SEARCH -> {
-                mapStatus.value = MapStatus.SEARCH_ZOOM
             }
             MapStatus.SEARCH_ZOOM -> {
-                mapStatus.value = MapStatus.SHOP_SEARCH
             }
             MapStatus.MARKER_CLICKED -> {
-                mapStatus.value = MapStatus.DEFAULT
                 mapViewModel.resetSelectedMarkers()
                 mapViewModel.mapScrollInfo(appState.cameraPositionState.position.target)
                 coroutineScope.launch {
@@ -178,7 +175,7 @@ private fun MapViewContents(
     }
 
     /** 맵 인터렉션 관리 */
-    ManageMapStatus(mapStatus,
+    ManageMapStatus(uiState.mapStatus,
         systemUiController,
         onSearching,
         peekHeight,
@@ -187,14 +184,12 @@ private fun MapViewContents(
         viewModel = mapViewModel)
 
     val setMapStatusDefault: () -> Unit = {
-        mapStatus.value = MapStatus.DEFAULT
+        mapViewModel.updateMapStatus(MapStatus.DEFAULT)
         coroutineScope.launch {
             bottomSheetScaffoldState.bottomSheetState.collapse()
         }
     }
-    val setMapStatusOnSearch = { mapStatus.value = MapStatus.SEARCH_TAB }
-
-
+    val setMapStatusOnSearch = { mapViewModel.updateMapStatus(MapStatus.SEARCH_TAB) }
 
     BottomSheetScaffold(
         modifier = Modifier
@@ -207,7 +202,7 @@ private fun MapViewContents(
                 appState = appState,
                 contents = uiState.bottomSheetContents,
                 screenHeight = screenHeight - topBarHeight + BOTTOM_NAVIGATION_HEIGHT,
-                isFullScreen = mapStatus.value == MapStatus.LOCATION_SEARCH,
+                isFullScreen = uiState.mapStatus == MapStatus.LOCATION_SEARCH,
                 isExpanded = bottomSheetScaffoldState.bottomSheetState.targetValue == BottomSheetValue.Expanded,
                 setMapStatusDefault = setMapStatusDefault,
                 setMapStatusOnSearch = setMapStatusOnSearch
@@ -225,7 +220,7 @@ private fun MapViewContents(
                 mapViewModel = mapViewModel,
                 onMapClick = changeZoomStatus,
                 onMarkerClick = {
-                    mapStatus.value = MapStatus.MARKER_CLICKED
+                    mapViewModel.updateMapStatus(MapStatus.MARKER_CLICKED)
                     coroutineScope.launch {
                         bottomSheetScaffoldState.bottomSheetState.expand()
                     }
@@ -233,7 +228,7 @@ private fun MapViewContents(
             )
 
             RefreshIcon(
-                visibility = mapStatus.value == MapStatus.DEFAULT,
+                visibility = uiState.mapStatus == MapStatus.DEFAULT,
                 yOffset = topBarHeight + 12.dp,
                 onClick = {
                     mapViewModel.mapFiltering(appState.cameraPositionState.position.target)
@@ -241,7 +236,7 @@ private fun MapViewContents(
             )
 
             GpsIcon(
-                visiblitiy = mapStatus.value.isGpsIconVisibility() || bottomSheetScaffoldState.bottomSheetState.targetValue == BottomSheetValue.Expanded,
+                visiblitiy = uiState.mapStatus.isGpsIconVisibility() || bottomSheetScaffoldState.bottomSheetState.targetValue == BottomSheetValue.Expanded,
                 offsetY = with(localDensity) { bottomSheetScaffoldState.bottomSheetState.offset.value.toDp() }
             ) {
                 coroutineScope.launch {
@@ -256,7 +251,7 @@ private fun MapViewContents(
 
             /** 검색 및 필터 */
             AnimatedVisibility(
-                visible = mapStatus.value == MapStatus.DEFAULT,
+                visible = uiState.mapStatus == MapStatus.DEFAULT,
                 enter = slideInVertically { -it },
                 exit = slideOutVertically { -it }
             ) {
@@ -274,7 +269,7 @@ private fun MapViewContents(
                         categoryItems = uiState.categoryItems,
                         updateCategoryTags = { mapViewModel.updateCategoryTags(it) },
                         updateIsBookmarked = { mapViewModel.updateIsBookmarked(it) },
-                        onSearch = { mapStatus.value = MapStatus.SEARCH_TAB }
+                        onSearch = { mapViewModel.updateMapStatus(MapStatus.SEARCH_TAB) }
                     )
                     BottomGradient(20.dp)
                 }
@@ -282,7 +277,7 @@ private fun MapViewContents(
 
             /** 검색 결과 탑바 */
             AnimatedVisibility(
-                visible = mapStatus.value.searchResultTopBarVisiblity(),
+                visible = uiState.mapStatus.searchResultTopBarVisiblity(),
                 enter = fadeIn(),
                 exit = fadeOut()
             ) {
@@ -301,14 +296,14 @@ private fun MapViewContents(
             ) {
                 MapSearchScreen(
                     onShopSearch = {
-                        mapStatus.value = MapStatus.SHOP_SEARCH
+                        mapViewModel.updateMapStatus(MapStatus.SHOP_SEARCH)
                     },
                     onBackPrseed = {
                         onSearching.value = false
-                        mapStatus.value = MapStatus.DEFAULT
+                        mapViewModel.updateMapStatus(MapStatus.DEFAULT)
                     },
                     onLocationSearch = {
-                        mapStatus.value = MapStatus.LOCATION_SEARCH
+                        mapViewModel.updateMapStatus(MapStatus.LOCATION_SEARCH)
                     }
                 )
             }
@@ -318,7 +313,7 @@ private fun MapViewContents(
 
 @Composable
 private fun ManageMapStatus(
-    mapStatus: MutableState<MapStatus>,
+    mapStatus: MapStatus,
     systemUiController: SystemUiController,
     onSearching: MutableState<Boolean>,
     peekHeight: MutableState<Dp>,
@@ -326,9 +321,10 @@ private fun ManageMapStatus(
     bottomSheetScaffoldState: BottomSheetScaffoldState,
     viewModel: MapViewModel,
 ) {
-    LaunchedEffect(key1 = mapStatus.value) {
+    LaunchedEffect(key1 = mapStatus) {
+        Log.i("mapStatus", mapStatus.toString())
         systemUiController.setNavigationBarColor(Color.White)
-        when (mapStatus.value) {
+        when (mapStatus) {
             /** 기본 상태 */
             MapStatus.DEFAULT -> {
                 onSearching.value = false

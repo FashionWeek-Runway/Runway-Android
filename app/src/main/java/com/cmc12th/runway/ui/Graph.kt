@@ -49,6 +49,27 @@ fun NavGraphBuilder.mainGraph(
         composable(Screen.Home.route) { HomeScreen() }
         composable(Screen.Map.route) { MapScreen(appState) }
         composable(Screen.Mypage.route) { MypageScreen(appState) }
+        navigation(startDestination = DETAIL_ROUTE, route = DETAIL_GRAPH) {
+            composable(route = "$DETAIL_ROUTE?idx={idx}",
+                arguments = listOf(
+                    navArgument("idx") {
+                        type = NavType.IntType
+                    }
+                )
+            ) { entry ->
+                val idx = entry.arguments?.getInt("idx") ?: 0
+                DetailScreen(appState, idx)
+            }
+            composable(PHOTO_REVIEW_ROUTE) {
+                PhotoReviewScreen(appState)
+            }
+            composable(PHOTO_REVIEW_RESULT_ROUTE) {
+                val userObject =
+                    appState.navController.previousBackStackEntry?.arguments?.getParcelable<Bitmap>(
+                        "bitmap")
+                PhotoReviewResultScreen(appState, userObject!!)
+            }
+        }
     }
 }
 

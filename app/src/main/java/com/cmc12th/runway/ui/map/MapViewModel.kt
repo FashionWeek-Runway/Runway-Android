@@ -13,14 +13,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cmc12th.runway.ui.map.model.NaverItem
 import com.cmc12th.runway.data.request.map.MapFilterRequest
-import com.cmc12th.runway.data.response.map.MapInfoItem
 import com.cmc12th.runway.data.response.map.toNaverMapItem
 import com.cmc12th.runway.domain.repository.MapRepository
 import com.cmc12th.runway.domain.repository.StoreRepository
 import com.cmc12th.runway.ui.domain.model.RunwayCategory
 import com.cmc12th.runway.ui.map.MapViewModel.Companion.DEFAULT_LATLNG
-import com.cmc12th.runway.ui.map.MapViewModel.Companion.DEFAULT_LOCATION
 import com.cmc12th.runway.ui.map.model.BottomSheetContent
+import com.cmc12th.runway.ui.map.model.MapStatus
 import com.cmc12th.runway.ui.map.model.MovingCameraWrapper
 import com.cmc12th.runway.ui.signin.model.CategoryTag
 import com.google.android.gms.location.*
@@ -39,6 +38,7 @@ data class MapUiState(
     val userPosition: LatLng = DEFAULT_LATLNG,
     val movingCameraPosition: MovingCameraWrapper = MovingCameraWrapper.DEFAULT,
     val bottomSheetContents: BottomSheetContent = BottomSheetContent.DEFAULT,
+    val mapStatus: MapStatus = MapStatus.DEFAULT,
 )
 
 @HiltViewModel
@@ -73,6 +73,8 @@ class MapViewModel @Inject constructor(
     val _movingCameraPosition: MutableStateFlow<MovingCameraWrapper> =
         MutableStateFlow(MovingCameraWrapper.DEFAULT)
 
+    val _mapStatus: MutableStateFlow<MapStatus> = MutableStateFlow<MapStatus>(MapStatus.DEFAULT)
+
     private val _userPosition = MutableStateFlow(DEFAULT_LATLNG)
 
     val mapUiState = combine(
@@ -82,6 +84,7 @@ class MapViewModel @Inject constructor(
         _userPosition,
         _movingCameraPosition,
         _bottomsheetItem,
+        _mapStatus,
     ) { resultArr ->
         @Suppress("UNCHECKED_CAST")
         MapUiState(
@@ -90,7 +93,8 @@ class MapViewModel @Inject constructor(
             isBookmarked = resultArr[2] as Boolean,
             userPosition = resultArr[3] as LatLng,
             movingCameraPosition = resultArr[4] as MovingCameraWrapper,
-            bottomSheetContents = resultArr[5] as BottomSheetContent
+            bottomSheetContents = resultArr[5] as BottomSheetContent,
+            mapStatus = resultArr[6] as MapStatus
         )
     }.stateIn(
         scope = viewModelScope,
@@ -154,6 +158,35 @@ class MapViewModel @Inject constructor(
                 updateBottomSheetItem(BottomSheetContent.DEFAULT)
             }
         }
+    }
+
+    fun changeMapStatus() {
+        when (_mapStatus.value) {
+            MapStatus.DEFAULT -> {
+                resetSelectedMarkers()
+                _mapStatus.value = MapStatus.ZOOM
+            }
+            MapStatus.ZOOM -> {
+                _mapStatus.value = MapStatus.DEFAULT
+            }
+            MapStatus.LOCATION_SEARCH -> {
+            }
+            MapStatus.SHOP_SEARCH -> {
+                _mapStatus.value = MapStatus.SEARCH_ZOOM
+            }
+            MapStatus.SEARCH_ZOOM -> {
+                _mapStatus.value = MapStatus.SHOP_SEARCH
+            }
+            MapStatus.MARKER_CLICKED -> {
+                _mapStatus.value = MapStatus.DEFAULT
+                resetSelectedMarkers()
+            }
+            else -> {}
+        }
+    }
+
+    fun updateMapStatus(mapStatus: MapStatus) {
+        _mapStatus.value = mapStatus
     }
 
     fun removeLocationListener() {
