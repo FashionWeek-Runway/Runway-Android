@@ -29,10 +29,8 @@ import com.cmc12th.runway.R
 import com.cmc12th.runway.data.model.RecentStr
 import com.cmc12th.runway.data.response.map.RegionSearch
 import com.cmc12th.runway.data.response.map.StoreSearch
-import com.cmc12th.runway.ui.components.BackIcon
-import com.cmc12th.runway.ui.components.HeightSpacer
-import com.cmc12th.runway.ui.components.WidthSpacer
-import com.cmc12th.runway.ui.components.WidthSpacerLine
+import com.cmc12th.runway.ui.components.*
+import com.cmc12th.runway.ui.domain.model.DialogButtonContent
 import com.cmc12th.runway.ui.map.MapViewModel
 import com.cmc12th.runway.ui.map.components.SearchTextField
 import com.cmc12th.runway.ui.theme.*
@@ -81,6 +79,9 @@ fun MapSearchScreen(
                     recentSearchs = searchUiState.recentSearchs,
                     removeRecentStr = {
                         mapViewModel.removeRecentStr(it)
+                    },
+                    removeAllRecentStr = {
+                        mapViewModel.removeAllRecentStr()
                     }
                 )
             }
@@ -344,8 +345,28 @@ private fun ResultItems(
 }
 
 @Composable
-private fun RecentSearches(recentSearchs: List<RecentStr>, removeRecentStr: (Int) -> Unit) {
+private fun RecentSearches(
+    recentSearchs: List<RecentStr>,
+    removeRecentStr: (Int) -> Unit,
+    removeAllRecentStr: () -> Unit,
+) {
+    val dialogVisibility = remember {
+        mutableStateOf(false)
+    }
 
+    if (dialogVisibility.value) {
+        RunwayHorizontalDialog(
+            title = "검색 내역을 모두 지우시겠어요?",
+            descrption = "최근 검색어를 삭제하면\n다시 되돌릴 수 없습니다.",
+            positiveButton = DialogButtonContent(title = "삭제", onClick = {
+                removeAllRecentStr()
+            }),
+            negativeButton = DialogButtonContent(title = "아니요", onClick = {
+                dialogVisibility.value = false
+            }),
+            onDismissRequest = { dialogVisibility.value = false }
+        )
+    }
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -357,7 +378,11 @@ private fun RecentSearches(recentSearchs: List<RecentStr>, removeRecentStr: (Int
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(text = "최근 검색", style = Body2M, color = Gray600)
-            Text(text = "전체 삭제", style = Button2, color = Gray700)
+            Text(text = "전체 삭제", style = Button2, color = Gray700,
+                modifier = Modifier.clickable {
+
+                    dialogVisibility.value = true
+                })
         }
         LazyColumn(
             modifier = Modifier.fillMaxWidth(),

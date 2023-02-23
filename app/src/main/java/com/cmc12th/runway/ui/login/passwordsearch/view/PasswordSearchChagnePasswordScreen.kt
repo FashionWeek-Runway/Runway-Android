@@ -13,7 +13,6 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -29,7 +28,6 @@ import com.cmc12th.runway.ui.signin.view.CheckPassword
 import com.cmc12th.runway.ui.signin.view.InputPassword
 import com.cmc12th.runway.ui.theme.*
 import com.cmc12th.runway.utils.Constants.LOGIN_ID_PW_ROUTE
-import kotlinx.coroutines.Job
 
 @Composable
 fun PasswordSearchChagnePasswordScreen(
@@ -135,7 +133,7 @@ private fun CompleteDialog(
     appState: ApplicationState,
 ) {
     if (completeDialogVisiblitiy) {
-        RunwayDialog(
+        RunwayVerticalDialog(
             properties = DialogProperties(dismissOnClickOutside = false),
             onDismissRequest = {
                 appState.navigate(LOGIN_ID_PW_ROUTE)

@@ -19,15 +19,14 @@ import com.cmc12th.runway.ui.domain.model.DialogButtonContent
 import com.cmc12th.runway.ui.theme.Body2
 import com.cmc12th.runway.ui.theme.Button1
 import com.cmc12th.runway.ui.theme.HeadLine4
-import com.cmc12th.runway.ui.theme.Primary
 
 
 /**
  * @param title 타이틀이 필요 없다면 공백으로 보낼 것
- * positiveButton이 확인 버튼(파란색 배경)
+ * positiveButton이 확인 버튼
  */
 @Composable
-fun RunwayDialog(
+fun RunwayVerticalDialog(
     properties: DialogProperties = DialogProperties(),
     onDismissRequest: () -> Unit,
     title: String = "",

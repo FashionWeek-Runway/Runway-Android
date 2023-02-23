@@ -23,7 +23,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
@@ -235,7 +234,7 @@ private fun AgeDialog(
     navigatePopStack: () -> Unit,
 ) {
     if (initialDialogVisiblity) {
-        RunwayDialog(
+        RunwayVerticalDialog(
             properties = DialogProperties(dismissOnClickOutside = false),
             onDismissRequest = closeInitialDialog,
             title = "만 14세 이상인가요?",
@@ -251,7 +250,7 @@ private fun AgeDialog(
         )
     }
     if (beforeFourteenYearsDialogVisiblity) {
-        RunwayDialog(
+        RunwayVerticalDialog(
             onDismissRequest = closeInitialDialog,
             title = "만 14세 이상 사용 가능합니다.",
             descrption = "죄송합니다. RUNWAY는 만 14세 이상 사용가능합니다. 우리 나중에 다시 만나요:)",
