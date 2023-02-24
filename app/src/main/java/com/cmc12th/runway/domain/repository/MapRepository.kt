@@ -5,6 +5,7 @@ import com.cmc12th.runway.data.request.map.MapSearchRequest
 import com.cmc12th.runway.data.response.map.MapFilterItem
 import com.cmc12th.runway.data.response.map.MapInfoItem
 import com.cmc12th.runway.data.response.map.MapSearchResponseBody
+import com.cmc12th.runway.data.response.map.StoreInfoWithMarkerData
 import com.cmc12th.runway.utils.ApiWrapper
 import com.cmc12th.runway.utils.PagingApiWrapper
 import kotlinx.coroutines.flow.Flow
@@ -21,5 +22,7 @@ interface MapRepository {
             Flow<ApiWrapper<MapSearchResponseBody>>
 
     fun mapInfo(@Path("storeId") storeId: Int): Flow<ApiWrapper<MapInfoItem>>
+
+    fun storeSearch(@Path("storeId") storeId: Int): Flow<ApiWrapper<StoreInfoWithMarkerData>>
 
 }

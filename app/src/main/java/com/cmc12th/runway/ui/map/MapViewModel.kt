@@ -166,6 +166,7 @@ class MapViewModel @Inject constructor(
 
     private var searchJob: Job? = null
 
+
     /** 검색 탭 검색 */
     fun mapSearch() {
         searchJob?.cancel()
@@ -207,8 +208,9 @@ class MapViewModel @Inject constructor(
     }
 
     private var scrollTemp: BottomSheetContent = BottomSheetContent.DEFAULT
+    private var markerItemsTemp = emptyList<NaverItem>()
 
-    /** 단일 스크롤 정보(단일) 가져오기 */
+    /** 마커 클릭했을 때 하단 정보 가져오기 */
     fun mapInfo(storeId: Int) = viewModelScope.launch {
         updateBottomSheetItem(BottomSheetContent.LOADING)
         mapRepository.mapInfo(storeId).collect { apiState ->
@@ -222,6 +224,7 @@ class MapViewModel @Inject constructor(
         }
     }
 
+    /** 맵에 보이는 마커들 정보 가져오기 */
     fun mapFiltering(latLng: LatLng) = viewModelScope.launch {
         mapRepository.mapFiltering(
             MapFilterRequest(
@@ -237,6 +240,21 @@ class MapViewModel @Inject constructor(
 
             }
         }
+    }
+
+    /** 스토어 아이디 검색 */
+    fun searchStoreId(storeId: Int) = viewModelScope.launch {
+        mapRepository.storeSearch(storeId).collect { apiState ->
+            apiState.onSuccess {
+                updateBottomSheetItem(BottomSheetContent.SINGLE(it.result.storeInfo.toMapInfoItem()))
+                updateMarkerItems(it.result.mapMarker.toMarkerItem())
+            }
+        }
+    }
+
+    private fun saveTempDatas() {
+        scrollTemp = _bottomsheetItem.value
+        markerItemsTemp = _markerItems.value
     }
 
     fun onMapClick() {
@@ -266,7 +284,6 @@ class MapViewModel @Inject constructor(
         }
     }
 
-
     fun addRecentStr(searchStr: String, searchType: SearchType) = viewModelScope.launch {
         val dateInfo = LocalDateTime.now()
             .format(DateTimeFormatter.ofPattern("MM.dd"))
@@ -276,9 +293,6 @@ class MapViewModel @Inject constructor(
         if (dbItem == null) {
             searchRepository.addSearchStr(RecentStr(searchStr, dateInfo, searchType))
         }
-//        recentStrDuplicateCheck(searchStr)?.let {
-//            searchRepository.addSearchStr(RecentStr(searchStr, dateInfo))
-//        }
     }
 
     fun removeRecentStr(id: Int) = viewModelScope.launch {
@@ -291,10 +305,6 @@ class MapViewModel @Inject constructor(
 
     fun removeAllRecentStr() = viewModelScope.launch {
         searchRepository.removeAllSearchStr()
-    }
-
-    private fun recentStrDuplicateCheck(searchStr: String) = _recentSearchs.value.find {
-        it.value == searchStr
     }
 
     fun updateMovingCamera(movingCameraPosition: MovingCameraWrapper) {

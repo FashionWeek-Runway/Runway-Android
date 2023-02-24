@@ -81,5 +81,7 @@ class RunwayClient @Inject constructor(
     suspend fun mapInfo(storeId: Int) =
         mapService.mapInfo(storeId)
 
+    suspend fun storeSearch(storeId: Int) =
+        mapService.mapSearchInfo(storeId)
 
 }

@@ -534,7 +534,7 @@ private fun RunwayNaverMap(
         MapSearchScreen(
             onShopSearch = {
                 mapViewModel.updateMapStatus(MapStatus.SHOP_SEARCH)
-//                mapViewModel.mapInfo()
+                mapViewModel.searchStoreId(it.storeId)
                 mapViewModel.addRecentStr(
                     it.storeName,
                     SearchType(it.storeId, SearchType.STORE_TYPE)

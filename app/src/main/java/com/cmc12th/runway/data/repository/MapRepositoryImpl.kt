@@ -5,6 +5,7 @@ import com.cmc12th.runway.data.request.map.MapSearchRequest
 import com.cmc12th.runway.data.response.map.MapFilterItem
 import com.cmc12th.runway.data.response.map.MapInfoItem
 import com.cmc12th.runway.data.response.map.MapSearchResponseBody
+import com.cmc12th.runway.data.response.map.StoreInfoWithMarkerData
 import com.cmc12th.runway.domain.repository.MapRepository
 import com.cmc12th.runway.network.RunwayClient
 import com.cmc12th.runway.network.model.safeFlow
@@ -37,5 +38,9 @@ class MapRepositoryImpl @Inject constructor(
 
     override fun mapInfo(storeId: Int): Flow<ApiWrapper<MapInfoItem>> = safeFlow {
         runwayClient.mapInfo(storeId)
+    }
+
+    override fun storeSearch(storeId: Int): Flow<ApiWrapper<StoreInfoWithMarkerData>> = safeFlow {
+        runwayClient.storeSearch(storeId)
     }
 }
