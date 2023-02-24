@@ -199,7 +199,8 @@ class MapViewModel @Inject constructor(
             )
         ).collect { apiState ->
             apiState.onSuccess {
-                _bottomsheetItem.value = BottomSheetContent.MULTI(it.pagingMetadata.contents)
+                _bottomsheetItem.value =
+                    BottomSheetContent.MULTI(contents = it.pagingMetadata.contents)
             }
             apiState.onError {
 
@@ -217,7 +218,7 @@ class MapViewModel @Inject constructor(
             apiState.onSuccess {
                 // scrollTemp = _bottomsheetItem.value
                 saveTempDatas()
-                updateBottomSheetItem(BottomSheetContent.SINGLE(it.result))
+                updateBottomSheetItem(BottomSheetContent.SINGLE(contents = it.result))
             }
             apiState.onError {
                 updateBottomSheetItem(BottomSheetContent.DEFAULT)
@@ -244,10 +245,15 @@ class MapViewModel @Inject constructor(
     }
 
     /** 스토어 아이디 검색 */
-    fun searchStoreId(storeId: Int) = viewModelScope.launch {
+    fun searchStoreId(storeName: String, storeId: Int) = viewModelScope.launch {
         mapRepository.storeSearch(storeId).collect { apiState ->
             apiState.onSuccess {
-                updateBottomSheetItem(BottomSheetContent.SINGLE(it.result.storeInfo.toMapInfoItem()))
+                updateBottomSheetItem(
+                    BottomSheetContent.SINGLE(
+                        storeName,
+                        it.result.storeInfo.toMapInfoItem()
+                    )
+                )
                 updateMovingCamera(
                     MovingCameraWrapper.MOVING(
                         Location("SelectedMarker").apply {

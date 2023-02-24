@@ -48,6 +48,7 @@ import com.cmc12th.runway.ui.map.components.BottomGradient
 import com.cmc12th.runway.ui.map.components.GpsIcon
 import com.cmc12th.runway.ui.map.components.RefreshIcon
 import com.cmc12th.runway.ui.map.components.SearchBoxAndTagCategory
+import com.cmc12th.runway.ui.map.model.BottomSheetContent
 import com.cmc12th.runway.ui.map.model.MapStatus
 import com.cmc12th.runway.ui.map.model.MovingCameraWrapper
 import com.cmc12th.runway.ui.theme.Body1B
@@ -59,7 +60,6 @@ import com.naver.maps.map.CameraUpdate
 import com.naver.maps.map.compose.*
 import com.naver.maps.map.overlay.Marker
 import com.naver.maps.map.overlay.OverlayImage
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import ted.gun0912.clustering.naver.TedNaverClustering
 
@@ -307,13 +307,13 @@ private fun MapViewContents(
                 SearchResultBar(
                     modifier = Modifier.padding(20.dp, 16.dp),
                     setMapStatusDefault = setMapStatusDefault,
-                    setMapStatusOnSearch = setMapStatusOnSearch
+                    setMapStatusOnSearch = setMapStatusOnSearch,
+                    bottomSheetContent = mapUiState.bottomSheetContents
                 )
             }
 
         }
     }
-
 
     if (mapViewModel.onDetail.value) {
         DetailScreen(appState = appState,
@@ -403,6 +403,7 @@ fun SearchResultBar(
     modifier: Modifier = Modifier,
     setMapStatusDefault: () -> Unit,
     setMapStatusOnSearch: () -> Unit,
+    bottomSheetContent: BottomSheetContent,
 ) {
     Box(
         modifier = Modifier
@@ -418,7 +419,11 @@ fun SearchResultBar(
                 setMapStatusOnSearch()
             }
             Text(
-                text = "매장이나 장소 이름명",
+                text = when (bottomSheetContent) {
+                    is BottomSheetContent.MULTI -> bottomSheetContent.locationName
+                    is BottomSheetContent.SINGLE -> bottomSheetContent.storeName
+                    else -> ""
+                },
                 style = Body1B,
                 color = Color.Black,
                 modifier = Modifier.weight(1f)
@@ -555,7 +560,7 @@ private fun RunwayNaverMap(
         MapSearchScreen(
             onShopSearch = {
                 mapViewModel.updateMapStatus(MapStatus.SHOP_SEARCH)
-                mapViewModel.searchStoreId(it.storeId)
+                mapViewModel.searchStoreId(it.storeName, it.storeId)
                 mapViewModel.addRecentStr(
                     it.storeName,
                     SearchType(it.storeId, SearchType.STORE_TYPE)

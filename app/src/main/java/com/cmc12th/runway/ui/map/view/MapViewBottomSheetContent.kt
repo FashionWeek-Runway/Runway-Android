@@ -28,7 +28,6 @@ import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.map.model.BottomSheetContent
 import com.cmc12th.runway.ui.theme.*
 import com.cmc12th.runway.utils.Constants.BOTTOM_NAVIGATION_HEIGHT
-import com.cmc12th.runway.utils.Constants.DETAIL_ROUTE
 
 @Composable
 fun MapViewBottomSheetContent(
@@ -60,7 +59,8 @@ fun MapViewBottomSheetContent(
             SearchResultBar(
                 modifier = Modifier.padding(0.dp, top = 0.dp, bottom = 16.dp),
                 setMapStatusDefault = setMapStatusDefault,
-                setMapStatusOnSearch = setMapStatusOnSearch
+                setMapStatusOnSearch = setMapStatusOnSearch,
+                bottomSheetContent = contents
             )
         }
 
