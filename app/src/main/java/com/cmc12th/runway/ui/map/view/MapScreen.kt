@@ -300,8 +300,15 @@ private fun MapViewContents(
                     SearchBoxAndTagCategory(
                         isBookmarked = mapUiState.isBookmarked,
                         categoryItems = mapUiState.categoryItems,
-                        updateCategoryTags = { mapViewModel.updateCategoryTags(it) },
-                        updateIsBookmarked = { mapViewModel.updateIsBookmarked(it) },
+                        updateCategoryTags = {
+                            mapViewModel.updateCategoryTags(
+                                it,
+                                appState.cameraPositionState.position.target
+                            )
+                        },
+                        updateIsBookmarked = {
+                            mapViewModel.updateIsBookmarked(it)
+                        },
                         onSearch = {
                             mapViewModel.saveTempDatas()
                             mapViewModel.updateMapStatus(MapStatus.SEARCH_TAB)

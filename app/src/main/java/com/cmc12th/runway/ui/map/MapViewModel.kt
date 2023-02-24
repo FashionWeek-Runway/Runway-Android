@@ -235,8 +235,18 @@ class MapViewModel @Inject constructor(
                 longitude = latLng.longitude
             )
         ).collect { apiState ->
-            apiState.onSuccess {
-                updateMarkerItems(it.result.toNaverMapItem())
+            apiState.onSuccess { responseWrapper ->
+                if (_isBookmarked.value) {
+                    updateMarkerItems(
+                        responseWrapper.result.toNaverMapItem().filter {
+                            it.bookmark
+                        }
+                    )
+                } else {
+                    updateMarkerItems(
+                        responseWrapper.result.toNaverMapItem()
+                    )
+                }
             }
             apiState.onError {
 
@@ -391,12 +401,20 @@ class MapViewModel @Inject constructor(
 
     fun updateIsBookmarked(isBookmarked: Boolean) {
         _isBookmarked.value = isBookmarked
+        if (isBookmarked) {
+            _markerItems.value = _markerItems.value.filter {
+                it.bookmark
+            }
+        } else {
+            _markerItems.value = _markerItems.value
+        }
     }
 
-    fun updateCategoryTags(categoryTag: CategoryTag) {
+    fun updateCategoryTags(categoryTag: CategoryTag, position: LatLng) {
         _categoryItems.value = _categoryItems.value.mapIndexed { _, item ->
             if (item.name == categoryTag.name) item.copy(isSelected = !item.isSelected) else item
         }.toMutableList()
+        mapFiltering(position)
     }
 
     private fun updateMarkerItems(naverItems: List<NaverItem>) {

@@ -27,5 +27,6 @@ fun List<MapFilterItem>.toNaverMapItem(): List<NaverItem> = this.map {
         title = it.storeName,
         position = LatLng(it.latitude, it.longitude),
         storeId = it.storeId,
+        bookmark = it.bookmark
     )
 }
