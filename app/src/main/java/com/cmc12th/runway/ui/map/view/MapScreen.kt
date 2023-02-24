@@ -213,6 +213,7 @@ private fun MapViewContents(
 
     val setMapStatusDefault: () -> Unit = {
         mapViewModel.updateMapStatus(MapStatus.DEFAULT)
+        mapViewModel.loadTempDatas()
         coroutineScope.launch {
             bottomSheetScaffoldState.bottomSheetState.collapse()
         }
@@ -329,7 +330,10 @@ private fun MapViewContents(
             ) {
                 SearchResultBar(
                     modifier = Modifier.padding(20.dp, 16.dp),
-                    setMapStatusDefault = setMapStatusDefault,
+                    setMapStatusDefault = {
+                        mapViewModel.loadTempDatas()
+                        setMapStatusDefault()
+                    },
                     setMapStatusOnSearch = setMapStatusOnSearch,
                     bottomSheetContent = mapUiState.bottomSheetContents
                 )

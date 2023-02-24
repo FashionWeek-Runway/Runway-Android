@@ -27,6 +27,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.cmc12th.runway.R
 import com.cmc12th.runway.data.model.RecentStr
+import com.cmc12th.runway.data.model.SearchType.Companion.LOCATION_TYPE
+import com.cmc12th.runway.data.model.SearchType.Companion.STORE_TYPE
 import com.cmc12th.runway.data.response.map.RegionSearch
 import com.cmc12th.runway.data.response.map.StoreSearch
 import com.cmc12th.runway.ui.components.*
@@ -79,6 +81,25 @@ fun MapSearchScreen(
                     recentSearchs = searchUiState.recentSearchs,
                     removeRecentStr = {
                         mapViewModel.removeRecentStr(it)
+                    },
+                    onClickRecentStr = {
+                        if (it.searchType.type == LOCATION_TYPE) {
+                            onLocationSearch(
+                                RegionSearch(
+                                    address = "",
+                                    region = it.value,
+                                    regionId = it.searchType.id
+                                )
+                            )
+                        } else if (it.searchType.type == STORE_TYPE) {
+                            onShopSearch(
+                                StoreSearch(
+                                    address = "",
+                                    storeName = it.value,
+                                    storeId = it.searchType.id
+                                )
+                            )
+                        }
                     },
                     removeAllRecentStr = {
                         mapViewModel.removeAllRecentStr()
@@ -343,6 +364,7 @@ private fun ResultItems(
 @Composable
 private fun RecentSearches(
     recentSearchs: List<RecentStr>,
+    onClickRecentStr: (RecentStr) -> Unit,
     removeRecentStr: (Int) -> Unit,
     removeAllRecentStr: () -> Unit,
 ) {
@@ -386,11 +408,15 @@ private fun RecentSearches(
         ) {
             items(recentSearchs) {
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable {
+                            onClickRecentStr(it)
+                        },
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     IconButton(
-                        onClick = { /*TODO*/ },
+                        onClick = { },
                         modifier = Modifier.size(24.dp)
                     ) {
                         Icon(
