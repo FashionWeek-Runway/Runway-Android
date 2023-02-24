@@ -136,4 +136,8 @@ dependencies {
     kapt("androidx.room:room-compiler:2.5.0")
     // optional - Kotlin Extensions and Coroutines support for Room
     implementation("androidx.room:room-ktx:2.5.0")
+
+    // Paging Compose
+    implementation("androidx.paging:paging-runtime:3.1.1")
+    implementation("androidx.paging:paging-compose:1.0.0-alpha18")
 }
