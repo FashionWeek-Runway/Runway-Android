@@ -5,7 +5,6 @@
 
 package com.cmc12th.runway.ui.detail.view
 
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.*
@@ -121,9 +120,14 @@ fun DetailScreen(
         DetailTopBar(
             topbarColor = topbarColor.value,
             topbarIconAnimateColor = topbarIconAnimateColor.value,
-            onBackPress = onBackPress
+            onBackPress = onBackPress,
+            isBookmarked = uiState.storeDetail.bookmark,
+            updateBookmark = {
+                detailViewModel.updateBookmark(idx) {
+                    detailViewModel.updateBookmarkState(it)
+                }
+            }
         )
-
     }
 
 }
@@ -133,6 +137,8 @@ private fun BoxScope.DetailTopBar(
     topbarColor: Color,
     topbarIconAnimateColor: Color,
     onBackPress: () -> Unit,
+    isBookmarked: Boolean,
+    updateBookmark: (Boolean) -> Unit,
 ) {
 
     Row(
@@ -160,13 +166,28 @@ private fun BoxScope.DetailTopBar(
             modifier = Modifier.padding(end = 20.dp),
             horizontalArrangement = Arrangement.spacedBy(20.dp)
         ) {
-            IconButton(onClick = {}, modifier = Modifier.size(28.dp)) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_border_bookamrk_24),
-                    contentDescription = "IC_SHARE",
-                    tint = topbarIconAnimateColor
-                )
+            if (isBookmarked) {
+                IconButton(onClick = {
+                    updateBookmark(false)
+                }, modifier = Modifier.size(28.dp)) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_filled_bookmark_24),
+                        contentDescription = "IC_BOOKMARKED",
+                        tint = topbarIconAnimateColor
+                    )
+                }
+            } else {
+                IconButton(onClick = {
+                    updateBookmark(true)
+                }, modifier = Modifier.size(28.dp)) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_border_bookmark_24),
+                        contentDescription = "IC_BOOKMARK",
+                        tint = topbarIconAnimateColor
+                    )
+                }
             }
+
             IconButton(onClick = {}, modifier = Modifier.size(28.dp)) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_border_share_24),

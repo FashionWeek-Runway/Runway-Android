@@ -22,8 +22,8 @@ class StoreRepositoryImpl @Inject constructor(
     private val runwayClient: RunwayClient,
 ) : StoreRepository {
 
-    override fun store(): Flow<DefaultApiWrapper> = safeFlow {
-        runwayClient.stores()
+    override fun storeBookmark(storeId: Int): Flow<DefaultApiWrapper> = safeFlow {
+        runwayClient.storeBookmark(storeId)
     }
 
     override fun getBlogReview(

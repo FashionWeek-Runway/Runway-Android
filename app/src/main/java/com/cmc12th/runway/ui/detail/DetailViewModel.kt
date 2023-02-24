@@ -1,5 +1,6 @@
 package com.cmc12th.runway.ui.detail
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
@@ -47,24 +48,26 @@ class DetailViewModel @Inject constructor(
         initialValue = DetailUiState()
     )
 
+    fun updateBookmark(storeId: Int, onSuccess: () -> Unit) = viewModelScope.launch {
+        Log.i("dlgocks1", "update Bookmarked")
+        storeRepository.storeBookmark(storeId = storeId).collect { apiState ->
+            apiState.onSuccess {
+                onSuccess()
+            }
+        }
+    }
+
+    fun updateBookmarkState(isBookmarked: Boolean) {
+        _storeDetail.value = _storeDetail.value.copy(
+            bookmark = isBookmarked
+        )
+    }
 
     fun getUserReviewPaging(storeId: Int) = viewModelScope.launch {
         storeRepository.userReviewPaging(storeId).cachedIn(viewModelScope).collect {
             _userReviews.value = it
         }
     }
-
-//    fun getUserReviewPaging(storeId: Int) = Pager(
-//        config = PagingConfig(
-//            pageSize = 10,
-//        ),
-//        pagingSourceFactory = {
-//            UserReviewPagingSource(
-//                storeId = storeId,
-//                storeRepository = storeRepository
-//            )
-//        },
-//    ).flow
 
     fun getDetailInfo(idx: Int) = viewModelScope.launch {
         storeRepository.getDetail(idx).collect { apiState ->
@@ -81,5 +84,6 @@ class DetailViewModel @Inject constructor(
             }
         }
     }
+
 
 }

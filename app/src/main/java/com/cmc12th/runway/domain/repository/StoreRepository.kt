@@ -14,7 +14,7 @@ import okhttp3.MultipartBody
 import retrofit2.http.*
 
 interface StoreRepository {
-    fun store(): Flow<DefaultApiWrapper>
+    fun storeBookmark(storeId: Int): Flow<DefaultApiWrapper>
 
     fun getBlogReview(storeId: Int, storeName: String): Flow<ApiWrapper<List<BlogReview>>>
 

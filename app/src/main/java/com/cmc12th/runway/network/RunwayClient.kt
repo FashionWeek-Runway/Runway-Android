@@ -57,7 +57,7 @@ class RunwayClient @Inject constructor(
 
 
     /** 쇼룸 */
-    suspend fun stores() = storeService.stores()
+    suspend fun storeBookmark(storeId: Int) = storeService.storeBookmark(storeId)
 
     suspend fun getBlogReview(storeId: Int, storeName: String) =
         storeService.getBlogReview(storeId, storeName)

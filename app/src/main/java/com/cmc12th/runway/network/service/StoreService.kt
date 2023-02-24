@@ -14,9 +14,9 @@ import retrofit2.http.*
 
 interface StoreService {
 
-    /** 쇼룸 홈화면 조회 */
-    @GET("/stores")
-    suspend fun stores(): DefaultResponse
+    /** 쇼룸 북마크 조회 */
+    @POST("/stores/{storeId}")
+    suspend fun storeBookmark(@Path("storeId") storeId: Int): DefaultResponse
 
     /** 쇼룸 웹 스크랩핑(블로그 리뷰) */
     @GET("/stores/blog/{storeId}")
@@ -26,7 +26,6 @@ interface StoreService {
     ): NetworkResponse<List<BlogReview>>
 
     /** 쇼룸 사장님 소식 리스트 조회 */
-    // TODO 아직 소식 데이터값이 안나왔음
 //    @POST("/stores/board/{storeId}")
 //    suspend fun getStoreManagerNews(
 //        @Path("storeId") storeId: Int,
