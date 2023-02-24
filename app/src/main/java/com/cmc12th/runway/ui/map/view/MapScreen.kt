@@ -167,6 +167,11 @@ private fun MapViewContents(
             mapViewModel.updateMapStatus(MapStatus.MARKER_CLICKED)
             mapViewModel.updateMarker(it.copy(isClicked = !it.isClicked))
             mapViewModel.mapInfo(it.storeId)
+        } else if (mapUiState.mapStatus == MapStatus.LOCATION_SEARCH) {
+            mapViewModel.saveLocationTempDatas()
+            mapViewModel.updateMapStatus(MapStatus.LOCATION_SEARCH_MARKER_CLICKED)
+            mapViewModel.updateMarker(it.copy(isClicked = !it.isClicked))
+            mapViewModel.mapInfo(it.storeId)
         }
         coroutineScope.launch {
             bottomSheetScaffoldState.bottomSheetState.expand()
@@ -188,7 +193,11 @@ private fun MapViewContents(
             MapStatus.MARKER_CLICKED -> {
                 collapsBottomSheet()
             }
-            else -> {}
+            MapStatus.LOCATION_SEARCH_MARKER_CLICKED -> {
+                collapsBottomSheet()
+            }
+            MapStatus.SEARCH_TAB -> {
+            }
         }
         mapViewModel.onMapClick()
     }

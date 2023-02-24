@@ -210,14 +210,13 @@ class MapViewModel @Inject constructor(
 
     private var scrollTemp: BottomSheetContent = BottomSheetContent.DEFAULT
     private var markerItemsTemp = emptyList<NaverItem>()
+    private var locationScrollTemp: BottomSheetContent = BottomSheetContent.DEFAULT
 
     /** 마커 클릭했을 때 하단 정보 가져오기 */
     fun mapInfo(storeId: Int) = viewModelScope.launch {
-        // updateBottomSheetItem(BottomSheetContent.LOADING)
+        updateBottomSheetItem(BottomSheetContent.LOADING)
         mapRepository.mapInfo(storeId).collect { apiState ->
             apiState.onSuccess {
-                // scrollTemp = _bottomsheetItem.value
-                saveTempDatas()
                 updateBottomSheetItem(BottomSheetContent.SINGLE(contents = it.result))
             }
             apiState.onError {
@@ -257,7 +256,7 @@ class MapViewModel @Inject constructor(
                 updateMovingCamera(
                     MovingCameraWrapper.MOVING(
                         Location("SelectedMarker").apply {
-                            latitude = it.result.mapMarker.latitude
+                            latitude = it.result.mapMarker.latitude - 0.01
                             longitude = it.result.mapMarker.longitude
                         }
                     )
@@ -308,9 +307,17 @@ class MapViewModel @Inject constructor(
         markerItemsTemp = _markerItems.value
     }
 
+    fun saveLocationTempDatas() {
+        locationScrollTemp = _bottomsheetItem.value
+    }
+
     fun loadTempDatas() {
         _bottomsheetItem.value = scrollTemp
         _markerItems.value = markerItemsTemp
+    }
+
+    fun loadLocationTempDatas() {
+        _bottomsheetItem.value = locationScrollTemp
     }
 
     fun onMapClick() {
@@ -334,6 +341,12 @@ class MapViewModel @Inject constructor(
                 _mapStatus.value = MapStatus.DEFAULT
                 // 단일 항목을 클릭했다가 돌아올 때 복구
                 loadTempDatas()
+                resetSelectedMarkers()
+            }
+            MapStatus.LOCATION_SEARCH_MARKER_CLICKED -> {
+                _mapStatus.value = MapStatus.LOCATION_SEARCH
+                // 단일 항목을 클릭했다가 돌아올 때 복구
+                loadLocationTempDatas()
                 resetSelectedMarkers()
             }
             else -> {}
