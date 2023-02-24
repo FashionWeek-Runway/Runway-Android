@@ -399,15 +399,9 @@ class MapViewModel @Inject constructor(
         fusedLocationClient.removeLocationUpdates(locationCallback)
     }
 
-    fun updateIsBookmarked(isBookmarked: Boolean) {
+    fun updateIsBookmarked(isBookmarked: Boolean, position: LatLng) {
         _isBookmarked.value = isBookmarked
-        if (isBookmarked) {
-            _markerItems.value = _markerItems.value.filter {
-                it.bookmark
-            }
-        } else {
-            _markerItems.value = _markerItems.value
-        }
+        mapFiltering(position)
     }
 
     fun updateCategoryTags(categoryTag: CategoryTag, position: LatLng) {

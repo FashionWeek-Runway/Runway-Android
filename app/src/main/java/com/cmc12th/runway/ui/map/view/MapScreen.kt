@@ -307,7 +307,10 @@ private fun MapViewContents(
                             )
                         },
                         updateIsBookmarked = {
-                            mapViewModel.updateIsBookmarked(it)
+                            mapViewModel.updateIsBookmarked(
+                                it,
+                                appState.cameraPositionState.position.target
+                            )
                         },
                         onSearch = {
                             mapViewModel.saveTempDatas()
