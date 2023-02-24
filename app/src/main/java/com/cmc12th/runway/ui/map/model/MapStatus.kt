@@ -9,4 +9,6 @@ enum class MapStatus {
     fun isGpsIconVisibility(): Boolean =
         this == ZOOM || this == SEARCH_ZOOM
 
+    fun onSearch(): Boolean =
+        this == LOCATION_SEARCH || this == SHOP_SEARCH || this == SEARCH_TAB || this == SEARCH_ZOOM
 }

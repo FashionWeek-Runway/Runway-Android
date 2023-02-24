@@ -153,9 +153,12 @@ private fun MapViewContents(
     }
 
     val onMarkerClick: (NaverItem) -> Unit = {
-        mapViewModel.updateMapStatus(MapStatus.MARKER_CLICKED)
-        mapViewModel.updateMarker(it.copy(isClicked = !it.isClicked))
-        mapViewModel.mapInfo(it.storeId)
+        if (!mapUiState.mapStatus.onSearch()) {
+            mapViewModel.updateMapStatus(MapStatus.MARKER_CLICKED)
+            mapViewModel.updateMarker(it.copy(isClicked = !it.isClicked))
+            mapViewModel.mapInfo(it.storeId)
+        }
+
         coroutineScope.launch {
             bottomSheetScaffoldState.bottomSheetState.expand()
         }
