@@ -207,6 +207,10 @@ private fun MapViewContents(
         bottomSheetScaffoldState,
     )
 
+    val refershIconVisiblity = remember {
+        mutableStateOf(true)
+    }
+
     val setMapStatusDefault: () -> Unit = {
         mapViewModel.updateMapStatus(MapStatus.DEFAULT)
         coroutineScope.launch {
@@ -251,13 +255,15 @@ private fun MapViewContents(
                 onMapClick = onMapClick,
                 onMarkerClick = onMarkerClick,
                 onSearching = onSearching,
+                updateRefershIconVisiblity = { refershIconVisiblity.value = it },
                 expandBottomSheet = { expandBottomSheet() }
             )
 
             RefreshIcon(
-                visibility = mapUiState.mapStatus == MapStatus.DEFAULT,
+                visibility = mapUiState.mapStatus == MapStatus.DEFAULT && refershIconVisiblity.value,
                 yOffset = topBarHeight + 12.dp,
                 onClick = {
+                    refershIconVisiblity.value = false
                     mapViewModel.mapFiltering(appState.cameraPositionState.position.target)
                 }
             )
@@ -460,11 +466,13 @@ private fun RunwayNaverMap(
     cameraPositionState: CameraPositionState,
     onMarkerClick: (NaverItem) -> Unit,
     onSearching: MutableState<Boolean>,
+    updateRefershIconVisiblity: (Boolean) -> Unit,
     expandBottomSheet: () -> Unit,
 ) {
 
     LaunchedEffect(key1 = cameraPositionState.position) {
         // Log.i("dlgocks1", cameraPositionState.position.target.toString())
+        updateRefershIconVisiblity(true)
     }
 
     LaunchedEffect(key1 = uiState.movingCameraPosition) {
