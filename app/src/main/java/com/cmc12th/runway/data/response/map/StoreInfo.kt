@@ -5,4 +5,11 @@ data class StoreInfo(
     val storeId: Int,
     val storeImg: String,
     val storeName: String
-)
+) {
+    fun toMapInfoItem(): MapInfoItem = MapInfoItem(
+        category = category,
+        storeId = storeId,
+        storeImg = storeImg,
+        storeName = storeName
+    )
+}

@@ -9,7 +9,6 @@ data class NaverItem(
     var position: LatLng,
     var title: String,
     val storeId: Int,
-    val storeName: String,
     var description: String = "",
     var bookmark: Boolean = false,
     var isClicked: Boolean = false,
@@ -21,7 +20,7 @@ data class NaverItem(
 
     companion object {
         fun default(): NaverItem = NaverItem(
-            LatLng(0.0, 0.0), "", -999, "", ""
+            LatLng(0.0, 0.0), "", -999, ""
         )
     }
 }
