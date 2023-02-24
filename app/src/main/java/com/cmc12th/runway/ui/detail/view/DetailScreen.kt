@@ -75,15 +75,15 @@ fun DetailScreen(
             topbarIconColor.value = Color.Black
         }
     }
+
     BackHandler {
         onBackPress()
     }
-    DisposableEffect(Unit) {
+
+    LaunchedEffect(Unit) {
         appState.bottomBarState.value = false
-        onDispose {
-            appState.bottomBarState.value = true
-        }
     }
+
     ManageSystemBarColor(scrollState, topbarColor.value)
 
     Box(

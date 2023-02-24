@@ -311,10 +311,14 @@ private fun MapViewContents(
         DetailScreen(appState = appState,
             idx = 1,
             detailVIewModel = detailViewModel,
-            onBackPress = { mapViewModel.onDetail.value = false }
+            onBackPress = {
+                if (mapUiState.mapStatus.onSearch()) {
+                    appState.bottomBarState.value = false
+                }
+                mapViewModel.onDetail.value = false
+            }
         )
     }
-
 }
 
 @Composable
