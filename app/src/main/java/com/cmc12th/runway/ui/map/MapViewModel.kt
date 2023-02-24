@@ -247,6 +247,15 @@ class MapViewModel @Inject constructor(
         mapRepository.storeSearch(storeId).collect { apiState ->
             apiState.onSuccess {
                 updateBottomSheetItem(BottomSheetContent.SINGLE(it.result.storeInfo.toMapInfoItem()))
+                updateMovingCamera(
+                    MovingCameraWrapper.MOVING(
+                        Location("SelectedMarker").apply {
+                            latitude = it.result.mapMarker.latitude
+                            longitude = it.result.mapMarker.longitude
+                        }
+                    )
+
+                )
                 updateMarkerItems(it.result.mapMarker.toMarkerItem())
             }
         }
