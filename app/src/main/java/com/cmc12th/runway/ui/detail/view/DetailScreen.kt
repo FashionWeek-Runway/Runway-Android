@@ -5,6 +5,7 @@
 
 package com.cmc12th.runway.ui.detail.view
 
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.*
@@ -29,11 +30,15 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.paging.PagingData
+import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.items
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.cmc12th.runway.R
 import com.cmc12th.runway.data.response.store.BlogReview
 import com.cmc12th.runway.data.response.store.StoreDetail
+import com.cmc12th.runway.data.response.store.UserReview
 import com.cmc12th.runway.ui.components.*
 import com.cmc12th.runway.ui.detail.DetailViewModel
 import com.cmc12th.runway.ui.domain.model.ApplicationState
@@ -41,6 +46,7 @@ import com.cmc12th.runway.ui.map.components.TopGradient
 import com.cmc12th.runway.ui.theme.*
 import com.cmc12th.runway.utils.Constants.PHOTO_REVIEW_ROUTE
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import kotlinx.coroutines.flow.Flow
 import java.lang.Float.min
 
 @Composable
@@ -53,9 +59,16 @@ fun DetailScreen(
 
     val detailViewModel: DetailViewModel = hiltViewModel()
     val uiState by detailViewModel.uiState.collectAsState()
+//    val scrollState = rememberLazyListState()
 
-    val scrollState = rememberLazyListState()
+    LaunchedEffect(key1 = Unit) {
+        appState.bottomBarState.value = false
+        detailViewModel.getUserReviewPaging(idx)
+        detailViewModel.getDetailInfo(idx)
+        detailViewModel.getBlogReview(idx, storeName)
+    }
 
+    val scrollState = rememberScrollState()
     val topbarColor = remember {
         mutableStateOf(Color.Transparent)
     }
@@ -63,40 +76,16 @@ fun DetailScreen(
         mutableStateOf(Color.White)
     }
     val topbarIconAnimateColor = animateColorAsState(targetValue = topbarIconColor.value)
-
-    LaunchedEffect(key1 = Unit) {
-        detailViewModel.getDetailInfo(idx)
-        detailViewModel.getBlogReview(idx, storeName)
-    }
-
-    LaunchedEffect(key1 = scrollState.firstVisibleItemScrollOffset) {
-        if (scrollState.firstVisibleItemScrollOffset < 100) {
-            if (scrollState.firstVisibleItemScrollOffset < 50) {
-                topbarColor.value = Color.Transparent
-            } else {
-                topbarColor.value = Color.White.copy(
-                    alpha = min(
-                        (scrollState.firstVisibleItemScrollOffset.toFloat()) / 100f,
-                        100f
-                    )
-                )
-            }
-            topbarIconColor.value = Color.White
-        } else {
-            topbarColor.value = Color.White
-            topbarIconColor.value = Color.Black
-        }
-    }
+    ManageSystemBarColor(
+        scrollState = scrollState,
+        topbarColor = topbarColor.value,
+        updateTopbarIconColor = { topbarIconColor.value = it },
+        updateTopbarColor = { topbarColor.value = it }
+    )
 
     BackHandler {
         onBackPress()
     }
-
-    LaunchedEffect(Unit) {
-        appState.bottomBarState.value = false
-    }
-
-    ManageSystemBarColor(scrollState, topbarColor.value)
 
     Box(
         modifier = Modifier
@@ -104,29 +93,26 @@ fun DetailScreen(
             .background(Color.White)
     ) {
 
-        LazyColumn(
+        Column(
             modifier = Modifier
                 .fillMaxSize()
-                .navigationBarsPadding(),
-            state = scrollState
+                .navigationBarsPadding()
+                .verticalScroll(scrollState),
         ) {
-            item {
-                ShowRoomBanner(uiState.storeDetail)
-                ShowRoomTitle(uiState.storeDetail)
-                ShowRoomDetail(uiState.storeDetail)
+            ShowRoomBanner(uiState.storeDetail)
+            ShowRoomTitle(uiState.storeDetail)
+            ShowRoomDetail(uiState.storeDetail)
+            // WidthSpacerLine(height = 1.dp, color = Gray200)
+            // ShopNews()
+            WidthSpacerLine(height = 2.dp, color = Black)
+            UserReview(
+                userReviews = detailViewModel.userReviews
+            ) {
+                appState.navigate(PHOTO_REVIEW_ROUTE)
             }
-            item {
-                // WidthSpacerLine(height = 1.dp, color = Gray200)
-                // ShopNews()
-                WidthSpacerLine(height = 2.dp, color = Black)
-                UserReview {
-                    appState.navigate(PHOTO_REVIEW_ROUTE)
-                }
-                HeightSpacer(height = 20.dp)
-                WidthSpacerLine(height = 8.dp, color = Gray100)
-                BlogReview()
-            }
-            items(uiState.blogReview) {
+            WidthSpacerLine(height = 8.dp, color = Gray100)
+            BlogReview()
+            uiState.blogReview.map {
                 BlogReviewItem(it)
             }
 
@@ -137,6 +123,7 @@ fun DetailScreen(
             topbarIconAnimateColor = topbarIconAnimateColor.value,
             onBackPress = onBackPress
         )
+
     }
 
 }
@@ -195,7 +182,7 @@ private fun BoxScope.DetailTopBar(
 fun ShowRoomTitle(storeDetail: StoreDetail) {
     Column(
         modifier = Modifier
-            .padding(start = 20.dp, end = 20.dp, top = 12.dp, bottom = 16.dp),
+            .padding(start = 20.dp, end = 20.dp, top = 12.dp, bottom = 0.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
 
@@ -230,7 +217,12 @@ fun ShowRoomTag(categoryTag: String) {
 
 
 @Composable
-private fun ManageSystemBarColor(scrollState: LazyListState, topbarColor: Color) {
+private fun ManageSystemBarColor(
+    scrollState: ScrollState,
+    topbarColor: Color,
+    updateTopbarColor: (Color) -> Unit,
+    updateTopbarIconColor: (Color) -> Unit
+) {
 
     val systemUiController = rememberSystemUiController()
 
@@ -241,11 +233,32 @@ private fun ManageSystemBarColor(scrollState: LazyListState, topbarColor: Color)
             systemUiController.setSystemBarsColor(color = Color.White)
         }
     }
-    LaunchedEffect(key1 = scrollState.firstVisibleItemScrollOffset) {
-        if (scrollState.firstVisibleItemScrollOffset < 100) {
+    LaunchedEffect(key1 = scrollState.value.dp) {
+        if (scrollState.value.dp < 100.dp) {
             systemUiController.setSystemBarsColor(topbarColor)
             systemUiController.setNavigationBarColor(color = Color.White)
         } else systemUiController.setSystemBarsColor(Color.White)
+    }
+
+    LaunchedEffect(key1 = scrollState.value.dp) {
+        if (scrollState.value.dp < 100.dp) {
+            if (scrollState.value.dp < 50.dp) {
+                updateTopbarColor(Color.Transparent)
+            } else {
+                updateTopbarColor(
+                    Color.White.copy(
+                        alpha = min(
+                            (scrollState.value.dp) / 100.dp,
+                            100f
+                        )
+                    )
+                )
+            }
+            updateTopbarIconColor(Color.White)
+        } else {
+            updateTopbarColor(Color.White)
+            updateTopbarIconColor(Color.Black)
+        }
     }
 }
 
@@ -379,7 +392,12 @@ fun BlogReviewItem(blogReview: BlogReview) {
 
 
 @Composable
-fun UserReview(navigateToWriteScreen: () -> Unit) {
+fun UserReview(
+    userReviews: Flow<PagingData<UserReview>>,
+    navigateToWriteScreen: () -> Unit
+) {
+    val userReviewsPaging = userReviews.collectAsLazyPagingItems()
+
     Column {
         Row(
             modifier = Modifier
@@ -404,19 +422,44 @@ fun UserReview(navigateToWriteScreen: () -> Unit) {
                 )
             }
         }
-
+        if (userReviewsPaging.itemCount == 0) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(20.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.img_dummy),
+                    contentDescription = "IMG_DUMMY",
+                    modifier = Modifier.size(100.dp)
+                )
+                HeightSpacer(height = 30.dp)
+                Text(text = "아직 등록된 후기가 없습니다.", style = Body1, color = Color.Black)
+                HeightSpacer(height = 5.dp)
+                Text(text = "매장에 방문했다면 후기를 남겨보세요 :)", style = Body2, color = Gray500)
+            }
+        }
         LazyRow(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(5.dp)
         ) {
             item { WidthSpacer(width = 15.dp) }
-            items((0..9).toList()) {
-                Image(
-                    painter = painterResource(id = R.drawable.img_dummy),
-                    contentDescription = "IMG_USER_REVIEW",
-                    modifier = Modifier.size(132.dp, 200.dp),
-                    contentScale = ContentScale.Crop
-                )
+
+            items(userReviewsPaging) {
+                it?.let {
+                    AsyncImage(
+                        modifier = Modifier.size(132.dp, 200.dp),
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .data(it.imgUrl)
+                            .crossfade(true)
+                            .build(),
+                        placeholder = painterResource(R.drawable.img_dummy),
+                        error = painterResource(id = R.drawable.img_dummy),
+                        contentDescription = "ASDas",
+                        contentScale = ContentScale.Crop,
+                    )
+                }
             }
             item { WidthSpacer(width = 15.dp) }
         }

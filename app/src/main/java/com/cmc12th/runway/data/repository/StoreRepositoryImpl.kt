@@ -1,5 +1,9 @@
 package com.cmc12th.runway.data.repository
 
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import com.cmc12th.runway.data.pagingsource.UserReviewPagingSource
 import com.cmc12th.runway.data.response.store.BlogReview
 import com.cmc12th.runway.data.response.store.StoreDetail
 import com.cmc12th.runway.data.response.store.UserReview
@@ -46,5 +50,18 @@ class StoreRepositoryImpl @Inject constructor(
             runwayClient.writeUserReview(storeId, img)
         }
 
+    override fun userReviewPaging(storeId: Int): Flow<PagingData<UserReview>> {
+        return Pager(
+            config = PagingConfig(
+                pageSize = 10,
+            ),
+            pagingSourceFactory = {
+                UserReviewPagingSource(
+                    storeId = storeId,
+                    storeRepository = this
+                )
+            },
+        ).flow
+    }
 
 }

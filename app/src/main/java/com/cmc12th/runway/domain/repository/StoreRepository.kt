@@ -1,5 +1,6 @@
 package com.cmc12th.runway.domain.repository
 
+import androidx.paging.PagingData
 import com.cmc12th.runway.data.response.PagingResponse
 import com.cmc12th.runway.data.response.map.MapFilterItem
 import com.cmc12th.runway.data.response.store.BlogReview
@@ -29,4 +30,6 @@ interface StoreRepository {
         @Path("storeId") storeId: Int,
         @Part img: MultipartBody.Part,
     ): Flow<DefaultApiWrapper>
+
+    fun userReviewPaging(storeId: Int): Flow<PagingData<UserReview>>
 }

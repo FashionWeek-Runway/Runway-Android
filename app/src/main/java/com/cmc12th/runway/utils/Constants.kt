@@ -10,6 +10,7 @@ object Constants {
     val BOTTOM_NAV_ITEMS = listOf<Screen>(Screen.Home, Screen.Map, Screen.Mypage)
     val CATEGORYS = listOf("미니멀", "캐주얼", "시티보이", "스트릿", "빈티지", "페미닌")
     const val SNS_INTENT_ACTION = "android.provider.Telephony.SMS_RECEIVED"
+    const val INIT_PAGE_INDEX = 0
 
     const val RECENT_STR_DATABASE = "recent-str-database"
     const val RUNWAY_DATASTORE = "runway-dataStore"
