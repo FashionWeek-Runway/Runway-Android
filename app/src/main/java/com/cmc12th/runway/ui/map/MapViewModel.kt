@@ -252,9 +252,14 @@ class MapViewModel @Inject constructor(
         }
     }
 
-    private fun saveTempDatas() {
+    fun saveTempDatas() {
         scrollTemp = _bottomsheetItem.value
         markerItemsTemp = _markerItems.value
+    }
+
+    fun loadTempDatas() {
+        _bottomsheetItem.value = scrollTemp
+        _markerItems.value = markerItemsTemp
     }
 
     fun onMapClick() {

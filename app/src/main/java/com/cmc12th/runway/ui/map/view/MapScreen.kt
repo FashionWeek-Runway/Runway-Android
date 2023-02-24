@@ -203,7 +203,9 @@ private fun MapViewContents(
             bottomSheetScaffoldState.bottomSheetState.collapse()
         }
     }
-    val setMapStatusOnSearch = { mapViewModel.updateMapStatus(MapStatus.SEARCH_TAB) }
+    val setMapStatusOnSearch = {
+        mapViewModel.updateMapStatus(MapStatus.SEARCH_TAB)
+    }
 
     BottomSheetScaffold(
         modifier = Modifier
@@ -279,7 +281,10 @@ private fun MapViewContents(
                         categoryItems = mapUiState.categoryItems,
                         updateCategoryTags = { mapViewModel.updateCategoryTags(it) },
                         updateIsBookmarked = { mapViewModel.updateIsBookmarked(it) },
-                        onSearch = { mapViewModel.updateMapStatus(MapStatus.SEARCH_TAB) }
+                        onSearch = {
+                            mapViewModel.saveTempDatas()
+                            mapViewModel.updateMapStatus(MapStatus.SEARCH_TAB)
+                        }
                     )
                     BottomGradient(20.dp)
                 }
@@ -544,6 +549,7 @@ private fun RunwayNaverMap(
                 )
             },
             onBackPrseed = {
+                mapViewModel.loadTempDatas()
                 mapViewModel.updateSearchText(TextFieldValue(""))
                 onSearching.value = false
                 mapViewModel.updateMapStatus(MapStatus.DEFAULT)
