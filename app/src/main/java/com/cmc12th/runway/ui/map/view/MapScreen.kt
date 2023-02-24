@@ -59,6 +59,7 @@ import com.naver.maps.map.CameraUpdate
 import com.naver.maps.map.compose.*
 import com.naver.maps.map.overlay.Marker
 import com.naver.maps.map.overlay.OverlayImage
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import ted.gun0912.clustering.naver.TedNaverClustering
 
@@ -126,9 +127,6 @@ private fun MapViewContents(
     mapViewModel: MapViewModel,
 ) {
     val mapUiState by mapViewModel.mapUiState.collectAsStateWithLifecycle()
-//    val cameraPositionState: CameraPositionState = rememberCameraPositionState {
-//        position = CameraPosition(LatLng(37.5437, 127.0659), 8.0)
-//    }
 
     val detailViewModel: DetailVIewModel = hiltViewModel()
     val bottomSheetScaffoldState =
@@ -143,13 +141,18 @@ private fun MapViewContents(
         mutableStateOf(false)
     }
 
-
     val peekHeight = remember {
         mutableStateOf(60.dp)
     }
 
     var topBarHeight by remember {
         mutableStateOf(0.dp)
+    }
+
+    val expandBottomSheet = {
+        coroutineScope.launch {
+            bottomSheetScaffoldState.bottomSheetState.expand()
+        }
     }
 
     val onMarkerClick: (NaverItem) -> Unit = {
@@ -178,9 +181,7 @@ private fun MapViewContents(
             }
             MapStatus.MARKER_CLICKED -> {
                 mapViewModel.mapScrollInfo(appState.cameraPositionState.position.target)
-                coroutineScope.launch {
-                    bottomSheetScaffoldState.bottomSheetState.collapse()
-                }
+                expandBottomSheet()
             }
             else -> {}
         }
@@ -237,6 +238,7 @@ private fun MapViewContents(
                 onMapClick = onMapClick,
                 onMarkerClick = onMarkerClick,
                 onSearching = onSearching,
+                expandBottomSheet = { expandBottomSheet() }
             )
 
             RefreshIcon(
@@ -367,7 +369,7 @@ private fun ManageMapStatus(
             MapStatus.SHOP_SEARCH -> {
                 onSearching.value = false
                 appState.changeBottomBarVisibility(false)
-                peekHeight.value = BOTTOM_NAVIGATION_HEIGHT + 200.dp
+                peekHeight.value = BOTTOM_NAVIGATION_HEIGHT + 100.dp
             }
             MapStatus.SEARCH_ZOOM -> {
                 systemUiController.setNavigationBarColor(Color.Transparent)
@@ -440,6 +442,7 @@ private fun RunwayNaverMap(
     cameraPositionState: CameraPositionState,
     onMarkerClick: (NaverItem) -> Unit,
     onSearching: MutableState<Boolean>,
+    expandBottomSheet: () -> Unit,
 ) {
 
     LaunchedEffect(key1 = cameraPositionState.position) {
@@ -452,7 +455,7 @@ private fun RunwayNaverMap(
             is MovingCameraWrapper.MOVING -> {
                 cameraPositionState.animate(
                     update = CameraUpdate.scrollAndZoomTo(
-                        LatLng(uiState.movingCameraPosition.location), 12.0
+                        LatLng(uiState.movingCameraPosition.location), 13.0
                     )
                 )
                 mapViewModel.updateMovingCamera(MovingCameraWrapper.DEFAULT)
@@ -551,6 +554,7 @@ private fun RunwayNaverMap(
                     it.storeName,
                     SearchType(it.storeId, SearchType.STORE_TYPE)
                 )
+                expandBottomSheet()
             },
             onBackPrseed = {
                 mapViewModel.loadTempDatas()

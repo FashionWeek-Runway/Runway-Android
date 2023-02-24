@@ -50,7 +50,7 @@ fun MapViewBottomSheetContent(
                 start = 20.dp,
                 end = 20.dp,
                 top = 10.dp,
-                bottom = BOTTOM_NAVIGATION_HEIGHT * 2
+                bottom = if (appState.bottomBarState.value) BOTTOM_NAVIGATION_HEIGHT * 2 else BOTTOM_NAVIGATION_HEIGHT
             )
     ) {
         AnimatedVisibility(
