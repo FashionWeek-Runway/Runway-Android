@@ -212,10 +212,11 @@ class MapViewModel @Inject constructor(
 
     /** 마커 클릭했을 때 하단 정보 가져오기 */
     fun mapInfo(storeId: Int) = viewModelScope.launch {
-        updateBottomSheetItem(BottomSheetContent.LOADING)
+        // updateBottomSheetItem(BottomSheetContent.LOADING)
         mapRepository.mapInfo(storeId).collect { apiState ->
             apiState.onSuccess {
-                scrollTemp = _bottomsheetItem.value
+                // scrollTemp = _bottomsheetItem.value
+                saveTempDatas()
                 updateBottomSheetItem(BottomSheetContent.SINGLE(it.result))
             }
             apiState.onError {
@@ -291,7 +292,7 @@ class MapViewModel @Inject constructor(
             MapStatus.MARKER_CLICKED -> {
                 _mapStatus.value = MapStatus.DEFAULT
                 // 단일 항목을 클릭했다가 돌아올 때 복구
-                updateBottomSheetItem(scrollTemp)
+                loadTempDatas()
                 resetSelectedMarkers()
             }
             else -> {}

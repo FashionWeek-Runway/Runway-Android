@@ -155,13 +155,19 @@ private fun MapViewContents(
         }
     }
 
+    val collapsBottomSheet: () -> Unit = {
+        coroutineScope.launch {
+            bottomSheetScaffoldState.bottomSheetState.collapse()
+        }
+    }
+
     val onMarkerClick: (NaverItem) -> Unit = {
         if (!mapUiState.mapStatus.onSearch()) {
+            mapViewModel.saveTempDatas()
             mapViewModel.updateMapStatus(MapStatus.MARKER_CLICKED)
             mapViewModel.updateMarker(it.copy(isClicked = !it.isClicked))
             mapViewModel.mapInfo(it.storeId)
         }
-
         coroutineScope.launch {
             bottomSheetScaffoldState.bottomSheetState.expand()
         }
@@ -180,8 +186,7 @@ private fun MapViewContents(
             MapStatus.SEARCH_ZOOM -> {
             }
             MapStatus.MARKER_CLICKED -> {
-                mapViewModel.mapScrollInfo(appState.cameraPositionState.position.target)
-                expandBottomSheet()
+                collapsBottomSheet()
             }
             else -> {}
         }
@@ -208,6 +213,7 @@ private fun MapViewContents(
         mapViewModel.updateMapStatus(MapStatus.SEARCH_TAB)
     }
 
+    Log.i("dlgocks1", mapUiState.bottomSheetContents.toString())
     BottomSheetScaffold(
         modifier = Modifier
             .fillMaxSize(),
