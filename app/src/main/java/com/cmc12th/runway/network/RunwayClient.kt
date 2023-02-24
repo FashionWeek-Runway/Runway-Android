@@ -3,12 +3,15 @@ package com.cmc12th.runway.network
 import com.cmc12th.runway.data.request.*
 import com.cmc12th.runway.data.request.map.MapFilterRequest
 import com.cmc12th.runway.data.request.map.MapSearchRequest
+import com.cmc12th.runway.data.response.map.MapMarker
 import com.cmc12th.runway.network.service.AuthService
 import com.cmc12th.runway.network.service.LoginService
 import com.cmc12th.runway.network.service.MapService
 import com.cmc12th.runway.network.service.StoreService
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import retrofit2.http.Path
+import retrofit2.http.Query
 import javax.inject.Inject
 
 class RunwayClient @Inject constructor(
@@ -83,5 +86,14 @@ class RunwayClient @Inject constructor(
 
     suspend fun storeSearch(storeId: Int) =
         mapService.mapSearchInfo(storeId)
+
+    suspend fun mapRegionMarkerInfo(regionId: Int) =
+        mapService.mapRegionMarkerInfo(regionId)
+
+    suspend fun mapRegionInfoPaging(
+        @Path("regionId") regionId: Int,
+        @Query("page") page: Int,
+        @Query("size") size: Int
+    ) = mapService.mapRegionInfoPaging(regionId, page, size)
 
 }

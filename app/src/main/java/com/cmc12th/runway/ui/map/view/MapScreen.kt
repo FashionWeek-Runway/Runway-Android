@@ -575,6 +575,12 @@ private fun RunwayNaverMap(
             },
             onLocationSearch = {
                 mapViewModel.updateMapStatus(MapStatus.LOCATION_SEARCH)
+                mapViewModel.searchLocationId(it.regionId)
+                mapViewModel.searchLocationInfoPaging(it.region, it.regionId)
+                mapViewModel.addRecentStr(
+                    it.region,
+                    SearchType(it.regionId, SearchType.LOCATION_TYPE)
+                )
             },
             mapViewModel = mapViewModel
         )

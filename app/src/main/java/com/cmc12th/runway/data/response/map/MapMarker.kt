@@ -10,11 +10,18 @@ data class MapMarker(
     val storeId: Int,
     val storeName: String
 ) {
-    fun toMarkerItem(): List<NaverItem> = listOf(
+    fun toSingleMarkerItem(): List<NaverItem> = listOf(
         NaverItem(
             position = LatLng(latitude, longitude),
             title = storeName,
             storeId = storeId,
         )
     )
+
+    fun toMarkerItem(): NaverItem =
+        NaverItem(
+            position = LatLng(latitude, longitude),
+            title = storeName,
+            storeId = storeId,
+        )
 }

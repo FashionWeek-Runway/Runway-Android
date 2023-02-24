@@ -33,4 +33,15 @@ interface MapService {
     @GET("/maps/{storeId}")
     suspend fun mapSearchInfo(@Path("storeId") storeId: Int): NetworkResponse<StoreInfoWithMarkerData>
 
+    /** 쇼룸 지역 검색 마커 결과 */
+    @GET("/maps/region/{regionId}")
+    suspend fun mapRegionMarkerInfo(@Path("regionId") regionId: Int): NetworkResponse<Array<MapMarker>>
+
+    /** 쇼룸 지역 검색 하단 스와이프 */
+    @GET("/maps/info/region/{regionId}")
+    suspend fun mapRegionInfoPaging(
+        @Path("regionId") regionId: Int,
+        @Query("page") page: Int,
+        @Query("size") size: Int,
+    ): PagingNetworkResponse<StoreInfo>
 }

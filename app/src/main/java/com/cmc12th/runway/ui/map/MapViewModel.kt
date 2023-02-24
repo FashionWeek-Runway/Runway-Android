@@ -263,9 +263,44 @@ class MapViewModel @Inject constructor(
                     )
 
                 )
-                updateMarkerItems(it.result.mapMarker.toMarkerItem())
+                updateMarkerItems(it.result.mapMarker.toSingleMarkerItem())
             }
         }
+    }
+
+    /** 장소 아이디 검색 */
+    fun searchLocationId(regionId: Int) = viewModelScope.launch {
+        mapRepository.locationMarkerSearch(regionId).collect { apiState ->
+            apiState.onSuccess { it ->
+                updateMovingCamera(
+                    MovingCameraWrapper.MOVING(
+                        Location("AveragePosition").apply {
+                            latitude = it.result.map { it.latitude }.average()
+                            longitude = it.result.map { it.longitude }.average()
+                        }
+                    )
+                )
+                updateMarkerItems(it.result.map {
+                    it.toMarkerItem()
+                })
+            }
+        }
+    }
+
+    fun searchLocationInfoPaging(region: String, regionId: Int) = viewModelScope.launch {
+        mapRepository.locationInfoPaging(regionId = regionId, page = 0, size = 10)
+            .collect { apiState ->
+                apiState.onSuccess {
+                    updateBottomSheetItem(
+                        BottomSheetContent.MULTI(
+                            region,
+                            it.pagingMetadata.contents.map {
+                                it.toMapInfoItem()
+                            }
+                        )
+                    )
+                }
+            }
     }
 
     fun saveTempDatas() {
@@ -384,6 +419,7 @@ class MapViewModel @Inject constructor(
     fun updateSearchText(searchText: TextFieldValue) {
         _searchText.value = searchText
     }
+
 
     inner class CustomLocationCallback : LocationCallback() {
         override fun onLocationResult(locationResult: LocationResult) {

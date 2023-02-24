@@ -2,10 +2,7 @@ package com.cmc12th.runway.data.repository
 
 import com.cmc12th.runway.data.request.map.MapFilterRequest
 import com.cmc12th.runway.data.request.map.MapSearchRequest
-import com.cmc12th.runway.data.response.map.MapFilterItem
-import com.cmc12th.runway.data.response.map.MapInfoItem
-import com.cmc12th.runway.data.response.map.MapSearchResponseBody
-import com.cmc12th.runway.data.response.map.StoreInfoWithMarkerData
+import com.cmc12th.runway.data.response.map.*
 import com.cmc12th.runway.domain.repository.MapRepository
 import com.cmc12th.runway.network.RunwayClient
 import com.cmc12th.runway.network.model.safeFlow
@@ -42,5 +39,18 @@ class MapRepositoryImpl @Inject constructor(
 
     override fun storeSearch(storeId: Int): Flow<ApiWrapper<StoreInfoWithMarkerData>> = safeFlow {
         runwayClient.storeSearch(storeId)
+    }
+
+    override fun locationMarkerSearch(regionId: Int): Flow<ApiWrapper<Array<MapMarker>>> =
+        safeFlow {
+            runwayClient.mapRegionMarkerInfo(regionId)
+        }
+
+    override fun locationInfoPaging(
+        regionId: Int,
+        page: Int,
+        size: Int
+    ): Flow<PagingApiWrapper<StoreInfo>> = safePagingFlow {
+        runwayClient.mapRegionInfoPaging(regionId, page, size)
     }
 }

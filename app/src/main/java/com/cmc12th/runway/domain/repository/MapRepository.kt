@@ -2,14 +2,12 @@ package com.cmc12th.runway.domain.repository
 
 import com.cmc12th.runway.data.request.map.MapFilterRequest
 import com.cmc12th.runway.data.request.map.MapSearchRequest
-import com.cmc12th.runway.data.response.map.MapFilterItem
-import com.cmc12th.runway.data.response.map.MapInfoItem
-import com.cmc12th.runway.data.response.map.MapSearchResponseBody
-import com.cmc12th.runway.data.response.map.StoreInfoWithMarkerData
+import com.cmc12th.runway.data.response.map.*
 import com.cmc12th.runway.utils.ApiWrapper
 import com.cmc12th.runway.utils.PagingApiWrapper
 import kotlinx.coroutines.flow.Flow
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface MapRepository {
     fun mapFiltering(mapFilterRequest: MapFilterRequest): Flow<ApiWrapper<List<MapFilterItem>>>
@@ -24,5 +22,13 @@ interface MapRepository {
     fun mapInfo(@Path("storeId") storeId: Int): Flow<ApiWrapper<MapInfoItem>>
 
     fun storeSearch(@Path("storeId") storeId: Int): Flow<ApiWrapper<StoreInfoWithMarkerData>>
+
+    fun locationMarkerSearch(regionId: Int): Flow<ApiWrapper<Array<MapMarker>>>
+
+    fun locationInfoPaging(
+        regionId: Int,
+        page: Int,
+        size: Int
+    ): Flow<PagingApiWrapper<StoreInfo>>
 
 }

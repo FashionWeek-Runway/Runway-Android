@@ -42,7 +42,7 @@ import kotlinx.coroutines.Job
 fun MapSearchScreen(
     onBackPrseed: () -> Unit,
     onShopSearch: (StoreSearch) -> Unit,
-    onLocationSearch: () -> Unit,
+    onLocationSearch: (RegionSearch) -> Unit,
     mapViewModel: MapViewModel,
 ) {
     val searchUiState by mapViewModel.searchUiState.collectAsStateWithLifecycle()
@@ -171,7 +171,7 @@ private fun TopSearchBar(
 @Composable
 fun OnSearching(
     onShopSearch: (StoreSearch) -> Unit,
-    onLocationSearch: () -> Unit,
+    onLocationSearch: (RegionSearch) -> Unit,
     regionSearchs: List<RegionSearch>,
     storeSearchs: List<StoreSearch>,
     searchText: TextFieldValue
@@ -211,7 +211,7 @@ private fun ResultItems(
     regionSearchs: List<RegionSearch>,
     searchText: TextFieldValue,
     onShopSearch: (StoreSearch) -> Unit,
-    onLocationSearch: () -> Unit,
+    onLocationSearch: (RegionSearch) -> Unit,
     storeSearchs: List<StoreSearch>
 ) {
     LazyColumn(
@@ -221,10 +221,15 @@ private fun ResultItems(
         verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
         item { HeightSpacer(height = 20.dp) }
+        /** 장소 검색 */
         if (regionSearchs.isNotEmpty()) {
             items(regionSearchs) {
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable {
+                            onLocationSearch(it)
+                        },
                     verticalAlignment = Alignment.Top
                 ) {
                     IconButton(
@@ -239,30 +244,27 @@ private fun ResultItems(
                     }
                     WidthSpacer(width = 4.dp)
                     Column(modifier = Modifier.weight(1f)) {
-                        Text(buildAnnotatedString {
-                            it.region.forEach { storeChar ->
-                                if (searchText.text.contains(storeChar)) {
-                                    withStyle(
-                                        style = SpanStyle(
-                                            color = Primary,
-                                            fontWeight = FontWeight.Bold
-                                        )
-                                    ) {
-                                        append(storeChar)
-                                    }
-                                } else {
-                                    withStyle(style = SpanStyle(color = Black)) {
-                                        append(storeChar)
+                        Text(
+                            buildAnnotatedString {
+                                it.region.forEach { storeChar ->
+                                    if (searchText.text.contains(storeChar)) {
+                                        withStyle(
+                                            style = SpanStyle(
+                                                color = Primary,
+                                                fontWeight = FontWeight.Bold
+                                            )
+                                        ) {
+                                            append(storeChar)
+                                        }
+                                    } else {
+                                        withStyle(style = SpanStyle(color = Black)) {
+                                            append(storeChar)
+                                        }
                                     }
                                 }
-                            }
-                        },
+                            },
                             style = Body1,
                             textAlign = TextAlign.Start,
-                            modifier = Modifier.clickable {
-                                // TODO 매장 클릭 구현
-//                                onShopSearch()
-                            }
                         )
                         HeightSpacer(height = 4.dp)
                         Text(
@@ -270,10 +272,6 @@ private fun ResultItems(
                             style = Body2,
                             color = Gray500,
                             textAlign = TextAlign.Start,
-                            modifier = Modifier.clickable {
-                                // TODO 지역 클릭 구현
-//                                onLocationSearch()
-                            }
                         )
                     }
 
@@ -281,10 +279,15 @@ private fun ResultItems(
                 }
             }
         }
+        /** 스토어 검색 */
         if (storeSearchs.isNotEmpty()) {
             items(storeSearchs) {
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable {
+                            onShopSearch(it)
+                        },
                     verticalAlignment = Alignment.Top
                 ) {
                     IconButton(
@@ -299,30 +302,27 @@ private fun ResultItems(
                     }
                     WidthSpacer(width = 4.dp)
                     Column(modifier = Modifier.weight(1f)) {
-                        Text(buildAnnotatedString {
-                            it.storeName.forEach { storeChar ->
-                                if (searchText.text.contains(storeChar)) {
-                                    withStyle(
-                                        style = SpanStyle(
-                                            color = Primary,
-                                            fontWeight = FontWeight.Bold
-                                        )
-                                    ) {
-                                        append(storeChar)
-                                    }
-                                } else {
-                                    withStyle(style = SpanStyle(color = Black)) {
-                                        append(storeChar)
+                        Text(
+                            buildAnnotatedString {
+                                it.storeName.forEach { storeChar ->
+                                    if (searchText.text.contains(storeChar)) {
+                                        withStyle(
+                                            style = SpanStyle(
+                                                color = Primary,
+                                                fontWeight = FontWeight.Bold
+                                            )
+                                        ) {
+                                            append(storeChar)
+                                        }
+                                    } else {
+                                        withStyle(style = SpanStyle(color = Black)) {
+                                            append(storeChar)
+                                        }
                                     }
                                 }
-                            }
-                        },
+                            },
                             style = Body1,
                             textAlign = TextAlign.Start,
-                            modifier = Modifier.clickable {
-                                // TODO 매장 클릭 구현
-                                onShopSearch(it)
-                            }
                         )
                         HeightSpacer(height = 4.dp)
                         Text(
@@ -330,10 +330,6 @@ private fun ResultItems(
                             style = Body2,
                             color = Gray500,
                             textAlign = TextAlign.Start,
-                            modifier = Modifier.clickable {
-                                // TODO 지역 클릭 구현
-                                // onLocationSearch()
-                            }
                         )
                     }
 
