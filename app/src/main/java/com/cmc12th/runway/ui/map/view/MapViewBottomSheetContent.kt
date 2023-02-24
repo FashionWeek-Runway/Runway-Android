@@ -171,7 +171,7 @@ private fun BottomDetailTag(it: String) {
             )
     ) {
         Text(
-            text = it,
+            text = "# $it",
             style = Button2,
             color = Blue600,
             modifier = Modifier.padding(8.dp, 6.dp)
