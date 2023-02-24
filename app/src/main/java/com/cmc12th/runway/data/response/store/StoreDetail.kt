@@ -7,23 +7,23 @@ import com.squareup.moshi.JsonClass
 @JsonClass(generateAdapter = true)
 data class StoreDetail(
     @Json(name = "address")
-    val address: String,
+    val address: String = "",
     @Json(name = "bookmark")
-    val bookmark: Boolean,
+    val bookmark: Boolean = false,
     @Json(name = "category")
-    val category: String,
+    val category: List<String> = emptyList(),
     @Json(name = "imgUrlList")
-    val imgUrlList: String,
+    val imgUrlList: List<String> = emptyList(),
     @Json(name = "instagram")
-    val instagram: String,
+    val instagram: String = "",
     @Json(name = "storeId")
-    val storeId: Int,
+    val storeId: Int = -1,
     @Json(name = "storeName")
-    val storeName: String,
+    val storeName: String = "",
     @Json(name = "storePhone")
-    val storePhone: String,
+    val storePhone: String = "",
     @Json(name = "storeTime")
-    val storeTime: String,
+    val storeTime: String = "",
     @Json(name = "webSite")
-    val webSite: String
+    val webSite: String = ""
 )

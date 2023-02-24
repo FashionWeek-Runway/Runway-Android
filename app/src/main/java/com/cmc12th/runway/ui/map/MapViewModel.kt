@@ -23,6 +23,7 @@ import com.cmc12th.runway.domain.repository.MapRepository
 import com.cmc12th.runway.domain.repository.SearchRepository
 import com.cmc12th.runway.ui.domain.model.RunwayCategory
 import com.cmc12th.runway.ui.map.MapViewModel.Companion.DEFAULT_LATLNG
+import com.cmc12th.runway.ui.map.components.DetailState
 import com.cmc12th.runway.ui.map.model.BottomSheetContent
 import com.cmc12th.runway.ui.map.model.MapStatus
 import com.cmc12th.runway.ui.map.model.MovingCameraWrapper
@@ -95,7 +96,7 @@ class MapViewModel @Inject constructor(
 
     private val _userPosition = MutableStateFlow(DEFAULT_LATLNG)
 
-    val onDetail = mutableStateOf(false)
+    val onDetail = mutableStateOf(DetailState.default())
 
     val mapUiState = combine(
         _markerItems,

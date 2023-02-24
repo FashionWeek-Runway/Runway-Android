@@ -39,15 +39,11 @@ import com.cmc12th.runway.ui.map.model.NaverItem
 import com.cmc12th.runway.R
 import com.cmc12th.runway.data.model.SearchType
 import com.cmc12th.runway.ui.components.RunwayIconButton
-import com.cmc12th.runway.ui.detail.DetailVIewModel
 import com.cmc12th.runway.ui.detail.view.DetailScreen
 import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.map.MapUiState
 import com.cmc12th.runway.ui.map.MapViewModel
-import com.cmc12th.runway.ui.map.components.BottomGradient
-import com.cmc12th.runway.ui.map.components.GpsIcon
-import com.cmc12th.runway.ui.map.components.RefreshIcon
-import com.cmc12th.runway.ui.map.components.SearchBoxAndTagCategory
+import com.cmc12th.runway.ui.map.components.*
 import com.cmc12th.runway.ui.map.model.BottomSheetContent
 import com.cmc12th.runway.ui.map.model.MapStatus
 import com.cmc12th.runway.ui.map.model.MovingCameraWrapper
@@ -128,7 +124,6 @@ private fun MapViewContents(
 ) {
     val mapUiState by mapViewModel.mapUiState.collectAsStateWithLifecycle()
 
-    val detailViewModel: DetailVIewModel = hiltViewModel()
     val bottomSheetScaffoldState =
         rememberBottomSheetScaffoldState()
     val configuration = LocalConfiguration.current
@@ -237,8 +232,11 @@ private fun MapViewContents(
                 isFullScreen = mapUiState.mapStatus == MapStatus.LOCATION_SEARCH,
                 isExpanded = bottomSheetScaffoldState.bottomSheetState.targetValue == BottomSheetValue.Expanded,
                 setMapStatusDefault = setMapStatusDefault,
-                setMapStatusOnSearch = setMapStatusOnSearch
-            ) { mapViewModel.onDetail.value = true }
+                setMapStatusOnSearch = setMapStatusOnSearch,
+                navigateToDetail = { id, storeName ->
+                    mapViewModel.onDetail.value = DetailState(true, id, storeName)
+                }
+            )
         }
     ) {
         Box(
@@ -324,15 +322,15 @@ private fun MapViewContents(
         }
     }
 
-    if (mapViewModel.onDetail.value) {
+    if (!mapViewModel.onDetail.value.isDefault()) {
         DetailScreen(appState = appState,
-            idx = 1,
-            detailVIewModel = detailViewModel,
+            idx = mapViewModel.onDetail.value.id,
+            storeName = mapViewModel.onDetail.value.storeName,
             onBackPress = {
                 if (mapUiState.mapStatus.onSearch()) {
                     appState.bottomBarState.value = false
                 }
-                mapViewModel.onDetail.value = false
+                mapViewModel.onDetail.value = DetailState.default()
             }
         )
     }

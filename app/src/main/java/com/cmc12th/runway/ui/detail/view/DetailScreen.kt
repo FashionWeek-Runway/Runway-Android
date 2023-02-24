@@ -1,4 +1,7 @@
-@file:OptIn(ExperimentalLayoutApi::class)
+@file:OptIn(
+    ExperimentalLayoutApi::class, ExperimentalFoundationApi::class,
+    ExperimentalLayoutApi::class
+)
 
 package com.cmc12th.runway.ui.detail.view
 
@@ -7,6 +10,7 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
+import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -18,18 +22,22 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.cmc12th.runway.R
+import com.cmc12th.runway.data.response.store.BlogReview
+import com.cmc12th.runway.data.response.store.StoreDetail
 import com.cmc12th.runway.ui.components.*
-import com.cmc12th.runway.ui.detail.DetailVIewModel
+import com.cmc12th.runway.ui.detail.DetailViewModel
 import com.cmc12th.runway.ui.domain.model.ApplicationState
-import com.cmc12th.runway.ui.domain.model.RunwayCategory
 import com.cmc12th.runway.ui.map.components.TopGradient
-import com.cmc12th.runway.ui.signin.model.CategoryTag
 import com.cmc12th.runway.ui.theme.*
 import com.cmc12th.runway.utils.Constants.PHOTO_REVIEW_ROUTE
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
@@ -39,9 +47,12 @@ import java.lang.Float.min
 fun DetailScreen(
     appState: ApplicationState,
     idx: Int,
+    storeName: String,
     onBackPress: () -> Unit = {},
-    detailVIewModel: DetailVIewModel,
 ) {
+
+    val detailViewModel: DetailViewModel = hiltViewModel()
+    val uiState by detailViewModel.uiState.collectAsState()
 
     val scrollState = rememberLazyListState()
 
@@ -54,12 +65,13 @@ fun DetailScreen(
     val topbarIconAnimateColor = animateColorAsState(targetValue = topbarIconColor.value)
 
     LaunchedEffect(key1 = Unit) {
-        detailVIewModel.getDetailInfo()
+        detailViewModel.getDetailInfo(idx)
+        detailViewModel.getBlogReview(idx, storeName)
     }
 
     LaunchedEffect(key1 = scrollState.firstVisibleItemScrollOffset) {
         if (scrollState.firstVisibleItemScrollOffset < 100) {
-            if (scrollState.firstVisibleItemScrollOffset < 10) {
+            if (scrollState.firstVisibleItemScrollOffset < 50) {
                 topbarColor.value = Color.Transparent
             } else {
                 topbarColor.value = Color.White.copy(
@@ -99,13 +111,13 @@ fun DetailScreen(
             state = scrollState
         ) {
             item {
-                ShowRoomBanner()
-                ShowRoomTitle()
-                WidthSpacerLine(height = 1.dp, color = Gray200)
-                ShowRoomDetail()
-
-                WidthSpacerLine(height = 1.dp, color = Gray200)
-                ShopNews()
+                ShowRoomBanner(uiState.storeDetail)
+                ShowRoomTitle(uiState.storeDetail)
+                ShowRoomDetail(uiState.storeDetail)
+            }
+            item {
+                // WidthSpacerLine(height = 1.dp, color = Gray200)
+                // ShopNews()
                 WidthSpacerLine(height = 2.dp, color = Black)
                 UserReview {
                     appState.navigate(PHOTO_REVIEW_ROUTE)
@@ -114,11 +126,11 @@ fun DetailScreen(
                 WidthSpacerLine(height = 8.dp, color = Gray100)
                 BlogReview()
             }
-            items((0..3).toList()) {
-                BlogReviewItem()
+            items(uiState.blogReview) {
+                BlogReviewItem(it)
             }
-        }
 
+        }
 
         DetailTopBar(
             topbarColor = topbarColor.value,
@@ -180,41 +192,38 @@ private fun BoxScope.DetailTopBar(
 }
 
 @Composable
-fun ShowRoomTitle() {
+fun ShowRoomTitle(storeDetail: StoreDetail) {
     Column(
         modifier = Modifier
             .padding(start = 20.dp, end = 20.dp, top = 12.dp, bottom = 16.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
 
-        Text(text = "미니멀 무신사 스튜디오 클럽", style = HeadLine2, color = Color.Black)
+        Text(text = storeDetail.storeName, style = HeadLine2, color = Color.Black)
         FlowRow {
-            RunwayCategory.generateCategoryTags().forEach {
+            storeDetail.category.forEach {
                 ShowRoomTag(it)
             }
         }
-
     }
 }
 
 @Composable
-fun ShowRoomTag(categoryTag: CategoryTag) {
+fun ShowRoomTag(categoryTag: String) {
     Box(modifier = Modifier.padding(top = 4.dp, end = 6.dp)) {
         Row(
             modifier = Modifier
-                .padding(8.dp, 5.dp)
                 .clip(RoundedCornerShape(4.dp))
-                .background(Gray50),
+                .border(BorderStroke(1.dp, Blue200), RoundedCornerShape(4.dp))
+                .background(Color(0x50E6EBFF)),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-            Icon(
-                painter = painterResource(id = categoryTag.iconId),
-                contentDescription = "IC_CATEGORY",
-                modifier = Modifier.size(12.dp),
-                tint = Primary
+            Text(
+                text = "# $categoryTag", style = Button2, color = Blue600,
+                modifier = Modifier
+                    .padding(8.dp, 6.dp)
             )
-            Text(text = categoryTag.name, style = Button2, color = Primary)
         }
     }
 }
@@ -324,12 +333,12 @@ fun BlogReview() {
 
 
 @Composable
-fun BlogReviewItem() {
+fun BlogReviewItem(blogReview: BlogReview) {
     Column {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .heightIn(108.dp)
+                .height(136.dp)
                 .padding(20.dp, 14.dp),
         ) {
             Column(
@@ -337,26 +346,31 @@ fun BlogReviewItem() {
                 modifier = Modifier.weight(1f)
             ) {
                 Text(
-                    text = "무신사 쇼핑 나들이 (무신사 스튜디오 성수/ 무신사 스탠다드 홍대) 졸리고 힘들다.",
+                    text = blogReview.title,
                     style = Body1M,
                     color = Gray900,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis
                 )
                 Text(
-                    text = "일이 삼사오육 칠 팔구십일이 삼사 오육칠팔 구십 일이삼, 일이 삼사오육 칠 팔구십일이 삼사오육칠팔 구십 일이삼.",
+                    text = blogReview.content,
                     style = Body2,
                     color = Gray700,
                     overflow = TextOverflow.Ellipsis
                 )
             }
             WidthSpacer(width = 20.dp)
-            Image(
-                painter = painterResource(id = R.drawable.img_dummy),
-                contentDescription = "IMG_DUMMY",
+            AsyncImage(
                 modifier = Modifier
                     .size(108.dp),
-                contentScale = ContentScale.Crop
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(blogReview.imgUrl)
+                    .crossfade(true)
+                    .build(),
+                placeholder = painterResource(R.drawable.img_dummy),
+                error = painterResource(id = R.drawable.img_dummy),
+                contentDescription = "BLOG_IMG",
+                contentScale = ContentScale.Crop,
             )
         }
         WidthSpacerLine(height = 1.dp, color = Gray200)
@@ -384,7 +398,7 @@ fun UserReview(navigateToWriteScreen: () -> Unit) {
             ) {
                 RunwayIconButton(drawable = R.drawable.ic_filled_camera_24, size = 24.dp)
                 Text(
-                    text = "나도 참여",
+                    text = "후기 작성",
                     style = Body1M,
                     color = Primary
                 )
@@ -411,7 +425,7 @@ fun UserReview(navigateToWriteScreen: () -> Unit) {
 
 
 @Composable
-private fun ShowRoomDetail() {
+private fun ShowRoomDetail(storeDetail: StoreDetail) {
     Column(
         modifier = Modifier.padding(20.dp, 16.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp),
@@ -422,7 +436,7 @@ private fun ShowRoomDetail() {
             horizontalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             RunwayIconButton(size = 18.dp, drawable = R.drawable.ic_border_map_18)
-            Text(text = "주소가 들어가 예정 강동구, 아해찬-이이이", style = Body2, color = Color.Black)
+            Text(text = storeDetail.address, style = Body2, color = Color.Black)
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -436,7 +450,7 @@ private fun ShowRoomDetail() {
             horizontalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             RunwayIconButton(size = 18.dp, drawable = R.drawable.ic_border_time_18)
-            Text(text = "월 - 일 09:00 ~ 21:00", style = Body2, color = Color.Black)
+            Text(text = storeDetail.storeTime, style = Body2, color = Color.Black)
         }
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -444,7 +458,7 @@ private fun ShowRoomDetail() {
             horizontalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             RunwayIconButton(size = 18.dp, drawable = R.drawable.ic_border_call_18)
-            Text(text = "0502-1473-3212", style = Body2, color = Color.Black)
+            Text(text = storeDetail.storePhone, style = Body2, color = Color.Black)
         }
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -453,7 +467,7 @@ private fun ShowRoomDetail() {
         ) {
             RunwayIconButton(size = 18.dp, drawable = R.drawable.ic_border_instagram_18)
             Text(
-                text = "[안스타그램 아이디]",
+                text = storeDetail.instagram,
                 textDecoration = TextDecoration.Underline,
                 style = Body2,
                 color = Color.Black
@@ -466,7 +480,7 @@ private fun ShowRoomDetail() {
         ) {
             RunwayIconButton(size = 18.dp, drawable = R.drawable.ic_border_web_18)
             Text(
-                text = "[웹사이트 링크]",
+                text = storeDetail.webSite,
                 textDecoration = TextDecoration.Underline,
                 style = Body2,
                 color = Color.Black
@@ -477,21 +491,32 @@ private fun ShowRoomDetail() {
 }
 
 @Composable
-private fun ShowRoomBanner() {
+private fun ShowRoomBanner(storeDetail: StoreDetail) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .height(IntrinsicSize.Max)
     ) {
-        Image(
-            painter = painterResource(id = R.drawable.img_dummy),
-            contentDescription = "SHOP_IMAGE",
-            contentScale = ContentScale.Crop,
+        HorizontalPager(
+            pageCount = storeDetail.imgUrlList.size,
             modifier = Modifier
                 .fillMaxWidth()
                 .align(Alignment.TopCenter)
                 .aspectRatio(1.2f)
-        )
+        ) {
+            AsyncImage(
+                modifier = Modifier.fillMaxSize(),
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(storeDetail.imgUrlList[it])
+                    .crossfade(true)
+                    .build(),
+                placeholder = painterResource(R.drawable.img_dummy),
+                error = painterResource(id = R.drawable.img_dummy),
+                contentDescription = "SHOP_IMAGE",
+                contentScale = ContentScale.Crop,
+            )
+        }
+
         TopGradient(modifier = Modifier.align(Alignment.BottomCenter), height = 20.dp, alpha = 1f)
     }
 }

@@ -38,7 +38,7 @@ fun MapViewBottomSheetContent(
     setMapStatusOnSearch: () -> Unit,
     setMapStatusDefault: () -> Unit,
     contents: BottomSheetContent,
-    navigateToDetail: () -> Unit,
+    navigateToDetail: (id: Int, storeName: String) -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -111,7 +111,7 @@ fun MapViewBottomSheetContent(
                 LazyColumn {
                     items(contents.getData()) {
                         Column(modifier = Modifier.clickable {
-                            navigateToDetail()
+                            navigateToDetail(it.storeId, it.storeName)
                         }) {
                             BottomDetailItem(navigateToDetail, it)
                         }
@@ -127,11 +127,11 @@ fun MapViewBottomSheetContent(
 
 @Composable
 private fun BottomDetailItem(
-    navigateToDetail: () -> Unit,
+    navigateToDetail: (id: Int, storeName: String) -> Unit,
     it: MapInfoItem
 ) {
     Column(modifier = Modifier.clickable {
-        navigateToDetail()
+        navigateToDetail(it.storeId, it.storeName)
     }) {
         AsyncImage(
             modifier = Modifier
