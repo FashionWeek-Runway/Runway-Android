@@ -105,10 +105,11 @@ fun DetailScreen(
             // ShopNews()
             WidthSpacerLine(height = 2.dp, color = Black)
             UserReview(
-                userReviews = detailViewModel.userReviews
-            ) {
-                appState.navigate(PHOTO_REVIEW_ROUTE)
-            }
+                userReviews = detailViewModel.userReviews,
+                navigateToWriteScreen = {
+                    appState.navigate(PHOTO_REVIEW_ROUTE)
+                }
+            )
             WidthSpacerLine(height = 8.dp, color = Gray100)
             BlogReview()
             uiState.blogReview.map {
@@ -242,7 +243,7 @@ private fun ManageSystemBarColor(
     scrollState: ScrollState,
     topbarColor: Color,
     updateTopbarColor: (Color) -> Unit,
-    updateTopbarIconColor: (Color) -> Unit
+    updateTopbarIconColor: (Color) -> Unit,
 ) {
 
     val systemUiController = rememberSystemUiController()
@@ -415,7 +416,7 @@ fun BlogReviewItem(blogReview: BlogReview) {
 @Composable
 fun UserReview(
     userReviews: Flow<PagingData<UserReview>>,
-    navigateToWriteScreen: () -> Unit
+    navigateToWriteScreen: () -> Unit,
 ) {
     val userReviewsPaging = userReviews.collectAsLazyPagingItems()
 
