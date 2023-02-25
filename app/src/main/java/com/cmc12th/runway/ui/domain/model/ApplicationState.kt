@@ -5,6 +5,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.navigation.NavHostController
+import com.google.accompanist.systemuicontroller.SystemUiController
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraPosition
 import com.naver.maps.map.compose.CameraPositionState
@@ -19,6 +20,7 @@ class ApplicationState(
     val navController: NavHostController,
     val scaffoldState: ScaffoldState,
     val cameraPositionState: CameraPositionState,
+    val systmeUiController: SystemUiController,
     private val coroutineScope: CoroutineScope,
 ) {
 
