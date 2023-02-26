@@ -13,7 +13,6 @@ import com.cmc12th.runway.ui.mypage.MypageViewModel
 import com.cmc12th.runway.utils.Constants
 import com.cmc12th.runway.utils.Constants.LOGIN_GRAPH
 import com.cmc12th.runway.utils.Constants.MAIN_GRAPH
-import com.cmc12th.runway.utils.Constants.SPLASH_ROUTE
 
 @Composable
 fun MypageScreen(appState: ApplicationState) {
@@ -25,7 +24,7 @@ fun MypageScreen(appState: ApplicationState) {
             .fillMaxSize()
     ) {
         Text(text = "Mypage Screen")
-        Button(onClick = { appState.navController.navigate(Constants.PHOTO_REVIEW_ROUTE) }) {
+        Button(onClick = { appState.navController.navigate(Constants.REVIEW_WRITE_ROUTE) }) {
             Text(text = "리뷰작성하러 가기")
         }
         Button(onClick = {

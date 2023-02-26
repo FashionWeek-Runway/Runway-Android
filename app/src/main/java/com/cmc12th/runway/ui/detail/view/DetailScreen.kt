@@ -1,5 +1,5 @@
 @file:OptIn(
-    ExperimentalMaterialApi::class
+    ExperimentalMaterialApi::class, ExperimentalMaterialApi::class
 )
 
 package com.cmc12th.runway.ui.detail.view
@@ -26,7 +26,8 @@ import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.domain.model.BottomSheetContent
 import com.cmc12th.runway.ui.domain.rememberBottomSheet
 import com.cmc12th.runway.ui.theme.*
-import com.cmc12th.runway.utils.Constants.PHOTO_REVIEW_ROUTE
+import com.cmc12th.runway.utils.Constants.REVIEW_DETAIL_ROUTE
+import com.cmc12th.runway.utils.Constants.REVIEW_WRITE_ROUTE
 import com.cmc12th.runway.utils.getImageUri
 import kotlinx.coroutines.launch
 
@@ -66,7 +67,7 @@ fun DetailScreen(
                     "uri",
                     uri
                 )
-                appState.navigate("$PHOTO_REVIEW_ROUTE?idx=$idx")
+                appState.navigate("$REVIEW_WRITE_ROUTE?idx=$idx")
             }
         }
     val camearLauncher =
@@ -77,7 +78,7 @@ fun DetailScreen(
                         "uri",
                         it
                     )
-                    appState.navigate("$PHOTO_REVIEW_ROUTE?idx=$idx")
+                    appState.navigate("$REVIEW_WRITE_ROUTE?idx=$idx")
                 }
             }
         }
@@ -125,7 +126,10 @@ fun DetailScreen(
                     userReviews = detailViewModel.userReviews,
                     showBottomSheet = showBottomSheet,
                     galleryLauncher = galleryLauncher,
-                    cameraLauncher = camearLauncher
+                    cameraLauncher = camearLauncher,
+                    navigateToUserReviewDetail = {
+                        appState.navigate(REVIEW_DETAIL_ROUTE)
+                    }
                 )
                 WidthSpacerLine(height = 8.dp, color = Gray100)
                 BlogReview()

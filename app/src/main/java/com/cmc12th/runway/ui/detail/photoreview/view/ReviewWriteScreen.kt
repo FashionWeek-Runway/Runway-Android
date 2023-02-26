@@ -47,7 +47,7 @@ import kotlin.math.roundToInt
 
 
 @Composable
-fun PhotoReviewWriteScreen(appState: ApplicationState, idx: Int, uri: Uri?) {
+fun ReviewWriteScreen(appState: ApplicationState, idx: Int, uri: Uri?) {
     val selectImages = remember { mutableStateOf(uri) }
     val detailViewModel: DetailViewModel = hiltViewModel()
 
