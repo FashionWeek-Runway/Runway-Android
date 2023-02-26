@@ -1,4 +1,4 @@
-package com.cmc12th.runway.ui.detail.photoreview.components
+package com.cmc12th.runway.ui.detail.components
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.offset

@@ -1,4 +1,4 @@
-package com.cmc12th.runway.ui.detail.photoreview.components
+package com.cmc12th.runway.ui.detail.components
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
