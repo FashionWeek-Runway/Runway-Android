@@ -27,7 +27,6 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
-import androidx.compose.material.TextFieldDefaults.indicatorLine
 import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
@@ -37,7 +36,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.input.pointer.pointerInput
@@ -48,7 +46,7 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.*
 import coil.compose.rememberAsyncImagePainter
 import com.cmc12th.runway.R
@@ -69,20 +67,19 @@ data class UserReviewText(
     val fontSize: TextUnit,
     val fontColor: Color,
     val textField: TextFieldValue = TextFieldValue(""),
+    val textAlign: TextAlign = TextAlign.Start,
     val focusRequester: FocusRequester = FocusRequester(),
 ) {
     fun toEditUiStatus() = EditUiStatus(
         isEdit = true,
         editIdx = idx,
         fontSize = fontSize,
+        textAlign = textAlign,
         fontColor = fontColor,
         textField = textField,
     )
 
     companion object {
-        fun disabled() =
-            UserReviewText(-1, DEFAULT_REVIEW_FONT_SIZE, Color.White, TextFieldValue(""))
-
         val DEFAULT_REVIEW_FONT_SIZE = 31.sp
     }
 }
@@ -92,12 +89,13 @@ data class EditUiStatus(
     val editIdx: Int,
     val fontSize: TextUnit,
     val fontColor: Color,
+    val textAlign: TextAlign = TextAlign.Start,
     val isColorPickerVisibility: Boolean = false,
     val textField: TextFieldValue = TextFieldValue(""),
 ) {
     companion object {
 
-        val REVIEW_FONT_COLORS = listOf<Color>(
+        val REVIEW_FONT_COLORS = listOf(
             Color.White,
             Color.Black,
             Primary,
@@ -113,6 +111,7 @@ data class EditUiStatus(
                 -1,
                 DEFAULT_REVIEW_FONT_SIZE,
                 Color.White,
+                TextAlign.Start,
                 false,
                 TextFieldValue("")
             )
@@ -157,7 +156,8 @@ fun PhotoReviewScreen(appState: ApplicationState) {
                 userReviewText[editStatus.value.editIdx].copy(
                     fontSize = editStatus.value.fontSize,
                     fontColor = editStatus.value.fontColor,
-                    textField = editStatus.value.textField
+                    textField = editStatus.value.textField,
+                    textAlign = editStatus.value.textAlign
                 )
         }
         disableEditStatus()
@@ -248,12 +248,17 @@ fun PhotoReviewScreen(appState: ApplicationState) {
                         isColorPickerVisibility = it
                     )
                 },
+                updateTextAlign = {
+                    editStatus.value = editStatus.value.copy(
+                        textAlign = it
+                    )
+                },
                 updateEditMode = { editMode ->
                     if (editMode) {
                         val userReview = UserReviewText(
                             idx = userReviewText.size,
                             fontSize = DEFAULT_REVIEW_FONT_SIZE,
-                            fontColor = Color.White
+                            fontColor = Color.White,
                         )
                         ableEditStatus(userReview)
                         userReviewText.add(userReview)
@@ -373,6 +378,7 @@ private fun EditFocusTextField(
             fontSize = editUiState.fontSize,
             lineHeight = editUiState.fontSize * 1.4f,
             fontFamily = FontFamily(Font(R.font.spoqa_han_sans_neo_medium)),
+            textAlign = editUiState.textAlign
         ),
         modifier = Modifier
             .offset(x = 60.dp, y = 160.dp)
@@ -388,9 +394,6 @@ private fun EditFocusTextField(
                 innerTextField()
             }
         },
-        keyboardActions = KeyboardActions(onDone = {
-
-        }),
     )
 }
 
@@ -473,6 +476,7 @@ private fun BoxScope.TopBarIcons(
     addUserReviewText: () -> Unit,
     updateColorPickerVisiblity: (Boolean) -> Unit,
     editStatus: EditUiStatus,
+    updateTextAlign: (TextAlign) -> Unit,
 ) {
 
     /** 에디트 모드일 때 */
@@ -494,12 +498,45 @@ private fun BoxScope.TopBarIcons(
                 horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally)
             ) {
 
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_baseline_left_align_24),
-                    contentDescription = "IMG_COLOR_PICKER",
-                    modifier = Modifier.size(24.dp),
-                    tint = Color.White
-                )
+                when (editStatus.textAlign) {
+                    TextAlign.Start -> {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_baseline_left_align_24),
+                            contentDescription = "IMG_COLOR_PICKER",
+                            modifier = Modifier
+                                .size(24.dp)
+                                .clickable {
+                                    updateTextAlign(TextAlign.Center)
+                                },
+                            tint = Color.White
+                        )
+                    }
+                    TextAlign.Center -> {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_baseline_center_align_24),
+                            contentDescription = "IMG_COLOR_PICKER",
+                            modifier = Modifier
+                                .size(24.dp)
+                                .clickable {
+                                    updateTextAlign(TextAlign.Right)
+                                },
+                            tint = Color.White
+                        )
+                    }
+                    else -> {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_baseline_right_align_24),
+                            contentDescription = "IMG_COLOR_PICKER",
+                            modifier = Modifier
+                                .size(24.dp)
+                                .clickable {
+                                    updateTextAlign(TextAlign.Start)
+                                },
+                            tint = Color.White
+                        )
+                    }
+                }
+
                 if (!editStatus.isColorPickerVisibility) {
                     Image(
                         painter = painterResource(id = R.drawable.img_color_picker_able_24),
@@ -527,7 +564,6 @@ private fun BoxScope.TopBarIcons(
                 addUserReviewText()
             })
         }
-
     }
 
     /** 에디트 모드가 아닐 때 */
@@ -662,7 +698,8 @@ private fun ReviewTextField(
                     color = userReviewText.fontColor,
                     fontSize = userReviewText.fontSize,
                     lineHeight = userReviewText.fontSize * 1.4f,
-                    fontFamily = FontFamily(Font(R.font.spoqa_han_sans_neo_medium))
+                    fontFamily = FontFamily(Font(R.font.spoqa_han_sans_neo_medium)),
+                    textAlign = userReviewText.textAlign
                 ),
                 modifier = Modifier
                     .width(textFieldWidth)
@@ -687,8 +724,6 @@ private fun ReviewTextField(
                     keyboardType = KeyboardType.Password
                 )
             )
-
-
         }
     }
 }
