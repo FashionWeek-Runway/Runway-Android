@@ -34,6 +34,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberAsyncImagePainter
 import com.cmc12th.runway.R
 import com.cmc12th.runway.ui.detail.DetailViewModel
+import com.cmc12th.runway.ui.detail.components.*
 import com.cmc12th.runway.ui.detail.photoreview.components.*
 import com.cmc12th.runway.ui.detail.photoreview.model.EditUiStatus
 import com.cmc12th.runway.ui.detail.photoreview.model.UserReviewText
