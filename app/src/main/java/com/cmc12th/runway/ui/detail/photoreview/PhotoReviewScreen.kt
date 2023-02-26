@@ -181,6 +181,7 @@ fun PhotoReviewScreen(appState: ApplicationState, idx: Int) {
 
     DisposableEffect(Unit) {
         galleryLauncher.launch("image/*")
+        appState.bottomBarState.value = false
         onDispose {
             appState.systmeUiController.setSystemBarsColor(Color.White)
             appState.systmeUiController.setNavigationBarColor(Color.White)

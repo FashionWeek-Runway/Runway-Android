@@ -347,9 +347,7 @@ private fun MapViewContents(
             idx = mapViewModel.onDetail.value.id,
             storeName = mapViewModel.onDetail.value.storeName,
             onBackPress = {
-                if (mapUiState.mapStatus.onSearch()) {
-                    appState.bottomBarState.value = false
-                }
+                appState.bottomBarState.value = !mapUiState.mapStatus.onSearch()
                 mapViewModel.onDetail.value = DetailState.default()
             }
         )

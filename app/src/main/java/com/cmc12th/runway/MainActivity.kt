@@ -77,7 +77,7 @@ private fun ManageBottomBarState(
     applicationState: ApplicationState,
 ) {
     when (navBackStackEntry?.destination?.route) {
-        HOME_ROUTE, MAP_ROUTE, MYPAGE_ROUTE -> applicationState.bottomBarState.value = true
+        HOME_ROUTE, MYPAGE_ROUTE -> applicationState.bottomBarState.value = true
         else -> applicationState.bottomBarState.value = false
     }
 }
