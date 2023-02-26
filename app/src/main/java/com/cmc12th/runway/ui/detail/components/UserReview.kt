@@ -36,6 +36,7 @@ import kotlinx.coroutines.flow.Flow
 fun UserReview(
     userReviews: Flow<PagingData<UserReview>>,
     showBottomSheet: (BottomSheetContent) -> Unit,
+    navigateToUserReviewDetail: (UserReview) -> Unit,
     cameraLauncher: ManagedActivityResultLauncher<Void?, Bitmap?>,
     galleryLauncher: ManagedActivityResultLauncher<String, Uri?>,
 ) {
@@ -110,7 +111,11 @@ fun UserReview(
             items(userReviewsPaging) {
                 it?.let {
                     AsyncImage(
-                        modifier = Modifier.size(132.dp, 200.dp),
+                        modifier = Modifier
+                            .size(132.dp, 200.dp)
+                            .clickable {
+                                navigateToUserReviewDetail(it)
+                            },
                         model = ImageRequest.Builder(LocalContext.current)
                             .data(it.imgUrl)
                             .crossfade(true)

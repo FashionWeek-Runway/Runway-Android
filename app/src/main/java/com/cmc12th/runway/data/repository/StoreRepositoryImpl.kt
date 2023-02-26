@@ -7,6 +7,7 @@ import com.cmc12th.runway.data.pagingsource.UserReviewPagingSource
 import com.cmc12th.runway.data.response.store.BlogReview
 import com.cmc12th.runway.data.response.store.StoreDetail
 import com.cmc12th.runway.data.response.store.UserReview
+import com.cmc12th.runway.data.response.store.UserReviewDetail
 import com.cmc12th.runway.domain.repository.StoreRepository
 import com.cmc12th.runway.network.RunwayClient
 import com.cmc12th.runway.network.model.safeFlow
@@ -14,6 +15,7 @@ import com.cmc12th.runway.network.model.safePagingFlow
 import com.cmc12th.runway.utils.ApiWrapper
 import com.cmc12th.runway.utils.DefaultApiWrapper
 import com.cmc12th.runway.utils.PagingApiWrapper
+import com.google.android.gms.common.api.Api
 import kotlinx.coroutines.flow.Flow
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -66,6 +68,10 @@ class StoreRepositoryImpl @Inject constructor(
                 )
             },
         ).flow
+    }
+
+    override fun getReviewDetail(reviewId: Int): Flow<ApiWrapper<UserReviewDetail>> = safeFlow {
+        runwayClient.getReviewDetail(reviewId)
     }
 
 }

@@ -6,6 +6,7 @@ import com.cmc12th.runway.data.response.map.MapFilterItem
 import com.cmc12th.runway.data.response.store.BlogReview
 import com.cmc12th.runway.data.response.store.StoreDetail
 import com.cmc12th.runway.data.response.store.UserReview
+import com.cmc12th.runway.data.response.store.UserReviewDetail
 import com.cmc12th.runway.utils.ApiWrapper
 import com.cmc12th.runway.utils.DefaultApiWrapper
 import com.cmc12th.runway.utils.PagingApiWrapper
@@ -32,4 +33,6 @@ interface StoreRepository {
     ): Flow<DefaultApiWrapper>
 
     fun userReviewPaging(storeId: Int): Flow<PagingData<UserReview>>
+    
+    fun getReviewDetail(reviewId: Int): Flow<ApiWrapper<UserReviewDetail>>
 }

@@ -5,6 +5,7 @@ import com.cmc12th.runway.data.response.PagingResponse
 import com.cmc12th.runway.data.response.store.BlogReview
 import com.cmc12th.runway.data.response.store.StoreDetail
 import com.cmc12th.runway.data.response.store.UserReview
+import com.cmc12th.runway.data.response.store.UserReviewDetail
 import com.cmc12th.runway.utils.DefaultResponse
 import com.cmc12th.runway.utils.NetworkResponse
 import com.cmc12th.runway.utils.PagingNetworkResponse
@@ -52,6 +53,12 @@ interface StoreService {
         @Path("storeId") storeId: Int,
         @Part img: MultipartBody.Part,
     ): DefaultResponse
+
+    /** 쇼룸 후기 상세 조회 */
+    @GET("/stores/review/detail/{reviewId}")
+    suspend fun getReviewDetail(
+        @Path("reviewId") reviewId: Int,
+    ): NetworkResponse<UserReviewDetail>
 
 }
 
