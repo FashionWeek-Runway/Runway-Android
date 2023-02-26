@@ -16,15 +16,17 @@ import com.cmc12th.runway.R
 fun RunwayIconButton(
     size: Dp = 24.dp,
     @DrawableRes drawable: Int,
+    tint: Color = Color.Unspecified,
     onCLick: () -> Unit = {},
 ) {
-    IconButton(onClick = onCLick,
+    IconButton(
+        onClick = onCLick,
         modifier = Modifier.size(size)
     ) {
         Icon(
             painter = painterResource(id = drawable),
             contentDescription = "IC_DUMMY",
-            tint = Color.Unspecified
+            tint = tint
         )
     }
 }
