@@ -125,7 +125,6 @@ data class EditUiStatus(
 fun PhotoReviewScreen(appState: ApplicationState, idx: Int) {
     val selectImages = remember { mutableStateOf<Uri?>(null) }
     val detailViewModel: DetailViewModel = hiltViewModel()
-    Log.i("dlgocks1", idx.toString())
     val galleryLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { url ->
             appState.systmeUiController.setSystemBarsColor(Color.Black)
@@ -210,12 +209,6 @@ fun PhotoReviewScreen(appState: ApplicationState, idx: Int) {
                         detailViewModel.addUserReview(idx, it) {
                             appState.popBackStack()
                         }
-//                        appState.navController.currentBackStackEntry?.arguments?.putParcelable(
-//                            "bitmap",
-//                            it
-//                        )
-//                        appState.navController.navigate(PHOTO_REVIEW_RESULT_ROUTE)
-//                        croppedImage.value = it
                     },
                     userReviewText = userReviewText,
                     updateUserReviewText = { idx, userReview ->
@@ -252,6 +245,7 @@ fun PhotoReviewScreen(appState: ApplicationState, idx: Int) {
 
             /** 탑 바 아이콘 모음 */
             TopBarIcons(
+                popBackStack = { appState.popBackStack() },
                 isEdit = editStatus.value.isEdit,
                 editStatus = editStatus.value,
                 updateColorPickerVisiblity = {
@@ -487,6 +481,7 @@ private fun BoxScope.TopBarIcons(
     addUserReviewText: () -> Unit,
     updateColorPickerVisiblity: (Boolean) -> Unit,
     editStatus: EditUiStatus,
+    popBackStack: () -> Unit,
     updateTextAlign: (TextAlign) -> Unit,
 ) {
 
@@ -591,7 +586,7 @@ private fun BoxScope.TopBarIcons(
                 modifier = Modifier
                     .size(24.dp),
                 onClick = {
-
+                    popBackStack()
                 },
             ) {
                 Icon(

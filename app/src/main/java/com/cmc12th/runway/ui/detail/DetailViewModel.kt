@@ -69,7 +69,6 @@ class DetailViewModel @Inject constructor(
                 encodedImage.toRequestBody()
             )
         ).collect { apiState ->
-            Log.i("dlgocks1", apiState.toString())
             apiState.onSuccess {
                 onSuccess()
             }
