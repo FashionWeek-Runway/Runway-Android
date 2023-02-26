@@ -11,6 +11,7 @@ import com.cmc12th.runway.utils.DefaultApiWrapper
 import com.cmc12th.runway.utils.PagingApiWrapper
 import kotlinx.coroutines.flow.Flow
 import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import retrofit2.http.*
 
 interface StoreRepository {
@@ -27,8 +28,7 @@ interface StoreRepository {
     ): Flow<PagingApiWrapper<UserReview>>
 
     fun writeUserReview(
-        @Path("storeId") storeId: Int,
-        @Part img: MultipartBody.Part,
+        storeId: Int, img: MultipartBody.Part,
     ): Flow<DefaultApiWrapper>
 
     fun userReviewPaging(storeId: Int): Flow<PagingData<UserReview>>

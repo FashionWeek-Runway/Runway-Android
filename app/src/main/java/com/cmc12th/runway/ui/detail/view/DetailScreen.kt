@@ -5,6 +5,7 @@
 
 package com.cmc12th.runway.ui.detail.view
 
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.*
@@ -43,6 +44,7 @@ import com.cmc12th.runway.ui.detail.DetailViewModel
 import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.map.components.TopGradient
 import com.cmc12th.runway.ui.theme.*
+import com.cmc12th.runway.utils.Constants
 import com.cmc12th.runway.utils.Constants.PHOTO_REVIEW_ROUTE
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.flow.Flow
@@ -58,7 +60,6 @@ fun DetailScreen(
 
     val detailViewModel: DetailViewModel = hiltViewModel()
     val uiState by detailViewModel.uiState.collectAsState()
-//    val scrollState = rememberLazyListState()
 
     LaunchedEffect(key1 = Unit) {
         appState.bottomBarState.value = false
@@ -107,7 +108,7 @@ fun DetailScreen(
             UserReview(
                 userReviews = detailViewModel.userReviews,
                 navigateToWriteScreen = {
-                    appState.navigate(PHOTO_REVIEW_ROUTE)
+                    appState.navigate("$PHOTO_REVIEW_ROUTE?idx=$idx")
                 }
             )
             WidthSpacerLine(height = 8.dp, color = Gray100)

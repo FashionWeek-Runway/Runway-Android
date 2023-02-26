@@ -60,13 +60,20 @@ fun NavGraphBuilder.mainGraph(
                 val idx = entry.arguments?.getInt("idx") ?: 0
 //                DetailScreen(appState, idx, detailVIewModel = detailVIewModel)
             }
-            composable(PHOTO_REVIEW_ROUTE) {
-                PhotoReviewScreen(appState)
+            composable(route = "$PHOTO_REVIEW_ROUTE?idx={idx}",
+                arguments = listOf(
+                    navArgument("idx") {
+                        type = NavType.IntType
+                    }
+                )) { entry ->
+                val idx = entry.arguments?.getInt("idx") ?: 0
+                PhotoReviewScreen(appState, idx)
             }
             composable(PHOTO_REVIEW_RESULT_ROUTE) {
                 val userObject =
                     appState.navController.previousBackStackEntry?.arguments?.getParcelable<Bitmap>(
-                        "bitmap")
+                        "bitmap"
+                    )
                 PhotoReviewResultScreen(appState, userObject!!)
             }
         }

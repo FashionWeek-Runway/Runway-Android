@@ -16,6 +16,7 @@ import com.cmc12th.runway.utils.DefaultApiWrapper
 import com.cmc12th.runway.utils.PagingApiWrapper
 import kotlinx.coroutines.flow.Flow
 import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import javax.inject.Inject
 
 class StoreRepositoryImpl @Inject constructor(
@@ -45,7 +46,10 @@ class StoreRepositoryImpl @Inject constructor(
         runwayClient.getUserReview(storeId, page, size)
     }
 
-    override fun writeUserReview(storeId: Int, img: MultipartBody.Part): Flow<DefaultApiWrapper> =
+    override fun writeUserReview(
+        storeId: Int,
+        img: MultipartBody.Part
+    ): Flow<DefaultApiWrapper> =
         safeFlow {
             runwayClient.writeUserReview(storeId, img)
         }

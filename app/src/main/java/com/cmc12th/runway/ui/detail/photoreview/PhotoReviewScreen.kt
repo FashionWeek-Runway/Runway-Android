@@ -8,6 +8,7 @@ package com.cmc12th.runway.ui.detail.photoreview
 import android.app.Activity
 import android.graphics.Bitmap
 import android.net.Uri
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
@@ -48,9 +49,11 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.*
+import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberAsyncImagePainter
 import com.cmc12th.runway.R
 import com.cmc12th.runway.ui.components.WidthSpacer
+import com.cmc12th.runway.ui.detail.DetailViewModel
 import com.cmc12th.runway.ui.detail.photoreview.EditUiStatus.Companion.REVIEW_FONT_COLORS
 import com.cmc12th.runway.ui.detail.photoreview.UserReviewText.Companion.DEFAULT_REVIEW_FONT_SIZE
 import com.cmc12th.runway.ui.domain.keyboardAsState
@@ -119,12 +122,15 @@ data class EditUiStatus(
 }
 
 @Composable
-fun PhotoReviewScreen(appState: ApplicationState) {
+fun PhotoReviewScreen(appState: ApplicationState, idx: Int) {
     val selectImages = remember { mutableStateOf<Uri?>(null) }
+    val detailViewModel: DetailViewModel = hiltViewModel()
+    Log.i("dlgocks1", idx.toString())
     val galleryLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { url ->
             appState.systmeUiController.setSystemBarsColor(Color.Black)
             appState.systmeUiController.setNavigationBarColor(Color.Black)
+            appState.bottomBarState.value = false
             selectImages.value = url
         }
 
@@ -150,6 +156,7 @@ fun PhotoReviewScreen(appState: ApplicationState) {
         focusManager.clearFocus()
         editStatus.value = EditUiStatus.disabled()
     }
+
     val addUserReviewText = {
         if (editStatus.value.editIdx != -1) {
             userReviewText[editStatus.value.editIdx] =
@@ -178,6 +185,7 @@ fun PhotoReviewScreen(appState: ApplicationState) {
         onDispose {
             appState.systmeUiController.setSystemBarsColor(Color.White)
             appState.systmeUiController.setNavigationBarColor(Color.White)
+            appState.bottomBarState.value = false
         }
     }
 
@@ -199,12 +207,15 @@ fun PhotoReviewScreen(appState: ApplicationState) {
                     selectImages = it,
                     event = event.value,
                     generateBitmap = {
-                        appState.navController.currentBackStackEntry?.arguments?.putParcelable(
-                            "bitmap",
-                            it
-                        )
-                        appState.navController.navigate(PHOTO_REVIEW_RESULT_ROUTE)
-                        croppedImage.value = it
+                        detailViewModel.addUserReview(idx, it) {
+                            appState.popBackStack()
+                        }
+//                        appState.navController.currentBackStackEntry?.arguments?.putParcelable(
+//                            "bitmap",
+//                            it
+//                        )
+//                        appState.navController.navigate(PHOTO_REVIEW_RESULT_ROUTE)
+//                        croppedImage.value = it
                     },
                     userReviewText = userReviewText,
                     updateUserReviewText = { idx, userReview ->
