@@ -4,6 +4,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.TextUnit
+import com.cmc12th.runway.ui.detail.photoreview.model.UserReviewText.Companion.DEFAULT_REVIEW_FONT_SIZE
 import com.cmc12th.runway.ui.theme.Point
 import com.cmc12th.runway.ui.theme.Primary
 

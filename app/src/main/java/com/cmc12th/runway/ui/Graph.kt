@@ -7,7 +7,6 @@ import androidx.compose.runtime.remember
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.*
 import androidx.navigation.compose.composable
-import com.cmc12th.runway.ui.detail.PhotoReviewResultScreen
 import com.cmc12th.runway.ui.detail.photoreview.PhotoReviewScreen
 import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.home.HomeScreen
@@ -29,7 +28,6 @@ import com.cmc12th.runway.utils.Constants.PASSWORD_SEARCH_GRAPH
 import com.cmc12th.runway.utils.Constants.PASSWORD_SEARCH_PHONE_CHANGE_PASSWORD
 import com.cmc12th.runway.utils.Constants.PASSWORD_SEARCH_PHONE_ROUTE
 import com.cmc12th.runway.utils.Constants.PASSWORD_SEARCH_PHONE_VERIFY_ROUTE
-import com.cmc12th.runway.utils.Constants.PHOTO_REVIEW_RESULT_ROUTE
 import com.cmc12th.runway.utils.Constants.PHOTO_REVIEW_ROUTE
 import com.cmc12th.runway.utils.Constants.SIGNIN_AGREEMENT_DETAIL_ROUTE
 import com.cmc12th.runway.utils.Constants.SIGNIN_AGREEMENT_ROUTE
@@ -50,16 +48,16 @@ fun NavGraphBuilder.mainGraph(
         composable(Screen.Map.route) { MapScreen(appState) }
         composable(Screen.Mypage.route) { MypageScreen(appState) }
         navigation(startDestination = DETAIL_ROUTE, route = DETAIL_GRAPH) {
-            composable(route = "$DETAIL_ROUTE?idx={idx}",
-                arguments = listOf(
-                    navArgument("idx") {
-                        type = NavType.IntType
-                    }
-                )
-            ) { entry ->
-                val idx = entry.arguments?.getInt("idx") ?: 0
+//            composable(route = "$DETAIL_ROUTE?idx={idx}",
+//                arguments = listOf(
+//                    navArgument("idx") {
+//                        type = NavType.IntType
+//                    }
+//                )
+//            ) { entry ->
+//                val idx = entry.arguments?.getInt("idx") ?: 0
 //                DetailScreen(appState, idx, detailVIewModel = detailVIewModel)
-            }
+//            }
             composable(route = "$PHOTO_REVIEW_ROUTE?idx={idx}",
                 arguments = listOf(
                     navArgument("idx") {
@@ -72,13 +70,6 @@ fun NavGraphBuilder.mainGraph(
                         "uri"
                     )
                 PhotoReviewScreen(appState, idx, userObject)
-            }
-            composable(PHOTO_REVIEW_RESULT_ROUTE) {
-                val userObject =
-                    appState.navController.previousBackStackEntry?.arguments?.getParcelable<Bitmap>(
-                        "bitmap"
-                    )
-                PhotoReviewResultScreen(appState, userObject!!)
             }
         }
     }
