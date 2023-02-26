@@ -1,18 +1,26 @@
 @file:OptIn(
     ExperimentalLayoutApi::class, ExperimentalFoundationApi::class,
-    ExperimentalLayoutApi::class
+    ExperimentalLayoutApi::class, ExperimentalMaterialApi::class
 )
 
 package com.cmc12th.runway.ui.detail.view
 
+import android.graphics.Bitmap
+import android.net.Uri
 import android.util.Log
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.ManagedActivityResultLauncher
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.result.launch
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -42,12 +50,17 @@ import com.cmc12th.runway.data.response.store.UserReview
 import com.cmc12th.runway.ui.components.*
 import com.cmc12th.runway.ui.detail.DetailViewModel
 import com.cmc12th.runway.ui.domain.model.ApplicationState
+import com.cmc12th.runway.ui.domain.model.BottomSheetContent
+import com.cmc12th.runway.ui.domain.model.BottomSheetContentItem
+import com.cmc12th.runway.ui.domain.model.BottomSheetState
+import com.cmc12th.runway.ui.domain.rememberBottomSheet
 import com.cmc12th.runway.ui.map.components.TopGradient
 import com.cmc12th.runway.ui.theme.*
-import com.cmc12th.runway.utils.Constants
 import com.cmc12th.runway.utils.Constants.PHOTO_REVIEW_ROUTE
+import com.cmc12th.runway.utils.getImageUri
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
 import java.lang.Float.min
 
 @Composable
@@ -60,7 +73,7 @@ fun DetailScreen(
 
     val detailViewModel: DetailViewModel = hiltViewModel()
     val uiState by detailViewModel.uiState.collectAsState()
-
+    val coroutineScope = rememberCoroutineScope()
     LaunchedEffect(key1 = Unit) {
         appState.bottomBarState.value = false
         detailViewModel.getUserReviewPaging(idx)
@@ -86,52 +99,91 @@ fun DetailScreen(
     BackHandler {
         onBackPress()
     }
+    val bottomsheetState = rememberBottomSheet()
+    val context = LocalContext.current
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White)
-    ) {
-
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .navigationBarsPadding()
-                .verticalScroll(scrollState),
-        ) {
-            ShowRoomBanner(uiState.storeDetail)
-            ShowRoomTitle(uiState.storeDetail)
-            ShowRoomDetail(uiState.storeDetail)
-            // WidthSpacerLine(height = 1.dp, color = Gray200)
-            // ShopNews()
-            WidthSpacerLine(height = 2.dp, color = Black)
-            UserReview(
-                userReviews = detailViewModel.userReviews,
-                navigateToWriteScreen = {
-                    appState.navigate("$PHOTO_REVIEW_ROUTE?idx=$idx")
-                }
-            )
-            WidthSpacerLine(height = 8.dp, color = Gray100)
-            BlogReview()
-            uiState.blogReview.map {
-                BlogReviewItem(it)
-            }
-
+    val showBottomSheet: (BottomSheetContent) -> Unit = {
+        coroutineScope.launch {
+            bottomsheetState.bottomsheetContent.value = it
+            bottomsheetState.modalSheetState.animateTo(ModalBottomSheetValue.Expanded)
         }
-
-        DetailTopBar(
-            topbarColor = topbarColor.value,
-            topbarIconAnimateColor = topbarIconAnimateColor.value,
-            onBackPress = onBackPress,
-            isBookmarked = uiState.storeDetail.bookmark,
-            updateBookmark = {
-                detailViewModel.updateBookmark(idx) {
-                    detailViewModel.updateBookmarkState(it)
-                }
-            }
-        )
     }
 
+    val galleryLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+            if (uri != null) {
+                appState.navController.currentBackStackEntry?.arguments?.putParcelable(
+                    "uri",
+                    uri
+                )
+                appState.navigate("$PHOTO_REVIEW_ROUTE?idx=$idx")
+            }
+        }
+
+    val camearLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.TakePicturePreview()) { takenPhoto ->
+            if (takenPhoto != null) {
+                getImageUri(context = context, bitmap = takenPhoto)?.let {
+                    appState.navController.currentBackStackEntry?.arguments?.putParcelable(
+                        "uri",
+                        it
+                    )
+                    appState.navigate("$PHOTO_REVIEW_ROUTE?idx=$idx")
+                }
+            }
+        }
+
+    CustomBottomSheet(
+        bottomsheetState
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.White)
+        ) {
+
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .navigationBarsPadding()
+                    .verticalScroll(scrollState),
+            ) {
+                ShowRoomBanner(uiState.storeDetail)
+                ShowRoomTitle(uiState.storeDetail)
+                ShowRoomDetail(uiState.storeDetail)
+                // WidthSpacerLine(height = 1.dp, color = Gray200)
+                // ShopNews()
+                WidthSpacerLine(height = 2.dp, color = Black)
+                UserReview(
+                    userReviews = detailViewModel.userReviews,
+                    navigateToWriteScreen = {
+//                        appState.navigate("$PHOTO_REVIEW_ROUTE?idx=$idx")
+                    },
+                    showBottomSheet = showBottomSheet,
+                    galleryLauncher = galleryLauncher,
+                    cameraLauncher = camearLauncher
+                )
+                WidthSpacerLine(height = 8.dp, color = Gray100)
+                BlogReview()
+                uiState.blogReview.map {
+                    BlogReviewItem(it)
+                }
+
+            }
+
+            DetailTopBar(
+                topbarColor = topbarColor.value,
+                topbarIconAnimateColor = topbarIconAnimateColor.value,
+                onBackPress = onBackPress,
+                isBookmarked = uiState.storeDetail.bookmark,
+                updateBookmark = {
+                    detailViewModel.updateBookmark(idx) {
+                        detailViewModel.updateBookmarkState(it)
+                    }
+                }
+            )
+        }
+    }
 }
 
 @Composable
@@ -418,6 +470,9 @@ fun BlogReviewItem(blogReview: BlogReview) {
 fun UserReview(
     userReviews: Flow<PagingData<UserReview>>,
     navigateToWriteScreen: () -> Unit,
+    showBottomSheet: (BottomSheetContent) -> Unit,
+    cameraLauncher: ManagedActivityResultLauncher<Void?, Bitmap?>,
+    galleryLauncher: ManagedActivityResultLauncher<String, Uri?>,
 ) {
     val userReviewsPaging = userReviews.collectAsLazyPagingItems()
 
@@ -432,7 +487,26 @@ fun UserReview(
             Text(text = "사용자 후기", style = HeadLine4, color = Color.Black)
             Row(
                 modifier = Modifier.clickable {
-                    navigateToWriteScreen()
+                    showBottomSheet(
+                        BottomSheetContent(
+                            title = "",
+                            itemList = listOf(
+                                BottomSheetContentItem(
+                                    itemName = "사진 찍기",
+                                    onItemClick = {
+                                        cameraLauncher.launch()
+                                    },
+                                ),
+                                BottomSheetContentItem(
+                                    itemName = "사진 앨범",
+                                    onItemClick = {
+                                        galleryLauncher.launch("image/*")
+                                    },
+                                )
+                            )
+                        )
+                    )
+                    // navigateToWriteScreen()
                 },
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(6.dp)

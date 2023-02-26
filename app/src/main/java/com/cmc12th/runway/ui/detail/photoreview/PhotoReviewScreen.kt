@@ -8,9 +8,6 @@ package com.cmc12th.runway.ui.detail.photoreview
 import android.app.Activity
 import android.graphics.Bitmap
 import android.net.Uri
-import android.util.Log
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -60,7 +57,6 @@ import com.cmc12th.runway.ui.domain.keyboardAsState
 import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.domain.model.KeyboardStatus
 import com.cmc12th.runway.ui.theme.*
-import com.cmc12th.runway.utils.Constants.PHOTO_REVIEW_RESULT_ROUTE
 import com.cmc12th.runway.utils.captureView
 import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
@@ -122,23 +118,21 @@ data class EditUiStatus(
 }
 
 @Composable
-fun PhotoReviewScreen(appState: ApplicationState, idx: Int) {
-    val selectImages = remember { mutableStateOf<Uri?>(null) }
+fun PhotoReviewScreen(appState: ApplicationState, idx: Int, uri: Uri?) {
+    val selectImages = remember { mutableStateOf(uri) }
     val detailViewModel: DetailViewModel = hiltViewModel()
-    val galleryLauncher =
-        rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { url ->
-            appState.systmeUiController.setSystemBarsColor(Color.Black)
-            appState.systmeUiController.setNavigationBarColor(Color.Black)
-            appState.bottomBarState.value = false
-            selectImages.value = url
-        }
+//    val galleryLauncher =
+//        rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { url ->
+//            appState.systmeUiController.setSystemBarsColor(Color.Black)
+//            appState.systmeUiController.setNavigationBarColor(Color.Black)
+//            appState.bottomBarState.value = false
+//            selectImages.value = url
+//        }
 
     val event = remember {
         mutableStateOf(false)
     }
-    val croppedImage = remember {
-        mutableStateOf<Bitmap?>(null)
-    }
+
     val editStatus = remember {
         mutableStateOf(EditUiStatus.disabled())
     }
@@ -179,16 +173,19 @@ fun PhotoReviewScreen(appState: ApplicationState, idx: Int) {
         }
     }
 
+    appState.systmeUiController.setSystemBarsColor(Color.Black)
+    appState.systmeUiController.setNavigationBarColor(Color.Black)
+
     DisposableEffect(Unit) {
-        galleryLauncher.launch("image/*")
+        // selectImages.value = uri
+//        appState.systmeUiController.setSystemBarsColor(Color.Black)
+//        appState.systmeUiController.setNavigationBarColor(Color.Black)
         appState.bottomBarState.value = false
         onDispose {
-            appState.systmeUiController.setSystemBarsColor(Color.White)
-            appState.systmeUiController.setNavigationBarColor(Color.White)
-            appState.bottomBarState.value = false
+//            appState.systmeUiController.setSystemBarsColor(Color.White)
+//            appState.systmeUiController.setNavigationBarColor(Color.White)
         }
     }
-
     Column(
         modifier = Modifier
             .fillMaxSize()
