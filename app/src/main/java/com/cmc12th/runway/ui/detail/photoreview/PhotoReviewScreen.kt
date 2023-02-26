@@ -1,12 +1,13 @@
-@file:OptIn(ExperimentalComposeUiApi::class, ExperimentalComposeUiApi::class,
-    ExperimentalComposeUiApi::class)
+@file:OptIn(
+    ExperimentalComposeUiApi::class, ExperimentalComposeUiApi::class,
+    ExperimentalComposeUiApi::class, ExperimentalMaterialApi::class
+)
 
 package com.cmc12th.runway.ui.detail.photoreview
 
 import android.app.Activity
 import android.graphics.Bitmap
 import android.net.Uri
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
@@ -18,10 +19,15 @@ import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.gestures.rememberDraggableState
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
+import androidx.compose.material.TextFieldDefaults.indicatorLine
 import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
@@ -31,29 +37,38 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.*
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.*
 import coil.compose.rememberAsyncImagePainter
 import com.cmc12th.runway.R
 import com.cmc12th.runway.ui.components.WidthSpacer
+import com.cmc12th.runway.ui.detail.photoreview.EditUiStatus.Companion.REVIEW_FONT_COLORS
+import com.cmc12th.runway.ui.detail.photoreview.UserReviewText.Companion.DEFAULT_REVIEW_FONT_SIZE
 import com.cmc12th.runway.ui.domain.keyboardAsState
 import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.domain.model.KeyboardStatus
 import com.cmc12th.runway.ui.theme.*
 import com.cmc12th.runway.utils.Constants.PHOTO_REVIEW_RESULT_ROUTE
 import com.cmc12th.runway.utils.captureView
+import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
 
 data class UserReviewText(
     val idx: Int,
     val fontSize: TextUnit,
     val fontColor: Color,
-    val textField: String = "",
+    val textField: TextFieldValue = TextFieldValue(""),
     val focusRequester: FocusRequester = FocusRequester(),
 ) {
     fun toEditUiStatus() = EditUiStatus(
@@ -65,7 +80,10 @@ data class UserReviewText(
     )
 
     companion object {
-        fun disabled() = UserReviewText(-1, 14.sp, Color.White, "")
+        fun disabled() =
+            UserReviewText(-1, DEFAULT_REVIEW_FONT_SIZE, Color.White, TextFieldValue(""))
+
+        val DEFAULT_REVIEW_FONT_SIZE = 31.sp
     }
 }
 
@@ -74,10 +92,30 @@ data class EditUiStatus(
     val editIdx: Int,
     val fontSize: TextUnit,
     val fontColor: Color,
-    val textField: String = "",
+    val isColorPickerVisibility: Boolean = false,
+    val textField: TextFieldValue = TextFieldValue(""),
 ) {
     companion object {
-        fun disabled() = EditUiStatus(false, -1, 14.sp, Color.White, "")
+
+        val REVIEW_FONT_COLORS = listOf<Color>(
+            Color.White,
+            Color.Black,
+            Primary,
+            Point,
+            Color(0xFFFBFF28),
+            Color(0xFFFC3A56),
+            Color(0xFFD700E7)
+        )
+
+        fun disabled() =
+            EditUiStatus(
+                false,
+                -1,
+                DEFAULT_REVIEW_FONT_SIZE,
+                Color.White,
+                false,
+                TextFieldValue("")
+            )
     }
 }
 
@@ -105,13 +143,15 @@ fun PhotoReviewScreen(appState: ApplicationState) {
     }
     val keyboardStatusState = keyboardAsState()
     val keyboardController = LocalSoftwareKeyboardController.current
+    val configuration = LocalConfiguration.current
+    val textFieldWidth = (configuration.screenWidthDp.absoluteValue - 60.dp.value).dp
 
     val focusManager = LocalFocusManager.current
     val disableEditStatus = {
-//        userReviewText.forEach {
-//            it.focusRequester.freeFocus()
-//        }
         focusManager.clearFocus()
+        editStatus.value = EditUiStatus.disabled()
+    }
+    val addUserReviewText = {
         if (editStatus.value.editIdx != -1) {
             userReviewText[editStatus.value.editIdx] =
                 userReviewText[editStatus.value.editIdx].copy(
@@ -120,7 +160,7 @@ fun PhotoReviewScreen(appState: ApplicationState) {
                     textField = editStatus.value.textField
                 )
         }
-        editStatus.value = EditUiStatus.disabled()
+        disableEditStatus()
     }
 
     val ableEditStatus: (userReviewText: UserReviewText) -> Unit = {
@@ -173,7 +213,8 @@ fun PhotoReviewScreen(appState: ApplicationState) {
                     editIdx = editStatus.value.editIdx,
                     updateEditMode = { editMode, userReview ->
                         if (editMode) ableEditStatus(userReview) else disableEditStatus()
-                    }
+                    },
+                    textFieldWidth = textFieldWidth
                 )
             }
 
@@ -183,6 +224,7 @@ fun PhotoReviewScreen(appState: ApplicationState) {
                     .fillMaxSize()
                     .background(Color(0x50000000))
                     .clickable {
+                        addUserReviewText()
                         keyboardController?.hide()
                     })
                 /** 폰트 사이즈 조절 */
@@ -192,26 +234,79 @@ fun PhotoReviewScreen(appState: ApplicationState) {
                 )
                 EditFocusTextField(
                     editUiState = editStatus.value,
-                    updateEditUiState = { editStatus.value = it }
+                    updateEditUiState = { editStatus.value = it },
+                    textFieldWidth = textFieldWidth
                 )
             }
 
             /** 탑 바 아이콘 모음 */
             TopBarIcons(
                 isEdit = editStatus.value.isEdit,
-                updateEditMode = { editMode, userReview ->
-                    if (editMode) ableEditStatus(userReview) else disableEditStatus()
-                },
-                addUserReviewText = {
-                    val userReview = UserReviewText(
-                        idx = userReviewText.size,
-                        fontSize = 14.sp,
-                        fontColor = Color.White
+                editStatus = editStatus.value,
+                updateColorPickerVisiblity = {
+                    editStatus.value = editStatus.value.copy(
+                        isColorPickerVisibility = it
                     )
-                    ableEditStatus(userReview)
-                    userReviewText.add(userReview)
-                }
+                },
+                updateEditMode = { editMode ->
+                    if (editMode) {
+                        val userReview = UserReviewText(
+                            idx = userReviewText.size,
+                            fontSize = DEFAULT_REVIEW_FONT_SIZE,
+                            fontColor = Color.White
+                        )
+                        ableEditStatus(userReview)
+                        userReviewText.add(userReview)
+                    } else {
+                        disableEditStatus()
+                    }
+                },
+                addUserReviewText = addUserReviewText
             )
+
+            /** 색상 선택 리스트 */
+            androidx.compose.animation.AnimatedVisibility(
+                modifier = Modifier
+                    .imePadding()
+                    .align(Alignment.BottomCenter)
+                    .padding(
+                        0.dp,
+                        20.dp
+                    ),
+                enter = fadeIn(),
+                exit = fadeOut(),
+                visible = editStatus.value.isEdit && editStatus.value.isColorPickerVisibility
+            ) {
+                LazyRow(
+                    horizontalArrangement = Arrangement.spacedBy(20.dp)
+                ) {
+                    item {
+                        WidthSpacer(width = 0.dp)
+                    }
+                    items(REVIEW_FONT_COLORS) {
+                        Box(
+                            modifier = Modifier
+                                .size(30.dp)
+                                .clip(CircleShape)
+                                .background(it)
+                                .border(
+                                    BorderStroke(
+                                        if (editStatus.value.fontColor == it) 3.dp else 1.dp,
+                                        Color.White
+                                    ), CircleShape
+                                )
+                                .clickable {
+                                    editStatus.value = editStatus.value.copy(
+                                        fontColor = it
+                                    )
+                                }
+                        )
+                    }
+                    item {
+                        WidthSpacer(width = 0.dp)
+                    }
+                }
+            }
 
 
         }
@@ -223,7 +318,8 @@ fun PhotoReviewScreen(appState: ApplicationState) {
                     .background(Color.Black),
                 horizontalArrangement = Arrangement.End
             ) {
-                Button(onClick = { event.value = !event.value },
+                Button(
+                    onClick = { event.value = !event.value },
                     modifier = Modifier
                         .padding(12.dp, 20.dp),
                     shape = RoundedCornerShape(4.dp),
@@ -235,10 +331,12 @@ fun PhotoReviewScreen(appState: ApplicationState) {
                     ) {
                         Text(text = "등록", style = Body2B, color = Point)
                         WidthSpacer(width = 4.dp)
-                        Icon(painter = painterResource(id = R.drawable.ic_baseline_right_arrow_16),
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_baseline_right_arrow_16),
                             contentDescription = "IC_RIGHT_ARROW",
                             modifier = Modifier.size(16.dp),
-                            tint = Point)
+                            tint = Point
+                        )
                     }
                 }
 
@@ -252,11 +350,11 @@ fun PhotoReviewScreen(appState: ApplicationState) {
 private fun EditFocusTextField(
     updateEditUiState: (EditUiStatus) -> Unit,
     editUiState: EditUiStatus,
+    textFieldWidth: Dp,
 ) {
     val focusRequester = remember {
         FocusRequester()
     }
-    val configuration = LocalConfiguration.current
 
     LaunchedEffect(key1 = Unit) {
         focusRequester.requestFocus()
@@ -271,13 +369,14 @@ private fun EditFocusTextField(
             )
         },
         textStyle = androidx.compose.material3.LocalTextStyle.current.copy(
-            color = Color.White,
+            color = editUiState.fontColor,
             fontSize = editUiState.fontSize,
-            lineHeight = editUiState.fontSize * 1.4f
+            lineHeight = editUiState.fontSize * 1.4f,
+            fontFamily = FontFamily(Font(R.font.spoqa_han_sans_neo_medium)),
         ),
         modifier = Modifier
-            .offset(x = 60.dp, y = 250.dp)
-            .fillMaxWidth()
+            .offset(x = 60.dp, y = 160.dp)
+            .width(textFieldWidth)
             .wrapContentHeight()
             .focusRequester(focusRequester)
             .onFocusChanged {
@@ -291,7 +390,8 @@ private fun EditFocusTextField(
         },
         keyboardActions = KeyboardActions(onDone = {
 
-        }))
+        }),
+    )
 }
 
 @Composable
@@ -300,12 +400,16 @@ private fun BoxScope.FontSizeToolBar(
     updateEditUiState: (EditUiStatus) -> Unit,
 ) {
     var offsetY by remember { mutableStateOf(0.dp.value) }
-
-    Box(modifier = Modifier.Companion
-        .align(Alignment.TopStart)
-        .offset(x = 20.dp, y = 100.dp)
-        .height(240.dp)
-        .width(24.dp)) {
+    LaunchedEffect(key1 = Unit) {
+        offsetY = (editUiState.fontSize.value - 31.sp.value) * 19f * -1
+    }
+    Box(
+        modifier = Modifier.Companion
+            .align(Alignment.TopStart)
+            .offset(x = 20.dp, y = 100.dp)
+            .height(240.dp)
+            .width(24.dp)
+    ) {
         Canvas(modifier = Modifier.fillMaxSize()) {
             drawPath(path = Path().apply {
                 moveTo(size.width / 2f, size.height)
@@ -324,13 +428,17 @@ private fun BoxScope.FontSizeToolBar(
                     orientation = Orientation.Vertical,
                     state = rememberDraggableState { delta ->
                         val dy = offsetY + delta
-                        val my = if (dy >= 0.dp.value) kotlin.math.min(250.dp.value,
-                            dy) else kotlin.math.max(-250.dp.value, dy)
+                        val my = if (dy >= 0.dp.value) kotlin.math.min(
+                            300.dp.value,
+                            dy
+                        ) else kotlin.math.max(-300.dp.value, dy)
 
-                        updateEditUiState(editUiState.copy(
-                            fontSize = (31.sp.value + (my / 19f * -1).sp.value).sp,
-                            textField = editUiState.textField
-                        ))
+                        updateEditUiState(
+                            editUiState.copy(
+                                fontSize = (31.sp.value + (my / 19f * -1).sp.value).sp,
+                                textField = editUiState.textField
+                            )
+                        )
 
                         offsetY = my
                     }
@@ -359,21 +467,27 @@ private fun BoxScope.FontSizeToolBar(
 }
 
 @Composable
-private fun TopBarIcons(
+private fun BoxScope.TopBarIcons(
     isEdit: Boolean,
-    updateEditMode: (isEdit: Boolean, userReviewText: UserReviewText) -> Unit,
+    updateEditMode: (isEdit: Boolean) -> Unit,
     addUserReviewText: () -> Unit,
+    updateColorPickerVisiblity: (Boolean) -> Unit,
+    editStatus: EditUiStatus,
 ) {
+
     /** 에디트 모드일 때 */
     AnimatedVisibility(visible = isEdit, enter = fadeIn(), exit = fadeOut()) {
-        Row(modifier = Modifier
-            .fillMaxWidth()
-            .height(78.dp)
-            .padding(20.dp, 14.dp),
+        Row(
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .fillMaxWidth()
+                .height(78.dp)
+                .padding(20.dp, 14.dp),
             horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically) {
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             Text(text = "취소", style = Body1B, color = Color.White, modifier = Modifier.clickable {
-                updateEditMode(false, UserReviewText.disabled())
+                updateEditMode(false)
             })
             Row(
                 modifier = Modifier.weight(1f),
@@ -386,27 +500,46 @@ private fun TopBarIcons(
                     modifier = Modifier.size(24.dp),
                     tint = Color.White
                 )
+                if (!editStatus.isColorPickerVisibility) {
+                    Image(
+                        painter = painterResource(id = R.drawable.img_color_picker_able_24),
+                        contentDescription = "IMG_COLOR_PICKER_ABLE",
+                        modifier = Modifier
+                            .size(24.dp)
+                            .clickable {
+                                updateColorPickerVisiblity(true)
+                            }
+                    )
+                } else {
+                    Image(
+                        painter = painterResource(id = R.drawable.img_color_picker_disable_24),
+                        contentDescription = "IMG_COLOR_PICKER_DISABLE",
+                        modifier = Modifier
+                            .size(24.dp)
+                            .clickable {
+                                updateColorPickerVisiblity(false)
+                            }
+                    )
+                }
 
-                Image(
-                    painter = painterResource(id = R.drawable.img_color_picker_24),
-                    contentDescription = "IMG_COLOR_PICKER",
-                    modifier = Modifier.size(24.dp)
-                )
             }
             Text(text = "완료", style = Body1B, color = Color.White, modifier = Modifier.clickable {
-                updateEditMode(false, UserReviewText.disabled())
+                addUserReviewText()
             })
         }
+
     }
 
     /** 에디트 모드가 아닐 때 */
     if (!isEdit) {
-        Row(modifier = Modifier
-            .fillMaxWidth()
-            .height(78.dp)
-            .padding(20.dp, 14.dp),
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(78.dp)
+                .padding(20.dp, 14.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically) {
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             IconButton(
                 modifier = Modifier
                     .size(24.dp),
@@ -421,7 +554,7 @@ private fun TopBarIcons(
                 )
             }
             IconButton(onClick = {
-                addUserReviewText()
+                updateEditMode(true)
             }) {
                 Row(
                     modifier = Modifier
@@ -433,8 +566,8 @@ private fun TopBarIcons(
                     Icon(
                         painter = painterResource(id = R.drawable.ic_add),
                         contentDescription = "IC_PLUS",
-                        tint = Color.White,
-                        modifier = Modifier.size(10.dp)
+                        modifier = Modifier.size(16.dp),
+                        tint = Color.White
                     )
                     Text(text = "Aa", style = Body2M, color = Color.White)
                 }
@@ -453,6 +586,7 @@ private fun ModifyImage(
     updateUserReviewText: (idx: Int, userReviewText: UserReviewText) -> Unit,
     updateEditMode: (isEdit: Boolean, userReviewText: UserReviewText) -> Unit,
     editIdx: Int,
+    textFieldWidth: Dp,
 ) {
     val view = LocalView.current
     val activity = LocalContext.current as Activity
@@ -472,34 +606,28 @@ private fun ModifyImage(
         contentDescription = null,
     )
     userReviewText.forEach {
-        TestTextField(
+        ReviewTextField(
             editIdx = editIdx,
             updateEditMode = updateEditMode,
             userReviewText = it,
             updateUserReviewText = updateUserReviewText,
+            textFieldWidth = textFieldWidth,
         )
     }
 }
 
 
 @Composable
-private fun TestTextField(
+private fun ReviewTextField(
     userReviewText: UserReviewText,
     updateUserReviewText: (idx: Int, userReviewText: UserReviewText) -> Unit,
     updateEditMode: (isEdit: Boolean, userReviewText: UserReviewText) -> Unit,
     editIdx: Int,
+    textFieldWidth: Dp,
 ) {
     val configuration = LocalConfiguration.current
     var offsetX by remember { mutableStateOf(configuration.screenWidthDp.dp.value / 2) }
     var offsetY by remember { mutableStateOf(configuration.screenHeightDp.dp.value / 2) }
-
-//    val focusRequester = remember {
-//        FocusRequester()
-//    }
-
-//    LaunchedEffect(key1 = Unit) {
-//        userReviewText.focusRequester.requestFocus()
-//    }
 
     if (editIdx != userReviewText.idx) {
         Box(
@@ -507,7 +635,8 @@ private fun TestTextField(
                 .offset {
                     IntOffset(
                         offsetX.roundToInt(),
-                        offsetY.roundToInt())
+                        offsetY.roundToInt()
+                    )
                 }
                 .pointerInput(Unit) {
                     detectDragGestures { change, dragAmount ->
@@ -518,42 +647,47 @@ private fun TestTextField(
 
                 },
         ) {
-            Column() {
-                BasicTextField(
-                    value = userReviewText.textField,
-                    onValueChange = {
-                        updateUserReviewText(
-                            userReviewText.idx,
-                            userReviewText.copy(
-                                textField = it
-                            )
+            BasicTextField(
+                value = userReviewText.textField,
+                readOnly = true,
+                onValueChange = {
+                    updateUserReviewText(
+                        userReviewText.idx,
+                        userReviewText.copy(
+                            textField = it
                         )
-                    },
-                    textStyle = androidx.compose.material3.LocalTextStyle.current.copy(
-                        color = userReviewText.fontColor,
-                        fontSize = userReviewText.fontSize,
-                        lineHeight = userReviewText.fontSize * 1.4f
-                    ),
-                    modifier = Modifier
-                        .wrapContentSize()
-                        .onFocusChanged {
-                            if (it.hasFocus) {
-                                updateEditMode(true, userReviewText)
-                            }
+                    )
+                },
+                textStyle = androidx.compose.material3.LocalTextStyle.current.copy(
+                    color = userReviewText.fontColor,
+                    fontSize = userReviewText.fontSize,
+                    lineHeight = userReviewText.fontSize * 1.4f,
+                    fontFamily = FontFamily(Font(R.font.spoqa_han_sans_neo_medium))
+                ),
+                modifier = Modifier
+                    .width(textFieldWidth)
+                    .wrapContentHeight()
+                    .onFocusChanged {
+                        if (it.hasFocus) {
+                            updateEditMode(true, userReviewText)
                         }
-                        .focusRequester(userReviewText.focusRequester),
-                    decorationBox = { innerTextField ->
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
-                            innerTextField()
-                        }
-                    },
-                    keyboardActions = KeyboardActions(onDone = {
+                    }
+                    .focusRequester(userReviewText.focusRequester),
+                decorationBox = { innerTextField ->
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        innerTextField()
+                    }
+                },
+                keyboardActions = KeyboardActions(onDone = {
 
-                    })
+                }),
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Password
                 )
-            }
+            )
+
 
         }
     }
