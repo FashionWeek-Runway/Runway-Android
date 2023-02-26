@@ -3,7 +3,7 @@
     ExperimentalComposeUiApi::class, ExperimentalMaterialApi::class
 )
 
-package com.cmc12th.runway.ui.detail.photoreview
+package com.cmc12th.runway.ui.detail.photoreview.view
 
 import android.app.Activity
 import android.graphics.Bitmap
@@ -47,7 +47,7 @@ import kotlin.math.roundToInt
 
 
 @Composable
-fun PhotoReviewScreen(appState: ApplicationState, idx: Int, uri: Uri?) {
+fun PhotoReviewWriteScreen(appState: ApplicationState, idx: Int, uri: Uri?) {
     val selectImages = remember { mutableStateOf(uri) }
     val detailViewModel: DetailViewModel = hiltViewModel()
 

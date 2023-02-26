@@ -1,13 +1,12 @@
 package com.cmc12th.runway.ui
 
-import android.graphics.Bitmap
 import android.net.Uri
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.*
 import androidx.navigation.compose.composable
-import com.cmc12th.runway.ui.detail.photoreview.PhotoReviewScreen
+import com.cmc12th.runway.ui.detail.photoreview.view.PhotoReviewWriteScreen
 import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.home.HomeScreen
 import com.cmc12th.runway.ui.login.view.LoginIdPasswdScreen
@@ -69,7 +68,7 @@ fun NavGraphBuilder.mainGraph(
                     appState.navController.previousBackStackEntry?.arguments?.getParcelable<Uri>(
                         "uri"
                     )
-                PhotoReviewScreen(appState, idx, userObject)
+                PhotoReviewWriteScreen(appState, idx, userObject)
             }
         }
     }
