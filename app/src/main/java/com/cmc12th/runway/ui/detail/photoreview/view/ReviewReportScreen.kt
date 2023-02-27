@@ -42,8 +42,7 @@ fun ReviewReportScreen() {
         modifier = Modifier
             .fillMaxSize()
             .systemBarsPadding()
-            .imePadding()
-            .verticalScroll(rememberScrollState()),
+            .imePadding(),
     ) {
 
         Row(
@@ -57,7 +56,8 @@ fun ReviewReportScreen() {
         Column(
             modifier = Modifier
                 .padding(20.dp, 0.dp)
-                .weight(1f),
+                .weight(1f)
+                .verticalScroll(rememberScrollState()),
         ) {
             Column {
                 Text(text = "신고 사유를 골라주세요", style = HeadLine3)

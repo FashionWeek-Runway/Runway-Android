@@ -8,6 +8,7 @@ import androidx.navigation.*
 import androidx.navigation.compose.composable
 import com.cmc12th.runway.ui.detail.photoreview.view.ReviewWriteScreen
 import com.cmc12th.runway.ui.detail.photoreview.view.ReviewDetailScreen
+import com.cmc12th.runway.ui.detail.photoreview.view.ReviewReportScreen
 import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.home.HomeScreen
 import com.cmc12th.runway.ui.login.view.LoginIdPasswdScreen
@@ -18,7 +19,6 @@ import com.cmc12th.runway.ui.login.view.LoginBaseScreen
 import com.cmc12th.runway.ui.map.view.MapScreen
 import com.cmc12th.runway.ui.mypage.view.MypageScreen
 import com.cmc12th.runway.ui.signin.view.*
-import com.cmc12th.runway.utils.Constants
 import com.cmc12th.runway.utils.Constants.DETAIL_GRAPH
 import com.cmc12th.runway.utils.Constants.DETAIL_ROUTE
 import com.cmc12th.runway.utils.Constants.LOGIN_BASE_ROUTE
@@ -74,25 +74,26 @@ fun NavGraphBuilder.mainGraph(
                     )
                 ReviewWriteScreen(appState, idx, userObject)
             }
-            composable(route = "$REVIEW_DETAIL_ROUTE?reviewId={reviewId}",
-                arguments = listOf(
-                    navArgument("reviewId") {
-                        type = NavType.IntType
-                    }
-                )) { entry ->
-                val idx = entry.arguments?.getInt("reviewId") ?: 0
-                ReviewDetailScreen()
+        }
 
-                composable(route = "$REVIEW_REPORT_ROUTE?reviewId={reviewId}",
-                    arguments = listOf(
-                        navArgument("reviewId") {
-                            type = NavType.IntType
-                        }
-                    )) {
-                    ReviewDetailScreen()
+        composable(route = "$REVIEW_DETAIL_ROUTE?reviewId={reviewId}",
+            arguments = listOf(
+                navArgument("reviewId") {
+                    type = NavType.IntType
                 }
-            }
+            )) { entry ->
+            val idx = entry.arguments?.getInt("reviewId") ?: 0
+            ReviewDetailScreen(appState, idx)
+        }
 
+        composable(route = "$REVIEW_REPORT_ROUTE?reviewId={reviewId}",
+            arguments = listOf(
+                navArgument("reviewId") {
+                    type = NavType.IntType
+                }
+            )) { entry ->
+            val idx = entry.arguments?.getInt("reviewId") ?: 0
+            ReviewReportScreen()
         }
     }
 }
