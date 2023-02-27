@@ -348,6 +348,7 @@ private fun MapViewContents(
             storeName = mapViewModel.onDetail.value.storeName,
             onBackPress = {
                 appState.bottomBarState.value = !mapUiState.mapStatus.onSearch()
+                systemUiController.setSystemBarsColor(color = Color.White)
                 mapViewModel.onDetail.value = DetailState.default()
             }
         )
