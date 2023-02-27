@@ -4,6 +4,7 @@
 package com.cmc12th.runway.ui.home
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
@@ -42,6 +43,7 @@ fun HomeScreen() {
 
     Column(modifier = Modifier
         .statusBarsPadding()
+        .background(White)
         .fillMaxSize(1f)) {
 
         Row(modifier = Modifier
