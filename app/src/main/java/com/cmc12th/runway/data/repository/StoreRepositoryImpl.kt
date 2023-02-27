@@ -50,7 +50,7 @@ class StoreRepositoryImpl @Inject constructor(
 
     override fun writeUserReview(
         storeId: Int,
-        img: MultipartBody.Part
+        img: RequestBody
     ): Flow<DefaultApiWrapper> =
         safeFlow {
             runwayClient.writeUserReview(storeId, img)

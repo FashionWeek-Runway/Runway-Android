@@ -67,7 +67,7 @@ class RunwayClient @Inject constructor(
     suspend fun getUserReview(storeId: Int, page: Int, size: Int) =
         storeService.getUserReview(storeId, page, size)
 
-    suspend fun writeUserReview(storeId: Int, img: MultipartBody.Part) =
+    suspend fun writeUserReview(storeId: Int, img: RequestBody) =
         storeService.writeUserReview(storeId, img)
 
     suspend fun getReviewDetail(reviewId: Int) = storeService.getReviewDetail(reviewId)

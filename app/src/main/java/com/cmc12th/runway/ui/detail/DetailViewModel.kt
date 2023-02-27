@@ -59,15 +59,11 @@ class DetailViewModel @Inject constructor(
         val baos = ByteArrayOutputStream()
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
         val imageBytes: ByteArray = baos.toByteArray()
-        val encodedImage: String = Base64.encodeToString(imageBytes, Base64.DEFAULT)
+        // val encodedImage: String = Base64.encodeToString(imageBytes, Base64.DEFAULT)
 
         storeRepository.writeUserReview(
             storeId,
-            MultipartBody.Part.createFormData(
-                "img",
-                Math.random().toString(),
-                encodedImage.toRequestBody()
-            )
+            imageBytes.toRequestBody()
         ).collect { apiState ->
             apiState.onSuccess {
                 onSuccess()

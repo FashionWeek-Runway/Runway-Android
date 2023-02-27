@@ -29,10 +29,10 @@ interface StoreRepository {
     ): Flow<PagingApiWrapper<UserReview>>
 
     fun writeUserReview(
-        storeId: Int, img: MultipartBody.Part,
+        storeId: Int, img: RequestBody,
     ): Flow<DefaultApiWrapper>
 
     fun userReviewPaging(storeId: Int): Flow<PagingData<UserReview>>
-    
+
     fun getReviewDetail(reviewId: Int): Flow<ApiWrapper<UserReviewDetail>>
 }

@@ -47,11 +47,10 @@ interface StoreService {
     ): PagingNetworkResponse<UserReview>
 
     /** 쇼룸 후기 작성 */
-    @Multipart
     @POST("/stores/review/{storeId}")
     suspend fun writeUserReview(
         @Path("storeId") storeId: Int,
-        @Part img: MultipartBody.Part,
+        @Body img: RequestBody,
     ): DefaultResponse
 
     /** 쇼룸 후기 상세 조회 */
