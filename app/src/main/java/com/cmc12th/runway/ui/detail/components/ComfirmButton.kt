@@ -13,7 +13,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.cmc12th.runway.R
 import com.cmc12th.runway.ui.components.WidthSpacer
@@ -27,12 +30,17 @@ fun ColumnScope.ComfirmButton(
     editStatus: EditUiStatus,
     event: Boolean,
     updateUploadEvent: (Boolean) -> Unit,
+    updateBottomBarHeight: (Dp) -> Unit,
 ) {
+    val localDensity = LocalDensity.current
     AnimatedVisibility(visible = !editStatus.isEdit) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(Color.Black),
+                .background(Color.Black)
+                .onGloballyPositioned { coordinates ->
+                    updateBottomBarHeight(with(localDensity) { coordinates.size.height.toDp() })
+                },
             horizontalArrangement = Arrangement.End
         ) {
             Button(

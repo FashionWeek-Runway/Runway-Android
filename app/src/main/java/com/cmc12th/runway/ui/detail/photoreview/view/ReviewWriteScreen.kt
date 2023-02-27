@@ -8,6 +8,7 @@ package com.cmc12th.runway.ui.detail.photoreview.view
 import android.app.Activity
 import android.graphics.Bitmap
 import android.net.Uri
+import android.util.Log
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.*
 import androidx.compose.foundation.gestures.detectDragGestures
@@ -42,7 +43,8 @@ import com.cmc12th.runway.ui.detail.photoreview.model.UserReviewText.Companion.D
 import com.cmc12th.runway.ui.domain.keyboardAsState
 import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.domain.model.KeyboardStatus
-import com.cmc12th.runway.utils.captureView
+import com.cmc12th.runway.utils.toBitmap
+import kotlinx.coroutines.delay
 import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
 
@@ -85,6 +87,10 @@ fun ReviewWriteScreen(appState: ApplicationState, idx: Int, uri: Uri?) {
         disableEditStatus()
     }
 
+    val bottomBarHeight = remember {
+        mutableStateOf(0.dp)
+    }
+
     val ableEditStatus: (userReviewText: UserReviewText) -> Unit = {
         editStatus.value = it.toEditUiStatus()
     }
@@ -117,6 +123,7 @@ fun ReviewWriteScreen(appState: ApplicationState, idx: Int, uri: Uri?) {
                 GenerateImageView(
                     selectImages = it,
                     event = uploadEvent.value,
+                    updateEvent = { uploadEvent.value = it },
                     generateBitmap = { bitmap ->
                         detailViewModel.addUserReview(idx, bitmap) {
                             appState.popBackStack()
@@ -130,6 +137,7 @@ fun ReviewWriteScreen(appState: ApplicationState, idx: Int, uri: Uri?) {
                     updateEditMode = { editMode, userReview ->
                         if (editMode) ableEditStatus(userReview) else disableEditStatus()
                     },
+                    bottomBarHeight = bottomBarHeight.value,
                     textFieldWidth = textFieldWidth
                 )
             }
@@ -164,48 +172,52 @@ fun ReviewWriteScreen(appState: ApplicationState, idx: Int, uri: Uri?) {
                 }
             }
 
-            /** 탑 바 아이콘 모음 */
-            TopBarIcons(
-                popBackStack = { appState.popBackStack() },
-                isEdit = editStatus.value.isEdit,
-                editStatus = editStatus.value,
-                updateColorPickerVisiblity = {
-                    editStatus.value = editStatus.value.copy(
-                        isColorPickerVisibility = it
-                    )
-                },
-                updateTextAlign = {
-                    editStatus.value = editStatus.value.copy(
-                        textAlign = it
-                    )
-                },
-                updateEditMode = { editMode ->
-                    if (editMode) {
-                        val userReview = UserReviewText(
-                            idx = userReviewText.size,
-                            fontSize = DEFAULT_REVIEW_FONT_SIZE,
-                            fontColor = Color.White,
+            // 이미지 업로드할 때(스샷 찍을때는 숨겨야함)
+            if (!uploadEvent.value) {
+                /** 탑 바 아이콘 모음 */
+                TopBarIcons(
+                    popBackStack = { appState.popBackStack() },
+                    isEdit = editStatus.value.isEdit,
+                    editStatus = editStatus.value,
+                    updateColorPickerVisiblity = {
+                        editStatus.value = editStatus.value.copy(
+                            isColorPickerVisibility = it
                         )
-                        ableEditStatus(userReview)
-                        userReviewText.add(userReview)
-                    } else {
-                        disableEditStatus()
-                    }
-                },
-                addUserReviewText = addUserReviewText
-            )
+                    },
+                    updateTextAlign = {
+                        editStatus.value = editStatus.value.copy(
+                            textAlign = it
+                        )
+                    },
+                    updateEditMode = { editMode ->
+                        if (editMode) {
+                            val userReview = UserReviewText(
+                                idx = userReviewText.size,
+                                fontSize = DEFAULT_REVIEW_FONT_SIZE,
+                                fontColor = Color.White,
+                            )
+                            ableEditStatus(userReview)
+                            userReviewText.add(userReview)
+                        } else {
+                            disableEditStatus()
+                        }
+                    },
+                    addUserReviewText = addUserReviewText
+                )
 
-            /** 색상 선택 리스트 */
-            ReviewTextColorPicker(
-                editStatus = editStatus.value,
-                updateEditUiStatus = { editStatus.value = it }
-            )
+                /** 색상 선택 리스트 */
+                ReviewTextColorPicker(
+                    editStatus = editStatus.value,
+                    updateEditUiStatus = { editStatus.value = it }
+                )
 
+            }
         }
 
         ComfirmButton(
             editStatus = editStatus.value,
             event = uploadEvent.value,
+            updateBottomBarHeight = { bottomBarHeight.value = it },
             updateUploadEvent = {
                 uploadEvent.value = it
             }
@@ -226,7 +238,6 @@ private fun EditBackGround(
         })
 }
 
-
 @Composable
 private fun GenerateImageView(
     selectImages: Uri,
@@ -237,15 +248,33 @@ private fun GenerateImageView(
     updateEditMode: (isEdit: Boolean, userReviewText: UserReviewText) -> Unit,
     editIdx: Int,
     textFieldWidth: Dp,
+    bottomBarHeight: Dp,
+    updateEvent: (Boolean) -> Unit,
 ) {
     val view = LocalView.current
-    val activity = LocalContext.current as Activity
+    val localDensity = LocalDensity.current
+    val statusBarHeight = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
+    val navigationBarsHeight =
+        WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
 
     LaunchedEffect(key1 = event) {
         if (event) {
-            captureView(view, activity.window) {
-                generateBitmap(it)
-            }
+            delay(100L)
+            view.toBitmap(
+                topbarheight = with(localDensity) { statusBarHeight.toPx() },
+                bottomBarHeight = with(localDensity) { navigationBarsHeight.toPx() + bottomBarHeight.toPx() },
+                onBitmapReady = { bitmap: Bitmap ->
+                    // TODO - use generated bitmap
+                    generateBitmap(bitmap)
+                    // updateEvent(false)
+                },
+                onBitmapError = { exception: Exception ->
+                    // TODO - handle exception
+                }
+            )
+//            captureView(view, activity.window) {
+//                generateBitmap(it)
+//            }
         }
     }
 
