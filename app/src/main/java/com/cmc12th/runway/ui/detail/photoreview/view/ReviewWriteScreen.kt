@@ -8,6 +8,7 @@ package com.cmc12th.runway.ui.detail.photoreview.view
 import android.app.Activity
 import android.graphics.Bitmap
 import android.net.Uri
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.*
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.*
@@ -140,15 +141,27 @@ fun ReviewWriteScreen(appState: ApplicationState, idx: Int, uri: Uri?) {
                     addUserReviewText()
                 })
                 /** 폰트 사이즈 조절 */
-                FontSizeToolBar(
-                    updateEditUiState = { editStatus.value = it },
-                    editUiState = editStatus.value,
-                )
-                EditFocusTextField(
-                    editUiState = editStatus.value,
-                    updateEditUiState = { editStatus.value = it },
-                    textFieldWidth = textFieldWidth
-                )
+                var offsetX by remember { mutableStateOf(0.dp) }
+                val animatedOffsetX by animateDpAsState(targetValue = offsetX)
+
+                LaunchedEffect(key1 = editStatus.value.textField) {
+                    if (editStatus.value.textField.text.isNotBlank()) {
+                        offsetX = (-30).dp
+                    }
+                }
+
+                Box(modifier = Modifier.offset(x = animatedOffsetX)) {
+                    FontSizeToolBar(
+                        updateEditUiState = { editStatus.value = it },
+                        editUiState = editStatus.value,
+                        updateOffsetX = { offsetX = it }
+                    )
+                    EditFocusTextField(
+                        editUiState = editStatus.value,
+                        updateEditUiState = { editStatus.value = it },
+                        textFieldWidth = textFieldWidth
+                    )
+                }
             }
 
             /** 탑 바 아이콘 모음 */

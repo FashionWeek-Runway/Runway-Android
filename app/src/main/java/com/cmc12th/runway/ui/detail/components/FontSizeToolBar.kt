@@ -10,6 +10,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -23,11 +25,14 @@ import kotlin.math.roundToInt
 fun BoxScope.FontSizeToolBar(
     editUiState: EditUiStatus,
     updateEditUiState: (EditUiStatus) -> Unit,
+    updateOffsetX: (Dp) -> Unit,
 ) {
     var offsetY by remember { mutableStateOf(0.dp.value) }
+
     LaunchedEffect(key1 = Unit) {
         offsetY = (editUiState.fontSize.value - 31.sp.value) * 19f * -1
     }
+
     Box(
         modifier = Modifier
             .align(Alignment.TopStart)
@@ -52,6 +57,7 @@ fun BoxScope.FontSizeToolBar(
                 .draggable(
                     orientation = Orientation.Vertical,
                     state = rememberDraggableState { delta ->
+                        updateOffsetX(0.dp)
                         val dy = offsetY + delta
                         val my = if (dy >= 0.dp.value) min(
                             300.dp.value,
