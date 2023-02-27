@@ -95,8 +95,6 @@ fun ReviewWriteScreen(appState: ApplicationState, idx: Int, uri: Uri?) {
     }
 
     LaunchedEffect(key1 = Unit) {
-        appState.bottomBarState.value = false
-
     }
     appState.systmeUiController.setSystemBarsColor(Color.Black)
     appState.systmeUiController.setNavigationBarColor(Color.Black)

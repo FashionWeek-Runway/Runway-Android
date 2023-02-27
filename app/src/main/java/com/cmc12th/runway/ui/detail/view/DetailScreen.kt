@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.compose.composable
 import com.cmc12th.runway.ui.components.*
 import com.cmc12th.runway.ui.detail.DetailViewModel
 import com.cmc12th.runway.ui.detail.components.*
@@ -128,7 +129,7 @@ fun DetailScreen(
                     galleryLauncher = galleryLauncher,
                     cameraLauncher = camearLauncher,
                     navigateToUserReviewDetail = {
-                        appState.navigate(REVIEW_DETAIL_ROUTE)
+                        appState.navigate("$REVIEW_DETAIL_ROUTE?reviewId=${it.reviewId}")
                     }
                 )
                 WidthSpacerLine(height = 8.dp, color = Gray100)

@@ -23,7 +23,7 @@ fun ManageSystemBarColor(
         systemUiController.setSystemBarsColor(color = Color.Transparent)
         systemUiController.setNavigationBarColor(color = Color.White)
         onDispose {
-            systemUiController.setSystemBarsColor(color = Color.White)
+            // systemUiController.setSystemBarsColor(color = Color.White)
         }
     }
     LaunchedEffect(key1 = scrollState.value.dp) {
