@@ -36,6 +36,7 @@ object Constants {
     const val DETAIL_ROUTE = "nav-detail"
     const val REVIEW_WRITE_ROUTE = "nav-review-write-review"
     const val REVIEW_DETAIL_ROUTE = "nav-review_detail-review"
+    const val REVIEW_REPORT_ROUTE = "nav-review_report-review"
 
     const val PASSWORD_SEARCH_PHONE_ROUTE = "nav-password-search-phone"
     const val PASSWORD_SEARCH_PHONE_VERIFY_ROUTE = "nav-password-search-phone-verify"
@@ -46,6 +47,7 @@ object Constants {
     const val LOGIN_GRAPH = "login-graph"
     const val SIGNIN_GRAPH = "signin-graph"
     const val DETAIL_GRAPH = "detail-graph"
+    const val REVIEW_DETAIL_GRAPH = "review-detail-graph"
     const val PASSWORD_SEARCH_GRAPH = "password-search-graph"
 
 }

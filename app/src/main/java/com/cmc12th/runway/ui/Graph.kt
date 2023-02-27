@@ -18,6 +18,7 @@ import com.cmc12th.runway.ui.login.view.LoginBaseScreen
 import com.cmc12th.runway.ui.map.view.MapScreen
 import com.cmc12th.runway.ui.mypage.view.MypageScreen
 import com.cmc12th.runway.ui.signin.view.*
+import com.cmc12th.runway.utils.Constants
 import com.cmc12th.runway.utils.Constants.DETAIL_GRAPH
 import com.cmc12th.runway.utils.Constants.DETAIL_ROUTE
 import com.cmc12th.runway.utils.Constants.LOGIN_BASE_ROUTE
@@ -29,6 +30,7 @@ import com.cmc12th.runway.utils.Constants.PASSWORD_SEARCH_PHONE_CHANGE_PASSWORD
 import com.cmc12th.runway.utils.Constants.PASSWORD_SEARCH_PHONE_ROUTE
 import com.cmc12th.runway.utils.Constants.PASSWORD_SEARCH_PHONE_VERIFY_ROUTE
 import com.cmc12th.runway.utils.Constants.REVIEW_DETAIL_ROUTE
+import com.cmc12th.runway.utils.Constants.REVIEW_REPORT_ROUTE
 import com.cmc12th.runway.utils.Constants.REVIEW_WRITE_ROUTE
 import com.cmc12th.runway.utils.Constants.SIGNIN_AGREEMENT_DETAIL_ROUTE
 import com.cmc12th.runway.utils.Constants.SIGNIN_AGREEMENT_ROUTE
@@ -80,6 +82,15 @@ fun NavGraphBuilder.mainGraph(
                 )) { entry ->
                 val idx = entry.arguments?.getInt("reviewId") ?: 0
                 ReviewDetailScreen()
+
+                composable(route = "$REVIEW_REPORT_ROUTE?reviewId={reviewId}",
+                    arguments = listOf(
+                        navArgument("reviewId") {
+                            type = NavType.IntType
+                        }
+                    )) {
+                    ReviewDetailScreen()
+                }
             }
 
         }

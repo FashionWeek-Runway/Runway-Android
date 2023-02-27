@@ -7,20 +7,17 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cmc12th.runway.ui.components.BackIcon
 import com.cmc12th.runway.ui.components.HeightSpacer
+import com.cmc12th.runway.ui.detail.photoreview.model.ReviewReportItem
 import com.cmc12th.runway.ui.signin.components.OnBoardHeadLine
 import com.cmc12th.runway.ui.theme.*
 import com.cmc12th.runway.utils.Constants.CATEGORYS
@@ -29,8 +26,14 @@ import com.cmc12th.runway.utils.Constants.CATEGORYS
 fun ReviewReportScreen() {
 
     val reportList = remember {
-        mutableStateOf(CATEGORYS)
+        mutableStateOf(CATEGORYS.mapIndexed { index, s ->
+            ReviewReportItem(index, s)
+        })
     }
+    var selectedReportItemIdx by remember {
+        mutableStateOf(-1)
+    }
+
     val reportStr = remember {
         mutableStateOf("")
     }
@@ -62,7 +65,9 @@ fun ReviewReportScreen() {
                 reportList.value.forEach {
                     Box(modifier = Modifier
                         .fillMaxWidth()
-                        .clickable { }) {
+                        .clickable {
+                            selectedReportItemIdx = it.idx
+                        }) {
                         Row(
                             modifier = Modifier
                                 .padding(0.dp, 16.dp),
@@ -72,9 +77,10 @@ fun ReviewReportScreen() {
                             Box(
                                 modifier = Modifier
                                     .size(18.dp)
-                                    .border(BorderStroke(1.dp, Gray300), CircleShape)
+                                    .border(if (selectedReportItemIdx == it.idx) BorderStroke(3.dp,
+                                        Primary) else BorderStroke(1.dp, Gray300), CircleShape)
                             )
-                            Text(text = it, style = Body1, color = Black)
+                            Text(text = it.contents, style = Body1, color = Black)
                         }
                     }
 
