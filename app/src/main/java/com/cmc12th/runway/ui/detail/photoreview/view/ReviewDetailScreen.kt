@@ -1,14 +1,13 @@
-@file:OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class)
+@file:OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class,
+    ExperimentalMaterialApi::class)
 
 package com.cmc12th.runway.ui.detail.photoreview.view
 
 import android.util.Log
-import android.view.MotionEvent
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -24,7 +23,6 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.*
 import androidx.compose.ui.layout.ContentScale
@@ -35,8 +33,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.util.fastAll
-import androidx.compose.ui.util.fastAny
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
@@ -55,7 +51,7 @@ import kotlinx.coroutines.launch
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
-enum class REVIEW_MOVE_DIRECTION {
+enum class ReviewMoveDirection {
     LEFT, RIGHT, DEFAULT;
 }
 
@@ -78,6 +74,7 @@ fun ReviewDetailScreen(appState: ApplicationState, reviewId: Int) {
         bottomsheetState.modalSheetState.animateTo(ModalBottomSheetValue.Hidden)
         reviewViewModel.getReviewDetail(reviewId)
     }
+
     appState.systmeUiController.setStatusBarColor(Color.Black)
     appState.systmeUiController.setNavigationBarColor(Color.Black)
 
@@ -85,6 +82,7 @@ fun ReviewDetailScreen(appState: ApplicationState, reviewId: Int) {
         bottomsheetState
     ) {
         DetailContents(
+            showSnackBar = { appState.showSnackbar(it) },
             reviewDetail = reviewViewModel.reviewDetail.value,
             showBottomSheet = showBottomSheet,
             updateBookmark = {
@@ -94,13 +92,18 @@ fun ReviewDetailScreen(appState: ApplicationState, reviewId: Int) {
                     )
                 }
             },
-            reportRBookmark = { reviewViewModel.reporteReview(reviewId) },
             popBackStack = {
                 appState.popBackStack()
             },
             navigateToReportScreen = {
                 appState.navigate("$REVIEW_REPORT_ROUTE?reviewId=$reviewId")
-            }
+            },
+            getReviewDetail = { idx, onSuccess ->
+                reviewViewModel.getReviewDetail(idx) {
+                    onSuccess()
+                }
+            },
+            reportRBookmark = { reviewViewModel.reporteReview(reviewId) },
         )
     }
 
@@ -112,8 +115,10 @@ private fun DetailContents(
     reviewDetail: UserReviewDetail,
     navigateToReportScreen: () -> Unit,
     popBackStack: () -> Unit,
+    showSnackBar: (String) -> Unit,
     updateBookmark: () -> Unit,
     reportRBookmark: () -> Unit,
+    getReviewDetail: (idx: Int, onSuccess: () -> Unit) -> Unit,
 ) {
 
     var offsetX by remember { mutableStateOf(0.dp.value) }
@@ -124,35 +129,49 @@ private fun DetailContents(
         offsetX = dx
     }
     var reviewDirection by remember {
-        mutableStateOf(REVIEW_MOVE_DIRECTION.DEFAULT)
+        mutableStateOf(ReviewMoveDirection.DEFAULT)
     }
     val configuration = LocalConfiguration.current
     val density = LocalDensity.current
     val screenWidthFloat = with(density) { configuration.screenWidthDp.dp.toPx() }
 
     val loadPreviousReview = {
-        // TODO 이전 리뷰 가져오기
-        Log.i("dlgocks1", "Load PrevioudReview")
-        offsetX = -screenWidthFloat
+        val prevReviewId = reviewDetail.reviewInquiry.prevReviewId
+        if (prevReviewId == null) {
+            offsetX = 0f
+            showSnackBar("이전 리뷰가 존재하지 않습니다.")
+        } else {
+            offsetX = -screenWidthFloat
+            getReviewDetail(prevReviewId) {
+                offsetX = 0f
+            }
+        }
     }
 
     val loadNextReview = {
-        // TODO 이후 리뷰 가져오기
-        Log.i("dlgocks1", "Load NextReview")
-        offsetX = screenWidthFloat
+        val nextReviewId = reviewDetail.reviewInquiry.nextReviewId
+        if (nextReviewId == null) {
+            offsetX = 0f
+            showSnackBar("다음 리뷰가 존재하지 않습니다.")
+        } else {
+            offsetX = screenWidthFloat
+            getReviewDetail(nextReviewId) {
+                offsetX = 0f
+            }
+        }
     }
 
     LaunchedEffect(key1 = reviewDirection) {
         when (reviewDirection) {
-            REVIEW_MOVE_DIRECTION.LEFT -> {
+            ReviewMoveDirection.LEFT -> {
                 loadPreviousReview()
-                reviewDirection = REVIEW_MOVE_DIRECTION.DEFAULT
+                reviewDirection = ReviewMoveDirection.DEFAULT
             }
-            REVIEW_MOVE_DIRECTION.RIGHT -> {
+            ReviewMoveDirection.RIGHT -> {
                 loadNextReview()
-                reviewDirection = REVIEW_MOVE_DIRECTION.DEFAULT
+                reviewDirection = ReviewMoveDirection.DEFAULT
             }
-            REVIEW_MOVE_DIRECTION.DEFAULT -> {
+            ReviewMoveDirection.DEFAULT -> {
                 // TO NOTHING
             }
         }
@@ -178,9 +197,9 @@ private fun DetailContents(
                             if (abs(offsetX) <= screenWidthFloat / 2) {
                                 offsetX = 0f
                             } else if (offsetX < -(screenWidthFloat / 2)) {
-                                loadPreviousReview()
+                                reviewDirection = ReviewMoveDirection.RIGHT
                             } else if (offsetX > screenWidthFloat / 2) {
-                                loadNextReview()
+                                reviewDirection = ReviewMoveDirection.LEFT
                             }
                         }
                     ) { change, dragAmount ->
@@ -188,9 +207,9 @@ private fun DetailContents(
                             detectTapGestures {
                                 reviewDirection =
                                     if (screenWidthFloat / 2 > it.x) {
-                                        REVIEW_MOVE_DIRECTION.LEFT
+                                        ReviewMoveDirection.LEFT
                                     } else {
-                                        REVIEW_MOVE_DIRECTION.RIGHT
+                                        ReviewMoveDirection.RIGHT
                                     }
                             }
                         }
