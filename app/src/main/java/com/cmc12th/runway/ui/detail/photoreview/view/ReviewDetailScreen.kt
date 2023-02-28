@@ -203,18 +203,18 @@ private fun DetailContents(
                             }
                         }
                     ) { change, dragAmount ->
-                        coroutineScope.launch {
-                            detectTapGestures {
-                                reviewDirection =
-                                    if (screenWidthFloat / 2 > it.x) {
-                                        ReviewMoveDirection.LEFT
-                                    } else {
-                                        ReviewMoveDirection.RIGHT
-                                    }
-                            }
-                        }
                         updateOffestX(dragAmount.x)
                         change.consume()
+                    }
+                }
+                .pointerInput(Unit) {
+                    detectTapGestures {
+                        reviewDirection =
+                            if (screenWidthFloat / 2 > it.x) {
+                                ReviewMoveDirection.LEFT
+                            } else {
+                                ReviewMoveDirection.RIGHT
+                            }
                     }
                 }
             )
@@ -353,27 +353,30 @@ private fun BoxScope.Bookmark(
     reviewDetail: UserReviewDetail,
     updateBookmark: () -> Unit,
 ) {
-    Column(
-        modifier = Modifier.Companion
-            .align(Alignment.BottomEnd)
-            .padding(20.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        if (reviewDetail.bookmark) {
-            RunwayIconButton(
-                drawable = R.drawable.ic_filled_bookmark_24,
-                tint = Point,
-                size = 28.dp,
-                onCLick = { updateBookmark() }
-            )
-        } else {
-            RunwayIconButton(
-                drawable = R.drawable.ic_border_bookmark_24,
-                tint = Color.White,
-                size = 28.dp,
-                onCLick = { updateBookmark() }
-            )
+    if (!reviewDetail.my) {
+        Column(
+            modifier = Modifier.Companion
+                .align(Alignment.BottomEnd)
+                .padding(20.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            if (reviewDetail.bookmark) {
+                RunwayIconButton(
+                    drawable = R.drawable.ic_filled_bookmark_24,
+                    tint = Point,
+                    size = 28.dp,
+                    onCLick = { updateBookmark() }
+                )
+            } else {
+                RunwayIconButton(
+                    drawable = R.drawable.ic_border_bookmark_24,
+                    tint = Color.White,
+                    size = 28.dp,
+                    onCLick = { updateBookmark() }
+                )
+            }
+            Text(text = reviewDetail.bookmarkCnt.toString(), color = White, style = Caption)
         }
-        Text(text = reviewDetail.bookmarkCnt.toString(), color = White, style = Caption)
     }
 }
+
