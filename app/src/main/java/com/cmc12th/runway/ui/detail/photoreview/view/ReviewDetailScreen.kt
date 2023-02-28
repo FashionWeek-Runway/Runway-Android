@@ -1,11 +1,15 @@
-@file:OptIn(ExperimentalMaterialApi::class)
+@file:OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class)
 
 package com.cmc12th.runway.ui.detail.photoreview.view
 
-import android.app.Activity
+import android.util.Log
+import android.view.MotionEvent
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -13,26 +17,31 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.input.pointer.*
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import androidx.core.view.ViewCompat
+import androidx.compose.ui.util.fastAll
+import androidx.compose.ui.util.fastAny
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.cmc12th.runway.R
+import com.cmc12th.runway.data.response.store.UserReviewDetail
 import com.cmc12th.runway.ui.components.CustomBottomSheet
 import com.cmc12th.runway.ui.components.RunwayIconButton
 import com.cmc12th.runway.ui.detail.photoreview.ReviewViewModel
@@ -41,19 +50,22 @@ import com.cmc12th.runway.ui.domain.model.BottomSheetContent
 import com.cmc12th.runway.ui.domain.model.BottomSheetContentItem
 import com.cmc12th.runway.ui.domain.rememberBottomSheet
 import com.cmc12th.runway.ui.theme.*
-import com.cmc12th.runway.utils.Constants
 import com.cmc12th.runway.utils.Constants.REVIEW_REPORT_ROUTE
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.math.abs
+import kotlin.math.roundToInt
+
+enum class REVIEW_MOVE_DIRECTION {
+    LEFT, RIGHT, DEFAULT;
+}
 
 @Composable
 fun ReviewDetailScreen(appState: ApplicationState, reviewId: Int) {
 
     val bottomsheetState = rememberBottomSheet()
     val coroutineScope = rememberCoroutineScope()
-
     val reviewViewModel: ReviewViewModel = hiltViewModel()
+    var reviewId = reviewId
 
     val showBottomSheet: (BottomSheetContent) -> Unit = {
         coroutineScope.launch {
@@ -64,7 +76,7 @@ fun ReviewDetailScreen(appState: ApplicationState, reviewId: Int) {
     LaunchedEffect(key1 = Unit) {
         appState.bottomBarState.value = false
         bottomsheetState.modalSheetState.animateTo(ModalBottomSheetValue.Hidden)
-        // TODO 리뷰 디테일 가져오기
+        reviewViewModel.getReviewDetail(reviewId)
     }
     appState.systmeUiController.setStatusBarColor(Color.Black)
     appState.systmeUiController.setNavigationBarColor(Color.Black)
@@ -72,123 +84,277 @@ fun ReviewDetailScreen(appState: ApplicationState, reviewId: Int) {
     CustomBottomSheet(
         bottomsheetState
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .statusBarsPadding()
-                .navigationBarsPadding()
-                .background(Black)
-        ) {
-
-            Box(modifier = Modifier.weight(1f)) {
-                AsyncImage(
-                    modifier = Modifier
-                        .fillMaxSize(),
-                    model = ImageRequest.Builder(LocalContext.current)
-                        .data(R.drawable.img_dummy)
-                        .crossfade(true)
-                        .build(),
-                    placeholder = painterResource(R.drawable.img_dummy),
-                    error = painterResource(id = R.drawable.img_dummy),
-                    contentDescription = "IMG_REVIEW",
-                    contentScale = ContentScale.Crop,
-                )
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(20.dp)
-                        .align(Alignment.TopCenter),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    AsyncImage(
-                        modifier = Modifier
-                            .clip(CircleShape)
-                            .size(30.dp)
-                            .border(BorderStroke(1.dp, Color.White), CircleShape),
-                        model = ImageRequest.Builder(LocalContext.current)
-                            .data(R.drawable.img_dummy)
-                            .crossfade(true)
-                            .build(),
-                        placeholder = painterResource(R.drawable.img_dummy),
-                        error = painterResource(id = R.drawable.img_dummy),
-                        contentDescription = "IMG_PROFILE",
-                        contentScale = ContentScale.Crop,
+        DetailContents(
+            reviewDetail = reviewViewModel.reviewDetail.value,
+            showBottomSheet = showBottomSheet,
+            updateBookmark = {
+                reviewViewModel.updateBookmark(reviewId) {
+                    appState.showSnackbar(
+                        if (reviewViewModel.reviewDetail.value.bookmark) "리뷰가 저장되었습니다." else "리뷰 저장이 취소됬습니다."
                     )
-                    Text(
-                        text = "닉네임 뷰", style = Body2B, color = Color.White,
-                        modifier = Modifier.weight(1f)
-                    )
-                    RunwayIconButton(drawable = R.drawable.ic_baseline_etc_24, tint = Color.White) {
-                        showBottomSheet(BottomSheetContent("",
-                            listOf(BottomSheetContentItem("신고",
-                                onItemClick = {
-                                    appState.navigate("$REVIEW_REPORT_ROUTE?reviewId=$reviewId")
-                                }))
-                        ))
-                    }
-                    RunwayIconButton(
-                        drawable = R.drawable.ic_close_baseline_small,
-                        tint = Color.White) {
-                        appState.popBackStack()
-                    }
                 }
-
-                Column(
-                    modifier = Modifier
-                        .align(Alignment.BottomEnd)
-                        .padding(20.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    RunwayIconButton(
-                        drawable = R.drawable.ic_border_bookmark_24,
-                        tint = Color.White,
-                        size = 28.dp
-                    ) {
-                        // TODO Add or Remove Bookmark
-                    }
-                    Text(text = "7", color = White, style = Caption)
-                }
+            },
+            reportRBookmark = { reviewViewModel.reporteReview(reviewId) },
+            popBackStack = {
+                appState.popBackStack()
+            },
+            navigateToReportScreen = {
+                appState.navigate("$REVIEW_REPORT_ROUTE?reviewId=$reviewId")
             }
+        )
+    }
 
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(20.dp, 13.dp)
-                    .clip(RoundedCornerShape(4.dp))
-                    .background(Color(0x50242528))
-                    .border(BorderStroke(1.dp, Gray800), RoundedCornerShape(4.dp))
-            ) {
-                Row(
-                    modifier = Modifier.padding(10.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    RunwayIconButton(drawable = R.drawable.ic_filled_review_location_16)
-                    Row(
-                        modifier = Modifier.weight(1f),
-                        horizontalArrangement = Arrangement.spacedBy(6.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(text = "매장명 매장명", style = Body2, color = White)
-                        Text(text = "지역명, 성수동", style = Caption, color = Gray300)
-                    }
-                    IconButton(
-                        onClick = {},
-                        modifier = Modifier.size(20.dp)
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_arrow),
-                            contentDescription = "IC_DUMMY",
-                            tint = Color.White,
-                            modifier = Modifier.rotate(180f)
-                        )
-                    }
-                }
+}
+
+@Composable
+private fun DetailContents(
+    showBottomSheet: (BottomSheetContent) -> Unit,
+    reviewDetail: UserReviewDetail,
+    navigateToReportScreen: () -> Unit,
+    popBackStack: () -> Unit,
+    updateBookmark: () -> Unit,
+    reportRBookmark: () -> Unit,
+) {
+
+    var offsetX by remember { mutableStateOf(0.dp.value) }
+    var animateOffsetX = animateFloatAsState(targetValue = offsetX)
+
+    val updateOffestX: (mx: Float) -> Unit = {
+        val dx = offsetX + it * 1.4f
+        offsetX = dx
+    }
+    var reviewDirection by remember {
+        mutableStateOf(REVIEW_MOVE_DIRECTION.DEFAULT)
+    }
+    val configuration = LocalConfiguration.current
+    val density = LocalDensity.current
+    val screenWidthFloat = with(density) { configuration.screenWidthDp.dp.toPx() }
+
+    val loadPreviousReview = {
+        // TODO 이전 리뷰 가져오기
+        Log.i("dlgocks1", "Load PrevioudReview")
+        offsetX = -screenWidthFloat
+    }
+
+    val loadNextReview = {
+        // TODO 이후 리뷰 가져오기
+        Log.i("dlgocks1", "Load NextReview")
+        offsetX = screenWidthFloat
+    }
+
+    LaunchedEffect(key1 = reviewDirection) {
+        when (reviewDirection) {
+            REVIEW_MOVE_DIRECTION.LEFT -> {
+                loadPreviousReview()
+                reviewDirection = REVIEW_MOVE_DIRECTION.DEFAULT
             }
-
+            REVIEW_MOVE_DIRECTION.RIGHT -> {
+                loadNextReview()
+                reviewDirection = REVIEW_MOVE_DIRECTION.DEFAULT
+            }
+            REVIEW_MOVE_DIRECTION.DEFAULT -> {
+                // TO NOTHING
+            }
         }
     }
 
+
+    val coroutineScope = rememberCoroutineScope()
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .statusBarsPadding()
+            .navigationBarsPadding()
+            .background(Black),
+    ) {
+        Box(modifier = Modifier.weight(1f)) {
+            MainImage(offsetX = animateOffsetX.value,
+                reviewDetail = reviewDetail)
+            Box(modifier = Modifier
+                .fillMaxSize()
+                .pointerInput(Unit) {
+                    detectDragGestures(
+                        onDragEnd = {
+                            if (abs(offsetX) <= screenWidthFloat / 2) {
+                                offsetX = 0f
+                            } else if (offsetX < -(screenWidthFloat / 2)) {
+                                loadPreviousReview()
+                            } else if (offsetX > screenWidthFloat / 2) {
+                                loadNextReview()
+                            }
+                        }
+                    ) { change, dragAmount ->
+                        coroutineScope.launch {
+                            detectTapGestures {
+                                reviewDirection =
+                                    if (screenWidthFloat / 2 > it.x) {
+                                        REVIEW_MOVE_DIRECTION.LEFT
+                                    } else {
+                                        REVIEW_MOVE_DIRECTION.RIGHT
+                                    }
+                            }
+                        }
+                        updateOffestX(dragAmount.x)
+                        change.consume()
+                    }
+                }
+            )
+            Topbar(reviewDetail, showBottomSheet, navigateToReportScreen, popBackStack)
+            Bookmark(reviewDetail, updateBookmark)
+
+
+        }
+        BottomBar(reviewDetail)
+    }
+}
+
+@Composable
+private fun MainImage(
+    offsetX: Float,
+    reviewDetail: UserReviewDetail,
+) {
+    AsyncImage(
+        modifier = Modifier
+            .fillMaxSize()
+            .offset {
+                IntOffset(x = offsetX.roundToInt(), y = 0)
+            },
+        model = ImageRequest.Builder(LocalContext.current)
+            .data(reviewDetail.imgUrl)
+            .crossfade(true)
+            .build(),
+        placeholder = painterResource(id = R.drawable.img_dummy),
+        error = painterResource(id = R.drawable.img_dummy),
+        contentDescription = "IMG_REVIEW",
+        contentScale = ContentScale.Crop,
+    )
+}
+
+@Composable
+private fun BottomBar(reviewDetail: UserReviewDetail) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(20.dp, 13.dp)
+            .clip(RoundedCornerShape(4.dp))
+            .background(Color(0x50242528))
+            .border(BorderStroke(1.dp, Gray800), RoundedCornerShape(4.dp))
+    ) {
+        Row(
+            modifier = Modifier.padding(10.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            RunwayIconButton(drawable = R.drawable.ic_filled_review_location_16)
+            Row(
+                modifier = Modifier.weight(1f),
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(text = reviewDetail.storeName,
+                    style = Body2,
+                    color = White,
+                    overflow = TextOverflow.Ellipsis)
+                Text(text = reviewDetail.regionInfo,
+                    style = Caption,
+                    color = Gray300,
+                    overflow = TextOverflow.Ellipsis)
+            }
+            IconButton(
+                onClick = {},
+                modifier = Modifier.size(20.dp)
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_arrow),
+                    contentDescription = "IC_ARROW",
+                    tint = Color.White,
+                    modifier = Modifier.rotate(180f)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun BoxScope.Topbar(
+    reviewDetail: UserReviewDetail,
+    showBottomSheet: (BottomSheetContent) -> Unit,
+    navigateToReportScreen: () -> Unit,
+    popBackStack: () -> Unit,
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(20.dp)
+            .align(Alignment.TopCenter),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        AsyncImage(
+            modifier = Modifier
+                .clip(CircleShape)
+                .size(30.dp)
+                .border(BorderStroke(1.dp, Color.White), CircleShape),
+            model = ImageRequest.Builder(LocalContext.current)
+                .data(reviewDetail.profileImgUrl)
+                .crossfade(true)
+                .build(),
+            placeholder = painterResource(R.drawable.img_dummy),
+            error = painterResource(id = R.drawable.img_dummy),
+            contentDescription = "IMG_PROFILE",
+            contentScale = ContentScale.Crop,
+        )
+        Text(
+            text = reviewDetail.nickname, style = Body2B, color = Color.White,
+            modifier = Modifier.weight(1f)
+        )
+        RunwayIconButton(drawable = R.drawable.ic_baseline_etc_24, tint = Color.White) {
+            showBottomSheet(BottomSheetContent("",
+                if (reviewDetail.my) {
+                    listOf(BottomSheetContentItem(itemName = "삭제",
+                        itemTextColor = Error_Color,
+                        onItemClick = navigateToReportScreen))
+                } else {
+                    listOf(BottomSheetContentItem("신고",
+                        onItemClick = navigateToReportScreen))
+                }
+            ))
+        }
+        RunwayIconButton(
+            drawable = R.drawable.ic_close_baseline_small,
+            tint = Color.White
+        ) {
+            popBackStack()
+        }
+    }
+}
+
+@Composable
+private fun BoxScope.Bookmark(
+    reviewDetail: UserReviewDetail,
+    updateBookmark: () -> Unit,
+) {
+    Column(
+        modifier = Modifier.Companion
+            .align(Alignment.BottomEnd)
+            .padding(20.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        if (reviewDetail.bookmark) {
+            RunwayIconButton(
+                drawable = R.drawable.ic_filled_bookmark_24,
+                tint = Point,
+                size = 28.dp,
+                onCLick = { updateBookmark() }
+            )
+        } else {
+            RunwayIconButton(
+                drawable = R.drawable.ic_border_bookmark_24,
+                tint = Color.White,
+                size = 28.dp,
+                onCLick = { updateBookmark() }
+            )
+        }
+        Text(text = reviewDetail.bookmarkCnt.toString(), color = White, style = Caption)
+    }
 }
