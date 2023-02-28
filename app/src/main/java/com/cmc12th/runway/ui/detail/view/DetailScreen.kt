@@ -18,7 +18,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.compose.composable
 import com.cmc12th.runway.ui.components.*
 import com.cmc12th.runway.ui.detail.DetailViewModel
 import com.cmc12th.runway.ui.detail.components.*
@@ -110,7 +109,6 @@ fun DetailScreen(
                 .fillMaxSize()
                 .background(Color.White)
         ) {
-
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -146,6 +144,11 @@ fun DetailScreen(
                 isBookmarked = uiState.storeDetail.bookmark,
                 updateBookmark = {
                     detailViewModel.updateBookmark(idx) {
+                        if (it) {
+                            appState.showSnackbar("매장이 저장되었습니다.")
+                        } else {
+                            appState.showSnackbar("매장이 저장이 취소되었습니다.")
+                        }
                         detailViewModel.updateBookmarkState(it)
                     }
                 }
