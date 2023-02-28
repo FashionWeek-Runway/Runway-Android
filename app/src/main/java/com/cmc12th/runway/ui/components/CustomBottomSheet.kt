@@ -67,7 +67,7 @@ fun CustomBottomSheet(
                             text = it.itemName,
                             style = Body1,
                             textAlign = TextAlign.Start,
-                            color = Color.Black
+                            color = it.itemTextColor
                         )
                         if (it.isSeleceted) {
                             androidx.compose.material3.Icon(
