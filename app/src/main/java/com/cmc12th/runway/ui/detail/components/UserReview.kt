@@ -76,7 +76,27 @@ fun UserReview(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(6.dp)
             ) {
-                RunwayIconButton(drawable = R.drawable.ic_filled_camera_24, size = 24.dp)
+                RunwayIconButton(drawable = R.drawable.ic_filled_camera_24, size = 24.dp) {
+                    showBottomSheet(
+                        BottomSheetContent(
+                            title = "",
+                            itemList = listOf(
+                                BottomSheetContentItem(
+                                    itemName = "사진 찍기",
+                                    onItemClick = {
+                                        cameraLauncher.launch()
+                                    },
+                                ),
+                                BottomSheetContentItem(
+                                    itemName = "사진 앨범",
+                                    onItemClick = {
+                                        galleryLauncher.launch("image/*")
+                                    },
+                                )
+                            )
+                        )
+                    )
+                }
                 Text(
                     text = "후기 작성",
                     style = Body1M,
