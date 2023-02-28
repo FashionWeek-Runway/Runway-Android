@@ -13,6 +13,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
@@ -91,6 +92,21 @@ private fun RootNavhost(
 ) {
     Scaffold(
         scaffoldState = appState.scaffoldState,
+        snackbarHost = {
+            SnackbarHost(hostState = appState.scaffoldState.snackbarHostState,
+                snackbar = { data ->
+                    Snackbar(
+                        modifier = Modifier.padding(
+                            bottom = 50.dp,
+                            start = 20.dp,
+                            end = 20.dp
+                        )
+                    ) {
+                        Text(text = data.message)
+                    }
+                }
+            )
+        },
         modifier = Modifier.customNavigationBarPaading(navBackStackEntry, appState),
         bottomBar = {
 //            if (appState.bottomBarState.value) BottomBar(appState)
