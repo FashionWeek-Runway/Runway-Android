@@ -59,13 +59,13 @@ interface StoreService {
     ): NetworkResponse<UserReviewDetail>
 
     /** 리뷰 묵마크 */
-    @GET("/stores/review/bookmark/{reviewId}")
+    @POST("/stores/review/bookmark/{reviewId}")
     suspend fun reviewBookmark(
         @Path("reviewId") reviewId: Int,
     ): DefaultResponse
 
     /** 리뷰 신고 */
-    @GET("/stores/review/report")
+    @POST("/stores/review/report")
     suspend fun reportReview(
         @Body reviewReportRequest: ReviewReportRequest,
     ): DefaultResponse
