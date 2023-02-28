@@ -1,25 +1,24 @@
 package com.cmc12th.runway.data.response.store
 
-
-import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 data class UserReviewDetail(
-    @Json(name = "imgUrl")
-    val imgUrl: String,
-    @Json(name = "nickname")
-    val nickname: String,
-    @Json(name = "profileImgUrl")
-    val profileImgUrl: String,
-    @Json(name = "regionInfo")
-    val regionInfo: String,
-    @Json(name = "reviewId")
-    val reviewId: Int,
-    @Json(name = "reviewInquiry")
-    val reviewInquiry: ReviewInquiry,
-    @Json(name = "storeId")
-    val storeId: Int,
-    @Json(name = "storeName")
-    val storeName: String
-)
+    val bookmark: Boolean = false,
+    val bookmarkCnt: Int = 0,
+    val imgUrl: String = "",
+    val my: Boolean = false,
+    val nickname: String = "",
+    val profileImgUrl: String = "",
+    val regionInfo: String = "",
+    val reviewId: Int = -1,
+    val reviewInquiry: ReviewInquiry = ReviewInquiry(null, null),
+    val storeId: Int = -1,
+    val storeName: String = "",
+) {
+    fun isDefault(): Boolean = this.reviewId == -1 && this.reviewId == -1
+
+    companion object {
+        fun default() = UserReviewDetail(storeId = -1, reviewId = -1)
+    }
+}
