@@ -3,6 +3,7 @@ package com.cmc12th.runway.network
 import com.cmc12th.runway.data.request.*
 import com.cmc12th.runway.data.request.map.MapFilterRequest
 import com.cmc12th.runway.data.request.map.MapSearchRequest
+import com.cmc12th.runway.data.request.store.ReviewReportRequest
 import com.cmc12th.runway.data.response.map.MapMarker
 import com.cmc12th.runway.network.service.AuthService
 import com.cmc12th.runway.network.service.LoginService
@@ -10,6 +11,8 @@ import com.cmc12th.runway.network.service.MapService
 import com.cmc12th.runway.network.service.StoreService
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import retrofit2.http.Body
+import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
 import javax.inject.Inject
@@ -72,6 +75,11 @@ class RunwayClient @Inject constructor(
 
     suspend fun getReviewDetail(reviewId: Int) = storeService.getReviewDetail(reviewId)
 
+    suspend fun reviewBookmark(reviewId: Int) = storeService.reviewBookmark()
+
+    suspend fun reportReview(reviewReportRequest: ReviewReportRequest) =
+        storeService.reportReview(reviewReportRequest)
+
     /** 맵 */
     suspend fun mapsFiltering(mapFilterRequest: MapFilterRequest) =
         mapService.mapFiltering(mapFilterRequest)
@@ -94,7 +102,8 @@ class RunwayClient @Inject constructor(
     suspend fun mapRegionInfoPaging(
         @Path("regionId") regionId: Int,
         @Query("page") page: Int,
-        @Query("size") size: Int
+        @Query("size") size: Int,
     ) = mapService.mapRegionInfoPaging(regionId, page, size)
+
 
 }

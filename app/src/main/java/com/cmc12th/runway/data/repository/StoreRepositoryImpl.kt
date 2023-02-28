@@ -4,6 +4,7 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.cmc12th.runway.data.pagingsource.UserReviewPagingSource
+import com.cmc12th.runway.data.request.store.ReviewReportRequest
 import com.cmc12th.runway.data.response.store.BlogReview
 import com.cmc12th.runway.data.response.store.StoreDetail
 import com.cmc12th.runway.data.response.store.UserReview
@@ -15,9 +16,7 @@ import com.cmc12th.runway.network.model.safePagingFlow
 import com.cmc12th.runway.utils.ApiWrapper
 import com.cmc12th.runway.utils.DefaultApiWrapper
 import com.cmc12th.runway.utils.PagingApiWrapper
-import com.google.android.gms.common.api.Api
 import kotlinx.coroutines.flow.Flow
-import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import javax.inject.Inject
 
@@ -31,7 +30,7 @@ class StoreRepositoryImpl @Inject constructor(
 
     override fun getBlogReview(
         storeId: Int,
-        storeName: String
+        storeName: String,
     ): Flow<ApiWrapper<List<BlogReview>>> = safeFlow {
         runwayClient.getBlogReview(storeId, storeName)
     }
@@ -43,14 +42,14 @@ class StoreRepositoryImpl @Inject constructor(
     override fun getUserReview(
         storeId: Int,
         page: Int,
-        size: Int
+        size: Int,
     ): Flow<PagingApiWrapper<UserReview>> = safePagingFlow {
         runwayClient.getUserReview(storeId, page, size)
     }
 
     override fun writeUserReview(
         storeId: Int,
-        img: RequestBody
+        img: RequestBody,
     ): Flow<DefaultApiWrapper> =
         safeFlow {
             runwayClient.writeUserReview(storeId, img)
@@ -73,5 +72,14 @@ class StoreRepositoryImpl @Inject constructor(
     override fun getReviewDetail(reviewId: Int): Flow<ApiWrapper<UserReviewDetail>> = safeFlow {
         runwayClient.getReviewDetail(reviewId)
     }
+
+    override fun reviewBookmark(reviewId: Int): Flow<DefaultApiWrapper> = safeFlow {
+        runwayClient.reviewBookmark(reviewId)
+    }
+
+    override fun reportReview(reviewReportRequest: ReviewReportRequest): Flow<DefaultApiWrapper> =
+        safeFlow {
+            runwayClient.reportReview(reviewReportRequest)
+        }
 
 }

@@ -1,7 +1,7 @@
 package com.cmc12th.runway.network.service
 
 import com.cmc12th.runway.data.request.*
-import com.cmc12th.runway.data.response.PagingResponse
+import com.cmc12th.runway.data.request.store.ReviewReportRequest
 import com.cmc12th.runway.data.response.store.BlogReview
 import com.cmc12th.runway.data.response.store.StoreDetail
 import com.cmc12th.runway.data.response.store.UserReview
@@ -9,13 +9,12 @@ import com.cmc12th.runway.data.response.store.UserReviewDetail
 import com.cmc12th.runway.utils.DefaultResponse
 import com.cmc12th.runway.utils.NetworkResponse
 import com.cmc12th.runway.utils.PagingNetworkResponse
-import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.http.*
 
 interface StoreService {
 
-    /** 쇼룸 북마크 조회 */
+    /** 쇼룸 북마크 */
     @POST("/stores/{storeId}")
     suspend fun storeBookmark(@Path("storeId") storeId: Int): DefaultResponse
 
@@ -23,7 +22,7 @@ interface StoreService {
     @GET("/stores/blog/{storeId}")
     suspend fun getBlogReview(
         @Path("storeId") storeId: Int,
-        @Query("storeName") storeName: String
+        @Query("storeName") storeName: String,
     ): NetworkResponse<List<BlogReview>>
 
     /** 쇼룸 사장님 소식 리스트 조회 */
@@ -59,5 +58,16 @@ interface StoreService {
         @Path("reviewId") reviewId: Int,
     ): NetworkResponse<UserReviewDetail>
 
+    /** 리뷰 묵마크 */
+    @GET("/stores/review/bookmark/{reviewId}")
+    suspend fun reviewBookmark(
+        @Path("reviewId") reviewId: Int,
+    ): DefaultResponse
+
+    /** 리뷰 신고 */
+    @GET("/stores/review/report")
+    suspend fun reportReview(
+        @Body reviewReportRequest: ReviewReportRequest,
+    ): DefaultResponse
 }
 
