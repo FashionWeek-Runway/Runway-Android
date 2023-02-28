@@ -6,10 +6,10 @@ import com.squareup.moshi.JsonClass
 data class UserReviewDetail(
     val bookmark: Boolean = false,
     val bookmarkCnt: Int = 0,
-    val imgUrl: String = "",
+    val imgUrl: String? = "",
     val my: Boolean = false,
     val nickname: String = "",
-    val profileImgUrl: String = "",
+    val profileImgUrl: String? = "",
     val regionInfo: String = "",
     val reviewId: Int = -1,
     val reviewInquiry: ReviewInquiry = ReviewInquiry(null, null),
