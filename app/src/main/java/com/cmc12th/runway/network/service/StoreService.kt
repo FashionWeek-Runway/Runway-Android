@@ -65,7 +65,7 @@ interface StoreService {
     ): DefaultResponse
 
     /** 리뷰 삭제 */
-    @POST("/stores/review/detail/{reviewId}")
+    @PATCH("/stores/review/detail/{reviewId}")
     suspend fun delteReview(
         @Path("reviewId") reviewId: Int,
     ): DefaultResponse
