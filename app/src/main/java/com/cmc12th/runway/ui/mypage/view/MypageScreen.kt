@@ -1,6 +1,7 @@
 package com.cmc12th.runway.ui.mypage.view
 
 import android.util.Log
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -9,6 +10,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -16,20 +19,27 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.cmc12th.runway.R
 import com.cmc12th.runway.ui.components.HeightSpacer
 import com.cmc12th.runway.ui.components.RunwayIconButton
+import com.cmc12th.runway.ui.components.util.bottomBorder
+import com.cmc12th.runway.ui.components.util.topBorder
 import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.mypage.MypageViewModel
+import com.cmc12th.runway.ui.mypage.model.MypageTabRowItem
 import com.cmc12th.runway.ui.theme.*
 import com.cmc12th.runway.utils.Constants
 import com.cmc12th.runway.utils.Constants.LOGIN_GRAPH
 import com.cmc12th.runway.utils.Constants.MAIN_GRAPH
+
 
 @Composable
 fun MypageScreen(appState: ApplicationState) {
@@ -44,168 +54,128 @@ fun MypageScreen(appState: ApplicationState) {
             }
         }
     }
+
+    val selectedPage = remember {
+        mutableStateOf(1)
+    }
     appState.systmeUiController.setStatusBarColor(Gray50)
 
     Column(
         modifier = Modifier
             .statusBarsPadding()
-            .background(Gray50)
             .fillMaxSize()
     ) {
-        Row(modifier = Modifier
-            .fillMaxWidth()
-            .padding(20.dp),
-            horizontalArrangement = Arrangement.SpaceBetween) {
+        /** 탑 바 */
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(20.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
             Text(text = "MY", style = HeadLine4, color = Color.Black)
             RunwayIconButton(drawable = R.drawable.ic_baseline_setting_24, tint = Black) {
 
             }
         }
-        HeightSpacer(height = 12.dp)
-        val localDensity = LocalDensity.current
 
-        Box(modifier = Modifier.padding(20.dp, 0.dp)) {
-            Canvas(modifier = Modifier
+        /** 닉네임 바 */
+        Row(
+            modifier = Modifier
                 .fillMaxWidth()
-                .height(200.dp)) {
-                with(localDensity) {
-                    drawPath(
-                        path = Path().apply {
-                            moveTo(25.dp.toPx(), 0f)
-                            lineTo(size.width - 25.dp.toPx(), 0f)
-                            lineTo(size.width, 25.dp.toPx())
-                            lineTo(size.width, 95.dp.toPx())
-                            lineTo(size.width - 18.dp.toPx(), 120.dp.toPx())
-                            lineTo(size.width, 138.dp.toPx())
-                            lineTo(size.width, size.height)
-                            lineTo(0f, size.height)
-                            lineTo(0f, 138.dp.toPx())
-                            lineTo(18.dp.toPx(), 120.dp.toPx())
-                            lineTo(0f, 95.dp.toPx())
-                            lineTo(0f, 25.dp.toPx())
-                            close()
-                        },
-                        color = Color.White)
-                    drawLine(
-                        color = Gray200,
-                        start = Offset(25.dp.toPx(), 0f),
-                        end = Offset(size.width - 25.dp.toPx(), 0f),
-                    )
-                    drawLine(
-                        color = Gray200,
-                        start = Offset(size.width - 25.dp.toPx(), 0f),
-                        end = Offset(size.width, 25.dp.toPx()),
-                    )
-                    drawLine(
-                        color = Gray200,
-                        start = Offset(size.width, 25.dp.toPx()),
-                        end = Offset(size.width, 95.dp.toPx()),
-                    )
-                    drawLine(
-                        color = Gray200,
-                        start = Offset(size.width, 95.dp.toPx()),
-                        end = Offset(size.width - 18.dp.toPx(), 120.dp.toPx()),
-                    )
-                    drawLine(
-                        color = Gray200,
-                        start = Offset(size.width - 18.dp.toPx(), 120.dp.toPx()),
-                        end = Offset(size.width, 138.dp.toPx()),
-                    )
-                    drawLine(
-                        color = Gray200,
-                        start = Offset(size.width, 138.dp.toPx()),
-                        end = Offset(size.width, size.height),
-                    )
-                    drawLine(
-                        color = Gray200,
-                        start = Offset(size.width, size.height),
-                        end = Offset(0f, size.height),
-                    )
-                    drawLine(
-                        color = Gray200,
-                        start = Offset(0f, size.height),
-                        end = Offset(0f, 138.dp.toPx()),
-                    )
-                    drawLine(
-                        color = Gray200,
-                        start = Offset(0f, 138.dp.toPx()),
-                        end = Offset(18.dp.toPx(), 120.dp.toPx()),
-                    )
-                    drawLine(
-                        color = Gray200,
-                        start = Offset(18.dp.toPx(), 120.dp.toPx()),
-                        end = Offset(0f, 95.dp.toPx()),
-                    )
-                    drawLine(
-                        color = Gray200,
-                        start = Offset(0f, 95.dp.toPx()),
-                        end = Offset(0f, 25.dp.toPx()),
-                    )
-                    drawLine(
-                        color = Gray200,
-                        start = Offset(0f, 25.dp.toPx()),
-                        end = Offset(25.dp.toPx(), 0f),
-                    )
-                    drawLine(
-                        color = Gray200,
-                        start = Offset(0f, 25.dp.toPx()),
-                        end = Offset(25.dp.toPx(), 0f),
-                    )
-                    drawLine(
-                        color = Gray200,
-                        start = Offset(18.dp.toPx(), 120.dp.toPx()),
-                        end = Offset(size.width - 18.dp.toPx(), 120.dp.toPx()),
-                        strokeWidth = 0.5.dp.toPx()
-                    )
-                    drawLine(
-                        color = Gray200,
-                        start = Offset(size.width - 70.dp.toPx(), 120.dp.toPx()),
-                        end = Offset(size.width - 70.dp.toPx(), size.height),
-                        strokeWidth = 0.5.dp.toPx()
+                .padding(20.dp, 0.dp),
+            horizontalArrangement = Arrangement.spacedBy(20.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(modifier = Modifier.size(60.dp)) {
+                AsyncImage(
+                    modifier = Modifier
+                        .clip(CircleShape)
+                        .fillMaxSize(),
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(R.drawable.img_dummy)
+                        .crossfade(true)
+                        .build(),
+                    placeholder = painterResource(R.drawable.img_dummy),
+                    error = painterResource(id = R.drawable.img_dummy),
+                    contentDescription = "IMG_PROFILE",
+                    contentScale = ContentScale.Crop,
+                )
+                Box(
+                    modifier = Modifier
+                        .clip(CircleShape)
+                        .align(Alignment.BottomEnd)
+                        .background(Color.White)
+                        .border(BorderStroke(1.dp, Primary), CircleShape)
+                        .size(20.dp)
+                ) {
+                    Icon(
+                        modifier = Modifier
+                            .align(Alignment.Center)
+                            .size(12.dp),
+                        painter = painterResource(id = R.drawable.ic_filled_pencil_12),
+                        contentDescription = "IC_PENCIL",
+                        tint = Primary,
                     )
                 }
             }
-            Text(text = "나패피",
-                style = HeadLine4,
-                color = Black,
-                modifier = Modifier
-                    .align(Alignment.BottomStart)
-                    .padding(24.dp, 21.dp))
-            IconButton(onClick = { /*TODO*/ }, modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .offset(x = -12.dp, y = -12.dp)) {
-                Icon(painter = painterResource(id = R.drawable.ic_filled_edit_pencil_24),
-                    contentDescription = "IC_PENCIL",
-                    tint = Gray500,
-                    modifier = Modifier
-                )
+            Column(
+                modifier = Modifier.weight(1f)
+            ) {
+                Text(text = "안녕하세요", style = HeadLine4M, color = Black)
+                Text(text = "나패피님", style = HeadLine3, color = Black)
             }
 
-            Box(modifier = Modifier
-                .offset(y = 12.dp)
-                .align(Alignment.TopCenter)) {
-                Image(painter = painterResource(id = R.drawable.img_dummy),
-                    contentDescription = "IMG_PROFILE",
+        }
+        HeightSpacer(height = 34.dp)
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .topBorder(1.dp, Gray200)
+                .bottomBorder(1.dp, Gray200),
+        ) {
+            MypageTabRowItem.values().forEach {
+                val isSelected = selectedPage.value == it.id
+                Column(
                     modifier = Modifier
-                        .size(80.dp)
-                        .clip(CircleShape)
-                        .border(BorderStroke(1.dp, Gray200), CircleShape),
-                    contentScale = ContentScale.Crop)
+                        .weight(1f)
+                        .bottomBorder(if (isSelected) 2.5.dp else 0.dp, Black)
+                        .clickable {
+                            selectedPage.value = it.id
+                        },
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(3.dp)
+                ) {
+                    HeightSpacer(height = 5.dp)
+                    Icon(
+                        painter = painterResource(id = if (selectedPage.value == it.id) it.selecteddrawableResId else it.drawableResId),
+                        contentDescription = "IC_TAB_ROW",
+                        modifier = Modifier.size(24.dp),
+                        tint = if (isSelected) Black else Gray300
+                    )
+                    Text(text = it.title, style = Body2, color = if (isSelected) Black else Gray300)
+                    HeightSpacer(height = 9.dp)
+                }
             }
         }
 
-        Row(modifier = Modifier.fillMaxWidth()) {
-            Text(text = "포토 리뷰")
-            Text(text = "저장한 목록")
+//        MyReviewTab()
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 85.dp)
+                .weight(1f),
+            verticalArrangement = Arrangement.Top,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.img_dummy),
+                contentDescription = "IMG_DUMMY",
+                modifier = Modifier.size(100.dp)
+            )
+            HeightSpacer(height = 30.dp)
+            Text(text = "내 스타일의 매장에 방문하고", style = Body1, color = Black)
+            Text(text = "기록해보세요!", style = Body2, color = Black)
         }
-        LazyColumn() {
-        }
-
     }
 }
-
-fun Dp.add(mdp: Dp) = (this.value + mdp.value).dp
-fun Float.addDptoDp(mdp: Dp) = (this.dp.value + mdp.value).dp
-fun Float.addDptoFloat(mdp: Dp) = (this.dp.value + mdp.value).dp.value
-fun Float.minusDptoFloat(mdp: Dp) = (this.dp.value - mdp.value).dp.value
-
