@@ -2,43 +2,31 @@ package com.cmc12th.runway.ui.mypage.view
 
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
 import com.cmc12th.runway.R
-import com.cmc12th.runway.data.response.user.MyReviewsItem
 import com.cmc12th.runway.ui.components.HeightSpacer
 import com.cmc12th.runway.ui.components.RunwayIconButton
-import com.cmc12th.runway.ui.components.util.bottomBorder
-import com.cmc12th.runway.ui.components.util.topBorder
 import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.mypage.MypageViewModel
-import com.cmc12th.runway.ui.mypage.model.MypageTabRowItem
+import com.cmc12th.runway.ui.mypage.components.*
 import com.cmc12th.runway.ui.theme.*
 import com.cmc12th.runway.utils.Constants.BOTTOM_NAVIGATION_HEIGHT
 import com.cmc12th.runway.utils.Constants.LOGIN_GRAPH
 import com.cmc12th.runway.utils.Constants.MAIN_GRAPH
 import me.onebone.toolbar.CollapsingToolbarScaffold
+import me.onebone.toolbar.CollapsingToolbarScope
 import me.onebone.toolbar.ScrollStrategy
 import me.onebone.toolbar.rememberCollapsingToolbarScaffoldState
 
+enum class MypageTabInfo(val id: Int) {
+    MY_REVIEW(1), STORAGE(2);
+}
 
 @Composable
 fun MypageScreen(appState: ApplicationState) {
@@ -55,17 +43,16 @@ fun MypageScreen(appState: ApplicationState) {
     }
 
     val selectedPage = remember {
-        mutableStateOf(1)
+        mutableStateOf(MypageTabInfo.MY_REVIEW)
     }
-    appState.systmeUiController.setStatusBarColor(Gray50)
+    val myReviews = viewModel.myReviews.collectAsLazyPagingItems()
+    val state = rememberCollapsingToolbarScaffoldState()
 
+    appState.systmeUiController.setStatusBarColor(Gray50)
     LaunchedEffect(key1 = Unit) {
         viewModel.getMyReviews()
     }
 
-    val myReviews = viewModel.myReviews.collectAsLazyPagingItems()
-
-    val state = rememberCollapsingToolbarScaffoldState()
     CollapsingToolbarScaffold(
         modifier = Modifier
             .statusBarsPadding()
@@ -80,170 +67,60 @@ fun MypageScreen(appState: ApplicationState) {
                     .padding(top = 80.dp)
                     .parallax(1f)
             ) {
-                ProfileInfo()
+                /** 프로필 정보 */
+                MainProfileInfo()
                 HeightSpacer(height = 34.dp)
                 /** 나의 후기, 저장 로우탭 */
-                CustomRowTab(selectedPage)
-            }
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(Color.White)
-                    .padding(20.dp)
-                    .pin(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(text = "MY", style = HeadLine4, color = Color.Black)
-                RunwayIconButton(
-                    drawable = R.drawable.ic_baseline_setting_24,
-                    tint = Black
+                MypageCustomRowTab(
+                    selectedPage = selectedPage.value
                 ) {
-
+                    selectedPage.value = it
+                }
+            }
+            TopBar()
+        }
+    ) {
+        when (selectedPage.value) {
+            MypageTabInfo.MY_REVIEW -> {
+                Column {
+                    if (myReviews.itemCount == 0) {
+                        EmptyMyReview()
+                    } else {
+                        MyReviews(myReviews)
+                    }
+                }
+            }
+            MypageTabInfo.STORAGE -> {
+                Column() {
+                    EmptyStorage()
                 }
             }
         }
-    ) {
-        Column {
-            MyReviews(myReviews)
-        }
-    }
-}
 
-@Composable
-private fun ColumnScope.MyReviews(myReviews: LazyPagingItems<MyReviewsItem>) {
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(3),
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(3.dp),
-        verticalArrangement = Arrangement.spacedBy(3.dp)
-    ) {
-        items(myReviews.itemCount) { index ->
-            Box(modifier = Modifier.weight(1f)) {
-                AsyncImage(
-                    modifier = Modifier
-                        .aspectRatio(0.65f)
-                        .fillMaxSize(),
-                    model = ImageRequest.Builder(LocalContext.current)
-                        .data(myReviews[index]?.imgUrl)
-                        .crossfade(true)
-                        .build(),
-                    placeholder = painterResource(R.drawable.img_dummy),
-                    error = painterResource(id = R.drawable.img_dummy),
-                    contentDescription = "IMG_PROFILE",
-                    contentScale = ContentScale.Crop,
-                )
-            }
-        }
     }
 }
 
 
 @Composable
-private fun CustomRowTab(selectedPage: MutableState<Int>) {
+private fun CollapsingToolbarScope.TopBar() {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .topBorder(1.dp, Gray200)
-            .bottomBorder(1.dp, Gray200),
+            .background(Color.White)
+            .padding(20.dp)
+            .pin(),
+        horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        MypageTabRowItem.values().forEach {
-            val isSelected = selectedPage.value == it.id
-            Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .bottomBorder(if (isSelected) 2.5.dp else 0.dp, Black)
-                    .clickable {
-                        selectedPage.value = it.id
-                    },
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(3.dp)
-            ) {
-                HeightSpacer(height = 5.dp)
-                Icon(
-                    painter = painterResource(id = if (selectedPage.value == it.id) it.selecteddrawableResId else it.drawableResId),
-                    contentDescription = "IC_TAB_ROW",
-                    modifier = Modifier.size(24.dp),
-                    tint = if (isSelected) Black else Gray300
-                )
-                Text(
-                    text = it.title,
-                    style = Body2,
-                    color = if (isSelected) Black else Gray300
-                )
-                HeightSpacer(height = 9.dp)
-            }
-        }
-    }
-}
-
-@Composable
-private fun ProfileInfo() {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(20.dp, 0.dp),
-        horizontalArrangement = Arrangement.spacedBy(20.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Box(modifier = Modifier.size(60.dp)) {
-            AsyncImage(
-                modifier = Modifier
-                    .clip(CircleShape)
-                    .fillMaxSize(),
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(R.drawable.img_dummy)
-                    .crossfade(true)
-                    .build(),
-                placeholder = painterResource(R.drawable.img_dummy),
-                error = painterResource(id = R.drawable.img_dummy),
-                contentDescription = "IMG_PROFILE",
-                contentScale = ContentScale.Crop,
-            )
-            Box(
-                modifier = Modifier
-                    .clip(CircleShape)
-                    .align(Alignment.BottomEnd)
-                    .background(Color.White)
-                    .border(BorderStroke(1.dp, Primary), CircleShape)
-                    .size(20.dp)
-            ) {
-                Icon(
-                    modifier = Modifier
-                        .align(Alignment.Center)
-                        .size(12.dp),
-                    painter = painterResource(id = R.drawable.ic_filled_pencil_12),
-                    contentDescription = "IC_PENCIL",
-                    tint = Primary,
-                )
-            }
-        }
-        Column(
-            modifier = Modifier.weight(1f)
+        Text(text = "MY", style = HeadLine4, color = Color.Black)
+        RunwayIconButton(
+            drawable = R.drawable.ic_baseline_setting_24,
+            tint = Black
         ) {
-            Text(text = "안녕하세요", style = HeadLine4M, color = Black)
-            Text(text = "나패피님", style = HeadLine3, color = Black)
+
         }
-
     }
 }
 
-@Composable
-private fun ColumnScope.EmptyMyReview() {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 85.dp)
-            .weight(1f),
-        verticalArrangement = Arrangement.Top,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.img_dummy),
-            contentDescription = "IMG_DUMMY",
-            modifier = Modifier.size(100.dp)
-        )
-        HeightSpacer(height = 30.dp)
-        Text(text = "내 스타일의 매장에 방문하고", style = Body1, color = Black)
-        Text(text = "기록해보세요!", style = Body2, color = Black)
-    }
-}
+
+
+
