@@ -25,6 +25,7 @@ import com.cmc12th.runway.data.response.map.MapInfoItem
 import com.cmc12th.runway.ui.components.HeightSpacer
 import com.cmc12th.runway.ui.components.WidthSpacer
 import com.cmc12th.runway.ui.domain.model.ApplicationState
+import com.cmc12th.runway.ui.map.components.BottomDetailItem
 import com.cmc12th.runway.ui.map.model.BottomSheetContent
 import com.cmc12th.runway.ui.theme.*
 import com.cmc12th.runway.utils.Constants.BOTTOM_NAVIGATION_HEIGHT
@@ -123,61 +124,6 @@ fun MapViewBottomSheetContent(
             }
         }
     }
-}
-
-@Composable
-private fun BottomDetailItem(
-    navigateToDetail: (id: Int, storeName: String) -> Unit,
-    it: MapInfoItem
-) {
-    Column(modifier = Modifier.clickable {
-        navigateToDetail(it.storeId, it.storeName)
-    }) {
-        AsyncImage(
-            modifier = Modifier
-                .fillMaxSize()
-                .aspectRatio(1.6f),
-            model = ImageRequest.Builder(LocalContext.current)
-                .data(it.storeImg)
-                .crossfade(true)
-                .build(),
-            placeholder = painterResource(R.drawable.img_dummy),
-            error = painterResource(id = R.drawable.img_dummy),
-            contentDescription = "ASDas",
-            contentScale = ContentScale.Crop,
-        )
-        Text(
-            text = it.storeName,
-            style = HeadLine4,
-            modifier = Modifier.padding(top = 10.dp, bottom = 6.dp)
-        )
-        LazyRow(modifier = Modifier.fillMaxWidth()) {
-            items(it.category) {
-                BottomDetailTag(it)
-            }
-        }
-    }
-}
-
-@Composable
-private fun BottomDetailTag(it: String) {
-    Box(
-        modifier = Modifier
-            .clip(RoundedCornerShape(4.dp))
-            .background(color = Color(0x50E6EBFF))
-            .border(
-                BorderStroke(1.dp, Blue200),
-                RoundedCornerShape(4.dp)
-            )
-    ) {
-        Text(
-            text = "# $it",
-            style = Button2,
-            color = Blue600,
-            modifier = Modifier.padding(8.dp, 6.dp)
-        )
-    }
-    WidthSpacer(width = 8.dp)
 }
 
 
