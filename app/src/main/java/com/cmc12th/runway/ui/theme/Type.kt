@@ -44,6 +44,12 @@ val HeadLine4 = TextStyle(
     fontSize = 18.sp,
 )
 
+val HeadLine4M = TextStyle(
+    fontFamily = SpoqaHansSansNeo,
+    fontWeight = FontWeight.Medium,
+    fontSize = 18.sp,
+)
+
 val SubHeadline1 = TextStyle(
     fontFamily = SpoqaHansSansNeo,
     fontWeight = FontWeight.Medium,
