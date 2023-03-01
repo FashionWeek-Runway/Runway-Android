@@ -44,12 +44,22 @@ class ReviewViewModel @Inject constructor(
         }
     }
 
+    fun deleteReview(reviewId: Int, onSuccess: () -> Unit) = viewModelScope.launch {
+        storeRepository.delteReview(reviewId = reviewId).collect {
+            it.onSuccess {
+                onSuccess()
+            }
+        }
+    }
+
     fun reporteReview(reviewId: Int) = viewModelScope.launch {
-        storeRepository.reportReview(reviewReportRequest = ReviewReportRequest(
-            opinion = "",
-            reviewId = reviewId,
-            reason = 0,
-        )).collect {
+        storeRepository.reportReview(
+            reviewReportRequest = ReviewReportRequest(
+                opinion = "",
+                reviewId = reviewId,
+                reason = 0,
+            )
+        ).collect {
             it.onSuccess {
 
             }

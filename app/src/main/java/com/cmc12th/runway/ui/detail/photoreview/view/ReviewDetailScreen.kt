@@ -1,9 +1,10 @@
-@file:OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class,
-    ExperimentalMaterialApi::class)
+@file:OptIn(
+    ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class,
+    ExperimentalMaterialApi::class
+)
 
 package com.cmc12th.runway.ui.detail.photoreview.view
 
-import android.util.Log
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -103,7 +104,12 @@ fun ReviewDetailScreen(appState: ApplicationState, reviewId: Int) {
                     onSuccess()
                 }
             },
-            reportRBookmark = { reviewViewModel.reporteReview(reviewId) },
+            deleteReview = {
+                reviewViewModel.deleteReview(reviewId = reviewId, onSuccess = {
+                    appState.showSnackbar("리뷰가 삭제되었습니다.")
+                    appState.popBackStack()
+                })
+            },
         )
     }
 
@@ -117,8 +123,8 @@ private fun DetailContents(
     popBackStack: () -> Unit,
     showSnackBar: (String) -> Unit,
     updateBookmark: () -> Unit,
-    reportRBookmark: () -> Unit,
     getReviewDetail: (idx: Int, onSuccess: () -> Unit) -> Unit,
+    deleteReview: () -> Unit,
 ) {
 
     var offsetX by remember { mutableStateOf(0.dp.value) }
@@ -177,8 +183,6 @@ private fun DetailContents(
         }
     }
 
-
-    val coroutineScope = rememberCoroutineScope()
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -187,8 +191,10 @@ private fun DetailContents(
             .background(Black),
     ) {
         Box(modifier = Modifier.weight(1f)) {
-            MainImage(offsetX = animateOffsetX.value,
-                reviewDetail = reviewDetail)
+            MainImage(
+                offsetX = animateOffsetX.value,
+                reviewDetail = reviewDetail
+            )
             Box(modifier = Modifier
                 .fillMaxSize()
                 .pointerInput(Unit) {
@@ -218,7 +224,13 @@ private fun DetailContents(
                     }
                 }
             )
-            Topbar(reviewDetail, showBottomSheet, navigateToReportScreen, popBackStack)
+            Topbar(
+                reviewDetail,
+                showBottomSheet,
+                navigateToReportScreen,
+                popBackStack,
+                deleteReview
+            )
             Bookmark(reviewDetail, updateBookmark)
 
 
@@ -270,14 +282,18 @@ private fun BottomBar(reviewDetail: UserReviewDetail) {
                 horizontalArrangement = Arrangement.spacedBy(6.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(text = reviewDetail.storeName,
+                Text(
+                    text = reviewDetail.storeName,
                     style = Body2,
                     color = White,
-                    overflow = TextOverflow.Ellipsis)
-                Text(text = reviewDetail.regionInfo,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Text(
+                    text = reviewDetail.regionInfo,
                     style = Caption,
                     color = Gray300,
-                    overflow = TextOverflow.Ellipsis)
+                    overflow = TextOverflow.Ellipsis
+                )
             }
             IconButton(
                 onClick = {},
@@ -300,6 +316,7 @@ private fun BoxScope.Topbar(
     showBottomSheet: (BottomSheetContent) -> Unit,
     navigateToReportScreen: () -> Unit,
     popBackStack: () -> Unit,
+    deleteReview: () -> Unit,
 ) {
     Row(
         modifier = Modifier
@@ -328,16 +345,27 @@ private fun BoxScope.Topbar(
             modifier = Modifier.weight(1f)
         )
         RunwayIconButton(drawable = R.drawable.ic_baseline_etc_24, tint = Color.White) {
-            showBottomSheet(BottomSheetContent("",
-                if (reviewDetail.my) {
-                    listOf(BottomSheetContentItem(itemName = "삭제",
-                        itemTextColor = Error_Color,
-                        onItemClick = navigateToReportScreen))
-                } else {
-                    listOf(BottomSheetContentItem("신고",
-                        onItemClick = navigateToReportScreen))
-                }
-            ))
+            showBottomSheet(
+                BottomSheetContent(
+                    "",
+                    if (reviewDetail.my) {
+                        listOf(
+                            BottomSheetContentItem(
+                                itemName = "삭제",
+                                itemTextColor = Error_Color,
+                                onItemClick = { deleteReview() }
+                            )
+                        )
+                    } else {
+                        listOf(
+                            BottomSheetContentItem(
+                                "신고",
+                                onItemClick = navigateToReportScreen
+                            )
+                        )
+                    }
+                )
+            )
         }
         RunwayIconButton(
             drawable = R.drawable.ic_close_baseline_small,
