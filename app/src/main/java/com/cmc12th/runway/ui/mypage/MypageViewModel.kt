@@ -9,6 +9,7 @@ import com.cmc12th.runway.data.repository.AuthRepositoryImpl.PreferenceKeys.ACCE
 import com.cmc12th.runway.data.repository.AuthRepositoryImpl.PreferenceKeys.REFRESH_TOKEN
 import com.cmc12th.runway.data.response.store.UserReview
 import com.cmc12th.runway.data.response.user.MyReviewsItem
+import com.cmc12th.runway.data.response.user.StoreMetaDataItem
 import com.cmc12th.runway.domain.repository.AuthRepository
 import com.kakao.sdk.user.UserApiClient
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,6 +24,9 @@ class MypageViewModel @Inject constructor(
 
     private val _myReviews = MutableStateFlow<PagingData<MyReviewsItem>>(PagingData.empty())
     val myReviews: StateFlow<PagingData<MyReviewsItem>> = _myReviews.asStateFlow()
+    private val _bookmarkedStore =
+        MutableStateFlow<PagingData<StoreMetaDataItem>>(PagingData.empty())
+    val bookmarkedStore: StateFlow<PagingData<StoreMetaDataItem>> = _bookmarkedStore.asStateFlow()
 
     fun logout(onSuccess: () -> Unit) = viewModelScope.launch {
         authRepository.setToken(ACCESS_TOKEN, "")
@@ -47,5 +51,10 @@ class MypageViewModel @Inject constructor(
         }
     }
 
+    fun getBookmarkedStore() = viewModelScope.launch {
+        authRepository.bookmarkedStorePaging().cachedIn(viewModelScope).collect {
+            _bookmarkedStore.value = it
+        }
+    }
 
 }

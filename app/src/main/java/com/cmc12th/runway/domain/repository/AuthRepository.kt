@@ -46,5 +46,6 @@ interface AuthRepository {
     ): Flow<PagingApiWrapper<StoreMetaDataItem>>
 
     fun myReviewPaging(): Flow<PagingData<MyReviewsItem>>
+    fun bookmarkedStorePaging(): Flow<PagingData<StoreMetaDataItem>>
 }
 

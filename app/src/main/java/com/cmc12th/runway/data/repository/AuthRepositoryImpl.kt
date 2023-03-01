@@ -5,6 +5,7 @@ import androidx.datastore.preferences.core.*
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import com.cmc12th.runway.data.pagingsource.BookmarkedPagingSource
 import com.cmc12th.runway.data.pagingsource.MyReviewPagingSource
 import com.cmc12th.runway.data.pagingsource.UserReviewPagingSource
 import com.cmc12th.runway.data.request.OauthLoginRequest
@@ -105,6 +106,19 @@ class AuthRepositoryImpl @Inject constructor(
             ),
             pagingSourceFactory = {
                 MyReviewPagingSource(
+                    authRepository = this
+                )
+            },
+        ).flow
+    }
+
+    override fun bookmarkedStorePaging(): Flow<PagingData<StoreMetaDataItem>> {
+        return Pager(
+            config = PagingConfig(
+                pageSize = 10,
+            ),
+            pagingSourceFactory = {
+                BookmarkedPagingSource(
                     authRepository = this
                 )
             },

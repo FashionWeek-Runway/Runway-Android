@@ -46,11 +46,13 @@ fun MypageScreen(appState: ApplicationState) {
         mutableStateOf(MypageTabInfo.MY_REVIEW)
     }
     val myReviews = viewModel.myReviews.collectAsLazyPagingItems()
+    val bookmarkedStore = viewModel.bookmarkedStore.collectAsLazyPagingItems()
     val state = rememberCollapsingToolbarScaffoldState()
 
     appState.systmeUiController.setStatusBarColor(Gray50)
     LaunchedEffect(key1 = Unit) {
         viewModel.getMyReviews()
+        viewModel.getBookmarkedStore()
     }
 
     CollapsingToolbarScaffold(
@@ -91,8 +93,12 @@ fun MypageScreen(appState: ApplicationState) {
                 }
             }
             MypageTabInfo.STORAGE -> {
-                Column() {
-                    EmptyStorage()
+                Column {
+                    if (bookmarkedStore.itemCount == 0) {
+                        EmptyStorage()
+                    } else {
+                        BookmarkedStore(bookmarkedStore)
+                    }
                 }
             }
         }
