@@ -5,6 +5,10 @@ import com.cmc12th.runway.data.request.map.MapFilterRequest
 import com.cmc12th.runway.data.request.map.MapSearchRequest
 import com.cmc12th.runway.data.request.store.ReviewReportRequest
 import com.cmc12th.runway.data.response.map.MapMarker
+import com.cmc12th.runway.data.response.user.ImgUrlAndNickname
+import com.cmc12th.runway.data.response.user.MyPageInfo
+import com.cmc12th.runway.data.response.user.MyReviewsItem
+import com.cmc12th.runway.data.response.user.UserInformationManagamentInfo
 import com.cmc12th.runway.network.service.AuthService
 import com.cmc12th.runway.network.service.LoginService
 import com.cmc12th.runway.network.service.MapService
@@ -51,9 +55,25 @@ class RunwayClient @Inject constructor(
         multipartFile: MultipartBody.Part?,
     ) = loginService.kakoSignUp(feedPostReqeust, categoryList, multipartFile)
 
+    /** 마이페이지 */
     suspend fun logout() = authService.logout()
-
     suspend fun loginRefresh(refreshToken: String) = authService.loginRefresh(refreshToken)
+    suspend fun getMyInfo() = authService.getMyInfo()
+    suspend fun getBookmarkedReview(page: Int, size: Int) =
+        authService.getBookmarkedReview(page, size)
+
+    suspend fun getMyBookmarkedReviewDetail(reviewId: Int) =
+        authService.getMyBookmarkedReviewDetail(reviewId)
+
+    suspend fun getInformationManagementInfo() = authService.getInformationManagementInfo()
+    suspend fun linkToKakao(oauthLoginRequest: OauthLoginRequest) =
+        authService.linkToKakao(oauthLoginRequest)
+
+    suspend fun unLinkToKakao() = authService.unLinkToKakao()
+    suspend fun getProfileInfoToEdit() = authService.getProfileInfoToEdit()
+    suspend fun getMyReview(page: Int, size: Int) = authService.getMyReview(page, size)
+    suspend fun getBookmarkedStore(page: Int, size: Int) =
+        authService.getBookmarkedStore(page, size)
 
 
     /** 쇼룸 */

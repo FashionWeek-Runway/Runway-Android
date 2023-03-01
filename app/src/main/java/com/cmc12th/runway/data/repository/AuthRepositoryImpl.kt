@@ -2,12 +2,17 @@ package com.cmc12th.runway.data.repository
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.*
+import com.cmc12th.runway.data.request.OauthLoginRequest
 import com.cmc12th.runway.data.response.LoginResponse
+import com.cmc12th.runway.data.response.store.UserReviewDetail
+import com.cmc12th.runway.data.response.user.*
 import com.cmc12th.runway.domain.repository.AuthRepository
 import com.cmc12th.runway.network.model.safeFlow
+import com.cmc12th.runway.network.model.safePagingFlow
 import com.cmc12th.runway.network.service.AuthService
 import com.cmc12th.runway.utils.ApiWrapper
 import com.cmc12th.runway.utils.DefaultApiWrapper
+import com.cmc12th.runway.utils.PagingApiWrapper
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
@@ -46,6 +51,52 @@ class AuthRepositoryImpl @Inject constructor(
 
     override suspend fun logout(): Flow<DefaultApiWrapper> = safeFlow {
         authService.logout()
+    }
+
+    override suspend fun getMyInfo(): Flow<ApiWrapper<MyPageInfo>> = safeFlow {
+        authService.getMyInfo()
+    }
+
+    override suspend fun getBookmarkedReview(
+        page: Int,
+        size: Int
+    ): Flow<PagingApiWrapper<MyReviewsItem>> = safePagingFlow {
+        authService.getBookmarkedReview(page, size)
+    }
+
+    override suspend fun getMyBookmarkedReviewDetail(reviewId: Int): Flow<ApiWrapper<UserReviewDetail>> =
+        safeFlow {
+            authService.getMyBookmarkedReviewDetail(reviewId)
+        }
+
+    override suspend fun getInformationManagementInfo(): Flow<ApiWrapper<UserInformationManagamentInfo>> =
+        safeFlow {
+            authService.getInformationManagementInfo()
+        }
+
+    override suspend fun linkToKakao(oauthLoginRequest: OauthLoginRequest): Flow<DefaultApiWrapper> =
+        safeFlow {
+            authService.linkToKakao(oauthLoginRequest)
+        }
+
+    override suspend fun unLinkToKakao(): Flow<DefaultApiWrapper> = safeFlow {
+        authService.unLinkToKakao()
+    }
+
+    override suspend fun getProfileInfoToEdit(): Flow<ApiWrapper<ImgUrlAndNickname>> = safeFlow {
+        authService.getProfileInfoToEdit()
+    }
+
+    override suspend fun getMyReview(page: Int, size: Int): Flow<PagingApiWrapper<MyReviewsItem>> =
+        safePagingFlow {
+            authService.getMyReview(page, size)
+        }
+
+    override suspend fun getBookmarkedStore(
+        page: Int,
+        size: Int
+    ): Flow<PagingApiWrapper<StoreMetaDataItem>> = safePagingFlow {
+        authService.getBookmarkedStore(page, size)
     }
 
     companion object PreferenceKeys {
