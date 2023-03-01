@@ -2,8 +2,14 @@ package com.cmc12th.runway.data.repository
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.*
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import com.cmc12th.runway.data.pagingsource.MyReviewPagingSource
+import com.cmc12th.runway.data.pagingsource.UserReviewPagingSource
 import com.cmc12th.runway.data.request.OauthLoginRequest
 import com.cmc12th.runway.data.response.LoginResponse
+import com.cmc12th.runway.data.response.store.UserReview
 import com.cmc12th.runway.data.response.store.UserReviewDetail
 import com.cmc12th.runway.data.response.user.*
 import com.cmc12th.runway.domain.repository.AuthRepository
@@ -91,6 +97,19 @@ class AuthRepositoryImpl @Inject constructor(
         safePagingFlow {
             authService.getMyReview(page, size)
         }
+
+    override fun myReviewPaging(): Flow<PagingData<MyReviewsItem>> {
+        return Pager(
+            config = PagingConfig(
+                pageSize = 10,
+            ),
+            pagingSourceFactory = {
+                MyReviewPagingSource(
+                    authRepository = this
+                )
+            },
+        ).flow
+    }
 
     override suspend fun getBookmarkedStore(
         page: Int,

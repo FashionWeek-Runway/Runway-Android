@@ -1,6 +1,7 @@
 package com.cmc12th.runway.domain.repository
 
 import androidx.datastore.preferences.core.Preferences
+import androidx.paging.PagingData
 import com.cmc12th.runway.data.request.OauthLoginRequest
 import com.cmc12th.runway.data.response.LoginResponse
 import com.cmc12th.runway.data.response.ResponseWrapper
@@ -44,5 +45,6 @@ interface AuthRepository {
         page: Int, size: Int
     ): Flow<PagingApiWrapper<StoreMetaDataItem>>
 
+    fun myReviewPaging(): Flow<PagingData<MyReviewsItem>>
 }
 

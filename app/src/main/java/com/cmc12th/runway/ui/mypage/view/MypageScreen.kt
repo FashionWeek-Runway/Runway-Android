@@ -1,43 +1,29 @@
 package com.cmc12th.runway.ui.mypage.view
 
-import android.util.Log
-import androidx.annotation.DrawableRes
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
-import androidx.compose.ui.input.nestedscroll.NestedScrollSource
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.cmc12th.runway.R
+import com.cmc12th.runway.data.response.user.MyReviewsItem
 import com.cmc12th.runway.ui.components.HeightSpacer
 import com.cmc12th.runway.ui.components.RunwayIconButton
 import com.cmc12th.runway.ui.components.util.bottomBorder
@@ -46,12 +32,10 @@ import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.mypage.MypageViewModel
 import com.cmc12th.runway.ui.mypage.model.MypageTabRowItem
 import com.cmc12th.runway.ui.theme.*
-import com.cmc12th.runway.utils.Constants
 import com.cmc12th.runway.utils.Constants.BOTTOM_NAVIGATION_HEIGHT
 import com.cmc12th.runway.utils.Constants.LOGIN_GRAPH
 import com.cmc12th.runway.utils.Constants.MAIN_GRAPH
 import me.onebone.toolbar.CollapsingToolbarScaffold
-import me.onebone.toolbar.CollapsingToolbarScaffoldScope
 import me.onebone.toolbar.ScrollStrategy
 import me.onebone.toolbar.rememberCollapsingToolbarScaffoldState
 
@@ -59,9 +43,9 @@ import me.onebone.toolbar.rememberCollapsingToolbarScaffoldState
 @Composable
 fun MypageScreen(appState: ApplicationState) {
 
-    val mypageViewModel: MypageViewModel = hiltViewModel()
+    val viewModel: MypageViewModel = hiltViewModel()
     val logout = {
-        mypageViewModel.logout {
+        viewModel.logout {
             appState.navController.navigate(LOGIN_GRAPH) {
                 popUpTo(MAIN_GRAPH) {
                     inclusive = true
@@ -75,6 +59,11 @@ fun MypageScreen(appState: ApplicationState) {
     }
     appState.systmeUiController.setStatusBarColor(Gray50)
 
+    LaunchedEffect(key1 = Unit) {
+        viewModel.getMyReviews()
+    }
+
+    val myReviews = viewModel.myReviews.collectAsLazyPagingItems()
 
     val state = rememberCollapsingToolbarScaffoldState()
     CollapsingToolbarScaffold(
@@ -115,27 +104,27 @@ fun MypageScreen(appState: ApplicationState) {
         }
     ) {
         Column {
-            MyReviews()
+            MyReviews(myReviews)
         }
     }
 }
 
 @Composable
-private fun ColumnScope.MyReviews() {
+private fun ColumnScope.MyReviews(myReviews: LazyPagingItems<MyReviewsItem>) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(3),
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(3.dp),
         verticalArrangement = Arrangement.spacedBy(3.dp)
     ) {
-        items((0..25).toList()) {
+        items(myReviews.itemCount) { index ->
             Box(modifier = Modifier.weight(1f)) {
                 AsyncImage(
                     modifier = Modifier
                         .aspectRatio(0.65f)
                         .fillMaxSize(),
                     model = ImageRequest.Builder(LocalContext.current)
-                        .data(R.drawable.img_dummy)
+                        .data(myReviews[index]?.imgUrl)
                         .crossfade(true)
                         .build(),
                     placeholder = painterResource(R.drawable.img_dummy),
@@ -147,6 +136,7 @@ private fun ColumnScope.MyReviews() {
         }
     }
 }
+
 
 @Composable
 private fun CustomRowTab(selectedPage: MutableState<Int>) {
