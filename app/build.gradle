@@ -143,4 +143,10 @@ dependencies {
     // Paging Compose
     implementation("androidx.paging:paging-runtime:3.1.1")
     implementation("androidx.paging:paging-compose:1.0.0-alpha18")
+
+    // 중첩 Column 스크롤을 위한 커스텀 Toolbar 레이아웃
+    // https://blog.onebone.me/post/jetpack-compose-nested-scroll/
+    // 후에 직접 구현하는 것으로 수정
+    implementation "me.onebone:toolbar-compose:2.3.5"
+
 }
