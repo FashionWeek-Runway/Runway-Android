@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
@@ -12,30 +14,29 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.cmc12th.runway.ui.components.BackIcon
 import com.cmc12th.runway.ui.components.HeightSpacer
-import com.cmc12th.runway.ui.detail.photoreview.model.ReviewReportItem
+import com.cmc12th.runway.ui.detail.photoreview.ReviewViewModel
+import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.signin.components.OnBoardHeadLine
 import com.cmc12th.runway.ui.theme.*
-import com.cmc12th.runway.utils.Constants.CATEGORYS
 
 @Composable
-fun ReviewReportScreen() {
+fun ReviewReportScreen(appState: ApplicationState, reivewId: Int) {
 
-    val reportList = remember {
-        mutableStateOf(CATEGORYS.mapIndexed { index, s ->
-            ReviewReportItem(index, s)
-        })
-    }
-    var selectedReportItemIdx by remember {
-        mutableStateOf(-1)
-    }
+    val reviewViewModel: ReviewViewModel = hiltViewModel()
+    val uiState by reviewViewModel.reportUiState.collectAsStateWithLifecycle()
 
-    val reportStr = remember {
-        mutableStateOf("")
+    val reportReview: () -> Unit = {
+        reviewViewModel.reporteReview(reviewId = reivewId) {
+            appState.showSnackbar("신고가 완료됐습니다.\n더 나은 서비스를 위해 노력하겠습니다.")
+            appState.popBackStack()
+        }
     }
 
     Column(
@@ -44,7 +45,6 @@ fun ReviewReportScreen() {
             .systemBarsPadding()
             .imePadding(),
     ) {
-
         Row(
             modifier = Modifier.padding(20.dp),
             verticalAlignment = Alignment.CenterVertically
@@ -60,13 +60,14 @@ fun ReviewReportScreen() {
                 .verticalScroll(rememberScrollState()),
         ) {
             Column {
+                HeightSpacer(height = 20.dp)
                 Text(text = "신고 사유를 골라주세요", style = HeadLine3)
                 HeightSpacer(height = 8.dp)
-                reportList.value.forEach {
+                uiState.reports.forEach {
                     Box(modifier = Modifier
                         .fillMaxWidth()
                         .clickable {
-                            selectedReportItemIdx = it.idx
+                            reviewViewModel.updateSelectedId(it.id)
                         }) {
                         Row(
                             modifier = Modifier
@@ -77,8 +78,12 @@ fun ReviewReportScreen() {
                             Box(
                                 modifier = Modifier
                                     .size(18.dp)
-                                    .border(if (selectedReportItemIdx == it.idx) BorderStroke(3.dp,
-                                        Primary) else BorderStroke(1.dp, Gray300), CircleShape)
+                                    .border(
+                                        if (uiState.selectedReportId == it.id) BorderStroke(
+                                            5.dp,
+                                            Primary
+                                        ) else BorderStroke(1.dp, Gray300), CircleShape
+                                    )
                             )
                             Text(text = it.contents, style = Body1, color = Black)
                         }
@@ -94,9 +99,9 @@ fun ReviewReportScreen() {
 
                 HeightSpacer(height = 16.dp)
                 BasicTextField(
-                    value = reportStr.value,
+                    value = uiState.reportContents,
                     onValueChange = {
-                        reportStr.value = it
+                        if (it.length <= 100) reviewViewModel.updateReportContents(it)
                     },
                     textStyle = Body1,
                     modifier = Modifier
@@ -109,7 +114,7 @@ fun ReviewReportScreen() {
                                 .weight(1f)
                                 .padding(14.dp)
                         ) {
-                            if (reportStr.value.isEmpty()) {
+                            if (uiState.reportContents.isEmpty()) {
                                 Text(
                                     "100자 이내로 작성해주세요.",
                                     style = Body1,
@@ -119,6 +124,12 @@ fun ReviewReportScreen() {
                             innerTextField()
                         }
                     },
+                    keyboardOptions = KeyboardOptions(
+                        imeAction = ImeAction.Done
+                    ),
+                    keyboardActions = KeyboardActions(onDone = {
+                        reportReview()
+                    }),
                 )
                 HeightSpacer(height = 8.dp)
                 Text(
@@ -134,8 +145,11 @@ fun ReviewReportScreen() {
                 .fillMaxWidth()
                 .padding(20.dp, 10.dp),
             shape = RoundedCornerShape(4.dp),
-            colors = ButtonDefaults.buttonColors(if (false) Color.Black else Gray300),
-            onClick = { }) {
+            enabled = uiState.selectedReportId != -1,
+            colors = ButtonDefaults.buttonColors(if (uiState.selectedReportId != -1) Color.Black else Gray300),
+            onClick = {
+                reportReview()
+            }) {
             Text(
                 modifier = Modifier.padding(0.dp, 5.dp),
                 text = "신고 하기",
@@ -146,8 +160,8 @@ fun ReviewReportScreen() {
     }
 }
 
-@Preview
-@Composable
-fun ReviewReportScreenPreview() {
-    ReviewReportScreen()
-}
+//@Preview
+//@Composable
+//fun ReviewReportScreenPreview() {
+//    ReviewReportScreen()
+//}

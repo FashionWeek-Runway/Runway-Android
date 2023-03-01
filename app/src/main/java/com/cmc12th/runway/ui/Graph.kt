@@ -93,7 +93,7 @@ fun NavGraphBuilder.mainGraph(
                 }
             )) { entry ->
             val idx = entry.arguments?.getInt("reviewId") ?: 0
-            ReviewReportScreen()
+            ReviewReportScreen(appState, idx)
         }
     }
 }

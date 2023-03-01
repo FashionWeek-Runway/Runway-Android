@@ -1,6 +1,6 @@
 package com.cmc12th.runway.data.model
 
-enum class ReviewReportType(id: Int, reason: String) {
+enum class ReviewReportType(val id: Int, val reason: String) {
     SPAM(1, "스팸 홍보 / 도배글이에요"),
     INAPPROPRIATE(2, "부적절한 사진이에요"),
     HARMFUL(3, "청소년에게 유해한 내용이에요"),
