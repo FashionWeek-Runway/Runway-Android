@@ -37,4 +37,6 @@ interface StoreRepository {
     fun reviewBookmark(reviewId: Int): Flow<DefaultApiWrapper>
 
     fun reportReview(reviewReportRequest: ReviewReportRequest): Flow<DefaultApiWrapper>
+
+    fun delteReview(reviewId: Int): Flow<DefaultApiWrapper>
 }

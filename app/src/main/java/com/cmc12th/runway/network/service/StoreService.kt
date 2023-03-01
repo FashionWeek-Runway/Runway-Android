@@ -64,6 +64,12 @@ interface StoreService {
         @Path("reviewId") reviewId: Int,
     ): DefaultResponse
 
+    /** 리뷰 삭제 */
+    @POST("/stores/review/detail/{reviewId}")
+    suspend fun delteReview(
+        @Path("reviewId") reviewId: Int,
+    ): DefaultResponse
+
     /** 리뷰 신고 */
     @POST("/stores/review/report")
     suspend fun reportReview(

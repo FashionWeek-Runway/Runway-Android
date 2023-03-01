@@ -11,10 +11,7 @@ import com.cmc12th.runway.network.service.MapService
 import com.cmc12th.runway.network.service.StoreService
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
-import retrofit2.http.Body
-import retrofit2.http.GET
-import retrofit2.http.Path
-import retrofit2.http.Query
+import retrofit2.http.*
 import javax.inject.Inject
 
 class RunwayClient @Inject constructor(
@@ -76,6 +73,8 @@ class RunwayClient @Inject constructor(
     suspend fun getReviewDetail(reviewId: Int) = storeService.getReviewDetail(reviewId)
 
     suspend fun reviewBookmark(reviewId: Int) = storeService.reviewBookmark(reviewId)
+
+    suspend fun delteReview(reviewId: Int) = storeService.delteReview(reviewId)
 
     suspend fun reportReview(reviewReportRequest: ReviewReportRequest) =
         storeService.reportReview(reviewReportRequest)

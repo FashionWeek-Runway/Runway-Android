@@ -18,6 +18,8 @@ import com.cmc12th.runway.utils.DefaultApiWrapper
 import com.cmc12th.runway.utils.PagingApiWrapper
 import kotlinx.coroutines.flow.Flow
 import okhttp3.RequestBody
+import retrofit2.http.POST
+import retrofit2.http.Path
 import javax.inject.Inject
 
 class StoreRepositoryImpl @Inject constructor(
@@ -75,6 +77,10 @@ class StoreRepositoryImpl @Inject constructor(
 
     override fun reviewBookmark(reviewId: Int): Flow<DefaultApiWrapper> = safeFlow {
         runwayClient.reviewBookmark(reviewId)
+    }
+
+    override fun delteReview(reviewId: Int): Flow<DefaultApiWrapper> = safeFlow {
+        runwayClient.delteReview(reviewId)
     }
 
     override fun reportReview(reviewReportRequest: ReviewReportRequest): Flow<DefaultApiWrapper> =
