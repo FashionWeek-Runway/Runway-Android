@@ -70,6 +70,13 @@ interface AuthService {
         @Query("size") size: Int
     ): PagingNetworkResponse<MyReviewsItem>
 
+    /** 내가 작성한 리뷰 상세조회 */
+    @GET("/users/review/detail/{reviewId}")
+    suspend fun getMyReviewDetail(
+        @Path("reviewId") reviewId: Int
+    ): NetworkResponse<UserReviewDetail>
+
+
     /** 내가 북마크한 쇼룸 리스트 보기 */
     @GET("/users/store")
     suspend fun getBookmarkedStore(

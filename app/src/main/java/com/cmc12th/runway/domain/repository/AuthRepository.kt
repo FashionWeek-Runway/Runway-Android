@@ -33,6 +33,10 @@ interface AuthRepository {
         reviewId: Int
     ): Flow<ApiWrapper<UserReviewDetail>>
 
+    suspend fun getMyReviewDetail(
+        reviewId: Int
+    ): Flow<ApiWrapper<UserReviewDetail>>
+
     suspend fun getInformationManagementInfo(): Flow<ApiWrapper<UserInformationManagamentInfo>>
     suspend fun linkToKakao(oauthLoginRequest: OauthLoginRequest): Flow<DefaultApiWrapper>
     suspend fun unLinkToKakao(): Flow<DefaultApiWrapper>

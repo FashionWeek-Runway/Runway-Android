@@ -76,6 +76,11 @@ class AuthRepositoryImpl @Inject constructor(
             authService.getMyBookmarkedReviewDetail(reviewId)
         }
 
+    override suspend fun getMyReviewDetail(reviewId: Int): Flow<ApiWrapper<UserReviewDetail>> =
+        safeFlow {
+            authService.getMyReviewDetail(reviewId)
+        }
+
     override suspend fun getInformationManagementInfo(): Flow<ApiWrapper<UserInformationManagamentInfo>> =
         safeFlow {
             authService.getInformationManagementInfo()

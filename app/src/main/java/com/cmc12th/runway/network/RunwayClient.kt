@@ -5,6 +5,7 @@ import com.cmc12th.runway.data.request.map.MapFilterRequest
 import com.cmc12th.runway.data.request.map.MapSearchRequest
 import com.cmc12th.runway.data.request.store.ReviewReportRequest
 import com.cmc12th.runway.data.response.map.MapMarker
+import com.cmc12th.runway.data.response.store.UserReviewDetail
 import com.cmc12th.runway.data.response.user.ImgUrlAndNickname
 import com.cmc12th.runway.data.response.user.MyPageInfo
 import com.cmc12th.runway.data.response.user.MyReviewsItem
@@ -74,6 +75,8 @@ class RunwayClient @Inject constructor(
     suspend fun getMyReview(page: Int, size: Int) = authService.getMyReview(page, size)
     suspend fun getBookmarkedStore(page: Int, size: Int) =
         authService.getBookmarkedStore(page, size)
+
+    suspend fun getMyReviewDetail(reviewId: Int) = authService.getMyReviewDetail(reviewId)
 
 
     /** 쇼룸 */
