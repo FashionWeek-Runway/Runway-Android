@@ -13,19 +13,37 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.DialogProperties
+import com.cmc12th.runway.R
 import com.cmc12th.runway.ui.components.BackIcon
 import com.cmc12th.runway.ui.components.RunwayCheckBox
+import com.cmc12th.runway.ui.components.RunwayVerticalDialog
 import com.cmc12th.runway.ui.domain.model.ApplicationState
+import com.cmc12th.runway.ui.domain.model.DialogButtonContent
 import com.cmc12th.runway.ui.setting.SettingViewModel
 import com.cmc12th.runway.ui.theme.*
+import com.cmc12th.runway.utils.Constants
 
 @Composable
 fun SettingWithdrawalScreen(appState: ApplicationState, viewModel: SettingViewModel) {
 
     val withDrawalCheckbox = remember {
         mutableStateOf(false)
+    }
+
+    val withDrawalDialog = remember {
+        mutableStateOf(false)
+    }
+    val navigateToOnboard: () -> Unit = {
+        appState.navController.navigate(Constants.LOGIN_GRAPH) {
+            popUpTo(Constants.MAIN_GRAPH) {
+                inclusive = true
+            }
+        }
     }
 
     Column(
@@ -36,6 +54,21 @@ fun SettingWithdrawalScreen(appState: ApplicationState, viewModel: SettingViewMo
             .statusBarsPadding(),
         verticalArrangement = Arrangement.spacedBy(30.dp)
     ) {
+        if (withDrawalDialog.value) {
+            RunwayVerticalDialog(
+                properties = DialogProperties(dismissOnClickOutside = false),
+                onDismissRequest = {
+                    navigateToOnboard()
+                },
+                title = "회원 탈퇴 완료",
+                descrption = "15일 이전에 돌아오시면 로그인이\n가능합니다. RUNWAY가 보고싶다면\n언제든지 돌아오세요!",
+                positiveButton = DialogButtonContent(
+                    title = "확인",
+                    onClick = {
+                        navigateToOnboard()
+                    })
+            )
+        }
 
         Row(
             verticalAlignment = Alignment.CenterVertically
@@ -55,39 +88,57 @@ fun SettingWithdrawalScreen(appState: ApplicationState, viewModel: SettingViewMo
             Text(text = "너무 아쉽지만..\n떠나기 전에 아래 내용을 확인해주세요.", style = Body1, color = Black)
         }
 
-        Column(modifier = Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(4.dp))
-            .background(Gray50)
-            .padding(14.dp, 18.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(4.dp))
+                .background(Gray50)
+                .padding(14.dp, 18.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Row {
-
+                    Image(
+                        painter = painterResource(id = R.drawable.img_emoticon_sadface),
+                        contentDescription = "IMG_EMOTICON_SADFACE",
+                        contentScale = ContentScale.Crop
+                    )
                     Text(text = "15일 이후 처음부터 다시 가입해야해요", style = Body2B, color = Black)
                 }
-                Text(text = "탈퇴 회원 정보는 15일간 임시 보관 후 완벽히 삭제됩니다. 탈퇴하시면 회원가입부터 다시 해야해요.",
+                Text(
+                    text = "탈퇴 회원 정보는 15일간 임시 보관 후 완벽히 삭제됩니다. 탈퇴하시면 회원가입부터 다시 해야해요.",
                     style = Body2,
-                    color = Gray800)
+                    color = Gray800
+                )
             }
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Row {
-
+                    Image(
+                        painter = painterResource(id = R.drawable.img_emoticon_trachcan),
+                        contentDescription = "IMG_EMOTICON_TRASHCAN",
+                        contentScale = ContentScale.Crop
+                    )
                     Text(text = "작성한 후기가 사라져요", style = Body2B, color = Black)
                 }
-                Text(text = "회원님이 작성한 후기들이 영구적으로 삭제됩니다. \n삭제된 정보는 다시 복구할 수 없어요.",
+
+                Text(
+                    text = "회원님이 작성한 후기들이 영구적으로 삭제됩니다. \n삭제된 정보는 다시 복구할 수 없어요.",
                     style = Body2,
-                    color = Gray800)
+                    color = Gray800
+                )
+
             }
         }
 
-        Row(modifier = Modifier
-            .fillMaxWidth()
-            .clickable {
-                withDrawalCheckbox.value = !withDrawalCheckbox.value
-            },
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable {
+                    withDrawalCheckbox.value = !withDrawalCheckbox.value
+                },
             horizontalArrangement = Arrangement.spacedBy(4.dp),
-            verticalAlignment = Alignment.CenterVertically) {
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             RunwayCheckBox(checkState = withDrawalCheckbox.value) {
                 withDrawalCheckbox.value = !withDrawalCheckbox.value
             }
@@ -99,6 +150,7 @@ fun SettingWithdrawalScreen(appState: ApplicationState, viewModel: SettingViewMo
         Button(
             onClick = {
                 // TODO 회원탈퇴 진행
+                appState.showSnackbar("회원탈퇴 API가 없어요~")
             },
             modifier = Modifier
                 .fillMaxWidth()
@@ -106,8 +158,10 @@ fun SettingWithdrawalScreen(appState: ApplicationState, viewModel: SettingViewMo
             enabled = withDrawalCheckbox.value,
             shape = RoundedCornerShape(4.dp),
             border = BorderStroke(1.dp, if (withDrawalCheckbox.value) Black else Gray300),
-            colors = ButtonDefaults.buttonColors(containerColor = White,
-                disabledContainerColor = White),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = White,
+                disabledContainerColor = White
+            ),
         ) {
             Text(
                 text = "탈퇴하기",
