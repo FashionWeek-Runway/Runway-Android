@@ -19,6 +19,8 @@ import com.cmc12th.runway.ui.login.view.LoginBaseScreen
 import com.cmc12th.runway.ui.map.view.MapScreen
 import com.cmc12th.runway.ui.mypage.view.MypageScreen
 import com.cmc12th.runway.ui.setting.SettingMainScreen
+import com.cmc12th.runway.ui.setting.view.SettingPersonalInfoManagementScreen
+import com.cmc12th.runway.ui.setting.view.SettingWithdrawalScreen
 import com.cmc12th.runway.ui.signin.view.*
 import com.cmc12th.runway.utils.Constants.DETAIL_GRAPH
 import com.cmc12th.runway.utils.Constants.DETAIL_ROUTE
@@ -35,6 +37,8 @@ import com.cmc12th.runway.utils.Constants.REVIEW_REPORT_ROUTE
 import com.cmc12th.runway.utils.Constants.REVIEW_WRITE_ROUTE
 import com.cmc12th.runway.utils.Constants.SETTING_GRAPH
 import com.cmc12th.runway.utils.Constants.SETTING_MAIN_ROUTE
+import com.cmc12th.runway.utils.Constants.SETTING_PERSONAL_INFO_MANAGEMENT_ROUTE
+import com.cmc12th.runway.utils.Constants.SETTING_WITHDRAWAL_ROUTE
 import com.cmc12th.runway.utils.Constants.SIGNIN_AGREEMENT_DETAIL_ROUTE
 import com.cmc12th.runway.utils.Constants.SIGNIN_AGREEMENT_ROUTE
 import com.cmc12th.runway.utils.Constants.SIGNIN_CATEGORY_ROUTE
@@ -146,7 +150,13 @@ fun NavGraphBuilder.settingGraph(
 ) {
     navigation(startDestination = SETTING_MAIN_ROUTE, route = SETTING_GRAPH) {
         composable(SETTING_MAIN_ROUTE) {
-            SettingMainScreen()
+            SettingMainScreen(appState)
+        }
+        composable(SETTING_PERSONAL_INFO_MANAGEMENT_ROUTE) {
+            SettingPersonalInfoManagementScreen(appState)
+        }
+        composable(SETTING_WITHDRAWAL_ROUTE) {
+            SettingWithdrawalScreen(appState)
         }
     }
 }

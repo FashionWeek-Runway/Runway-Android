@@ -1,6 +1,7 @@
 package com.cmc12th.runway.ui.setting.view
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -20,12 +21,13 @@ import androidx.compose.ui.unit.dp
 import com.cmc12th.runway.R
 import com.cmc12th.runway.ui.components.BackIcon
 import com.cmc12th.runway.ui.components.RunwaySwitch
+import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.theme.*
+import com.cmc12th.runway.utils.Constants.SETTING_WITHDRAWAL_ROUTE
 
 //social 값이 true = FRAME setting 03 , false = FRAME setting 02 kakao,apple boolean 값으로 화면에 보여주면 됩니다!
-@Preview
 @Composable
-fun SettingPersonalInfoManagementScreen() {
+fun SettingPersonalInfoManagementScreen(appState: ApplicationState) {
 
     val isKakaoLinked = remember {
         mutableStateOf(false)
@@ -43,7 +45,7 @@ fun SettingPersonalInfoManagementScreen() {
             verticalAlignment = Alignment.CenterVertically
         ) {
             BackIcon {
-                // appState.popBackStack()
+                appState.popBackStack()
             }
             Text(text = "개인 정보 관리", style = Body1B, color = Color.Black)
         }
@@ -117,7 +119,9 @@ fun SettingPersonalInfoManagementScreen() {
                 .padding(20.dp, 24.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
-            Text(text = "회원 탈퇴", style = Body2, color = Gray800)
+            Text(text = "회원 탈퇴", style = Body2, color = Gray800, modifier = Modifier.clickable {
+                appState.navigate(SETTING_WITHDRAWAL_ROUTE)
+            })
         }
 
     }

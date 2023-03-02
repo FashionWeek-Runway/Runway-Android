@@ -1,11 +1,10 @@
 package com.cmc12th.runway.ui.setting.view
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -14,15 +13,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.cmc12th.runway.ui.components.BackIcon
 import com.cmc12th.runway.ui.components.RunwayCheckBox
+import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.theme.*
+import com.cmc12th.runway.utils.Constants
 
-@Preview
 @Composable
-fun SettingWithdrawalScreen() {
+fun SettingWithdrawalScreen(appState: ApplicationState) {
 
     val withDrawalCheckbox = remember {
         mutableStateOf(false)
@@ -34,14 +36,14 @@ fun SettingWithdrawalScreen() {
             .padding(20.dp)
             .verticalScroll(rememberScrollState())
             .statusBarsPadding(),
-        verticalArrangement = Arrangement.spacedBy(24.dp)
+        verticalArrangement = Arrangement.spacedBy(30.dp)
     ) {
 
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {
             BackIcon {
-                // appState.popBackStack()
+                appState.popBackStack()
             }
             Text(text = "개인 정보 관리", style = Body1B, color = Color.Black)
         }
@@ -93,5 +95,30 @@ fun SettingWithdrawalScreen() {
             }
             Text(text = "위의 내용을 모두 확인하였으며, 탈퇴하겠습니다.", style = Body2, color = Gray900)
         }
+
+        Spacer(modifier = Modifier.weight(1f))
+
+        Button(
+            onClick = {
+                // TODO 회원탈퇴 진행
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(20.dp),
+            enabled = withDrawalCheckbox.value,
+            shape = RoundedCornerShape(4.dp),
+            border = BorderStroke(1.dp, if (withDrawalCheckbox.value) Black else Gray300),
+            colors = ButtonDefaults.buttonColors(containerColor = White,
+                disabledContainerColor = White),
+        ) {
+            Text(
+                text = "탈퇴하기",
+                modifier = Modifier.padding(0.dp, 5.dp),
+                textAlign = TextAlign.Center,
+                color = if (withDrawalCheckbox.value) Black else Gray300,
+                style = Button1
+            )
+        }
+
     }
 }

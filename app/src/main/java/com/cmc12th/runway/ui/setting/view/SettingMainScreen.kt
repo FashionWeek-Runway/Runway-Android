@@ -1,10 +1,6 @@
 package com.cmc12th.runway.ui.setting
 
-import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -14,19 +10,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
-import androidx.compose.ui.geometry.CornerRadius
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.cmc12th.runway.ui.components.BackIcon
 import com.cmc12th.runway.ui.components.RunwaySwitch
+import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.theme.*
+import com.cmc12th.runway.utils.Constants.SETTING_PERSONAL_INFO_MANAGEMENT_ROUTE
 
 
 data class SettingItem(
@@ -34,12 +25,14 @@ data class SettingItem(
     val onClick: () -> Unit,
 )
 
-@Preview
 @Composable
-fun SettingMainScreen() {
+fun SettingMainScreen(appState: ApplicationState) {
 
-    val account = listOf(SettingItem("개인 정보 관리", onClick = {}))
+    val account = listOf(SettingItem("개인 정보 관리", onClick = {
+        appState.navigate(SETTING_PERSONAL_INFO_MANAGEMENT_ROUTE)
+    }))
     val inquiry = listOf(SettingItem("쇼룸 추가 요청", onClick = {}))
+
     val policies = listOf(
         SettingItem("이용약관", onClick = {}),
         SettingItem("개인정보 처리 방침", onClick = {}),
@@ -64,7 +57,7 @@ fun SettingMainScreen() {
             verticalAlignment = Alignment.CenterVertically
         ) {
             BackIcon {
-                // appState.popBackStack()
+                appState.popBackStack()
             }
             Text(text = "설정", style = Body1B, color = Color.Black)
         }
