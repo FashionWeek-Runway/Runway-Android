@@ -12,8 +12,10 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import com.cmc12th.runway.R
 import com.cmc12th.runway.ui.components.HeightSpacer
 import com.cmc12th.runway.ui.components.RunwayIconButton
+import com.cmc12th.runway.ui.detail.view.DetailScreen
 import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.domain.model.ReviewViwerType
+import com.cmc12th.runway.ui.map.components.DetailState
 import com.cmc12th.runway.ui.mypage.MypageViewModel
 import com.cmc12th.runway.ui.mypage.components.*
 import com.cmc12th.runway.ui.theme.*
@@ -37,10 +39,6 @@ fun MypageScreen(appState: ApplicationState) {
 
     val viewModel: MypageViewModel = hiltViewModel()
 
-
-    val selectedPage = remember {
-        mutableStateOf(MypageTabInfo.MY_REVIEW)
-    }
     val myReviews = viewModel.myReviews.collectAsLazyPagingItems()
     val bookmarkedStore = viewModel.bookmarkedStore.collectAsLazyPagingItems()
     val state = rememberCollapsingToolbarScaffoldState()
@@ -50,6 +48,7 @@ fun MypageScreen(appState: ApplicationState) {
         viewModel.getMyReviews()
         viewModel.getBookmarkedStore()
     }
+
 
     CollapsingToolbarScaffold(
         modifier = Modifier
@@ -70,15 +69,15 @@ fun MypageScreen(appState: ApplicationState) {
                 HeightSpacer(height = 34.dp)
                 /** 나의 후기, 저장 로우탭 */
                 MypageCustomRowTab(
-                    selectedPage = selectedPage.value
+                    selectedPage = viewModel.selectedPage.value
                 ) {
-                    selectedPage.value = it
+                    viewModel.selectedPage.value = it
                 }
             }
             TopBar { appState.navigate(SETTING_GRAPH) }
         }
     ) {
-        when (selectedPage.value) {
+        when (viewModel.selectedPage.value) {
             MypageTabInfo.MY_REVIEW -> {
                 Column {
                     if (myReviews.itemCount == 0) {
@@ -98,12 +97,28 @@ fun MypageScreen(appState: ApplicationState) {
                     if (bookmarkedStore.itemCount == 0) {
                         EmptyStorage()
                     } else {
-                        BookmarkedStore(bookmarkedStore)
+                        BookmarkedStore(bookmarkedStore = bookmarkedStore,
+                            navigateToDetail = { id, storeName ->
+                                viewModel.onDetail.value = DetailState(true, id, storeName)
+                            })
                     }
                 }
             }
         }
 
+
+    }
+
+    if (!viewModel.onDetail.value.isDefault()) {
+        DetailScreen(appState = appState,
+            idx = viewModel.onDetail.value.id,
+            storeName = viewModel.onDetail.value.storeName,
+            onBackPress = {
+                appState.bottomBarState.value = true
+                appState.systmeUiController.setSystemBarsColor(color = Color.White)
+                viewModel.onDetail.value = DetailState.default()
+            }
+        )
     }
 }
 
