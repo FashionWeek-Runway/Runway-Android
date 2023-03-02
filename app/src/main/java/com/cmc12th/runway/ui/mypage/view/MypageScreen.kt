@@ -8,6 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.cmc12th.runway.R
 import com.cmc12th.runway.ui.components.HeightSpacer
@@ -21,9 +22,6 @@ import com.cmc12th.runway.ui.mypage.components.*
 import com.cmc12th.runway.ui.theme.*
 import com.cmc12th.runway.utils.Constants
 import com.cmc12th.runway.utils.Constants.BOTTOM_NAVIGATION_HEIGHT
-import com.cmc12th.runway.utils.Constants.DETAIL_GRAPH
-import com.cmc12th.runway.utils.Constants.LOGIN_GRAPH
-import com.cmc12th.runway.utils.Constants.MAIN_GRAPH
 import com.cmc12th.runway.utils.Constants.SETTING_GRAPH
 import me.onebone.toolbar.CollapsingToolbarScaffold
 import me.onebone.toolbar.CollapsingToolbarScope
@@ -38,17 +36,15 @@ enum class MypageTabInfo(val id: Int) {
 fun MypageScreen(appState: ApplicationState) {
 
     val viewModel: MypageViewModel = hiltViewModel()
-
     val myReviews = viewModel.myReviews.collectAsLazyPagingItems()
     val bookmarkedStore = viewModel.bookmarkedStore.collectAsLazyPagingItems()
     val state = rememberCollapsingToolbarScaffoldState()
-
+    val uiState = viewModel.uiState.collectAsStateWithLifecycle()
     appState.systmeUiController.setStatusBarColor(Gray50)
     LaunchedEffect(key1 = Unit) {
         viewModel.getMyReviews()
         viewModel.getBookmarkedStore()
     }
-
 
     CollapsingToolbarScaffold(
         modifier = Modifier
@@ -69,15 +65,15 @@ fun MypageScreen(appState: ApplicationState) {
                 HeightSpacer(height = 34.dp)
                 /** 나의 후기, 저장 로우탭 */
                 MypageCustomRowTab(
-                    selectedPage = viewModel.selectedPage.value
+                    selectedPage = uiState.value.selectedPage
                 ) {
-                    viewModel.selectedPage.value = it
+                    viewModel.updateSelectedPage(it)
                 }
             }
             TopBar { appState.navigate(SETTING_GRAPH) }
         }
     ) {
-        when (viewModel.selectedPage.value) {
+        when (uiState.value.selectedPage) {
             MypageTabInfo.MY_REVIEW -> {
                 Column {
                     if (myReviews.itemCount == 0) {
@@ -99,24 +95,23 @@ fun MypageScreen(appState: ApplicationState) {
                     } else {
                         BookmarkedStore(bookmarkedStore = bookmarkedStore,
                             navigateToDetail = { id, storeName ->
-                                viewModel.onDetail.value = DetailState(true, id, storeName)
+                                viewModel.updateOnDetail(DetailState(true, id, storeName))
                             })
                     }
                 }
             }
         }
-
-
     }
 
-    if (!viewModel.onDetail.value.isDefault()) {
+    /** 디테일 뷰 위에 깔아버리기 */
+    if (!uiState.value.onDetail.isDefault()) {
         DetailScreen(appState = appState,
-            idx = viewModel.onDetail.value.id,
-            storeName = viewModel.onDetail.value.storeName,
+            idx = uiState.value.onDetail.id,
+            storeName = uiState.value.onDetail.storeName,
             onBackPress = {
                 appState.bottomBarState.value = true
                 appState.systmeUiController.setSystemBarsColor(color = Color.White)
-                viewModel.onDetail.value = DetailState.default()
+                viewModel.updateOnDetail(DetailState.default())
             }
         )
     }
