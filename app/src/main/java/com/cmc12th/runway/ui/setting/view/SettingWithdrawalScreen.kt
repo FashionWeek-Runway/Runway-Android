@@ -97,7 +97,9 @@ fun SettingWithdrawalScreen(appState: ApplicationState, viewModel: SettingViewMo
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                Row {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     Image(
                         painter = painterResource(id = R.drawable.img_emoticon_sadface),
                         contentDescription = "IMG_EMOTICON_SADFACE",
@@ -112,7 +114,9 @@ fun SettingWithdrawalScreen(appState: ApplicationState, viewModel: SettingViewMo
                 )
             }
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                Row {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     Image(
                         painter = painterResource(id = R.drawable.img_emoticon_trachcan),
                         contentDescription = "IMG_EMOTICON_TRASHCAN",
