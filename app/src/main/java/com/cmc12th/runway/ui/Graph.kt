@@ -18,6 +18,7 @@ import com.cmc12th.runway.ui.login.passwordsearch.view.PasswordSearchVerifyScree
 import com.cmc12th.runway.ui.login.view.LoginBaseScreen
 import com.cmc12th.runway.ui.map.view.MapScreen
 import com.cmc12th.runway.ui.mypage.view.MypageScreen
+import com.cmc12th.runway.ui.setting.SettingMainScreen
 import com.cmc12th.runway.ui.signin.view.*
 import com.cmc12th.runway.utils.Constants.DETAIL_GRAPH
 import com.cmc12th.runway.utils.Constants.DETAIL_ROUTE
@@ -32,6 +33,8 @@ import com.cmc12th.runway.utils.Constants.PASSWORD_SEARCH_PHONE_VERIFY_ROUTE
 import com.cmc12th.runway.utils.Constants.REVIEW_DETAIL_ROUTE
 import com.cmc12th.runway.utils.Constants.REVIEW_REPORT_ROUTE
 import com.cmc12th.runway.utils.Constants.REVIEW_WRITE_ROUTE
+import com.cmc12th.runway.utils.Constants.SETTING_GRAPH
+import com.cmc12th.runway.utils.Constants.SETTING_MAIN_ROUTE
 import com.cmc12th.runway.utils.Constants.SIGNIN_AGREEMENT_DETAIL_ROUTE
 import com.cmc12th.runway.utils.Constants.SIGNIN_AGREEMENT_ROUTE
 import com.cmc12th.runway.utils.Constants.SIGNIN_CATEGORY_ROUTE
@@ -135,6 +138,16 @@ fun NavGraphBuilder.passwordSearchGraph(
             PasswordSearchChagnePasswordScreen(appState, hiltViewModel(backStackEntry))
         }
 
+    }
+}
+
+fun NavGraphBuilder.settingGraph(
+    appState: ApplicationState,
+) {
+    navigation(startDestination = SETTING_MAIN_ROUTE, route = SETTING_GRAPH) {
+        composable(SETTING_MAIN_ROUTE) {
+            SettingMainScreen()
+        }
     }
 }
 

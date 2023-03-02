@@ -42,9 +42,12 @@ object Constants {
     const val PASSWORD_SEARCH_PHONE_VERIFY_ROUTE = "nav-password-search-phone-verify"
     const val PASSWORD_SEARCH_PHONE_CHANGE_PASSWORD = "nav-password-search-phone-change-password"
 
+    const val SETTING_MAIN_ROUTE = "nav-setting-main"
+
     /** Graph Id */
     const val MAIN_GRAPH = "main-graph"
     const val LOGIN_GRAPH = "login-graph"
+    const val SETTING_GRAPH = "setting-graph"
     const val SIGNIN_GRAPH = "signin-graph"
     const val DETAIL_GRAPH = "detail-graph"
     const val REVIEW_DETAIL_GRAPH = "review-detail-graph"

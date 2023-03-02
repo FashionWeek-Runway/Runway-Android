@@ -131,7 +131,7 @@ private fun RootNavhost(
                 loginGraph(appState)
                 passwordSearchGraph(appState)
                 signInGraph(appState)
-//                detailGraph(appState)
+                settingGraph(appState)
             }
             BottomBar(appState)
         }

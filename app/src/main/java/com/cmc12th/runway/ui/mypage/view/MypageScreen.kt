@@ -17,8 +17,10 @@ import com.cmc12th.runway.ui.mypage.MypageViewModel
 import com.cmc12th.runway.ui.mypage.components.*
 import com.cmc12th.runway.ui.theme.*
 import com.cmc12th.runway.utils.Constants.BOTTOM_NAVIGATION_HEIGHT
+import com.cmc12th.runway.utils.Constants.DETAIL_GRAPH
 import com.cmc12th.runway.utils.Constants.LOGIN_GRAPH
 import com.cmc12th.runway.utils.Constants.MAIN_GRAPH
+import com.cmc12th.runway.utils.Constants.SETTING_GRAPH
 import me.onebone.toolbar.CollapsingToolbarScaffold
 import me.onebone.toolbar.CollapsingToolbarScope
 import me.onebone.toolbar.ScrollStrategy
@@ -79,7 +81,7 @@ fun MypageScreen(appState: ApplicationState) {
                     selectedPage.value = it
                 }
             }
-            TopBar()
+            TopBar { appState.navigate(SETTING_GRAPH) }
         }
     ) {
         when (selectedPage.value) {
@@ -108,7 +110,9 @@ fun MypageScreen(appState: ApplicationState) {
 
 
 @Composable
-private fun CollapsingToolbarScope.TopBar() {
+private fun CollapsingToolbarScope.TopBar(
+    navigateToSettingGraph: () -> Unit,
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -122,7 +126,7 @@ private fun CollapsingToolbarScope.TopBar() {
             drawable = R.drawable.ic_baseline_setting_24,
             tint = Black
         ) {
-
+            navigateToSettingGraph()
         }
     }
 }
