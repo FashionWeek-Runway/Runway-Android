@@ -14,17 +14,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.cmc12th.runway.ui.components.BackIcon
 import com.cmc12th.runway.ui.components.RunwayCheckBox
 import com.cmc12th.runway.ui.domain.model.ApplicationState
+import com.cmc12th.runway.ui.setting.SettingViewModel
 import com.cmc12th.runway.ui.theme.*
-import com.cmc12th.runway.utils.Constants
 
 @Composable
-fun SettingWithdrawalScreen(appState: ApplicationState) {
+fun SettingWithdrawalScreen(appState: ApplicationState, viewModel: SettingViewModel) {
 
     val withDrawalCheckbox = remember {
         mutableStateOf(false)

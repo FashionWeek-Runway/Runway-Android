@@ -13,5 +13,11 @@ data class UserInformationManagamentInfo(
     @Json(name = "phone")
     val phone: String,
     @Json(name = "social")
-    val social: Boolean
-)
+    val social: Boolean,
+) {
+    companion object {
+        fun default() = UserInformationManagamentInfo(
+            apple = false,
+            kakao = false, phone = "-", social = false)
+    }
+}

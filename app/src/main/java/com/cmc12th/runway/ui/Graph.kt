@@ -149,14 +149,17 @@ fun NavGraphBuilder.settingGraph(
     appState: ApplicationState,
 ) {
     navigation(startDestination = SETTING_MAIN_ROUTE, route = SETTING_GRAPH) {
-        composable(SETTING_MAIN_ROUTE) {
-            SettingMainScreen(appState)
+        composable(SETTING_MAIN_ROUTE) { entry ->
+            val backStackEntry = rememberNavControllerBackEntry(entry, appState, SETTING_GRAPH)
+            SettingMainScreen(appState, hiltViewModel(backStackEntry))
         }
-        composable(SETTING_PERSONAL_INFO_MANAGEMENT_ROUTE) {
-            SettingPersonalInfoManagementScreen(appState)
+        composable(SETTING_PERSONAL_INFO_MANAGEMENT_ROUTE) { entry ->
+            val backStackEntry = rememberNavControllerBackEntry(entry, appState, SETTING_GRAPH)
+            SettingPersonalInfoManagementScreen(appState, hiltViewModel(backStackEntry))
         }
-        composable(SETTING_WITHDRAWAL_ROUTE) {
-            SettingWithdrawalScreen(appState)
+        composable(SETTING_WITHDRAWAL_ROUTE) { entry ->
+            val backStackEntry = rememberNavControllerBackEntry(entry, appState, SETTING_GRAPH)
+            SettingWithdrawalScreen(appState, hiltViewModel(backStackEntry))
         }
     }
 }
