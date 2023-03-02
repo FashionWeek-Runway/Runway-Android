@@ -18,6 +18,7 @@ import com.cmc12th.runway.ui.login.passwordsearch.view.PasswordSearchPhoneScreen
 import com.cmc12th.runway.ui.login.passwordsearch.view.PasswordSearchVerifyScreen
 import com.cmc12th.runway.ui.login.view.LoginBaseScreen
 import com.cmc12th.runway.ui.map.view.MapScreen
+import com.cmc12th.runway.ui.mypage.view.EditProfileScreen
 import com.cmc12th.runway.ui.mypage.view.MypageScreen
 import com.cmc12th.runway.ui.setting.SettingMainScreen
 import com.cmc12th.runway.ui.setting.view.SettingPersonalInfoManagementScreen
@@ -29,6 +30,7 @@ import com.cmc12th.runway.utils.Constants.LOGIN_BASE_ROUTE
 import com.cmc12th.runway.utils.Constants.LOGIN_GRAPH
 import com.cmc12th.runway.utils.Constants.LOGIN_ID_PW_ROUTE
 import com.cmc12th.runway.utils.Constants.MAIN_GRAPH
+import com.cmc12th.runway.utils.Constants.MYPAGE_EDIT_PROFILE_ROUTE
 import com.cmc12th.runway.utils.Constants.PASSWORD_SEARCH_GRAPH
 import com.cmc12th.runway.utils.Constants.PASSWORD_SEARCH_PHONE_CHANGE_PASSWORD
 import com.cmc12th.runway.utils.Constants.PASSWORD_SEARCH_PHONE_ROUTE
@@ -60,17 +62,8 @@ fun NavGraphBuilder.mainGraph(
         composable(Screen.Mypage.route) {
             MypageScreen(appState)
         }
+
         navigation(startDestination = DETAIL_ROUTE, route = DETAIL_GRAPH) {
-//            composable(route = "$DETAIL_ROUTE?idx={idx}",
-//                arguments = listOf(
-//                    navArgument("idx") {
-//                        type = NavType.IntType
-//                    }
-//                )
-//            ) { entry ->
-//                val idx = entry.arguments?.getInt("idx") ?: 0
-//                DetailScreen(appState, idx, detailVIewModel = detailVIewModel)
-//            }
             composable(route = "$REVIEW_WRITE_ROUTE?idx={idx}",
                 arguments = listOf(
                     navArgument("idx") {
@@ -113,6 +106,10 @@ fun NavGraphBuilder.mainGraph(
             )) { entry ->
             val idx = entry.arguments?.getInt("reviewId") ?: 0
             ReviewReportScreen(appState, idx)
+        }
+
+        composable(route = MYPAGE_EDIT_PROFILE_ROUTE) {
+            EditProfileScreen(appState = appState)
         }
     }
 }

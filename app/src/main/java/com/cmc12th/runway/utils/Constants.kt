@@ -20,6 +20,8 @@ object Constants {
     const val MAP_ROUTE = "nav-map"
     const val MYPAGE_ROUTE = "nav-mypage"
 
+    const val MYPAGE_EDIT_PROFILE_ROUTE = "nav-mypage-edit-profile"
+
     const val LOGIN_BASE_ROUTE = "nav-login"
     const val LOGIN_ID_PW_ROUTE = "nav-login_id_pw"
     const val SPLASH_ROUTE = "nav-splash"

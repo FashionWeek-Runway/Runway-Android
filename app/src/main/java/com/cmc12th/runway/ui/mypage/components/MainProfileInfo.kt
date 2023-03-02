@@ -3,6 +3,7 @@ package com.cmc12th.runway.ui.mypage.components
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
@@ -25,7 +26,9 @@ import com.cmc12th.runway.ui.theme.HeadLine4M
 import com.cmc12th.runway.ui.theme.Primary
 
 @Composable
-fun MainProfileInfo() {
+fun MainProfileInfo(
+    navigateToEditProfile: () -> Unit
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -33,7 +36,11 @@ fun MainProfileInfo() {
         horizontalArrangement = Arrangement.spacedBy(20.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Box(modifier = Modifier.size(60.dp)) {
+        Box(modifier = Modifier
+            .size(60.dp)
+            .clickable {
+                navigateToEditProfile()
+            }) {
             AsyncImage(
                 modifier = Modifier
                     .clip(CircleShape)
