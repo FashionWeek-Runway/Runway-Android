@@ -1,6 +1,5 @@
 package com.cmc12th.runway.ui.signin.view
 
-import androidx.compose.animation.*
 import androidx.compose.foundation.*
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.scrollable
@@ -15,8 +14,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -24,10 +21,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.cmc12th.runway.R
-import com.cmc12th.runway.ui.components.BackIcon
-import com.cmc12th.runway.ui.components.HeightSpacer
-import com.cmc12th.runway.ui.components.WidthSpacer
-import com.cmc12th.runway.ui.components.WidthSpacerLine
+import com.cmc12th.runway.ui.components.*
 import com.cmc12th.runway.ui.signin.components.OnBoardStep
 import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.signin.SignInViewModel
@@ -143,7 +137,7 @@ fun AgreementComponent(
             .padding(10.dp, 6.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        AgreementCheckBox(checkState = isChecked,
+        RunwayCheckBox(checkState = isChecked,
             onChecked = { onCheck() })
         WidthSpacer(width = 20.dp)
         Row(
@@ -178,43 +172,11 @@ fun AgreementAll(
             },
         verticalAlignment = Alignment.CenterVertically
     ) {
-        AgreementCheckBox(
+        RunwayCheckBox(
             checkState = checkState,
             onChecked = { onChecked() }
         )
         WidthSpacer(width = 20.dp)
         Text(text = "약관 전체 동의", fontSize = 16.sp, fontWeight = FontWeight.Medium)
-    }
-}
-
-@Composable
-fun AgreementCheckBox(
-    checkState: Boolean,
-    onChecked: () -> Unit,
-) {
-    Box(
-        modifier = Modifier
-            .size(24.dp)
-            .border(BorderStroke(if (checkState) 0.dp else 1.dp, Gray300))
-            .background(if (checkState) Primary else Color.White)
-            .clickable {
-                onChecked()
-            }
-    ) {
-        AnimatedVisibility(
-            visible = checkState, modifier = Modifier
-                .align(Alignment.Center)
-        ) {
-            if (checkState) {
-                Icon(
-                    modifier = Modifier
-                        .size(16.dp)
-                        .align(Alignment.Center),
-                    painter = painterResource(id = R.drawable.ic_check),
-                    contentDescription = "IC_CHECK",
-                    tint = Point
-                )
-            }
-        }
     }
 }
