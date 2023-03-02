@@ -13,9 +13,11 @@ import com.cmc12th.runway.R
 import com.cmc12th.runway.ui.components.HeightSpacer
 import com.cmc12th.runway.ui.components.RunwayIconButton
 import com.cmc12th.runway.ui.domain.model.ApplicationState
+import com.cmc12th.runway.ui.domain.model.ReviewViwerType
 import com.cmc12th.runway.ui.mypage.MypageViewModel
 import com.cmc12th.runway.ui.mypage.components.*
 import com.cmc12th.runway.ui.theme.*
+import com.cmc12th.runway.utils.Constants
 import com.cmc12th.runway.utils.Constants.BOTTOM_NAVIGATION_HEIGHT
 import com.cmc12th.runway.utils.Constants.DETAIL_GRAPH
 import com.cmc12th.runway.utils.Constants.LOGIN_GRAPH
@@ -82,7 +84,12 @@ fun MypageScreen(appState: ApplicationState) {
                     if (myReviews.itemCount == 0) {
                         EmptyMyReview()
                     } else {
-                        MyReviews(myReviews)
+                        MyReviews(
+                            navigateToUserReviewDetail = { index ->
+                                appState.navigate("${Constants.REVIEW_DETAIL_ROUTE}?reviewId=${index}&viewerType=${ReviewViwerType.MYPAGE.typeToString}")
+                            },
+                            myReviews = myReviews
+                        )
                     }
                 }
             }

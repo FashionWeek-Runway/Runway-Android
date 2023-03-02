@@ -45,6 +45,7 @@ import com.cmc12th.runway.ui.detail.photoreview.ReviewViewModel
 import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.domain.model.BottomSheetContent
 import com.cmc12th.runway.ui.domain.model.BottomSheetContentItem
+import com.cmc12th.runway.ui.domain.model.ReviewViwerType
 import com.cmc12th.runway.ui.domain.rememberBottomSheet
 import com.cmc12th.runway.ui.theme.*
 import com.cmc12th.runway.utils.Constants.REVIEW_REPORT_ROUTE
@@ -57,7 +58,10 @@ enum class ReviewMoveDirection {
 }
 
 @Composable
-fun ReviewDetailScreen(appState: ApplicationState, reviewId: Int) {
+fun ReviewDetailScreen(
+    appState: ApplicationState, reviewId: Int,
+    viewerType: ReviewViwerType
+) {
 
     val bottomsheetState = rememberBottomSheet()
     val coroutineScope = rememberCoroutineScope()
@@ -73,7 +77,14 @@ fun ReviewDetailScreen(appState: ApplicationState, reviewId: Int) {
     LaunchedEffect(key1 = Unit) {
         appState.bottomBarState.value = false
         bottomsheetState.modalSheetState.animateTo(ModalBottomSheetValue.Hidden)
-        reviewViewModel.getReviewDetail(reviewId)
+        when (viewerType) {
+            ReviewViwerType.STORE_DETAIL -> {
+                reviewViewModel.getReviewDetailStore(reviewId)
+            }
+            ReviewViwerType.MYPAGE -> {
+                reviewViewModel.getReviewDetailMypage(reviewId)
+            }
+        }
     }
 
     appState.systmeUiController.setStatusBarColor(Color.Black)
@@ -100,9 +111,19 @@ fun ReviewDetailScreen(appState: ApplicationState, reviewId: Int) {
                 appState.navigate("$REVIEW_REPORT_ROUTE?reviewId=$reviewId")
             },
             getReviewDetail = { idx, onSuccess ->
-                reviewViewModel.getReviewDetail(idx) {
-                    onSuccess()
+                when (viewerType) {
+                    ReviewViwerType.STORE_DETAIL -> {
+                        reviewViewModel.getReviewDetailStore(idx) {
+                            onSuccess()
+                        }
+                    }
+                    ReviewViwerType.MYPAGE -> {
+                        reviewViewModel.getReviewDetailMypage(idx) {
+                            onSuccess()
+                        }
+                    }
                 }
+
             },
             deleteReview = {
                 reviewViewModel.deleteReview(reviewId = reviewId, onSuccess = {

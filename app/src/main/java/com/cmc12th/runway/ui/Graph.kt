@@ -10,6 +10,7 @@ import com.cmc12th.runway.ui.detail.photoreview.view.ReviewWriteScreen
 import com.cmc12th.runway.ui.detail.photoreview.view.ReviewDetailScreen
 import com.cmc12th.runway.ui.detail.photoreview.view.ReviewReportScreen
 import com.cmc12th.runway.ui.domain.model.ApplicationState
+import com.cmc12th.runway.ui.domain.model.ReviewViwerType
 import com.cmc12th.runway.ui.home.HomeScreen
 import com.cmc12th.runway.ui.login.view.LoginIdPasswdScreen
 import com.cmc12th.runway.ui.login.passwordsearch.view.PasswordSearchChagnePasswordScreen
@@ -85,14 +86,23 @@ fun NavGraphBuilder.mainGraph(
             }
         }
 
-        composable(route = "$REVIEW_DETAIL_ROUTE?reviewId={reviewId}",
+        composable(
+            route = "$REVIEW_DETAIL_ROUTE?reviewId={reviewId}&viewerType={viewerType}",
             arguments = listOf(
                 navArgument("reviewId") {
                     type = NavType.IntType
-                }
-            )) { entry ->
+                },
+                navArgument("viewerType") {
+                    type = NavType.StringType
+                },
+            )
+        ) { entry ->
             val idx = entry.arguments?.getInt("reviewId") ?: 0
-            ReviewDetailScreen(appState, idx)
+            val viewerType =
+                ReviewViwerType.convertStringToEnum(
+                    entry.arguments?.getString("viewerType") ?: "STORE_DETAIL"
+                )
+            ReviewDetailScreen(appState, idx, viewerType)
         }
 
         composable(route = "$REVIEW_REPORT_ROUTE?reviewId={reviewId}",

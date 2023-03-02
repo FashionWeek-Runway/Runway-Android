@@ -1,5 +1,6 @@
 package com.cmc12th.runway.ui.mypage.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -18,12 +19,16 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.cmc12th.runway.R
 import com.cmc12th.runway.data.response.user.MyReviewsItem
+import com.cmc12th.runway.ui.domain.model.ReviewViwerType
 import com.cmc12th.runway.ui.theme.Caption
 import com.cmc12th.runway.ui.theme.Gray100
+import com.cmc12th.runway.utils.Constants
 
 
 @Composable
-fun ColumnScope.MyReviews(myReviews: LazyPagingItems<MyReviewsItem>) {
+fun ColumnScope.MyReviews(
+    navigateToUserReviewDetail: (index: Int) -> Unit, myReviews: LazyPagingItems<MyReviewsItem>
+) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(3),
         modifier = Modifier.fillMaxWidth(),
@@ -31,7 +36,11 @@ fun ColumnScope.MyReviews(myReviews: LazyPagingItems<MyReviewsItem>) {
         verticalArrangement = Arrangement.spacedBy(3.dp)
     ) {
         items(myReviews.itemCount) { index ->
-            Box(modifier = Modifier.weight(1f)) {
+            Box(modifier = Modifier
+                .weight(1f)
+                .clickable {
+                    navigateToUserReviewDetail(myReviews[index]?.reviewId ?: 0)
+                }) {
                 AsyncImage(
                     modifier = Modifier
                         .aspectRatio(0.65f)

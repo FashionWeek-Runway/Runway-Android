@@ -24,6 +24,7 @@ import com.cmc12th.runway.ui.detail.components.*
 import com.cmc12th.runway.ui.detail.domain.ManageSystemBarColor
 import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.domain.model.BottomSheetContent
+import com.cmc12th.runway.ui.domain.model.ReviewViwerType
 import com.cmc12th.runway.ui.domain.rememberBottomSheet
 import com.cmc12th.runway.ui.theme.*
 import com.cmc12th.runway.utils.Constants.REVIEW_DETAIL_ROUTE
@@ -127,7 +128,7 @@ fun DetailScreen(
                     galleryLauncher = galleryLauncher,
                     cameraLauncher = camearLauncher,
                     navigateToUserReviewDetail = {
-                        appState.navigate("$REVIEW_DETAIL_ROUTE?reviewId=${it.reviewId}")
+                        appState.navigate("$REVIEW_DETAIL_ROUTE?reviewId=${it.reviewId}&viewerType=${ReviewViwerType.STORE_DETAIL.typeToString}")
                     }
                 )
                 WidthSpacerLine(height = 8.dp, color = Gray100)
