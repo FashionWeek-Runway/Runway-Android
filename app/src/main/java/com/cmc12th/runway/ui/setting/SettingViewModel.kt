@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.cmc12th.runway.data.repository.AuthRepositoryImpl
 import com.cmc12th.runway.data.request.OauthLoginRequest
 import com.cmc12th.runway.data.response.ErrorResponse
 import com.cmc12th.runway.data.response.user.UserInformationManagamentInfo
@@ -47,6 +48,23 @@ class SettingViewModel @Inject constructor(
         }
     }
 
+    fun logout(onSuccess: () -> Unit) = viewModelScope.launch {
+        authRepository.setToken(AuthRepositoryImpl.ACCESS_TOKEN, "")
+        authRepository.setToken(AuthRepositoryImpl.REFRESH_TOKEN, "")
+        UserApiClient.instance.unlink { error ->
+            if (error != null) {
+                Log.e("dlgocks1", "연결 끊기 실패", error)
+            } else {
+                Log.i("dlgocks1", "연결 끊기 성공. SDK에서 토큰 삭제 됨")
+            }
+        }
+        authRepository.logout().collect {
+            it.onSuccess {
+                onSuccess()
+            }
+        }
+    }
+    
     private fun linkToKakao(
         kakaoToken: String,
         onSuccess: () -> Unit,

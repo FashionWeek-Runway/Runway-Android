@@ -27,24 +27,7 @@ class MypageViewModel @Inject constructor(
     private val _bookmarkedStore =
         MutableStateFlow<PagingData<StoreMetaDataItem>>(PagingData.empty())
     val bookmarkedStore: StateFlow<PagingData<StoreMetaDataItem>> = _bookmarkedStore.asStateFlow()
-
-    fun logout(onSuccess: () -> Unit) = viewModelScope.launch {
-        authRepository.setToken(ACCESS_TOKEN, "")
-        authRepository.setToken(REFRESH_TOKEN, "")
-        UserApiClient.instance.unlink { error ->
-            if (error != null) {
-                Log.e("dlgocks1", "연결 끊기 실패", error)
-            } else {
-                Log.i("dlgocks1", "연결 끊기 성공. SDK에서 토큰 삭제 됨")
-            }
-        }
-        authRepository.logout().collect {
-            it.onSuccess {
-                onSuccess()
-            }
-        }
-    }
-
+    
     fun getMyReviews() = viewModelScope.launch {
         authRepository.myReviewPaging().cachedIn(viewModelScope).collect {
             _myReviews.value = it

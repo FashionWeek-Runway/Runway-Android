@@ -34,15 +34,7 @@ enum class MypageTabInfo(val id: Int) {
 fun MypageScreen(appState: ApplicationState) {
 
     val viewModel: MypageViewModel = hiltViewModel()
-    val logout = {
-        viewModel.logout {
-            appState.navController.navigate(LOGIN_GRAPH) {
-                popUpTo(MAIN_GRAPH) {
-                    inclusive = true
-                }
-            }
-        }
-    }
+
 
     val selectedPage = remember {
         mutableStateOf(MypageTabInfo.MY_REVIEW)
