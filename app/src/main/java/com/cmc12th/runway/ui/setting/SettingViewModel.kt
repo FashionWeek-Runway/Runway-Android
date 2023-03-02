@@ -6,10 +6,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cmc12th.runway.data.repository.AuthRepositoryImpl
 import com.cmc12th.runway.data.request.OauthLoginRequest
+import com.cmc12th.runway.data.request.PasswordAndPhoneNumberRequest
 import com.cmc12th.runway.data.response.ErrorResponse
 import com.cmc12th.runway.data.response.user.UserInformationManagamentInfo
 import com.cmc12th.runway.domain.repository.AuthRepository
 import com.cmc12th.runway.domain.repository.SignInRepository
+import com.cmc12th.runway.ui.signin.SignInPasswordUiState
+import com.cmc12th.runway.ui.signin.model.Password
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
@@ -26,10 +29,13 @@ data class SettingPersonalInfoUiState(
 @HiltViewModel
 class SettingViewModel @Inject constructor(
     private val authRepository: AuthRepository,
-    private val signInRepository: SignInRepository,
+    private val signInRepository: SignInRepository
 ) : ViewModel() {
 
     private val _personalInfo = MutableStateFlow(UserInformationManagamentInfo.default())
+
+    private val _password = MutableStateFlow(Password.default())
+    private val _retryPassword = MutableStateFlow(Password.default())
 
     val personalInfoUiState: StateFlow<SettingPersonalInfoUiState> =
         combine(_personalInfo) { flowArr ->
@@ -39,6 +45,28 @@ class SettingViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = SettingPersonalInfoUiState()
         )
+
+    val passwordUiState: StateFlow<SignInPasswordUiState> =
+        combine(_password, _retryPassword) { password, retryPassword ->
+            SignInPasswordUiState(password = password, retryPassword = retryPassword)
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = SignInPasswordUiState()
+        )
+
+//    fun modifyPassword(onSuccess: () -> Unit, onError: (ErrorResponse) -> Unit) =
+//        viewModelScope.launch {
+//            signInRepository.modifyPassword(
+//                passwordAndPhoneNumberRequest = PasswordAndPhoneNumberRequest(
+//                    phone = _phone.value.number,
+//                    password = _retryPassword.value.value
+//                )
+//            ).collect { apiState ->
+//                apiState.onSuccess { onSuccess() }
+//                apiState.onError { onError(it) }
+//            }
+//        }
 
     fun getPersonalInfo() = viewModelScope.launch {
         authRepository.getInformationManagementInfo().collectLatest { apiState ->
@@ -64,7 +92,7 @@ class SettingViewModel @Inject constructor(
             }
         }
     }
-    
+
     private fun linkToKakao(
         kakaoToken: String,
         onSuccess: () -> Unit,
@@ -136,33 +164,4 @@ class SettingViewModel @Inject constructor(
 
     }
 
-//    private fun kakaoLogin(
-//        accessToken: String,
-//        alreadyRegistered: () -> Unit,
-//        notRegistered: (profileImageUrl: String, kakaoId: String) -> Unit,
-//        onError: (ErrorResponse) -> Unit,
-//    ) = viewModelScope.launch {
-//        signInRepository.kakaoLogin(OauthLoginRequest(accessToken = accessToken))
-//            .collect { apiWrapper ->
-//                apiWrapper.onSuccess {
-//                    onSignInComplete(it.result.accessToken, it.result.refreshToken)
-//                    alreadyRegistered()
-//                }
-//                apiWrapper.onError { errorResponse ->
-//                    // 등록이 안되있는 유저일 때
-//                    if (errorResponse.code == "U022") {
-//                        // errorBody로 오는 String은 따로 파싱하여 사용해야 할 듯 도저히 구현이 안됨
-//                        /** Json을 refied를 사용하여 Generic Obejct로 파싱 */
-//                        val notRegisteredResponse: ResponseWrapper<NotRegisteredResponse> =
-//                            GsonHelper.fromJson(errorResponse.totalResponse)
-//                        notRegistered(
-//                            notRegisteredResponse.result.profileImgUrl,
-//                            notRegisteredResponse.result.kakaoId
-//                        )
-//                    } else {
-//                        onError(errorResponse)
-//                    }
-//                }
-//            }
-//    }
 }
