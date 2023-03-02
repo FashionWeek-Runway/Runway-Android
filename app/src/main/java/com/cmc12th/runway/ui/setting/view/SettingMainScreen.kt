@@ -11,7 +11,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.cmc12th.runway.ui.components.BackIcon
 import com.cmc12th.runway.ui.components.RunwaySwitch
@@ -19,25 +18,27 @@ import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.theme.*
 import com.cmc12th.runway.utils.Constants.SETTING_PERSONAL_INFO_MANAGEMENT_ROUTE
 
-
-data class SettingItem(
+data class MypageItemWrapper(
     val title: String,
     val onClick: () -> Unit,
 )
 
 @Composable
-fun SettingMainScreen(appState: ApplicationState) {
+fun SettingMainScreen(
+    appState: ApplicationState,
+    viewModel: SettingViewModel,
+) {
 
-    val account = listOf(SettingItem("개인 정보 관리", onClick = {
+    val account = listOf(MypageItemWrapper("개인 정보 관리", onClick = {
         appState.navigate(SETTING_PERSONAL_INFO_MANAGEMENT_ROUTE)
     }))
-    val inquiry = listOf(SettingItem("쇼룸 추가 요청", onClick = {}))
+    val inquiry = listOf(MypageItemWrapper("쇼룸 추가 요청", onClick = {}))
 
     val policies = listOf(
-        SettingItem("이용약관", onClick = {}),
-        SettingItem("개인정보 처리 방침", onClick = {}),
-        SettingItem("위치정보 이용 약관", onClick = {}),
-        SettingItem("마케팅 정보 수신 동의 약관", onClick = {}),
+        MypageItemWrapper("이용약관", onClick = {}),
+        MypageItemWrapper("개인정보 처리 방침", onClick = {}),
+        MypageItemWrapper("위치정보 이용 약관", onClick = {}),
+        MypageItemWrapper("마케팅 정보 수신 동의 약관", onClick = {}),
     )
 
     val alaramState = remember {
@@ -134,7 +135,7 @@ fun SettingMainScreen(appState: ApplicationState) {
 }
 
 @Composable
-private fun BaseSettingWrapper(title: String, items: List<SettingItem>) {
+private fun BaseSettingWrapper(title: String, items: List<MypageItemWrapper>) {
     Column(modifier = Modifier
         .fillMaxWidth()
         .padding(20.dp, 12.dp)) {
