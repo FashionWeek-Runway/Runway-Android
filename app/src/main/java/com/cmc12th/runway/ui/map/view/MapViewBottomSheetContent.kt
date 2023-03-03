@@ -18,6 +18,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.items
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.cmc12th.runway.R
@@ -44,6 +46,7 @@ fun MapViewBottomSheetContent(
     Column(
         modifier = Modifier
             .navigationBarsPadding()
+            .fillMaxWidth()
             .isFullScreen(isFullScreen, screenHeight)
             .wrapContentHeight()
             .padding(
@@ -75,57 +78,77 @@ fun MapViewBottomSheetContent(
                     .background(Gray200)
                     .align(Alignment.CenterHorizontally)
             )
-            HeightSpacer(height = 10.dp)
-            Text(
-                text = "[성수동] 둘러보기", style = Body1M, color = Color.Black,
-                modifier = Modifier.padding(bottom = 20.dp)
-            )
-        }
-
-        when (contents) {
-            BottomSheetContent.DEFAULT -> {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(0.dp, 100.dp),
-                    verticalArrangement = Arrangement.Bottom,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.img_dummy),
-                        contentDescription = "IMG_DUMMY",
-                        modifier = Modifier.size(100.dp)
+            /** 제목 타이틀 */
+            when (contents) {
+                BottomSheetContent.DEFAULT -> {}
+                BottomSheetContent.LOADING -> {}
+                is BottomSheetContent.MULTI -> {
+                    HeightSpacer(height = 10.dp)
+                    Text(
+                        text = contents.locationName, style = Body1M, color = Color.Black,
+                        modifier = Modifier.padding(bottom = 20.dp)
                     )
-                    HeightSpacer(height = 30.dp)
-                    Text(text = "아직 등록된 매장이 없습니다.", style = Body1, color = Black)
-                    Text(text = "위치를 이동하거나 필터를 변경해보세요.", style = Body2, color = Gray500)
+                }
+                is BottomSheetContent.SINGLE -> {
+                    HeightSpacer(height = 10.dp)
                 }
             }
-            is BottomSheetContent.MULTI -> {
-                LazyColumn(verticalArrangement = Arrangement.spacedBy(20.dp)) {
-                    items(contents.getData()) {
-                        BottomDetailItem(navigateToDetail, it)
+
+            when (contents) {
+                BottomSheetContent.DEFAULT -> {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(0.dp, 100.dp),
+                        verticalArrangement = Arrangement.Bottom,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.img_dummy),
+                            contentDescription = "IMG_DUMMY",
+                            modifier = Modifier.size(100.dp)
+                        )
+                        HeightSpacer(height = 30.dp)
+                        Text(text = "아직 등록된 매장이 없습니다.", style = Body1, color = Black)
+                        Text(text = "위치를 이동하거나 필터를 변경해보세요.", style = Body2, color = Gray500)
                     }
                 }
-            }
-            is BottomSheetContent.SINGLE -> {
-                LazyColumn {
-                    items(contents.getData()) {
-                        Column(modifier = Modifier.clickable {
-                            navigateToDetail(it.storeId, it.storeName)
-                        }) {
-                            BottomDetailItem(navigateToDetail, it)
+                is BottomSheetContent.MULTI -> {
+                    val pagingContents = contents.contents.collectAsLazyPagingItems()
+                    LazyColumn(verticalArrangement = Arrangement.spacedBy(20.dp)) {
+                        items(pagingContents) {
+                            it?.let {
+                                BottomDetailItem(navigateToDetail, it)
+                            }
                         }
                     }
                 }
-            }
-            BottomSheetContent.LOADING -> {
-
+                is BottomSheetContent.SINGLE -> {
+                    BottomDetailItem(navigateToDetail, contents.contents)
+                }
+                BottomSheetContent.LOADING -> {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(0.dp, 100.dp),
+                        verticalArrangement = Arrangement.Bottom,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.img_dummy),
+                            contentDescription = "IMG_DUMMY",
+                            modifier = Modifier.size(100.dp)
+                        )
+                        HeightSpacer(height = 30.dp)
+                        Text(text = "아직 등록된 매장이 없습니다.", style = Body1, color = Black)
+                        Text(text = "위치를 이동하거나 필터를 변경해보세요.", style = Body2, color = Gray500)
+                    }
+                }
             }
         }
     }
-}
 
+}
 
 private fun Modifier.isFullScreen(isFullScreen: Boolean, screenHeight: Dp): Modifier {
     return if (isFullScreen) {

@@ -266,6 +266,7 @@ private fun MapViewContents(
                 onClick = {
                     refershIconVisiblity.value = false
                     mapViewModel.mapFiltering(appState.cameraPositionState.position.target)
+                    mapViewModel.mapScrollInfoPaging(appState.cameraPositionState.position.target)
                 }
             )
 

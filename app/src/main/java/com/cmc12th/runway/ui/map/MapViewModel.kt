@@ -11,11 +11,16 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
+import androidx.paging.filter
+import androidx.paging.map
 import com.cmc12th.runway.data.model.RecentStr
 import com.cmc12th.runway.data.model.SearchType
 import com.cmc12th.runway.ui.map.model.NaverItem
 import com.cmc12th.runway.data.request.map.MapFilterRequest
 import com.cmc12th.runway.data.request.map.MapSearchRequest
+import com.cmc12th.runway.data.response.map.MapInfoItem
 import com.cmc12th.runway.data.response.map.RegionSearch
 import com.cmc12th.runway.data.response.map.StoreSearch
 import com.cmc12th.runway.data.response.map.toNaverMapItem
@@ -63,7 +68,7 @@ data class SearchUiState(
 class MapViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val mapRepository: MapRepository,
-    private val searchRepository: SearchRepository
+    private val searchRepository: SearchRepository,
 ) : ViewModel(), LifecycleObserver {
 
     private val fusedLocationClient: FusedLocationProviderClient =
@@ -138,6 +143,7 @@ class MapViewModel @Inject constructor(
         }
     }
 
+    @Suppress("UNCHECKED_CAST")
     val searchUiState = combine(
         _searchText,
         _regionSearch,
@@ -191,21 +197,18 @@ class MapViewModel @Inject constructor(
     }
 
     /** 맵 스크롤 정보(여러개) 가져오기 */
-    fun mapScrollInfo(latLng: LatLng) = viewModelScope.launch {
-        mapRepository.mapInfoPaging(page = 0, size = 10,
-            mapFilterRequest = MapFilterRequest(
-                latitude = latLng.latitude,
-                longitude = latLng.longitude,
-                category = _categoryItems.value.filter { it.isSelected }.map { it.name },
-            )
-        ).collect { apiState ->
-            apiState.onSuccess {
-                _bottomsheetItem.value =
-                    BottomSheetContent.MULTI(contents = it.pagingMetadata.contents)
-            }
-            apiState.onError {
-
-            }
+    fun mapScrollInfoPaging(latLng: LatLng) = viewModelScope.launch {
+        mapRepository.getMpaInfoPagingItem(mapFilterRequest = MapFilterRequest(
+            latitude = latLng.latitude,
+            longitude = latLng.longitude,
+            category = _categoryItems.value.filter { it.isSelected }.map { it.name },
+        )).cachedIn(viewModelScope).collect {
+            _bottomsheetItem.value =
+                BottomSheetContent.MULTI(
+                    "[지역이름]을 어디서 구해오지??",
+                    MutableStateFlow(PagingData.empty())).apply {
+                    this.contents.value = it
+                }
         }
     }
 
@@ -297,21 +300,18 @@ class MapViewModel @Inject constructor(
         }
     }
 
+    /** 검색 시 바텀 스크롤 아이템 */
     fun searchLocationInfoPaging(region: String, regionId: Int) = viewModelScope.launch {
-        mapRepository.locationInfoPaging(regionId = regionId, page = 0, size = 10)
-            .collect { apiState ->
-                apiState.onSuccess {
-                    updateBottomSheetItem(
-                        BottomSheetContent.MULTI(
-                            region,
-                            it.pagingMetadata.contents.map {
-                                it.toMapInfoItem()
-                            }
-                        )
-                    )
+        mapRepository.getLocationInfoPagingItem(
+            regionId = regionId,
+        ).cachedIn(viewModelScope).collect {
+            _bottomsheetItem.value =
+                BottomSheetContent.MULTI(region, MutableStateFlow(PagingData.empty())).apply {
+                    this.contents.value = it
                 }
-            }
+        }
     }
+
 
     fun saveTempDatas() {
         scrollTemp = _bottomsheetItem.value
@@ -323,6 +323,7 @@ class MapViewModel @Inject constructor(
     }
 
     fun loadTempDatas() {
+        Log.i("dlgocks1", scrollTemp.toString())
         _bottomsheetItem.value = scrollTemp
         _markerItems.value = markerItemsTemp
     }
@@ -402,6 +403,7 @@ class MapViewModel @Inject constructor(
     fun updateIsBookmarked(isBookmarked: Boolean, position: LatLng) {
         _isBookmarked.value = isBookmarked
         mapFiltering(position)
+        mapScrollInfoPaging(position)
     }
 
     fun updateCategoryTags(categoryTag: CategoryTag, position: LatLng) {
@@ -409,6 +411,7 @@ class MapViewModel @Inject constructor(
             if (item.name == categoryTag.name) item.copy(isSelected = !item.isSelected) else item
         }.toMutableList()
         mapFiltering(position)
+        mapScrollInfoPaging(position)
     }
 
     private fun updateMarkerItems(naverItems: List<NaverItem>) {
@@ -454,7 +457,7 @@ class MapViewModel @Inject constructor(
                 // 초기 1회 진입할 때 마커 불러오기
                 if (initialMarkerLoadFlag) {
                     mapFiltering(LatLng(it.latitude, it.longitude))
-                    mapScrollInfo(LatLng(it.latitude, it.longitude))
+                    mapScrollInfoPaging(LatLng(it.latitude, it.longitude))
                     initialMarkerLoadFlag = false
                     _movingCameraPosition.value = MovingCameraWrapper.MOVING(it)
                 }

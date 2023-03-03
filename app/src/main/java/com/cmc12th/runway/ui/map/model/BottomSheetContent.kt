@@ -1,15 +1,19 @@
 package com.cmc12th.runway.ui.map.model
 
+import androidx.paging.PagingData
 import com.cmc12th.runway.data.response.map.MapInfoItem
+import kotlinx.coroutines.flow.MutableStateFlow
 
-sealed class BottomSheetContent(private val contents: List<MapInfoItem>) {
-    object DEFAULT : BottomSheetContent(emptyList())
-    object LOADING : BottomSheetContent(emptyList())
-    class SINGLE(val storeName: String = "", contents: MapInfoItem) :
-        BottomSheetContent(listOf(contents))
+sealed class BottomSheetContent() {
+    object DEFAULT : BottomSheetContent()
+    object LOADING : BottomSheetContent()
+    class SINGLE(val storeName: String = "", val contents: MapInfoItem) :
+        BottomSheetContent()
 
-    class MULTI(val locationName: String = "", contents: List<MapInfoItem>) :
-        BottomSheetContent(contents)
+    class MULTI(
+        val locationName: String = "",
+        val contents: MutableStateFlow<PagingData<MapInfoItem>>,
+    ) :
+        BottomSheetContent()
 
-    fun getData() = this.contents
 }

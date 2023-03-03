@@ -21,14 +21,15 @@ import com.cmc12th.runway.ui.theme.HeadLine4
 @Composable
 fun BottomDetailItem(
     navigateToDetail: (id: Int, storeName: String) -> Unit,
-    it: MapInfoItem
+    it: MapInfoItem,
 ) {
-    Column(modifier = Modifier.clickable {
-        navigateToDetail(it.storeId, it.storeName)
-    }) {
+    Column(modifier = Modifier
+        .clickable {
+            navigateToDetail(it.storeId, it.storeName)
+        }) {
         AsyncImage(
             modifier = Modifier
-                .fillMaxSize()
+                .fillMaxWidth()
                 .aspectRatio(1.6f),
             model = ImageRequest.Builder(LocalContext.current)
                 .data(it.storeImg)

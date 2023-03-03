@@ -1,5 +1,10 @@
 package com.cmc12th.runway.data.repository
 
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import com.cmc12th.runway.data.pagingsource.MapInfoItemByFilterPagingSource
+import com.cmc12th.runway.data.pagingsource.MapInfoItemByLocationSearchPagingSource
 import com.cmc12th.runway.data.request.map.MapFilterRequest
 import com.cmc12th.runway.data.request.map.MapSearchRequest
 import com.cmc12th.runway.data.response.map.*
@@ -28,6 +33,20 @@ class MapRepositoryImpl @Inject constructor(
         runwayClient.mapsInfoPaging(page, size, mapFilterRequest)
     }
 
+    override fun getMpaInfoPagingItem(mapFilterRequest: MapFilterRequest): Flow<PagingData<MapInfoItem>> {
+        return Pager(
+            config = PagingConfig(
+                pageSize = 10,
+            ),
+            pagingSourceFactory = {
+                MapInfoItemByFilterPagingSource(
+                    mapRepository = this,
+                    mapFilterRequest = mapFilterRequest
+                )
+            },
+        ).flow
+    }
+
     override fun mapSearch(mapSearchRequest: MapSearchRequest): Flow<ApiWrapper<MapSearchResponseBody>> =
         safeFlow {
             runwayClient.mapSearch(mapSearchRequest)
@@ -49,8 +68,22 @@ class MapRepositoryImpl @Inject constructor(
     override fun locationInfoPaging(
         regionId: Int,
         page: Int,
-        size: Int
+        size: Int,
     ): Flow<PagingApiWrapper<StoreInfo>> = safePagingFlow {
         runwayClient.mapRegionInfoPaging(regionId, page, size)
+    }
+
+    override fun getLocationInfoPagingItem(regionId: Int): Flow<PagingData<MapInfoItem>> {
+        return Pager(
+            config = PagingConfig(
+                pageSize = 10,
+            ),
+            pagingSourceFactory = {
+                MapInfoItemByLocationSearchPagingSource(
+                    mapRepository = this,
+                    regionId = regionId,
+                )
+            },
+        ).flow
     }
 }

@@ -1,5 +1,6 @@
 package com.cmc12th.runway.domain.repository
 
+import androidx.paging.PagingData
 import com.cmc12th.runway.data.request.map.MapFilterRequest
 import com.cmc12th.runway.data.request.map.MapSearchRequest
 import com.cmc12th.runway.data.response.map.*
@@ -28,7 +29,9 @@ interface MapRepository {
     fun locationInfoPaging(
         regionId: Int,
         page: Int,
-        size: Int
+        size: Int,
     ): Flow<PagingApiWrapper<StoreInfo>>
 
+    fun getMpaInfoPagingItem(mapFilterRequest: MapFilterRequest): Flow<PagingData<MapInfoItem>>
+    fun getLocationInfoPagingItem(regionId: Int): Flow<PagingData<MapInfoItem>>
 }
