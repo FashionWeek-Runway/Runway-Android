@@ -70,14 +70,18 @@ fun MapViewBottomSheetContent(
 
         /** 풀스크린이 아니고 확장상태가 아니면 탑바가 보인다. */
         if (!(isFullScreen && isExpanded)) {
-            Spacer(
-                modifier = Modifier
-                    .clip(RoundedCornerShape(5.dp))
-                    .height(3.dp)
-                    .width(36.dp)
-                    .background(Gray200)
-                    .align(Alignment.CenterHorizontally)
-            )
+            Box(modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.CenterHorizontally)) {
+                Spacer(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(5.dp))
+                        .height(3.dp)
+                        .width(36.dp)
+                        .background(Gray200)
+                        .align(Alignment.Center)
+                )
+            }
             /** 제목 타이틀 */
             when (contents) {
                 BottomSheetContent.DEFAULT -> {}
