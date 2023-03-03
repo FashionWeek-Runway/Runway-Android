@@ -207,7 +207,7 @@ class MapViewModel @Inject constructor(
                 BottomSheetContent.MULTI(
                     "[지역이름]을 어디서 구해오지??",
                     MutableStateFlow(PagingData.empty())).apply {
-                    this.contents.value = it
+                    this.contents.value = if (_isBookmarked.value) it.filter { it.bookmark } else it
                 }
         }
     }
@@ -300,7 +300,7 @@ class MapViewModel @Inject constructor(
         }
     }
 
-    /** 검색 시 바텀 스크롤 아이템 */
+    /** 장소 검색 시 바텀 스크롤 아이템 */
     fun searchLocationInfoPaging(region: String, regionId: Int) = viewModelScope.launch {
         mapRepository.getLocationInfoPagingItem(
             regionId = regionId,
@@ -373,6 +373,10 @@ class MapViewModel @Inject constructor(
         }
         if (dbItem == null) {
             searchRepository.addSearchStr(RecentStr(searchStr, dateInfo, searchType))
+        } else {
+            searchRepository.addSearchStr(RecentStr(searchStr, dateInfo, searchType).apply {
+                id = dbItem.id
+            })
         }
     }
 

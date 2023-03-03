@@ -15,5 +15,7 @@ data class MapInfoItem(
     @Json(name = "storeImg")
     val storeImg: String,
     @Json(name = "storeName")
-    val storeName: String
+    val storeName: String,
+    @Json(name = "bookmark")
+    val bookmark: Boolean = false,
 )

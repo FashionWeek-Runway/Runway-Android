@@ -82,7 +82,8 @@ fun MapViewBottomSheetContent(
                         .align(Alignment.Center)
                 )
             }
-            /** 제목 타이틀 */
+
+            /** 제목 */
             when (contents) {
                 BottomSheetContent.DEFAULT -> {}
                 BottomSheetContent.LOADING -> {}
@@ -97,62 +98,64 @@ fun MapViewBottomSheetContent(
                     HeightSpacer(height = 10.dp)
                 }
             }
+        }
 
-            when (contents) {
-                BottomSheetContent.DEFAULT -> {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(0.dp, 100.dp),
-                        verticalArrangement = Arrangement.Bottom,
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.img_store_empty),
-                            contentDescription = "IMG_STORE_EMPTY",
-                            modifier = Modifier.size(100.dp)
-                        )
-                        HeightSpacer(height = 30.dp)
-                        Text(text = "아직 등록된 매장이 없습니다.", style = Body1, color = Black)
-                        Text(text = "위치를 이동하거나 필터를 변경해보세요.", style = Body2, color = Gray500)
-                    }
+
+        /** 본문 내용 */
+        when (contents) {
+            BottomSheetContent.DEFAULT -> {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(0.dp, 100.dp),
+                    verticalArrangement = Arrangement.Bottom,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.img_store_empty),
+                        contentDescription = "IMG_STORE_EMPTY",
+                        modifier = Modifier.size(100.dp)
+                    )
+                    HeightSpacer(height = 30.dp)
+                    Text(text = "아직 등록된 매장이 없습니다.", style = Body1, color = Black)
+                    Text(text = "위치를 이동하거나 필터를 변경해보세요.", style = Body2, color = Gray500)
                 }
-                is BottomSheetContent.MULTI -> {
-                    val pagingContents = contents.contents.collectAsLazyPagingItems()
-                    LazyColumn(verticalArrangement = Arrangement.spacedBy(20.dp)) {
-                        items(pagingContents) {
-                            it?.let {
-                                BottomDetailItem(navigateToDetail, it)
-                            }
+            }
+            is BottomSheetContent.MULTI -> {
+                val pagingContents = contents.contents.collectAsLazyPagingItems()
+                LazyColumn(verticalArrangement = Arrangement.spacedBy(20.dp)) {
+                    items(pagingContents) {
+                        it?.let {
+                            BottomDetailItem(navigateToDetail, it)
                         }
                     }
                 }
-                is BottomSheetContent.SINGLE -> {
-                    BottomDetailItem(navigateToDetail, contents.contents)
-                }
-                BottomSheetContent.LOADING -> {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(0.dp, 100.dp),
-                        verticalArrangement = Arrangement.Bottom,
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.img_store_empty),
-                            contentDescription = "IMG_STORE_EMPTY",
-                            modifier = Modifier.size(100.dp)
-                        )
-                        HeightSpacer(height = 30.dp)
-                        Text(text = "아직 등록된 매장이 없습니다.", style = Body1, color = Black)
-                        Text(text = "위치를 이동하거나 필터를 변경해보세요.", style = Body2, color = Gray500)
-                    }
+            }
+            is BottomSheetContent.SINGLE -> {
+                BottomDetailItem(navigateToDetail, contents.contents)
+            }
+            BottomSheetContent.LOADING -> {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(0.dp, 100.dp),
+                    verticalArrangement = Arrangement.Bottom,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.img_store_empty),
+                        contentDescription = "IMG_STORE_EMPTY",
+                        modifier = Modifier.size(100.dp)
+                    )
+                    HeightSpacer(height = 30.dp)
+                    Text(text = "아직 등록된 매장이 없습니다.", style = Body1, color = Black)
+                    Text(text = "위치를 이동하거나 필터를 변경해보세요.", style = Body2, color = Gray500)
                 }
             }
         }
     }
-
 }
+
 
 private fun Modifier.isFullScreen(isFullScreen: Boolean, screenHeight: Dp): Modifier {
     return if (isFullScreen) {

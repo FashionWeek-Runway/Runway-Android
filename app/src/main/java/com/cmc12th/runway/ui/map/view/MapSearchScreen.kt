@@ -37,7 +37,6 @@ import com.cmc12th.runway.ui.map.MapViewModel
 import com.cmc12th.runway.ui.map.components.SearchTextField
 import com.cmc12th.runway.ui.theme.*
 import com.cmc12th.runway.utils.noRippleClickable
-import kotlinx.coroutines.Job
 
 
 @Composable
@@ -129,11 +128,11 @@ fun EmptyRecentSearches() {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(
-            painter = painterResource(id = R.drawable.img_dummy),
-            contentDescription = "IC_DUMMY",
+            painter = painterResource(id = R.drawable.img_empty_recent_search),
+            contentDescription = "IC_EMPTY_RECENT_SEARCH",
             modifier = Modifier.size(100.dp)
         )
-        Text(text = "최근 검색어가 없습니다.", style = Body1, color = Black)
+        Text(text = "지역이나 매장을 검색하여\n원하는 매장을 찾으세요.", style = Body1, color = Black)
     }
 }
 
@@ -195,7 +194,7 @@ fun OnSearching(
     onLocationSearch: (RegionSearch) -> Unit,
     regionSearchs: List<RegionSearch>,
     storeSearchs: List<StoreSearch>,
-    searchText: TextFieldValue
+    searchText: TextFieldValue,
 ) {
 
     if (storeSearchs.isEmpty() && regionSearchs.isEmpty()) {
@@ -215,8 +214,8 @@ private fun EmptyResult(searchText: TextFieldValue) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(
-            painter = painterResource(id = R.drawable.img_dummy),
-            contentDescription = "IC_DUMMY",
+            painter = painterResource(id = R.drawable.img_empty_search_result),
+            contentDescription = "IMG_EMPTY_SEARCH_RESULT",
             modifier = Modifier.size(100.dp)
         )
         HeightSpacer(height = 30.dp)
@@ -233,7 +232,7 @@ private fun ResultItems(
     searchText: TextFieldValue,
     onShopSearch: (StoreSearch) -> Unit,
     onLocationSearch: (RegionSearch) -> Unit,
-    storeSearchs: List<StoreSearch>
+    storeSearchs: List<StoreSearch>,
 ) {
     LazyColumn(
         modifier = Modifier
@@ -259,8 +258,9 @@ private fun ResultItems(
                     ) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_search_location),
-                            contentDescription = "IC_DUMMY",
-                            tint = Color.Unspecified
+                            contentDescription = "IC_SEARCH_LOCATION",
+                            tint = Color.Unspecified,
+                            modifier = Modifier.size(16.dp)
                         )
                     }
                     WidthSpacer(width = 4.dp)
@@ -316,9 +316,11 @@ private fun ResultItems(
                         modifier = Modifier.size(24.dp)
                     ) {
                         Icon(
-                            painter = painterResource(id = R.drawable.ic_search_location),
-                            contentDescription = "IC_DUMMY",
-                            tint = Color.Unspecified
+                            painter = painterResource(id = R.drawable.ic_filled_search_store_16),
+                            contentDescription = "IC_FILLED_SEARCH_STORE_16",
+                            tint = Color.Unspecified,
+                            modifier = Modifier.size(16.dp)
+
                         )
                     }
                     WidthSpacer(width = 4.dp)
@@ -421,7 +423,7 @@ private fun RecentSearches(
                     ) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_search_location),
-                            contentDescription = "IC_DUMMY",
+                            contentDescription = "IC_SEARCH_LOCATION",
                             tint = Color.Unspecified
                         )
                     }
