@@ -25,5 +25,5 @@ data class StoreDetail(
     @Json(name = "storeTime")
     val storeTime: String = "",
     @Json(name = "webSite")
-    val webSite: String = ""
+    val webSite: String? = "",
 )

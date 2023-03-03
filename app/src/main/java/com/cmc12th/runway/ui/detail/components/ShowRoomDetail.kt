@@ -71,7 +71,7 @@ fun ShowRoomDetail(storeDetail: StoreDetail) {
         ) {
             RunwayIconButton(size = 18.dp, drawable = R.drawable.ic_border_web_18)
             Text(
-                text = storeDetail.webSite,
+                text = storeDetail.webSite ?: "웹사이트 없음",
                 textDecoration = TextDecoration.Underline,
                 style = Body2,
                 color = Color.Black
