@@ -104,8 +104,8 @@ fun MapViewBottomSheetContent(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Image(
-                            painter = painterResource(id = R.drawable.img_dummy),
-                            contentDescription = "IMG_DUMMY",
+                            painter = painterResource(id = R.drawable.img_store_empty),
+                            contentDescription = "IMG_STORE_EMPTY",
                             modifier = Modifier.size(100.dp)
                         )
                         HeightSpacer(height = 30.dp)
@@ -135,8 +135,8 @@ fun MapViewBottomSheetContent(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Image(
-                            painter = painterResource(id = R.drawable.img_dummy),
-                            contentDescription = "IMG_DUMMY",
+                            painter = painterResource(id = R.drawable.img_store_empty),
+                            contentDescription = "IMG_STORE_EMPTY",
                             modifier = Modifier.size(100.dp)
                         )
                         HeightSpacer(height = 30.dp)
