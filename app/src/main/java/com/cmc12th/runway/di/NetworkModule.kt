@@ -1,12 +1,9 @@
 package com.cmc12th.runway.di
 
-import com.cmc12th.runway.network.service.LoginService
 import com.cmc12th.runway.network.RunwayClient
 import com.cmc12th.runway.network.model.ServiceInterceptor
 import com.cmc12th.runway.network.model.TokenAuthenticator
-import com.cmc12th.runway.network.service.AuthService
-import com.cmc12th.runway.network.service.MapService
-import com.cmc12th.runway.network.service.StoreService
+import com.cmc12th.runway.network.service.*
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -105,17 +102,27 @@ object NetworkModule {
 
     @Provides
     @Singleton
+    fun provideHomeService(
+        @RunwayRetrofit retrofit: Retrofit,
+    ): HomeService {
+        return retrofit.create(HomeService::class.java)
+    }
+
+    @Provides
+    @Singleton
     fun provideRunwayClient(
         loginService: LoginService,
         authService: AuthService,
         storeService: StoreService,
         mapService: MapService,
+        homeService: HomeService,
     ): RunwayClient {
         return RunwayClient(
             loginService = loginService,
             authService = authService,
             storeService = storeService,
             mapService = mapService,
+            homeService = homeService
         )
     }
 

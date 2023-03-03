@@ -4,19 +4,10 @@ import com.cmc12th.runway.data.request.*
 import com.cmc12th.runway.data.request.map.MapFilterRequest
 import com.cmc12th.runway.data.request.map.MapSearchRequest
 import com.cmc12th.runway.data.request.store.ReviewReportRequest
-import com.cmc12th.runway.data.response.map.MapMarker
-import com.cmc12th.runway.data.response.store.UserReviewDetail
-import com.cmc12th.runway.data.response.user.ImgUrlAndNickname
-import com.cmc12th.runway.data.response.user.MyPageInfo
-import com.cmc12th.runway.data.response.user.MyReviewsItem
-import com.cmc12th.runway.data.response.user.UserInformationManagamentInfo
-import com.cmc12th.runway.network.service.AuthService
-import com.cmc12th.runway.network.service.LoginService
-import com.cmc12th.runway.network.service.MapService
-import com.cmc12th.runway.network.service.StoreService
+import com.cmc12th.runway.data.response.user.PatchCategoryBody
+import com.cmc12th.runway.network.service.*
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
-import retrofit2.http.*
 import javax.inject.Inject
 
 class RunwayClient @Inject constructor(
@@ -24,6 +15,7 @@ class RunwayClient @Inject constructor(
     private val authService: AuthService,
     private val storeService: StoreService,
     private val mapService: MapService,
+    private val homeService: HomeService,
 ) {
 
     /** Auth */
@@ -55,6 +47,7 @@ class RunwayClient @Inject constructor(
         categoryList: List<MultipartBody.Part>,
         multipartFile: MultipartBody.Part?,
     ) = loginService.kakoSignUp(feedPostReqeust, categoryList, multipartFile)
+
 
     /** 마이페이지 */
     suspend fun logout() = authService.logout()
@@ -122,10 +115,16 @@ class RunwayClient @Inject constructor(
         mapService.mapRegionMarkerInfo(regionId)
 
     suspend fun mapRegionInfoPaging(
-        @Path("regionId") regionId: Int,
-        @Query("page") page: Int,
-        @Query("size") size: Int,
+        regionId: Int,
+        page: Int,
+        size: Int,
     ) = mapService.mapRegionInfoPaging(regionId, page, size)
 
+    /** 홈 */
+    suspend fun getHomeBanner(type: Int) = homeService.getHomeBanner(type)
+    suspend fun getHomeReview(page: Int, size: Int) = homeService.getHomeReview(page, size)
+    suspend fun getCategorys() = authService.getCategories()
+    suspend fun setCategorys(patchCategoryBody: PatchCategoryBody) =
+        authService.setCategories(patchCategoryBody)
 
 }

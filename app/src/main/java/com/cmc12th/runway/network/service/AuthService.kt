@@ -13,6 +13,7 @@ import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Header
+import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -38,13 +39,13 @@ interface AuthService {
     /** 내가 북마크한 리스트 조회 */
     suspend fun getBookmarkedReview(
         @Query("page") page: Int,
-        @Query("size") size: Int
+        @Query("size") size: Int,
     ): PagingNetworkResponse<MyReviewsItem>
 
     /** 내가 북마크한 리뷰 상세 조회 */
     @GET("/users/bookmark/review/detail/{reviewId}")
     suspend fun getMyBookmarkedReviewDetail(
-        @Path("reviewId") reviewId: Int
+        @Path("reviewId") reviewId: Int,
     ): NetworkResponse<UserReviewDetail>
 
     /** 개인정보 관리 조회 */
@@ -67,13 +68,13 @@ interface AuthService {
     @GET("/users/review")
     suspend fun getMyReview(
         @Query("page") page: Int,
-        @Query("size") size: Int
+        @Query("size") size: Int,
     ): PagingNetworkResponse<MyReviewsItem>
 
     /** 내가 작성한 리뷰 상세조회 */
     @GET("/users/review/detail/{reviewId}")
     suspend fun getMyReviewDetail(
-        @Path("reviewId") reviewId: Int
+        @Path("reviewId") reviewId: Int,
     ): NetworkResponse<UserReviewDetail>
 
 
@@ -81,6 +82,15 @@ interface AuthService {
     @GET("/users/store")
     suspend fun getBookmarkedStore(
         @Query("page") page: Int,
-        @Query("size") size: Int
+        @Query("size") size: Int,
     ): PagingNetworkResponse<StoreMetaDataItem>
+
+    /** 내 카테고리 조회 */
+    @GET("/home/categories")
+    suspend fun getCategories(): NetworkResponse<ArrayList<String>>
+
+    /** 홈화면 카테고리 선택 */
+    @PATCH("/home/categories")
+    suspend fun setCategories(@Body patchCategoryBody: PatchCategoryBody): DefaultResponse
+
 }

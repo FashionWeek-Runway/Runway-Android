@@ -33,12 +33,18 @@ abstract class RepositoryModule {
     @Binds
     @ViewModelScoped
     abstract fun bindMapRepository(
-        mapRepositoryImpl: MapRepositoryImpl
+        mapRepositoryImpl: MapRepositoryImpl,
     ): MapRepository
 
     @Binds
     @ViewModelScoped
     abstract fun bindSearchRepository(
-        searchRepositoryImpl: SearchRepositoryImpl
+        searchRepositoryImpl: SearchRepositoryImpl,
     ): SearchRepository
+
+    @Binds
+    @ViewModelScoped
+    abstract fun bindHomeRepository(
+        homeRepositoryImpl: HomeRepositoryImpl,
+    ): HomeRepository
 }
