@@ -4,18 +4,14 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.paging.PagingData
 import com.cmc12th.runway.data.request.OauthLoginRequest
 import com.cmc12th.runway.data.response.LoginResponse
-import com.cmc12th.runway.data.response.ResponseWrapper
+import com.cmc12th.runway.data.response.store.ImgUrlAndNicknameAndCategorys
 import com.cmc12th.runway.data.response.store.UserReviewDetail
 import com.cmc12th.runway.data.response.user.*
-import com.cmc12th.runway.network.model.ApiState
 import com.cmc12th.runway.utils.ApiWrapper
 import com.cmc12th.runway.utils.DefaultApiWrapper
-import com.cmc12th.runway.utils.DefaultResponse
 import com.cmc12th.runway.utils.PagingApiWrapper
 import kotlinx.coroutines.flow.Flow
-import retrofit2.http.Body
-import retrofit2.http.Path
-import retrofit2.http.Query
+import okhttp3.MultipartBody
 
 interface AuthRepository {
 
@@ -51,5 +47,10 @@ interface AuthRepository {
 
     fun myReviewPaging(): Flow<PagingData<MyReviewsItem>>
     fun bookmarkedStorePaging(): Flow<PagingData<StoreMetaDataItem>>
+
+    suspend fun patchProfileImage(
+        multipartFile: MultipartBody.Part?,
+        nickname: MultipartBody.Part?,
+    ): Flow<ApiWrapper<ImgUrlAndNicknameAndCategorys>>
 }
 

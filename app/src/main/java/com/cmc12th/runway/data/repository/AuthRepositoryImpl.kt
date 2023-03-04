@@ -10,25 +10,27 @@ import com.cmc12th.runway.data.pagingsource.MyReviewPagingSource
 import com.cmc12th.runway.data.pagingsource.UserReviewPagingSource
 import com.cmc12th.runway.data.request.OauthLoginRequest
 import com.cmc12th.runway.data.response.LoginResponse
+import com.cmc12th.runway.data.response.store.ImgUrlAndNicknameAndCategorys
 import com.cmc12th.runway.data.response.store.UserReview
 import com.cmc12th.runway.data.response.store.UserReviewDetail
 import com.cmc12th.runway.data.response.user.*
 import com.cmc12th.runway.domain.repository.AuthRepository
+import com.cmc12th.runway.network.RunwayClient
 import com.cmc12th.runway.network.model.safeFlow
 import com.cmc12th.runway.network.model.safePagingFlow
-import com.cmc12th.runway.network.service.AuthService
 import com.cmc12th.runway.utils.ApiWrapper
 import com.cmc12th.runway.utils.DefaultApiWrapper
 import com.cmc12th.runway.utils.PagingApiWrapper
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
+import okhttp3.MultipartBody
 import java.io.IOException
 import javax.inject.Inject
 
 class AuthRepositoryImpl @Inject constructor(
     private val preferenceDataStore: DataStore<Preferences>,
-    private val authService: AuthService,
+    private val runwayClient: RunwayClient
 ) : AuthRepository {
 
     override suspend fun setToken(type: Preferences.Key<String>, value: String) {
@@ -53,55 +55,55 @@ class AuthRepositoryImpl @Inject constructor(
 
     override fun validateRefreshToken(refreshToken: String): Flow<ApiWrapper<LoginResponse>> =
         safeFlow {
-            authService.loginRefresh(refreshToken)
+            runwayClient.loginRefresh(refreshToken)
         }
 
     override suspend fun logout(): Flow<DefaultApiWrapper> = safeFlow {
-        authService.logout()
+        runwayClient.logout()
     }
 
     override suspend fun getMyInfo(): Flow<ApiWrapper<MyPageInfo>> = safeFlow {
-        authService.getMyInfo()
+        runwayClient.getMyInfo()
     }
 
     override suspend fun getBookmarkedReview(
         page: Int,
         size: Int
     ): Flow<PagingApiWrapper<MyReviewsItem>> = safePagingFlow {
-        authService.getBookmarkedReview(page, size)
+        runwayClient.getBookmarkedReview(page, size)
     }
 
     override suspend fun getMyBookmarkedReviewDetail(reviewId: Int): Flow<ApiWrapper<UserReviewDetail>> =
         safeFlow {
-            authService.getMyBookmarkedReviewDetail(reviewId)
+            runwayClient.getMyBookmarkedReviewDetail(reviewId)
         }
 
     override suspend fun getMyReviewDetail(reviewId: Int): Flow<ApiWrapper<UserReviewDetail>> =
         safeFlow {
-            authService.getMyReviewDetail(reviewId)
+            runwayClient.getMyReviewDetail(reviewId)
         }
 
     override suspend fun getInformationManagementInfo(): Flow<ApiWrapper<UserInformationManagamentInfo>> =
         safeFlow {
-            authService.getInformationManagementInfo()
+            runwayClient.getInformationManagementInfo()
         }
 
     override suspend fun linkToKakao(oauthLoginRequest: OauthLoginRequest): Flow<DefaultApiWrapper> =
         safeFlow {
-            authService.linkToKakao(oauthLoginRequest)
+            runwayClient.linkToKakao(oauthLoginRequest)
         }
 
     override suspend fun unLinkToKakao(): Flow<DefaultApiWrapper> = safeFlow {
-        authService.unLinkToKakao()
+        runwayClient.unLinkToKakao()
     }
 
     override suspend fun getProfileInfoToEdit(): Flow<ApiWrapper<ImgUrlAndNickname>> = safeFlow {
-        authService.getProfileInfoToEdit()
+        runwayClient.getProfileInfoToEdit()
     }
 
     override suspend fun getMyReview(page: Int, size: Int): Flow<PagingApiWrapper<MyReviewsItem>> =
         safePagingFlow {
-            authService.getMyReview(page, size)
+            runwayClient.getMyReview(page, size)
         }
 
     override fun myReviewPaging(): Flow<PagingData<MyReviewsItem>> {
@@ -130,11 +132,18 @@ class AuthRepositoryImpl @Inject constructor(
         ).flow
     }
 
+    override suspend fun patchProfileImage(
+        multipartFile: MultipartBody.Part?,
+        nickname: MultipartBody.Part?
+    ): Flow<ApiWrapper<ImgUrlAndNicknameAndCategorys>> = safeFlow {
+        runwayClient.patchProfileImage(multipartFile, nickname)
+    }
+
     override suspend fun getBookmarkedStore(
         page: Int,
         size: Int
     ): Flow<PagingApiWrapper<StoreMetaDataItem>> = safePagingFlow {
-        authService.getBookmarkedStore(page, size)
+        runwayClient.getBookmarkedStore(page, size)
     }
 
     companion object PreferenceKeys {

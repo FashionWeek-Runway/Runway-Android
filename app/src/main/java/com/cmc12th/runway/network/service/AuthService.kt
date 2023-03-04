@@ -3,20 +3,15 @@ package com.cmc12th.runway.network.service
 import com.cmc12th.runway.data.request.OauthLoginRequest
 import com.cmc12th.runway.data.response.LoginResponse
 import com.cmc12th.runway.data.response.ResponseWrapper
+import com.cmc12th.runway.data.response.store.ImgUrlAndNicknameAndCategorys
 import com.cmc12th.runway.data.response.store.UserReviewDetail
 import com.cmc12th.runway.data.response.user.*
 import com.cmc12th.runway.utils.DefaultResponse
 import com.cmc12th.runway.utils.NetworkResponse
 import com.cmc12th.runway.utils.PagingNetworkResponse
+import okhttp3.MultipartBody
 import retrofit2.Call
-import retrofit2.http.Body
-import retrofit2.http.DELETE
-import retrofit2.http.GET
-import retrofit2.http.Header
-import retrofit2.http.PATCH
-import retrofit2.http.POST
-import retrofit2.http.Path
-import retrofit2.http.Query
+import retrofit2.http.*
 
 interface AuthService {
 
@@ -64,6 +59,14 @@ interface AuthService {
     @GET("/users/profile")
     suspend fun getProfileInfoToEdit(): NetworkResponse<ImgUrlAndNickname>
 
+    /** 프로필 편집을 위한 기존 데이터 조회 */
+    @Multipart
+    @PATCH("/users/profile")
+    suspend fun patchProfileImage(
+        @Part multipartFile: MultipartBody.Part?,
+        @Part nickname: MultipartBody.Part?,
+    ): NetworkResponse<ImgUrlAndNicknameAndCategorys>
+
     /** 내가 작성한 리뷰 조회 */
     @GET("/users/review")
     suspend fun getMyReview(
@@ -76,7 +79,6 @@ interface AuthService {
     suspend fun getMyReviewDetail(
         @Path("reviewId") reviewId: Int,
     ): NetworkResponse<UserReviewDetail>
-
 
     /** 내가 북마크한 쇼룸 리스트 보기 */
     @GET("/users/store")
