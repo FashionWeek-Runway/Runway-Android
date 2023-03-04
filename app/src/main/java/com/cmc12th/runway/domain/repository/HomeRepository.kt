@@ -22,4 +22,5 @@ interface HomeRepository {
         page: Int, size: Int,
     ): Flow<PagingApiWrapper<HomeReviewItem>>
 
+    fun getHomeReviewDetail(reviewId: Int): Flow<ApiWrapper<UserReviewDetail>>
 }

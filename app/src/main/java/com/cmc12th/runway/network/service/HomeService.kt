@@ -3,6 +3,7 @@ package com.cmc12th.runway.network.service
 import com.cmc12th.runway.data.request.*
 import com.cmc12th.runway.data.response.home.HomeBanner
 import com.cmc12th.runway.data.response.home.HomeReviewItem
+import com.cmc12th.runway.data.response.store.UserReviewDetail
 import com.cmc12th.runway.utils.NetworkResponse
 import com.cmc12th.runway.utils.PagingNetworkResponse
 import retrofit2.http.*
@@ -21,6 +22,12 @@ interface HomeService {
         @Query("page") page: Int,
         @Query("size") size: Int,
     ): PagingNetworkResponse<HomeReviewItem>
+
+    /** 홈화면 리뷰 상세 조회 */
+    @GET("/home/review/detail/{reviewId}")
+    suspend fun getHomeReviewDetail(
+        @Path("reviewId") reviewId: Int,
+    ): NetworkResponse<UserReviewDetail>
 
 }
 

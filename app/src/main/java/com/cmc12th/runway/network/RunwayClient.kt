@@ -128,6 +128,7 @@ class RunwayClient @Inject constructor(
     /** 홈 */
     suspend fun getHomeBanner(type: Int) = homeService.getHomeBanner(type)
     suspend fun getHomeReview(page: Int, size: Int) = homeService.getHomeReview(page, size)
+    suspend fun getHomeReviewDetail(reviewId: Int) = homeService.getHomeReviewDetail(reviewId)
     suspend fun getCategorys() = authService.getCategories()
     suspend fun setCategorys(patchCategoryBody: PatchCategoryBody) =
         authService.setCategories(patchCategoryBody)

@@ -2,6 +2,7 @@ package com.cmc12th.runway.data.repository
 
 import com.cmc12th.runway.data.response.home.HomeBanner
 import com.cmc12th.runway.data.response.home.HomeReviewItem
+import com.cmc12th.runway.data.response.store.UserReviewDetail
 import com.cmc12th.runway.domain.repository.HomeRepository
 import com.cmc12th.runway.network.RunwayClient
 import com.cmc12th.runway.network.model.safeFlow
@@ -22,5 +23,9 @@ class HomeRepositoryImpl @Inject constructor(
         safePagingFlow {
             runwayClient.getHomeReview(page, size)
         }
+
+    override fun getHomeReviewDetail(reviewId: Int): Flow<ApiWrapper<UserReviewDetail>> = safeFlow {
+        runwayClient.getHomeReviewDetail(reviewId)
+    }
 
 }
