@@ -9,6 +9,7 @@ import androidx.navigation.compose.composable
 import com.cmc12th.runway.ui.detail.photoreview.view.ReviewWriteScreen
 import com.cmc12th.runway.ui.detail.photoreview.view.ReviewDetailScreen
 import com.cmc12th.runway.ui.detail.photoreview.view.ReviewReportScreen
+import com.cmc12th.runway.ui.detail.view.DetailScreen
 import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.domain.model.ReviewViwerType
 import com.cmc12th.runway.ui.home.view.HomeScreen
@@ -69,6 +70,27 @@ fun NavGraphBuilder.mainGraph(
         }
 
         composable(
+            route = "$DETAIL_ROUTE?storeId={storeId}&storeName={storeName}",
+            arguments = listOf(
+                navArgument("storeId") {
+                    type = NavType.IntType
+                },
+                navArgument("storeName") {
+                    type = NavType.StringType
+                },
+            )
+        ) { entry ->
+            val storeId = entry.arguments?.getInt("storeId") ?: -1
+            val storeName = entry.arguments?.getString("storeName") ?: ""
+            DetailScreen(
+                appState = appState,
+                idx = storeId,
+                storeName = storeName,
+                onBackPress = { appState.popBackStack() }
+            )
+        }
+
+        composable(
             route = "$WEB_VIEW_ROUTE?title={title}&url={url}",
             arguments = listOf(
                 navArgument("title") {
@@ -84,20 +106,18 @@ fun NavGraphBuilder.mainGraph(
             WebviewScreen(appState, title, url)
         }
 
-        navigation(startDestination = DETAIL_ROUTE, route = DETAIL_GRAPH) {
-            composable(route = "$REVIEW_WRITE_ROUTE?idx={idx}",
-                arguments = listOf(
-                    navArgument("idx") {
-                        type = NavType.IntType
-                    }
-                )) { entry ->
-                val idx = entry.arguments?.getInt("idx") ?: 0
-                val userObject =
-                    appState.navController.previousBackStackEntry?.arguments?.getParcelable<Uri>(
-                        "uri"
-                    )
-                ReviewWriteScreen(appState, idx, userObject)
-            }
+        composable(route = "$REVIEW_WRITE_ROUTE?idx={idx}",
+            arguments = listOf(
+                navArgument("idx") {
+                    type = NavType.IntType
+                }
+            )) { entry ->
+            val idx = entry.arguments?.getInt("idx") ?: 0
+            val userObject =
+                appState.navController.previousBackStackEntry?.arguments?.getParcelable<Uri>(
+                    "uri"
+                )
+            ReviewWriteScreen(appState, idx, userObject)
         }
 
         composable(

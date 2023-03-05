@@ -8,7 +8,6 @@ package com.cmc12th.runway.ui.home.view
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
@@ -20,28 +19,21 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.geometry.toRect
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.StrokeJoin
-import androidx.compose.ui.graphics.drawOutline
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
-import androidx.paging.compose.items
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.cmc12th.runway.R
@@ -55,13 +47,12 @@ import com.cmc12th.runway.ui.domain.model.ReviewViwerType
 import com.cmc12th.runway.ui.home.HomeViewModel
 import com.cmc12th.runway.ui.home.component.HomeBannerStep
 import com.cmc12th.runway.ui.theme.*
-import com.cmc12th.runway.utils.Constants
 import com.cmc12th.runway.utils.Constants.BOTTOM_NAVIGATION_HEIGHT
+import com.cmc12th.runway.utils.Constants.DETAIL_ROUTE
 import com.cmc12th.runway.utils.Constants.REVIEW_DETAIL_ROUTE
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
-import kotlinx.coroutines.Job
 
 @Composable
 fun HomeScreen(appState: ApplicationState) {
@@ -93,13 +84,18 @@ fun HomeScreen(appState: ApplicationState) {
                 .aspectRatio(0.67f)
         ) {
             HomeBanner(
-                homeBanners = uiState.homeBanners
-            ) { storeId, bookmarked ->
-                viewModel.updateBookmark(storeId) {
-                    viewModel.updateBookmarkState(storeId, bookmarked)
+                homeBanners = uiState.homeBanners,
+                updateBookmark = { storeId, bookmarked ->
+                    viewModel.updateBookmark(storeId) {
+                        viewModel.updateBookmarkState(storeId, bookmarked)
+                    }
+                },
+                navigateToDetail = { storeId, storeName ->
+                    appState.navigate(
+                        "${DETAIL_ROUTE}?storeId=$storeId&storeName=$storeName"
+                    )
                 }
-            }
-
+            )
             /** Banner Top */
             MainBannerTopBar(uiState.nickName)
         }
@@ -230,7 +226,8 @@ private fun HomeReviews(
 @Composable
 private fun BoxScope.HomeBanner(
     homeBanners: MutableList<HomeBannerItem>,
-    updateBookmark: (storeId: Int, bookmarked: Boolean) -> Unit
+    updateBookmark: (storeId: Int, bookmarked: Boolean) -> Unit,
+    navigateToDetail: (storeId: Int, storeName: String) -> Unit
 ) {
     val pagerState = rememberPagerState()
     HorizontalPager(
@@ -243,6 +240,9 @@ private fun BoxScope.HomeBanner(
             modifier = Modifier
                 .clip(RoundedCornerShape(4.dp))
                 .fillMaxSize()
+                .clickable {
+                    navigateToDetail(homeBanners[page].storeId, homeBanners[page].storeName)
+                }
         ) {
             AsyncImage(
                 modifier = Modifier
