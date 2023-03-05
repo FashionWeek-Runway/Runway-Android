@@ -116,9 +116,9 @@ fun UserReview(
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.img_dummy),
+                    painter = painterResource(id = R.mipmap.img_empty_myreview),
                     contentDescription = "IMG_DUMMY",
-                    modifier = Modifier.size(100.dp)
+                    modifier = Modifier.size(128.dp, 115.dp)
                 )
                 HeightSpacer(height = 30.dp)
                 Text(text = "아직 등록된 후기가 없습니다.", style = Body1, color = Color.Black)
