@@ -2,12 +2,10 @@
 
 package com.cmc12th.runway.ui.signin.view
 
-import android.graphics.Bitmap
 import android.net.Uri
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.result.launch
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
@@ -19,15 +17,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -40,9 +35,9 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
-import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.cmc12th.runway.R
+import com.cmc12th.runway.broadcast.ComposeFileProvider
 import com.cmc12th.runway.ui.components.BackIcon
 import com.cmc12th.runway.ui.components.CustomBottomSheet
 import com.cmc12th.runway.ui.components.CustomTextField
@@ -60,7 +55,6 @@ import com.cmc12th.runway.ui.signin.model.ProfileImageType
 import com.cmc12th.runway.ui.theme.*
 import com.cmc12th.runway.utils.Constants.MAX_NICKNAME_LENGTH
 import com.cmc12th.runway.utils.Constants.SIGNIN_CATEGORY_ROUTE
-import com.cmc12th.runway.utils.getImageUri
 import kotlinx.coroutines.launch
 
 
@@ -114,23 +108,33 @@ fun SignInProfileImageScreen(
             easing = FastOutSlowInEasing
         )
     )
+    var hasImage by remember {
+        mutableStateOf(false)
+    }
+    var imageUri by remember {
+        mutableStateOf<Uri?>(null)
+    }
+    val setImageToViewModel: (Uri?) -> Unit = { uri ->
+        if (uri != null) {
+            val image = ProfileImageType.LOCAL(uri = uri)
+            signInViewModel.updateProfileImage(image)
+        }
+    }
+
+    LaunchedEffect(key1 = hasImage) {
+        if (hasImage) {
+            setImageToViewModel(imageUri)
+        }
+    }
 
     val galleryLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
-            if (uri != null) {
-                val image = ProfileImageType.LOCAL(uri = uri)
-                signInViewModel.updateProfileImage(image)
-            }
+            setImageToViewModel(uri)
         }
 
     val takePhotoFromCameraLauncher = // 카메라로 사진 찍어서 가져오기
-        rememberLauncherForActivityResult(ActivityResultContracts.TakePicturePreview()) { takenPhoto ->
-            if (takenPhoto != null) {
-                getImageUri(context = context, bitmap = takenPhoto)?.let {
-                    val image = ProfileImageType.LOCAL(uri = it)
-                    signInViewModel.updateProfileImage(image)
-                }
-            }
+        rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) {
+            hasImage = it
         }
 
     val onDone = {
@@ -190,9 +194,9 @@ fun SignInProfileImageScreen(
                     profileSize = profileSize,
                     galleryLauncher = galleryLauncher,
                     takePhotoFromCameraLauncher = takePhotoFromCameraLauncher,
-                    showBottomSheet = showBottomSheet,
-                    setDefaultProfileImage = { signInViewModel.updateProfileImage(ProfileImageType.DEFAULT) }
-                )
+                    updateImageUri = { imageUri = it },
+                    showBottomSheet = showBottomSheet
+                ) { signInViewModel.updateProfileImage(ProfileImageType.DEFAULT) }
 
                 /** 닉네임 입력 칸 */
                 HeightSpacer(height = heightSpacerSize)
@@ -270,8 +274,9 @@ fun ProfileImageIcon(
     profileImageType: ProfileImageType,
     profileSize: Float,
     galleryLauncher: ManagedActivityResultLauncher<String, Uri?>,
-    takePhotoFromCameraLauncher: ManagedActivityResultLauncher<Void?, Bitmap?>,
+    takePhotoFromCameraLauncher: ManagedActivityResultLauncher<Uri, Boolean>,
     showBottomSheet: (BottomSheetContent) -> Unit,
+    updateImageUri: (Uri?) -> Unit,
     setDefaultProfileImage: () -> Unit,
 ) {
 
@@ -292,6 +297,7 @@ fun ProfileImageIcon(
                     DefaultProfileImage(
                         galleryLauncher = galleryLauncher,
                         takePhotoFromCameraLauncher = takePhotoFromCameraLauncher,
+                        updateImageUri = updateImageUri,
                         showBottomSheet = showBottomSheet
                     )
                 }
@@ -299,6 +305,7 @@ fun ProfileImageIcon(
                     SelectedProfileImage(
                         selectedImage = profileImageType,
                         takePhotoFromCameraLauncher = takePhotoFromCameraLauncher,
+                        updateImageUri = updateImageUri,
                         galleryLauncher = galleryLauncher,
                         showBottomSheet = showBottomSheet,
                         setDefaultProfileImage = setDefaultProfileImage
@@ -312,11 +319,13 @@ fun ProfileImageIcon(
 @Composable
 private fun SelectedProfileImage(
     selectedImage: ProfileImageType,
-    takePhotoFromCameraLauncher: ManagedActivityResultLauncher<Void?, Bitmap?>,
+    takePhotoFromCameraLauncher: ManagedActivityResultLauncher<Uri, Boolean>,
     galleryLauncher: ManagedActivityResultLauncher<String, Uri?>,
     showBottomSheet: (BottomSheetContent) -> Unit,
     setDefaultProfileImage: () -> Unit,
+    updateImageUri: (Uri?) -> Unit,
 ) {
+    val context = LocalContext.current
     Box {
         if (selectedImage is ProfileImageType.SOCIAL) {
             AsyncImage(
@@ -332,14 +341,6 @@ private fun SelectedProfileImage(
             )
         }
         if (selectedImage is ProfileImageType.LOCAL) {
-//            Image(
-//                modifier = Modifier.fillMaxSize(),
-//                painter = rememberAsyncImagePainter(
-//                    model = selectedImage.uri
-//                ),
-//                contentScale = ContentScale.Crop,
-//                contentDescription = "IMG_DUMMY"
-//            )
             AsyncImage(
                 modifier = Modifier.fillMaxSize(),
                 model = ImageRequest.Builder(LocalContext.current)
@@ -371,7 +372,11 @@ private fun SelectedProfileImage(
                                     ),
                                     BottomSheetContentItem(
                                         itemName = "사진 촬영",
-                                        onItemClick = { takePhotoFromCameraLauncher.launch() },
+                                        onItemClick = {
+                                            val uri = ComposeFileProvider.getImageUri(context)
+                                            updateImageUri(uri)
+                                            takePhotoFromCameraLauncher.launch(uri)
+                                        },
                                         isSeleceted = false
                                     ),
                                     BottomSheetContentItem(
@@ -400,9 +405,12 @@ private fun SelectedProfileImage(
 @Composable
 private fun DefaultProfileImage(
     galleryLauncher: ManagedActivityResultLauncher<String, Uri?>,
-    takePhotoFromCameraLauncher: ManagedActivityResultLauncher<Void?, Bitmap?>,
+    takePhotoFromCameraLauncher: ManagedActivityResultLauncher<Uri, Boolean>,
+    updateImageUri: (Uri?) -> Unit,
     showBottomSheet: (BottomSheetContent) -> Unit,
 ) {
+    val context = LocalContext.current
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -433,7 +441,11 @@ private fun DefaultProfileImage(
                                     title = "", itemList = listOf(
                                         BottomSheetContentItem(
                                             itemName = "사진 촬영",
-                                            onItemClick = { takePhotoFromCameraLauncher.launch() },
+                                            onItemClick = {
+                                                val uri = ComposeFileProvider.getImageUri(context)
+                                                updateImageUri(uri)
+                                                takePhotoFromCameraLauncher.launch(uri)
+                                            },
                                             isSeleceted = false
                                         ),
                                         BottomSheetContentItem(

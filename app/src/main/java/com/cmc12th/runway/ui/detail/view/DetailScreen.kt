@@ -4,6 +4,7 @@
 
 package com.cmc12th.runway.ui.detail.view
 
+import android.net.Uri
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -11,13 +12,13 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.cmc12th.runway.broadcast.ComposeFileProvider
 import com.cmc12th.runway.ui.components.*
 import com.cmc12th.runway.ui.detail.DetailViewModel
 import com.cmc12th.runway.ui.detail.components.*
@@ -27,13 +28,9 @@ import com.cmc12th.runway.ui.domain.model.BottomSheetContent
 import com.cmc12th.runway.ui.domain.model.ReviewViwerType
 import com.cmc12th.runway.ui.domain.rememberBottomSheet
 import com.cmc12th.runway.ui.theme.*
-import com.cmc12th.runway.utils.Constants
 import com.cmc12th.runway.utils.Constants.REVIEW_DETAIL_ROUTE
 import com.cmc12th.runway.utils.Constants.REVIEW_WRITE_ROUTE
 import com.cmc12th.runway.utils.Constants.WEB_VIEW_ROUTE
-import com.cmc12th.runway.utils.getImageUri
-import com.google.accompanist.web.WebView
-import com.google.accompanist.web.rememberWebViewState
 import kotlinx.coroutines.launch
 
 @Composable
@@ -64,28 +61,36 @@ fun DetailScreen(
             bottomsheetState.modalSheetState.show()
         }
     }
+    val navigateToReviewWrite: (Uri?) -> Unit = { uri ->
+        if (uri != null) {
+            appState.navController.currentBackStackEntry?.arguments?.putParcelable(
+                "uri",
+                uri
+            )
+            appState.navigate("$REVIEW_WRITE_ROUTE?idx=$idx")
+        }
+    }
+    var hasImage by remember {
+        mutableStateOf(false)
+    }
+    var imageUri by remember {
+        mutableStateOf<Uri?>(null)
+    }
+
+    LaunchedEffect(key1 = hasImage) {
+        if (hasImage) {
+            navigateToReviewWrite(imageUri)
+        }
+    }
 
     val galleryLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
-            if (uri != null) {
-                appState.navController.currentBackStackEntry?.arguments?.putParcelable(
-                    "uri",
-                    uri
-                )
-                appState.navigate("$REVIEW_WRITE_ROUTE?idx=$idx")
-            }
+            navigateToReviewWrite(uri)
         }
+
     val camearLauncher =
-        rememberLauncherForActivityResult(ActivityResultContracts.TakePicturePreview()) { takenPhoto ->
-            if (takenPhoto != null) {
-                getImageUri(context = context, bitmap = takenPhoto)?.let {
-                    appState.navController.currentBackStackEntry?.arguments?.putParcelable(
-                        "uri",
-                        it
-                    )
-                    appState.navigate("$REVIEW_WRITE_ROUTE?idx=$idx")
-                }
-            }
+        rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) {
+            hasImage = it
         }
 
     ManageSystemBarColor(
@@ -131,6 +136,7 @@ fun DetailScreen(
                     showBottomSheet = showBottomSheet,
                     galleryLauncher = galleryLauncher,
                     cameraLauncher = camearLauncher,
+                    updateImageUri = { imageUri = it },
                     navigateToUserReviewDetail = {
                         appState.navigate("$REVIEW_DETAIL_ROUTE?reviewId=${it.reviewId}&viewerType=${ReviewViwerType.STORE_DETAIL.typeToString}")
                     }

@@ -1,9 +1,7 @@
 package com.cmc12th.runway.ui.detail.components
 
-import android.graphics.Bitmap
 import android.net.Uri
 import androidx.activity.compose.ManagedActivityResultLauncher
-import androidx.activity.result.launch
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -23,6 +21,7 @@ import androidx.paging.compose.items
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.cmc12th.runway.R
+import com.cmc12th.runway.broadcast.ComposeFileProvider
 import com.cmc12th.runway.data.response.store.UserReview
 import com.cmc12th.runway.ui.components.HeightSpacer
 import com.cmc12th.runway.ui.components.RunwayIconButton
@@ -37,11 +36,12 @@ fun UserReview(
     userReviews: Flow<PagingData<UserReview>>,
     showBottomSheet: (BottomSheetContent) -> Unit,
     navigateToUserReviewDetail: (UserReview) -> Unit,
-    cameraLauncher: ManagedActivityResultLauncher<Void?, Bitmap?>,
+    cameraLauncher: ManagedActivityResultLauncher<Uri, Boolean>,
     galleryLauncher: ManagedActivityResultLauncher<String, Uri?>,
+    updateImageUri: (Uri?) -> Unit,
 ) {
     val userReviewsPaging = userReviews.collectAsLazyPagingItems()
-
+    val context = LocalContext.current
     Column {
         Row(
             modifier = Modifier
@@ -60,7 +60,9 @@ fun UserReview(
                                 BottomSheetContentItem(
                                     itemName = "사진 찍기",
                                     onItemClick = {
-                                        cameraLauncher.launch()
+                                        val uri = ComposeFileProvider.getImageUri(context)
+                                        updateImageUri(uri)
+                                        cameraLauncher.launch(uri)
                                     },
                                 ),
                                 BottomSheetContentItem(
@@ -84,7 +86,9 @@ fun UserReview(
                                 BottomSheetContentItem(
                                     itemName = "사진 찍기",
                                     onItemClick = {
-                                        cameraLauncher.launch()
+                                        val uri = ComposeFileProvider.getImageUri(context)
+                                        updateImageUri(uri)
+                                        cameraLauncher.launch(uri)
                                     },
                                 ),
                                 BottomSheetContentItem(
