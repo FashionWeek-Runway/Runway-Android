@@ -23,7 +23,6 @@ import com.cmc12th.runway.ui.theme.*
 import com.cmc12th.runway.utils.Constants
 import com.cmc12th.runway.utils.Constants.BOTTOM_NAVIGATION_HEIGHT
 import com.cmc12th.runway.utils.Constants.EDIT_PROFILE_IMAGE_ROUTE
-import com.cmc12th.runway.utils.Constants.MYPAGE_EDIT_PROFILE_ROUTE
 import com.cmc12th.runway.utils.Constants.SETTING_GRAPH
 import me.onebone.toolbar.CollapsingToolbarScaffold
 import me.onebone.toolbar.CollapsingToolbarScope
@@ -42,10 +41,14 @@ fun MypageScreen(appState: ApplicationState) {
     val bookmarkedStore = viewModel.bookmarkedStore.collectAsLazyPagingItems()
     val state = rememberCollapsingToolbarScaffoldState()
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
+    val profileImageUiState = viewModel.profileImageUiState.collectAsStateWithLifecycle()
+
     appState.systmeUiController.setStatusBarColor(Gray50)
+
     LaunchedEffect(key1 = Unit) {
         viewModel.getMyReviews()
         viewModel.getBookmarkedStore()
+        viewModel.getMyProfile()
     }
 
     CollapsingToolbarScaffold(
@@ -64,6 +67,8 @@ fun MypageScreen(appState: ApplicationState) {
             ) {
                 /** 프로필 정보 */
                 MainProfileInfo(
+                    nickName = profileImageUiState.value.nickName.text,
+                    profileImage = profileImageUiState.value.profileImage,
                     navigateToEditProfile = {
                         appState.navigate(EDIT_PROFILE_IMAGE_ROUTE)
                     }

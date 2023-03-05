@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.cmc12th.runway.R
+import com.cmc12th.runway.ui.signin.model.ProfileImageType
 import com.cmc12th.runway.ui.theme.Black
 import com.cmc12th.runway.ui.theme.HeadLine3
 import com.cmc12th.runway.ui.theme.HeadLine4M
@@ -27,7 +28,9 @@ import com.cmc12th.runway.ui.theme.Primary
 
 @Composable
 fun MainProfileInfo(
-    navigateToEditProfile: () -> Unit
+    navigateToEditProfile: () -> Unit,
+    nickName: String,
+    profileImage: ProfileImageType
 ) {
     Row(
         modifier = Modifier
@@ -46,7 +49,13 @@ fun MainProfileInfo(
                     .clip(CircleShape)
                     .fillMaxSize(),
                 model = ImageRequest.Builder(LocalContext.current)
-                    .data(R.drawable.img_dummy)
+                    .data(
+                        when (profileImage) {
+                            ProfileImageType.DEFAULT -> null
+                            is ProfileImageType.LOCAL -> null
+                            is ProfileImageType.SOCIAL -> profileImage.imgUrl
+                        }
+                    )
                     .crossfade(true)
                     .build(),
                 placeholder = painterResource(R.drawable.img_dummy),
@@ -76,7 +85,7 @@ fun MainProfileInfo(
             modifier = Modifier.weight(1f)
         ) {
             Text(text = "안녕하세요", style = HeadLine4M, color = Black)
-            Text(text = "나패피님", style = HeadLine3, color = Black)
+            Text(text = "${nickName}님", style = HeadLine3, color = Black)
         }
 
     }
