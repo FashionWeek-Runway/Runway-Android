@@ -127,10 +127,11 @@ fun ReviewDetailScreen(
                         }
                     }
                     ReviewViwerType.HOME -> {
-                        reviewViewModel.getReviewDetailHome(reviewId)
+                        reviewViewModel.getReviewDetailHome(idx) {
+                            onSuccess()
+                        }
                     }
                 }
-
             },
             deleteReview = {
                 reviewViewModel.deleteReview(reviewId = reviewId, onSuccess = {
