@@ -8,10 +8,14 @@ import androidx.room.PrimaryKey
 import com.cmc12th.runway.data.response.home.HomeBannerItem
 import com.cmc12th.runway.data.response.home.HomeReviewItem
 import com.cmc12th.runway.data.response.user.MyReviewsItem
+import com.cmc12th.runway.data.response.user.PatchCategoryBody
 import com.cmc12th.runway.domain.repository.AuthRepository
 import com.cmc12th.runway.domain.repository.HomeRepository
 import com.cmc12th.runway.domain.repository.StoreRepository
+import com.cmc12th.runway.ui.domain.model.RunwayCategory
 import com.cmc12th.runway.ui.setting.SettingPersonalInfoUiState
+import com.cmc12th.runway.ui.signin.SignInCategoryUiState
+import com.cmc12th.runway.ui.signin.model.CategoryTag
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -29,9 +33,12 @@ class HomeViewModel @Inject constructor(
     private val authRepository: AuthRepository
 ) : ViewModel() {
 
+
     private val _homeBanners = MutableStateFlow(mutableListOf<HomeBannerItem>())
     private val _nickName = MutableStateFlow("")
     private val _reviews = MutableStateFlow<PagingData<HomeReviewItem>>(PagingData.empty())
+    private val _categoryTags = MutableStateFlow(RunwayCategory.generateCategoryTags())
+
     val reviews: StateFlow<PagingData<HomeReviewItem>> = _reviews.asStateFlow()
 
     val uiState = combine(
@@ -46,6 +53,17 @@ class HomeViewModel @Inject constructor(
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = homeUiState()
     )
+
+    val categoryUiState: StateFlow<SignInCategoryUiState> =
+        combine(_categoryTags) { categoryTags ->
+            SignInCategoryUiState(
+                categoryTags = categoryTags[0],
+            )
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = SignInCategoryUiState()
+        )
 
     fun getHomeReview() = viewModelScope.launch {
         homeRepository.getHomeReviewPaging().collect {
@@ -77,6 +95,33 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    fun getCategorys() = viewModelScope.launch {
+        homeRepository.getCategories().collect { apiState ->
+            apiState.onSuccess { res ->
+                _categoryTags.update { items ->
+                    val updatedList = items.map {
+                        it.copy(
+                            isSelected = res.result.contains(it.name)
+                        )
+                    }.toMutableList()
+                    updatedList
+                }
+            }
+        }
+    }
+
+    fun setCategorys(onSuccess: () -> Unit) = viewModelScope.launch {
+        homeRepository.setCategories(
+            PatchCategoryBody(
+                _categoryTags.value.filter { it.isSelected }.map { it.id }
+            )
+        ).collect { apiState ->
+            apiState.onSuccess {
+                onSuccess()
+            }
+        }
+    }
+
     fun updateBookmarkState(storedId: Int, bookmarked: Boolean) {
         _homeBanners.update { items ->
             val updatedList = items.map {
@@ -87,4 +132,12 @@ class HomeViewModel @Inject constructor(
             updatedList
         }
     }
+
+    fun updateCategoryTags(categoryTag: CategoryTag) {
+        _categoryTags.value = _categoryTags.value.mapIndexed { _, item ->
+            if (item.name == categoryTag.name) item.copy(isSelected = !item.isSelected) else item
+        }.toMutableList()
+    }
+
+
 }

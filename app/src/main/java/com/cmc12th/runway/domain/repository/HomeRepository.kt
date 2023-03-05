@@ -10,6 +10,7 @@ import com.cmc12th.runway.data.response.store.BlogReview
 import com.cmc12th.runway.data.response.store.StoreDetail
 import com.cmc12th.runway.data.response.store.UserReview
 import com.cmc12th.runway.data.response.store.UserReviewDetail
+import com.cmc12th.runway.data.response.user.PatchCategoryBody
 import com.cmc12th.runway.utils.ApiWrapper
 import com.cmc12th.runway.utils.DefaultApiWrapper
 import com.cmc12th.runway.utils.PagingApiWrapper
@@ -27,4 +28,6 @@ interface HomeRepository {
     fun getHomeReviewPaging(): Flow<PagingData<HomeReviewItem>>
 
     fun getHomeReviewDetail(reviewId: Int): Flow<ApiWrapper<UserReviewDetail>>
+    fun setCategories(patchCategoryBody: PatchCategoryBody): Flow<DefaultApiWrapper>
+    fun getCategories(): Flow<ApiWrapper<ArrayList<String>>>
 }
