@@ -1,5 +1,6 @@
 package com.cmc12th.runway.ui.detail.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -18,13 +19,19 @@ import com.cmc12th.runway.ui.components.WidthSpacerLine
 import com.cmc12th.runway.ui.theme.*
 
 @Composable
-fun BlogReviewItem(blogReview: BlogReview) {
+fun BlogReviewItem(
+    blogReview: BlogReview,
+    onClick: (url: String, title: String) -> Unit,
+) {
     Column {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(136.dp)
-                .padding(20.dp, 14.dp),
+                .padding(20.dp, 14.dp)
+                .clickable {
+                    onClick(blogReview.webUrl, "")
+                },
         ) {
             Column(
                 verticalArrangement = Arrangement.spacedBy(4.dp),

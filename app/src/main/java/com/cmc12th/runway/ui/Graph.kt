@@ -25,6 +25,7 @@ import com.cmc12th.runway.ui.setting.SettingMainScreen
 import com.cmc12th.runway.ui.setting.view.SettingPersonalInfoManagementScreen
 import com.cmc12th.runway.ui.setting.view.SettingWithdrawalScreen
 import com.cmc12th.runway.ui.signin.view.*
+import com.cmc12th.runway.ui.webview.WebviewScreen
 import com.cmc12th.runway.utils.Constants.DETAIL_GRAPH
 import com.cmc12th.runway.utils.Constants.DETAIL_ROUTE
 import com.cmc12th.runway.utils.Constants.EDIT_PROFILE_IMAGE_ROUTE
@@ -54,6 +55,7 @@ import com.cmc12th.runway.utils.Constants.SIGNIN_PASSWORD_ROUTE
 import com.cmc12th.runway.utils.Constants.SIGNIN_PHONE_VERIFY_ROUTE
 import com.cmc12th.runway.utils.Constants.SIGNIN_PROFILE_IMAGE_ROUTE
 import com.cmc12th.runway.utils.Constants.SIGNIN_USER_VERIFICATION_ROUTE
+import com.cmc12th.runway.utils.Constants.WEB_VIEW_ROUTE
 
 
 fun NavGraphBuilder.mainGraph(
@@ -64,6 +66,22 @@ fun NavGraphBuilder.mainGraph(
         composable(Screen.Map.route) { MapScreen(appState) }
         composable(Screen.Mypage.route) {
             MypageScreen(appState)
+        }
+
+        composable(
+            route = "$WEB_VIEW_ROUTE?title={title}&url={url}",
+            arguments = listOf(
+                navArgument("title") {
+                    type = NavType.StringType
+                },
+                navArgument("url") {
+                    type = NavType.StringType
+                },
+            )
+        ) { entry ->
+            val title = entry.arguments?.getString("title") ?: ""
+            val url = entry.arguments?.getString("url") ?: ""
+            WebviewScreen(appState, title, url)
         }
 
         navigation(startDestination = DETAIL_ROUTE, route = DETAIL_GRAPH) {
