@@ -13,7 +13,7 @@ interface HomeService {
     /** 홈화면 쇼룸 조회 */
     /** @param type 홈화면 조회시 0 전체보기 조회 시 1
      *  홈화면은 총 10개, 전체는 총 30개가 보여짐 */
-    @POST("/home")
+    @GET("/home")
     suspend fun getHomeBanner(@Query("type") type: Int): NetworkResponse<HomeBanner>
 
     /** 홈화면 리뷰 조회 */
