@@ -20,7 +20,10 @@ object Constants {
     const val MAP_ROUTE = "nav-map"
     const val MYPAGE_ROUTE = "nav-mypage"
 
+    const val EDIT_PROFILE_IMAGE_ROUTE = "nav-edit_profile_image"
+
     const val MYPAGE_EDIT_PROFILE_ROUTE = "nav-mypage-edit-profile"
+    const val MYPAGE_EDIT_PROFILE_COMPLETE_ROUTE = "nav-mypage-edit-profile-complete"
 
     const val LOGIN_BASE_ROUTE = "nav-login"
     const val LOGIN_ID_PW_ROUTE = "nav-login_id_pw"

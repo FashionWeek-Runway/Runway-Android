@@ -162,7 +162,7 @@ fun ProfileBoxPreview() {
 }
 
 @Composable
-private fun ProfileBox(
+fun ProfileBox(
     animatedScale: Float,
     nickname: Nickname,
     categoryTags: List<CategoryTag>,

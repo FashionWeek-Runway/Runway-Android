@@ -7,7 +7,7 @@ import com.squareup.moshi.JsonClass
 @JsonClass(generateAdapter = true)
 data class ImgUrlAndNicknameAndCategorys(
     @Json(name = "categoryList")
-    val categoryList: String,
+    val categoryList: List<String>,
     @Json(name = "imgUrl")
     val imgUrl: String?,
     @Json(name = "nickname")

@@ -18,6 +18,7 @@ import com.cmc12th.runway.ui.login.passwordsearch.view.PasswordSearchPhoneScreen
 import com.cmc12th.runway.ui.login.passwordsearch.view.PasswordSearchVerifyScreen
 import com.cmc12th.runway.ui.login.view.LoginBaseScreen
 import com.cmc12th.runway.ui.map.view.MapScreen
+import com.cmc12th.runway.ui.mypage.view.EditProfileCompleteScreen
 import com.cmc12th.runway.ui.mypage.view.EditProfileScreen
 import com.cmc12th.runway.ui.mypage.view.MypageScreen
 import com.cmc12th.runway.ui.setting.SettingMainScreen
@@ -26,10 +27,12 @@ import com.cmc12th.runway.ui.setting.view.SettingWithdrawalScreen
 import com.cmc12th.runway.ui.signin.view.*
 import com.cmc12th.runway.utils.Constants.DETAIL_GRAPH
 import com.cmc12th.runway.utils.Constants.DETAIL_ROUTE
+import com.cmc12th.runway.utils.Constants.EDIT_PROFILE_IMAGE_ROUTE
 import com.cmc12th.runway.utils.Constants.LOGIN_BASE_ROUTE
 import com.cmc12th.runway.utils.Constants.LOGIN_GRAPH
 import com.cmc12th.runway.utils.Constants.LOGIN_ID_PW_ROUTE
 import com.cmc12th.runway.utils.Constants.MAIN_GRAPH
+import com.cmc12th.runway.utils.Constants.MYPAGE_EDIT_PROFILE_COMPLETE_ROUTE
 import com.cmc12th.runway.utils.Constants.MYPAGE_EDIT_PROFILE_ROUTE
 import com.cmc12th.runway.utils.Constants.PASSWORD_SEARCH_GRAPH
 import com.cmc12th.runway.utils.Constants.PASSWORD_SEARCH_PHONE_CHANGE_PASSWORD
@@ -108,8 +111,22 @@ fun NavGraphBuilder.mainGraph(
             ReviewReportScreen(appState, idx)
         }
 
-        composable(route = MYPAGE_EDIT_PROFILE_ROUTE) {
-            EditProfileScreen(appState = appState)
+    }
+}
+
+fun NavGraphBuilder.editProfileGraph(
+    appState: ApplicationState
+) {
+    navigation(startDestination = MYPAGE_EDIT_PROFILE_ROUTE, route = EDIT_PROFILE_IMAGE_ROUTE) {
+        composable(route = MYPAGE_EDIT_PROFILE_ROUTE) { entry ->
+            val backStackEntry =
+                rememberNavControllerBackEntry(entry, appState, MYPAGE_EDIT_PROFILE_ROUTE)
+            EditProfileScreen(appState = appState, hiltViewModel(backStackEntry))
+        }
+        composable(route = MYPAGE_EDIT_PROFILE_COMPLETE_ROUTE) { entry ->
+            val backStackEntry =
+                rememberNavControllerBackEntry(entry, appState, MYPAGE_EDIT_PROFILE_ROUTE)
+            EditProfileCompleteScreen(appState, hiltViewModel(backStackEntry))
         }
     }
 }

@@ -129,6 +129,7 @@ private fun RootNavhost(
                 }
                 mainGraph(appState)
                 loginGraph(appState)
+                editProfileGraph(appState)
                 passwordSearchGraph(appState)
                 signInGraph(appState)
                 settingGraph(appState)

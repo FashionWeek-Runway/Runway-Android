@@ -22,6 +22,7 @@ import com.cmc12th.runway.ui.mypage.components.*
 import com.cmc12th.runway.ui.theme.*
 import com.cmc12th.runway.utils.Constants
 import com.cmc12th.runway.utils.Constants.BOTTOM_NAVIGATION_HEIGHT
+import com.cmc12th.runway.utils.Constants.EDIT_PROFILE_IMAGE_ROUTE
 import com.cmc12th.runway.utils.Constants.MYPAGE_EDIT_PROFILE_ROUTE
 import com.cmc12th.runway.utils.Constants.SETTING_GRAPH
 import me.onebone.toolbar.CollapsingToolbarScaffold
@@ -64,7 +65,7 @@ fun MypageScreen(appState: ApplicationState) {
                 /** 프로필 정보 */
                 MainProfileInfo(
                     navigateToEditProfile = {
-                        appState.navigate(MYPAGE_EDIT_PROFILE_ROUTE)
+                        appState.navigate(EDIT_PROFILE_IMAGE_ROUTE)
                     }
                 )
                 HeightSpacer(height = 34.dp)

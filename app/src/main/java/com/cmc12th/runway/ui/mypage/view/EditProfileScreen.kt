@@ -16,8 +16,6 @@ import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material3.*
@@ -28,9 +26,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -41,7 +36,6 @@ import coil.request.ImageRequest
 import com.cmc12th.runway.R
 import com.cmc12th.runway.ui.components.BackIcon
 import com.cmc12th.runway.ui.components.CustomBottomSheet
-import com.cmc12th.runway.ui.components.CustomTextField
 import com.cmc12th.runway.ui.components.HeightSpacer
 import com.cmc12th.runway.ui.domain.keyboardAsState
 import com.cmc12th.runway.ui.domain.model.ApplicationState
@@ -50,21 +44,18 @@ import com.cmc12th.runway.ui.domain.model.BottomSheetContentItem
 import com.cmc12th.runway.ui.domain.model.KeyboardStatus
 import com.cmc12th.runway.ui.domain.rememberBottomSheet
 import com.cmc12th.runway.ui.mypage.MypageViewModel
-import com.cmc12th.runway.ui.signin.SignInViewModel
-import com.cmc12th.runway.ui.signin.components.OnBoardStep
-import com.cmc12th.runway.ui.signin.model.Nickname
 import com.cmc12th.runway.ui.signin.model.ProfileImageType
 import com.cmc12th.runway.ui.signin.view.InputNickname
 import com.cmc12th.runway.ui.theme.*
-import com.cmc12th.runway.utils.Constants
+import com.cmc12th.runway.utils.Constants.MYPAGE_EDIT_PROFILE_COMPLETE_ROUTE
 import com.cmc12th.runway.utils.getImageUri
 import kotlinx.coroutines.launch
 
 @Composable
 fun EditProfileScreen(
     appState: ApplicationState,
+    viewModel: MypageViewModel,
 ) {
-    val viewModel: MypageViewModel = hiltViewModel()
     val coroutineScope = rememberCoroutineScope()
     val bottomsheetState = rememberBottomSheet()
     val uiState by viewModel.profileImageUiState.collectAsStateWithLifecycle()
@@ -123,10 +114,9 @@ fun EditProfileScreen(
     val onDone = {
         errorMessage.value = ""
         if (uiState.nickName.text.isNotBlank() && uiState.nickName.checkValidate()) {
-            viewModel.checkNickname(
+            viewModel.modifyProfile(
                 onSuccess = {
-                    // TODO 완료화면으로 넘어가기
-                    // appState.navController.navigate(Constants.SIGNIN_CATEGORY_ROUTE)
+                    appState.navController.navigate(MYPAGE_EDIT_PROFILE_COMPLETE_ROUTE)
                 },
                 onError = {
                     errorMessage.value = it.message
@@ -215,7 +205,7 @@ fun EditProfileScreen(
                 )
             ) {
                 Text(
-                    text = "다음",
+                    text = "저장",
                     modifier = Modifier.padding(0.dp, 5.dp),
                     textAlign = TextAlign.Center,
                     color = Color.White,
