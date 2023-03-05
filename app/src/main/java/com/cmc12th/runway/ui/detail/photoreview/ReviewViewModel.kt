@@ -7,6 +7,7 @@ import com.cmc12th.runway.data.model.ReviewReportType
 import com.cmc12th.runway.data.request.store.ReviewReportRequest
 import com.cmc12th.runway.data.response.store.UserReviewDetail
 import com.cmc12th.runway.domain.repository.AuthRepository
+import com.cmc12th.runway.domain.repository.HomeRepository
 import com.cmc12th.runway.domain.repository.StoreRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
@@ -30,7 +31,8 @@ data class ReviewReportWrapper(
 @HiltViewModel
 class ReviewViewModel @Inject constructor(
     private val storeRepository: StoreRepository,
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
+    private val homeRepository: HomeRepository
 ) : ViewModel() {
 
     //    private val _reviewDetail = MutableStateFlow(UserReviewDetail.default())
@@ -68,6 +70,17 @@ class ReviewViewModel @Inject constructor(
             }
         }
     }
+
+    /** 홈에서의 리뷰 디테일 조회 */
+    fun getReviewDetailHome(reviewId: Int, onSuccess: () -> Unit = {}) =
+        viewModelScope.launch {
+            homeRepository.getHomeReviewDetail(reviewId).collect { apiState ->
+                apiState.onSuccess {
+                    _reviewDetail.value = it.result
+                    onSuccess()
+                }
+            }
+        }
 
     /** 마이페이지에서의 내가 북마크한 리뷰 디테일 조회 */
     fun getReviewDetailMypage(reviewId: Int, onSuccess: () -> Unit = {}) =

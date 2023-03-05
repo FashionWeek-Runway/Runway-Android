@@ -1,7 +1,7 @@
 package com.cmc12th.runway.ui.domain.model
 
 enum class ReviewViwerType(val typeToString: String) {
-    STORE_DETAIL("STORE_DETAIL"), MYPAGE("MYPAGE");
+    STORE_DETAIL("STORE_DETAIL"), MYPAGE("MYPAGE"), HOME("HOME");
 
     companion object {
         fun convertStringToEnum(stringType: String): ReviewViwerType = values().find {

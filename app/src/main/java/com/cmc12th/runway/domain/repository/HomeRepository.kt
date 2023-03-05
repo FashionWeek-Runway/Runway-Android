@@ -1,9 +1,11 @@
 package com.cmc12th.runway.domain.repository
 
 import androidx.paging.PagingData
+import com.cmc12th.runway.data.request.map.MapFilterRequest
 import com.cmc12th.runway.data.request.store.ReviewReportRequest
 import com.cmc12th.runway.data.response.home.HomeBanner
 import com.cmc12th.runway.data.response.home.HomeReviewItem
+import com.cmc12th.runway.data.response.map.MapInfoItem
 import com.cmc12th.runway.data.response.store.BlogReview
 import com.cmc12th.runway.data.response.store.StoreDetail
 import com.cmc12th.runway.data.response.store.UserReview
@@ -21,6 +23,8 @@ interface HomeRepository {
     fun getHomeReview(
         page: Int, size: Int,
     ): Flow<PagingApiWrapper<HomeReviewItem>>
+
+    fun getHomeReviewPaging(): Flow<PagingData<HomeReviewItem>>
 
     fun getHomeReviewDetail(reviewId: Int): Flow<ApiWrapper<UserReviewDetail>>
 }

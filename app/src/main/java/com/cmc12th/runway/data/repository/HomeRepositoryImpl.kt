@@ -1,5 +1,10 @@
 package com.cmc12th.runway.data.repository
 
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import com.cmc12th.runway.data.pagingsource.BookmarkedPagingSource
+import com.cmc12th.runway.data.pagingsource.HomeReviewItemPagingSource
 import com.cmc12th.runway.data.response.home.HomeBanner
 import com.cmc12th.runway.data.response.home.HomeReviewItem
 import com.cmc12th.runway.data.response.store.UserReviewDetail
@@ -23,6 +28,19 @@ class HomeRepositoryImpl @Inject constructor(
         safePagingFlow {
             runwayClient.getHomeReview(page, size)
         }
+
+    override fun getHomeReviewPaging(): Flow<PagingData<HomeReviewItem>> {
+        return Pager(
+            config = PagingConfig(
+                pageSize = 10,
+            ),
+            pagingSourceFactory = {
+                HomeReviewItemPagingSource(
+                    homeRepository = this
+                )
+            },
+        ).flow
+    }
 
     override fun getHomeReviewDetail(reviewId: Int): Flow<ApiWrapper<UserReviewDetail>> = safeFlow {
         runwayClient.getHomeReviewDetail(reviewId)

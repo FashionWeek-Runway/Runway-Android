@@ -1,9 +1,13 @@
 package com.cmc12th.runway.ui.home
 
+import androidx.compose.runtime.MutableState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
 import androidx.room.PrimaryKey
 import com.cmc12th.runway.data.response.home.HomeBannerItem
+import com.cmc12th.runway.data.response.home.HomeReviewItem
+import com.cmc12th.runway.data.response.user.MyReviewsItem
 import com.cmc12th.runway.domain.repository.AuthRepository
 import com.cmc12th.runway.domain.repository.HomeRepository
 import com.cmc12th.runway.domain.repository.StoreRepository
@@ -25,8 +29,10 @@ class HomeViewModel @Inject constructor(
     private val authRepository: AuthRepository
 ) : ViewModel() {
 
-    val _homeBanners = MutableStateFlow(mutableListOf<HomeBannerItem>())
-    val _nickName = MutableStateFlow("")
+    private val _homeBanners = MutableStateFlow(mutableListOf<HomeBannerItem>())
+    private val _nickName = MutableStateFlow("")
+    private val _reviews = MutableStateFlow<PagingData<HomeReviewItem>>(PagingData.empty())
+    val reviews: StateFlow<PagingData<HomeReviewItem>> = _reviews.asStateFlow()
 
     val uiState = combine(
         _homeBanners, _nickName
@@ -40,6 +46,12 @@ class HomeViewModel @Inject constructor(
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = homeUiState()
     )
+
+    fun getHomeReview() = viewModelScope.launch {
+        homeRepository.getHomeReviewPaging().collect {
+            _reviews.value = it
+        }
+    }
 
     fun getProfile() = viewModelScope.launch {
         authRepository.getProfileInfoToEdit().collect { apiState ->

@@ -1,6 +1,6 @@
 @file:OptIn(
     ExperimentalPagerApi::class, ExperimentalPagerApi::class, ExperimentalTextApi::class,
-    ExperimentalPagerApi::class
+    ExperimentalPagerApi::class, ExperimentalPagerApi::class
 )
 
 package com.cmc12th.runway.ui.home.view
@@ -33,18 +33,25 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.items
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.cmc12th.runway.R
 import com.cmc12th.runway.data.response.home.HomeBannerItem
+import com.cmc12th.runway.data.response.home.HomeReviewItem
 import com.cmc12th.runway.ui.components.HeightSpacer
 import com.cmc12th.runway.ui.components.RunwayIconButton
 import com.cmc12th.runway.ui.components.WidthSpacer
 import com.cmc12th.runway.ui.domain.model.ApplicationState
+import com.cmc12th.runway.ui.domain.model.ReviewViwerType
 import com.cmc12th.runway.ui.home.HomeViewModel
 import com.cmc12th.runway.ui.home.component.HomeBannerStep
 import com.cmc12th.runway.ui.theme.*
+import com.cmc12th.runway.utils.Constants
 import com.cmc12th.runway.utils.Constants.BOTTOM_NAVIGATION_HEIGHT
+import com.cmc12th.runway.utils.Constants.REVIEW_DETAIL_ROUTE
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
@@ -56,10 +63,12 @@ fun HomeScreen(appState: ApplicationState) {
     appState.systmeUiController.setStatusBarColor(Color.Transparent)
     val viewModel: HomeViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val reviews = viewModel.reviews.collectAsLazyPagingItems()
 
     LaunchedEffect(key1 = Unit) {
         viewModel.getHomeBanner(0)
         viewModel.getProfile()
+        viewModel.getHomeReview()
     }
 
     Column(
@@ -89,41 +98,12 @@ fun HomeScreen(appState: ApplicationState) {
             MainBannerTopBar(uiState.nickName)
         }
 
-        Text(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 20.dp, end = 20.dp, top = 20.dp),
-            text = "비슷한 취향의 사용자 후기",
-            style = HeadLine4,
-            color = Color.Black
+        HomeReviews(
+            reviews = reviews,
+            navigateToUserReviewDetail = { index ->
+                appState.navigate("${REVIEW_DETAIL_ROUTE}?reviewId=${index}&viewerType=${ReviewViwerType.HOME.typeToString}")
+            },
         )
-
-        HeightSpacer(height = 16.dp)
-
-        LazyRow(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(5.dp)
-        ) {
-            item { WidthSpacer(width = 15.dp) }
-
-            items((0..8).toList()) {
-                AsyncImage(
-                    modifier = Modifier
-                        .size(132.dp, 200.dp)
-                        .clickable {
-                        },
-                    model = ImageRequest.Builder(LocalContext.current)
-                        .data("")
-                        .crossfade(true)
-                        .build(),
-                    placeholder = painterResource(R.drawable.img_dummy),
-                    error = painterResource(id = R.drawable.img_dummy),
-                    contentDescription = "IMG_REVIEW",
-                    contentScale = ContentScale.Crop,
-                )
-            }
-            item { WidthSpacer(width = 15.dp) }
-        }
 
         Text(
             modifier = Modifier
@@ -156,6 +136,88 @@ fun HomeScreen(appState: ApplicationState) {
             }
         }
 
+    }
+}
+
+@Composable
+private fun HomeReviews(
+    reviews: LazyPagingItems<HomeReviewItem>,
+    navigateToUserReviewDetail: (Int) -> Unit
+) {
+    Text(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 20.dp, end = 20.dp, top = 20.dp),
+        text = "비슷한 취향의 사용자 후기",
+        style = HeadLine4,
+        color = Color.Black
+    )
+
+    HeightSpacer(height = 16.dp)
+
+    if (reviews.itemCount == 0) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(20.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Image(
+                painter = painterResource(id = R.mipmap.img_empty_home_review),
+                contentDescription = "IMG_EMPTY_HOME_REVIEW",
+                modifier = Modifier.size(128.dp, 115.dp)
+            )
+            HeightSpacer(height = 30.dp)
+            Text(text = "아직 내 취향의 후기가 없어요.", style = Body1, color = Color.Black)
+            HeightSpacer(height = 5.dp)
+            Text(text = "스타일 카테고리를 추가해서\n다양한 후기를 만나보세요.", style = Body2, color = Gray500)
+        }
+    }
+    LazyRow(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(5.dp)
+    ) {
+        item { WidthSpacer(width = 15.dp) }
+
+        items(reviews.itemCount) { index ->
+            Box(modifier = Modifier
+                .size(132.dp, 200.dp)
+                .clickable {
+                    navigateToUserReviewDetail(reviews[index]?.reviewId ?: 0)
+                }) {
+                AsyncImage(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(reviews[index]?.imgUrl)
+                        .crossfade(true)
+                        .build(),
+                    placeholder = painterResource(R.drawable.img_dummy),
+                    error = painterResource(id = R.drawable.img_dummy),
+                    contentDescription = "IMG_PROFILE",
+                    contentScale = ContentScale.Crop,
+                )
+                Row(
+                    modifier = Modifier
+                        .align(Alignment.BottomStart)
+                        .padding(6.dp),
+                    horizontalArrangement = Arrangement.spacedBy(3.dp)
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_filled_review_location_16),
+                        contentDescription = "IC_LOCATION",
+                        modifier = Modifier.size(14.dp),
+                        tint = Color.Unspecified
+                    )
+                    Text(
+                        text = reviews[index]?.regionInfo ?: "",
+                        style = Caption,
+                        color = Gray100
+                    )
+                }
+            }
+        }
+        item { WidthSpacer(width = 15.dp) }
     }
 }
 

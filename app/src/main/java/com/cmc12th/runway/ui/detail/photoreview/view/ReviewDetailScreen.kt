@@ -84,6 +84,9 @@ fun ReviewDetailScreen(
             ReviewViwerType.MYPAGE -> {
                 reviewViewModel.getReviewDetailMypage(reviewId)
             }
+            ReviewViwerType.HOME -> {
+                reviewViewModel.getReviewDetailHome(reviewId)
+            }
         }
     }
 
@@ -122,6 +125,9 @@ fun ReviewDetailScreen(
                         reviewViewModel.getReviewDetailMypage(idx) {
                             onSuccess()
                         }
+                    }
+                    ReviewViwerType.HOME -> {
+                        reviewViewModel.getReviewDetailHome(reviewId)
                     }
                 }
 
