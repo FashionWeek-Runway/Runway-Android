@@ -27,9 +27,13 @@ import com.cmc12th.runway.ui.domain.model.BottomSheetContent
 import com.cmc12th.runway.ui.domain.model.ReviewViwerType
 import com.cmc12th.runway.ui.domain.rememberBottomSheet
 import com.cmc12th.runway.ui.theme.*
+import com.cmc12th.runway.utils.Constants
 import com.cmc12th.runway.utils.Constants.REVIEW_DETAIL_ROUTE
 import com.cmc12th.runway.utils.Constants.REVIEW_WRITE_ROUTE
+import com.cmc12th.runway.utils.Constants.WEB_VIEW_ROUTE
 import com.cmc12th.runway.utils.getImageUri
+import com.google.accompanist.web.WebView
+import com.google.accompanist.web.rememberWebViewState
 import kotlinx.coroutines.launch
 
 @Composable
@@ -57,7 +61,7 @@ fun DetailScreen(
     val showBottomSheet: (BottomSheetContent) -> Unit = {
         coroutineScope.launch {
             bottomsheetState.bottomsheetContent.value = it
-            bottomsheetState.modalSheetState.animateTo(ModalBottomSheetValue.Expanded)
+            bottomsheetState.modalSheetState.show()
         }
     }
 
@@ -134,7 +138,12 @@ fun DetailScreen(
                 WidthSpacerLine(height = 8.dp, color = Gray100)
                 BlogReview()
                 uiState.blogReview.map {
-                    BlogReviewItem(it)
+                    BlogReviewItem(
+                        blogReview = it,
+                        onClick = { url, title ->
+                            appState.navigate("$WEB_VIEW_ROUTE?title$title=&url=$url")
+                        }
+                    )
                 }
             }
 
