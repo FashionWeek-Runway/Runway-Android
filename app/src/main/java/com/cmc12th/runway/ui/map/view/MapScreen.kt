@@ -549,7 +549,8 @@ private fun RunwayNaverMap(
                     }.customMarker {
                         Marker().apply {
                             icon =
-                                OverlayImage.fromResource(R.drawable.ic_fill_map_marker_default_24)
+                                if (it.isClicked) OverlayImage.fromResource(R.mipmap.ic_map_selceted_marker)
+                                else OverlayImage.fromResource(R.drawable.ic_fill_map_marker_default_24)
                             width = if (it.isClicked) 160 else 90
                             height = if (it.isClicked) 160 else 90
                             captionText = it.title
