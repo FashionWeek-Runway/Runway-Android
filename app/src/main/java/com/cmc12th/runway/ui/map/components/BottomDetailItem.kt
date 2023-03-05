@@ -37,7 +37,7 @@ fun BottomDetailItem(
                 .build(),
             placeholder = painterResource(R.drawable.img_dummy),
             error = painterResource(id = R.drawable.img_dummy),
-            contentDescription = "ASDas",
+            contentDescription = "IMG_SELECTED_IMG",
             contentScale = ContentScale.Crop,
         )
         Text(
