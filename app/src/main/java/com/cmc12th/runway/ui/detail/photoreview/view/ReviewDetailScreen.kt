@@ -9,12 +9,12 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -48,6 +48,7 @@ import com.cmc12th.runway.ui.domain.model.BottomSheetContentItem
 import com.cmc12th.runway.ui.domain.model.ReviewViwerType
 import com.cmc12th.runway.ui.domain.rememberBottomSheet
 import com.cmc12th.runway.ui.theme.*
+import com.cmc12th.runway.utils.Constants
 import com.cmc12th.runway.utils.Constants.REVIEW_REPORT_ROUTE
 import kotlinx.coroutines.launch
 import kotlin.math.abs
@@ -139,6 +140,11 @@ fun ReviewDetailScreen(
                     appState.popBackStack()
                 })
             },
+            navigateToDetail = { storeId, storeName ->
+                appState.navigate(
+                    "${Constants.DETAIL_ROUTE}?storeId=$storeId&storeName=$storeName"
+                )
+            }
         )
     }
 
@@ -154,6 +160,7 @@ private fun DetailContents(
     updateBookmark: () -> Unit,
     getReviewDetail: (idx: Int, onSuccess: () -> Unit) -> Unit,
     deleteReview: () -> Unit,
+    navigateToDetail: (storeId: Int, storeName: String) -> Unit
 ) {
 
     var offsetX by remember { mutableStateOf(0.dp.value) }
@@ -264,7 +271,10 @@ private fun DetailContents(
 
 
         }
-        BottomBar(reviewDetail)
+        BottomBar(
+            reviewDetail = reviewDetail,
+            navigateToDetail = navigateToDetail
+        )
     }
 }
 
@@ -291,7 +301,10 @@ private fun MainImage(
 }
 
 @Composable
-private fun BottomBar(reviewDetail: UserReviewDetail) {
+private fun BottomBar(
+    reviewDetail: UserReviewDetail,
+    navigateToDetail: (storeId: Int, storeName: String) -> Unit
+) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -299,6 +312,9 @@ private fun BottomBar(reviewDetail: UserReviewDetail) {
             .clip(RoundedCornerShape(4.dp))
             .background(Color(0x50242528))
             .border(BorderStroke(1.dp, Gray800), RoundedCornerShape(4.dp))
+            .clickable {
+                navigateToDetail(reviewDetail.storeId, reviewDetail.storeName)
+            }
     ) {
         Row(
             modifier = Modifier.padding(10.dp),
