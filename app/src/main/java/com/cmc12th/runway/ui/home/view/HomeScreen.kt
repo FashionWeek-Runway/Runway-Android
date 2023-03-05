@@ -20,15 +20,21 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.geometry.toRect
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.StrokeJoin
+import androidx.compose.ui.graphics.drawOutline
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -309,22 +315,22 @@ private fun BoxScope.HomeBanner(
                             text = homeBanners[page].storeName,
                             style = TextStyle.Default.copy(
                                 fontSize = 26.sp,
-                                fontFamily = blackHanSans
+                                fontFamily = blackHanSans,
+                                drawStyle = Stroke(
+                                    miter = 10f,
+                                    width = 8f,
+                                    join = StrokeJoin.Round,
+                                ),
                             ),
-                            color = Primary
+                            color = Color.White
                         )
                         Text(
                             text = homeBanners[page].storeName,
                             style = TextStyle.Default.copy(
                                 fontSize = 26.sp,
-                                fontFamily = blackHanSans,
-                                drawStyle = Stroke(
-                                    miter = 10f,
-                                    width = 5f,
-                                    join = StrokeJoin.Round,
-                                ),
+                                fontFamily = blackHanSans
                             ),
-                            color = Color.White
+                            color = Primary
                         )
                     }
                     HeightSpacer(height = 14.dp)
