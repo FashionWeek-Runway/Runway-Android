@@ -71,12 +71,12 @@ fun ReviewDetailScreen(
     val showBottomSheet: (BottomSheetContent) -> Unit = {
         coroutineScope.launch {
             bottomsheetState.bottomsheetContent.value = it
-            bottomsheetState.modalSheetState.animateTo(ModalBottomSheetValue.Expanded)
+            bottomsheetState.modalSheetState.show()
         }
     }
     LaunchedEffect(key1 = Unit) {
         appState.bottomBarState.value = false
-        bottomsheetState.modalSheetState.animateTo(ModalBottomSheetValue.Hidden)
+        bottomsheetState.modalSheetState.hide()
         when (viewerType) {
             ReviewViwerType.STORE_DETAIL -> {
                 reviewViewModel.getReviewDetailStore(reviewId)

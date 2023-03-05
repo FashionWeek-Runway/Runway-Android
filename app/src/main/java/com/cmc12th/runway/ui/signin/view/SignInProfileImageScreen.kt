@@ -151,7 +151,7 @@ fun SignInProfileImageScreen(
     val showBottomSheet: (BottomSheetContent) -> Unit = {
         coroutineScope.launch {
             bottomsheetState.bottomsheetContent.value = it
-            bottomsheetState.modalSheetState.animateTo(ModalBottomSheetValue.Expanded)
+            bottomsheetState.modalSheetState.show()
         }
     }
 

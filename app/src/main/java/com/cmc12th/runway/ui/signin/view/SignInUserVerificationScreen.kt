@@ -62,7 +62,7 @@ fun SignInUserInfoVerifyScreen(
         keyboardController?.hide()
         coroutineScope.launch {
             bottomsheetState.bottomsheetContent.value = it
-            bottomsheetState.modalSheetState.animateTo(ModalBottomSheetValue.Expanded)
+            bottomsheetState.modalSheetState.show()
         }
     }
 
