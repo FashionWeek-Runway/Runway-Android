@@ -206,6 +206,14 @@ private fun HomeReviews(
                         color = Gray100
                     )
                 }
+
+                if (reviews[index]?.read == true) {
+                    Box(
+                        modifier = Modifier
+                            .background(Black40)
+                            .fillMaxSize()
+                    )
+                }
             }
         }
         item { WidthSpacer(width = 15.dp) }
