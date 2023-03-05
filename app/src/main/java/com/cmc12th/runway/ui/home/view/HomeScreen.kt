@@ -37,8 +37,10 @@ import com.cmc12th.runway.ui.home.HomeViewModel
 import com.cmc12th.runway.ui.home.component.HomeBannerComponents
 import com.cmc12th.runway.ui.home.component.HomeBannerTopBar
 import com.cmc12th.runway.ui.theme.*
+import com.cmc12th.runway.utils.Constants
 import com.cmc12th.runway.utils.Constants.BOTTOM_NAVIGATION_HEIGHT
 import com.cmc12th.runway.utils.Constants.DETAIL_ROUTE
+import com.cmc12th.runway.utils.Constants.EDIT_CATEGORY_ROUTE
 import com.cmc12th.runway.utils.Constants.REVIEW_DETAIL_ROUTE
 import com.google.accompanist.pager.ExperimentalPagerApi
 
@@ -86,7 +88,12 @@ fun HomeScreen(appState: ApplicationState) {
             )
 
             /** Banner Top */
-            HomeBannerTopBar(uiState.nickName)
+            HomeBannerTopBar(
+                nickname = uiState.nickName,
+                navigateToEditCategory = {
+                    appState.navigate("${EDIT_CATEGORY_ROUTE}?nickName={${uiState.nickName}")
+                }
+            )
         }
 
         HomeReviews(
@@ -96,37 +103,42 @@ fun HomeScreen(appState: ApplicationState) {
             },
         )
 
-        Text(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 20.dp, end = 20.dp, top = 30.dp),
-            text = "흥미로운 가게 소식을 알려드려요",
-            style = HeadLine4,
-            color = Color.Black
-        )
+        ShowNews()
 
-        Column(
-            modifier = Modifier
-                .padding(20.dp),
-            verticalArrangement = Arrangement.spacedBy(20.dp)
-        ) {
-            (0..4).toList().forEach {
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(14.dp)
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.img_dummy),
-                        contentDescription = "IMG_STORE_NEWS",
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .aspectRatio(1.39f),
-                        contentScale = ContentScale.Crop
-                    )
-                    Text(text = "'PRESENT' 'FUTURE' 'PAST'", style = Body1B, color = Gray900)
-                }
+    }
+}
+
+@Composable
+private fun ShowNews() {
+    Text(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 20.dp, end = 20.dp, top = 30.dp),
+        text = "흥미로운 가게 소식을 알려드려요",
+        style = HeadLine4,
+        color = Color.Black
+    )
+
+    Column(
+        modifier = Modifier
+            .padding(20.dp),
+        verticalArrangement = Arrangement.spacedBy(20.dp)
+    ) {
+        (0..4).toList().forEach {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(14.dp)
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.img_dummy),
+                    contentDescription = "IMG_STORE_NEWS",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .aspectRatio(1.39f),
+                    contentScale = ContentScale.Crop
+                )
+                Text(text = "'PRESENT' 'FUTURE' 'PAST'", style = Body1B, color = Gray900)
             }
         }
-
     }
 }
 

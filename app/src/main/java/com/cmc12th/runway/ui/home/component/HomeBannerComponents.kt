@@ -54,10 +54,7 @@ fun BoxScope.HomeBannerComponents(
                     navigateToDetail(homeBanners[page].storeId, homeBanners[page].storeName)
                 }
         ) {
-            /** 배경 이미지 */
-            /** 배경 이미지 */
-            /** 배경 이미지 */
-
+            
             /** 배경 이미지 */
             AsyncImage(
                 modifier = Modifier
@@ -73,23 +70,11 @@ fun BoxScope.HomeBannerComponents(
             )
 
             /** 배경 깔기 */
-
-            /** 배경 깔기 */
-
-            /** 배경 깔기 */
-
-            /** 배경 깔기 */
             Box(
                 modifier = Modifier
                     .background(Black10)
                     .fillMaxSize()
             )
-
-            /** 하얀색 네모 박스 안 */
-
-            /** 하얀색 네모 박스 안 */
-
-            /** 하얀색 네모 박스 안 */
 
             /** 하얀색 네모 박스 안 */
             Box(

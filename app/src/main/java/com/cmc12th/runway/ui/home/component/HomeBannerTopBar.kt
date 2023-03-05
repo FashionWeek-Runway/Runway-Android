@@ -18,7 +18,10 @@ import com.cmc12th.runway.ui.theme.White
 
 
 @Composable
-fun BoxScope.HomeBannerTopBar(nickname: String) {
+fun BoxScope.HomeBannerTopBar(
+    nickname: String,
+    navigateToEditCategory: () -> Unit
+) {
     Box(
         Modifier
             .statusBarsPadding()
@@ -33,7 +36,7 @@ fun BoxScope.HomeBannerTopBar(nickname: String) {
                 drawable = R.drawable.ic_baseline_filter_24,
                 tint = Color.White
             ) {
-                // TODO 필터 설정 뷰로 넘기기
+                navigateToEditCategory()
             }
         }
         Row(

@@ -12,6 +12,7 @@ import com.cmc12th.runway.ui.detail.photoreview.view.ReviewReportScreen
 import com.cmc12th.runway.ui.detail.view.DetailScreen
 import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.domain.model.ReviewViwerType
+import com.cmc12th.runway.ui.home.view.EditCategoryScreen
 import com.cmc12th.runway.ui.home.view.HomeScreen
 import com.cmc12th.runway.ui.login.view.LoginIdPasswdScreen
 import com.cmc12th.runway.ui.login.passwordsearch.view.PasswordSearchChagnePasswordScreen
@@ -29,6 +30,7 @@ import com.cmc12th.runway.ui.signin.view.*
 import com.cmc12th.runway.ui.webview.WebviewScreen
 import com.cmc12th.runway.utils.Constants.DETAIL_GRAPH
 import com.cmc12th.runway.utils.Constants.DETAIL_ROUTE
+import com.cmc12th.runway.utils.Constants.EDIT_CATEGORY_ROUTE
 import com.cmc12th.runway.utils.Constants.EDIT_PROFILE_IMAGE_ROUTE
 import com.cmc12th.runway.utils.Constants.LOGIN_BASE_ROUTE
 import com.cmc12th.runway.utils.Constants.LOGIN_GRAPH
@@ -67,6 +69,20 @@ fun NavGraphBuilder.mainGraph(
         composable(Screen.Map.route) { MapScreen(appState) }
         composable(Screen.Mypage.route) {
             MypageScreen(appState)
+        }
+
+        composable(
+            route = "$EDIT_CATEGORY_ROUTE?nickName={nickName}",
+            arguments = listOf(
+                navArgument("nickName") {
+                    type = NavType.StringType
+                })
+        ) { entry ->
+            val nickName = entry.arguments?.getString("nickName") ?: ""
+            EditCategoryScreen(
+                appState = appState,
+                nickname = nickName
+            )
         }
 
         composable(
