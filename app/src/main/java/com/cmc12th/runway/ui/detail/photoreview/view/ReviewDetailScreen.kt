@@ -111,6 +111,7 @@ fun ReviewDetailScreen(
                 appState.navigate("$REVIEW_REPORT_ROUTE?reviewId=$reviewId")
             },
             getReviewDetail = { idx, onSuccess ->
+                reviewId = idx
                 when (viewerType) {
                     ReviewViwerType.STORE_DETAIL -> {
                         reviewViewModel.getReviewDetailStore(idx) {
@@ -424,7 +425,7 @@ private fun BoxScope.Bookmark(
                     onCLick = { updateBookmark() }
                 )
             }
-            Text(text = reviewDetail.bookmarkCnt.toString(), color = White, style = Caption)
+            // Text(text = reviewDetail.bookmarkCnt.toString(), color = White, style = Caption)
         }
     }
 }
