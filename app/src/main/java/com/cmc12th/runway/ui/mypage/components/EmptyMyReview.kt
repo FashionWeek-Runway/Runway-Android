@@ -6,6 +6,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.cmc12th.runway.R
@@ -25,9 +26,10 @@ fun ColumnScope.EmptyMyReview() {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(
-            painter = painterResource(id = R.drawable.img_dummy),
-            contentDescription = "IMG_DUMMY",
-            modifier = Modifier.size(100.dp)
+            painter = painterResource(id = R.mipmap.img_empty_myreview),
+            contentDescription = "IMG_EMPTY_MYREVIEW",
+            modifier = Modifier.size(182.dp, 163.dp),
+            contentScale = ContentScale.Crop
         )
         HeightSpacer(height = 30.dp)
         Text(text = "내 스타일의 매장에 방문하고", style = Body1, color = Black)
