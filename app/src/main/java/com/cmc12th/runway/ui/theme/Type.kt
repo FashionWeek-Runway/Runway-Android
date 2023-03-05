@@ -20,6 +20,10 @@ val SpoqaHansSansNeo = FontFamily(
     Font(R.font.spoqa_han_sans_neo_light, FontWeight.Light, FontStyle.Normal),
 )
 
+val blackHanSans = FontFamily(
+    Font(R.font.black_han_sans_regular, FontWeight.Medium, FontStyle.Normal)
+)
+
 val HeadLine1 = TextStyle(
     fontFamily = SpoqaHansSansNeo,
     fontWeight = FontWeight.Bold,
