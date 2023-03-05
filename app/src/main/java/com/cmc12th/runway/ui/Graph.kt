@@ -11,7 +11,7 @@ import com.cmc12th.runway.ui.detail.photoreview.view.ReviewDetailScreen
 import com.cmc12th.runway.ui.detail.photoreview.view.ReviewReportScreen
 import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.domain.model.ReviewViwerType
-import com.cmc12th.runway.ui.home.HomeScreen
+import com.cmc12th.runway.ui.home.view.HomeScreen
 import com.cmc12th.runway.ui.login.view.LoginIdPasswdScreen
 import com.cmc12th.runway.ui.login.passwordsearch.view.PasswordSearchChagnePasswordScreen
 import com.cmc12th.runway.ui.login.passwordsearch.view.PasswordSearchPhoneScreen
@@ -62,7 +62,7 @@ fun NavGraphBuilder.mainGraph(
     appState: ApplicationState,
 ) {
     navigation(startDestination = Screen.Home.route, route = MAIN_GRAPH) {
-        composable(Screen.Home.route) { HomeScreen() }
+        composable(Screen.Home.route) { HomeScreen(appState) }
         composable(Screen.Map.route) { MapScreen(appState) }
         composable(Screen.Mypage.route) {
             MypageScreen(appState)
