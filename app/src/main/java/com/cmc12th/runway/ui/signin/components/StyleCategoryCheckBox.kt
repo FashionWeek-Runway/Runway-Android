@@ -35,7 +35,7 @@ fun StyleCategoryCheckBox(
     Box(
         modifier = Modifier
             .clip(RoundedCornerShape(5.dp))
-            .border(1.dp, if (isSelected) Blue200 else Gray300, RoundedCornerShape(5.dp))
+            .border(1.dp, if (isSelected) Primary else Gray300, RoundedCornerShape(5.dp))
             .background(color)
             .clickable {
                 onClicked()
@@ -49,14 +49,14 @@ fun StyleCategoryCheckBox(
                 painter = painterResource(id = R.drawable.ic_check),
                 contentDescription = "IC_CHECK",
                 modifier = Modifier.size(18.dp),
-                tint = if (isSelected) Primary else Gray300
+                tint = if (isSelected) Point else Gray300
             )
 
             WidthSpacer(width = 10.dp)
             Text(
                 text = title,
                 style = if (isSelected) Body1B else Body1,
-                color = if (isSelected) Primary else Gray600
+                color = if (isSelected) White else Gray600
             )
         }
     }

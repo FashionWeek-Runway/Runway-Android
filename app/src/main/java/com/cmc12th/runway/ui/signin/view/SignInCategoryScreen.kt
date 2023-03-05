@@ -123,7 +123,7 @@ fun CategoryGroup(
             Row(horizontalArrangement = Arrangement.spacedBy(15.dp)) {
                 item.forEach { categoryTag ->
                     val surfaceColor: State<Color> = animateColorAsState(
-                        if (categoryTag.isSelected) Blue200 else White
+                        if (categoryTag.isSelected) Primary else White
                     )
                     StyleCategoryCheckBox(
                         isSelected = categoryTag.isSelected,
