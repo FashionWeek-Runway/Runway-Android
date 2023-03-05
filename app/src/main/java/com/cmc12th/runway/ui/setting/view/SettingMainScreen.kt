@@ -36,7 +36,9 @@ fun SettingMainScreen(
     val account = listOf(MypageItemWrapper("개인 정보 관리", onClick = {
         appState.navigate(SETTING_PERSONAL_INFO_MANAGEMENT_ROUTE)
     }))
-    val inquiry = listOf(MypageItemWrapper("쇼룸 추가 요청", onClick = {}))
+    val inquiry = listOf(MypageItemWrapper("쇼룸 추가 요청", onClick = {
+        appState.navigate("${Constants.WEB_VIEW_ROUTE}?title=${""}&url=${"https://docs.google.com/forms/d/e/1FAIpQLScmcpp4nMMziU6t8xgsct18IKeYXy2KTjNDIdRDILKv4bazkA/viewform"}")
+    }))
 
     val policies = listOf(
         MypageItemWrapper("이용약관", onClick = {
