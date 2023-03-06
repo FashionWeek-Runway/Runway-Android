@@ -13,24 +13,26 @@ import com.cmc12th.runway.domain.repository.AuthRepository
 import com.cmc12th.runway.domain.repository.HomeRepository
 import com.cmc12th.runway.domain.repository.StoreRepository
 import com.cmc12th.runway.ui.domain.model.RunwayCategory
+import com.cmc12th.runway.ui.home.model.HomeBannertype
 import com.cmc12th.runway.ui.setting.SettingPersonalInfoUiState
 import com.cmc12th.runway.ui.signin.SignInCategoryUiState
 import com.cmc12th.runway.ui.signin.model.CategoryTag
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import java.util.Collections.addAll
 import javax.inject.Inject
 
 data class homeUiState(
-    val homeBanners: MutableList<HomeBannerItem> = mutableListOf(),
-    val nickName: String = ""
+    val homeBanners: MutableList<HomeBannertype> = mutableListOf(),
+    val nickName: String = "",
 )
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val homeRepository: HomeRepository,
     private val storeRepository: StoreRepository,
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
 ) : ViewModel() {
 
 
@@ -44,8 +46,13 @@ class HomeViewModel @Inject constructor(
     val uiState = combine(
         _homeBanners, _nickName
     ) { homeBannerItems, nickName ->
+        val homeBanners: MutableList<HomeBannertype> = homeBannerItems.map {
+            HomeBannertype.toStoreBanner(it)
+        }.toMutableList()
+        homeBanners.add(HomeBannertype.SHOWMOREBANNER)
+
         homeUiState(
-            homeBanners = homeBannerItems,
+            homeBanners = homeBanners,
             nickName = nickName
         )
     }.stateIn(

@@ -21,7 +21,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -37,7 +36,6 @@ import com.cmc12th.runway.ui.home.HomeViewModel
 import com.cmc12th.runway.ui.home.component.HomeBannerComponents
 import com.cmc12th.runway.ui.home.component.HomeBannerTopBar
 import com.cmc12th.runway.ui.theme.*
-import com.cmc12th.runway.utils.Constants
 import com.cmc12th.runway.utils.Constants.BOTTOM_NAVIGATION_HEIGHT
 import com.cmc12th.runway.utils.Constants.DETAIL_ROUTE
 import com.cmc12th.runway.utils.Constants.EDIT_CATEGORY_ROUTE
@@ -45,10 +43,9 @@ import com.cmc12th.runway.utils.Constants.REVIEW_DETAIL_ROUTE
 import com.google.accompanist.pager.ExperimentalPagerApi
 
 @Composable
-fun HomeScreen(appState: ApplicationState) {
+fun HomeScreen(appState: ApplicationState, viewModel: HomeViewModel) {
 
     appState.systmeUiController.setStatusBarColor(Color.Transparent)
-    val viewModel: HomeViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val reviews = viewModel.reviews.collectAsLazyPagingItems()
 
@@ -145,7 +142,7 @@ private fun ShowNews() {
 @Composable
 private fun HomeReviews(
     reviews: LazyPagingItems<HomeReviewItem>,
-    navigateToUserReviewDetail: (Int) -> Unit
+    navigateToUserReviewDetail: (Int) -> Unit,
 ) {
     Text(
         modifier = Modifier
