@@ -298,9 +298,8 @@ fun NavGraphBuilder.signInGraph(
                 kakaoId = kakaoId
             )
         }
-        composable(SIGNIN_AGREEMENT_DETAIL_ROUTE) { entry ->
-            val backStackEntry = rememberNavControllerBackEntry(entry, appState, SIGNIN_GRAPH)
-            AgreementDetailScreen(appState, hiltViewModel(backStackEntry))
+        composable(SIGNIN_AGREEMENT_DETAIL_ROUTE) {
+            AgreementDetailScreen(appState)
         }
         composable(SIGNIN_CATEGORY_ROUTE) { entry ->
             val backStackEntry = rememberNavControllerBackEntry(entry, appState, SIGNIN_GRAPH)

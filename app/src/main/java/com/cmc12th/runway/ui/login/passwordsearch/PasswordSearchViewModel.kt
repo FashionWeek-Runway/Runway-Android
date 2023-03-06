@@ -1,6 +1,5 @@
 package com.cmc12th.runway.ui.login.passwordsearch
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cmc12th.runway.data.request.LoginCheckRequest
@@ -8,7 +7,6 @@ import com.cmc12th.runway.data.request.PasswordAndPhoneNumberRequest
 import com.cmc12th.runway.data.request.SendVerifyMessageRequest
 import com.cmc12th.runway.data.response.ErrorResponse
 import com.cmc12th.runway.domain.repository.SignInRepository
-import com.cmc12th.runway.ui.login.LoginIdPasswordUiState
 import com.cmc12th.runway.ui.signin.SignInPasswordUiState
 import com.cmc12th.runway.ui.signin.SignInPhoneVerifyUiState
 import com.cmc12th.runway.ui.signin.SignInViewModel
@@ -24,12 +22,12 @@ import javax.inject.Inject
 
 data class SearchPasswordPhoneUiState(
     val phone: Phone = Phone.default(),
-    val userPhoneVerificationStatus: Boolean = false
+    val userPhoneVerificationStatus: Boolean = false,
 )
 
 @HiltViewModel
 class PasswordSearchViewModel @Inject constructor(
-    private val signInRepository: SignInRepository
+    private val signInRepository: SignInRepository,
 ) : ViewModel() {
 
 

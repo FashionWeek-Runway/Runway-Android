@@ -1,6 +1,5 @@
 package com.cmc12th.runway.ui.signin.view
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
@@ -22,7 +21,6 @@ import com.cmc12th.runway.ui.theme.HeadLine4
 @Composable
 fun AgreementDetailScreen(
     appState: ApplicationState,
-    signInViewModel: SignInViewModel = hiltViewModel()
 ) {
 
     Column(

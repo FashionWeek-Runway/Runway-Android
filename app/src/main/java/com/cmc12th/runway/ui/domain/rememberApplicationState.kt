@@ -8,8 +8,6 @@ import androidx.navigation.compose.rememberNavController
 import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.google.accompanist.systemuicontroller.SystemUiController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import com.naver.maps.geometry.LatLng
-import com.naver.maps.map.CameraPosition
 import com.naver.maps.map.compose.CameraPositionState
 import com.naver.maps.map.compose.rememberCameraPositionState
 import kotlinx.coroutines.CoroutineScope

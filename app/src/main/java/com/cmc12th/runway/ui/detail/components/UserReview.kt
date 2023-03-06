@@ -109,9 +109,6 @@ fun UserReview(
                 )
             }
         }
-        when (userReviewsPaging.loadState) {
-
-        }
 
         if (userReviewsPaging.itemCount == 0) {
             Column(

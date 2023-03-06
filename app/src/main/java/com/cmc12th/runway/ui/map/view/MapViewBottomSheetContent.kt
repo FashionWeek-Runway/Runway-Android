@@ -1,31 +1,25 @@
 package com.cmc12th.runway.ui.map.view
 
-import androidx.compose.animation.*
-import androidx.compose.foundation.*
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
 import com.cmc12th.runway.R
-import com.cmc12th.runway.data.response.map.MapInfoItem
 import com.cmc12th.runway.ui.components.HeightSpacer
-import com.cmc12th.runway.ui.components.WidthSpacer
 import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.map.components.BottomDetailItem
 import com.cmc12th.runway.ui.map.model.BottomSheetContent
@@ -104,22 +98,7 @@ fun MapViewBottomSheetContent(
         /** 본문 내용 */
         when (contents) {
             BottomSheetContent.DEFAULT -> {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(0.dp, 100.dp),
-                    verticalArrangement = Arrangement.Bottom,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.img_store_empty),
-                        contentDescription = "IMG_STORE_EMPTY",
-                        modifier = Modifier.size(100.dp)
-                    )
-                    HeightSpacer(height = 30.dp)
-                    Text(text = "아직 등록된 매장이 없습니다.", style = Body1, color = Black)
-                    Text(text = "위치를 이동하거나 필터를 변경해보세요.", style = Body2, color = Gray500)
-                }
+                MapBottomSheetEmptyStore()
             }
             is BottomSheetContent.MULTI -> {
                 val pagingContents = contents.contents.collectAsLazyPagingItems()
@@ -135,24 +114,29 @@ fun MapViewBottomSheetContent(
                 BottomDetailItem(navigateToDetail, contents.contents)
             }
             BottomSheetContent.LOADING -> {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(0.dp, 100.dp),
-                    verticalArrangement = Arrangement.Bottom,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.img_store_empty),
-                        contentDescription = "IMG_STORE_EMPTY",
-                        modifier = Modifier.size(100.dp)
-                    )
-                    HeightSpacer(height = 30.dp)
-                    Text(text = "아직 등록된 매장이 없습니다.", style = Body1, color = Black)
-                    Text(text = "위치를 이동하거나 필터를 변경해보세요.", style = Body2, color = Gray500)
-                }
+                MapBottomSheetEmptyStore()
             }
         }
+    }
+}
+
+@Composable
+private fun MapBottomSheetEmptyStore() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(0.dp, 100.dp),
+        verticalArrangement = Arrangement.Bottom,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.img_store_empty),
+            contentDescription = "IMG_STORE_EMPTY",
+            modifier = Modifier.size(100.dp)
+        )
+        HeightSpacer(height = 30.dp)
+        Text(text = "아직 등록된 매장이 없습니다.", style = Body1, color = Black)
+        Text(text = "위치를 이동하거나 필터를 변경해보세요.", style = Body2, color = Gray500)
     }
 }
 

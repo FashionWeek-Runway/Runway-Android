@@ -12,10 +12,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -29,16 +27,14 @@ import com.cmc12th.runway.broadcast.parseSmsMessage
 import com.cmc12th.runway.ui.components.BackIcon
 import com.cmc12th.runway.ui.components.CustomTextField
 import com.cmc12th.runway.ui.components.HeightSpacer
-import com.cmc12th.runway.ui.components.WidthSpacer
-import com.cmc12th.runway.ui.signin.components.OnBoardStep
 import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.signin.SignInViewModel
 import com.cmc12th.runway.ui.signin.components.OnBoardHeadLine
+import com.cmc12th.runway.ui.signin.components.OnBoardStep
 import com.cmc12th.runway.ui.signin.components.RetryContainer
 import com.cmc12th.runway.ui.theme.*
 import com.cmc12th.runway.utils.Constants
 import com.cmc12th.runway.utils.Constants.SIGNIN_PASSWORD_ROUTE
-import java.math.RoundingMode
 
 @Composable
 fun SignInPhoneVerifyScreen(

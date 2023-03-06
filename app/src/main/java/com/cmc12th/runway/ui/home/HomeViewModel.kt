@@ -1,30 +1,25 @@
 package com.cmc12th.runway.ui.home
 
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
-import androidx.room.PrimaryKey
 import com.cmc12th.runway.data.response.home.HomeBannerItem
 import com.cmc12th.runway.data.response.home.HomeReviewItem
-import com.cmc12th.runway.data.response.user.MyReviewsItem
 import com.cmc12th.runway.data.response.user.PatchCategoryBody
 import com.cmc12th.runway.domain.repository.AuthRepository
 import com.cmc12th.runway.domain.repository.HomeRepository
 import com.cmc12th.runway.domain.repository.StoreRepository
 import com.cmc12th.runway.ui.domain.model.RunwayCategory
 import com.cmc12th.runway.ui.home.model.HomeBannertype
-import com.cmc12th.runway.ui.setting.SettingPersonalInfoUiState
 import com.cmc12th.runway.ui.signin.SignInCategoryUiState
 import com.cmc12th.runway.ui.signin.model.CategoryTag
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import java.util.Collections.addAll
 import javax.inject.Inject
 
-data class homeUiState(
+data class HomeUiState(
     val homeBanners: MutableList<HomeBannertype> = mutableListOf(),
     val nickName: String = "",
 )
@@ -45,7 +40,6 @@ class HomeViewModel @Inject constructor(
     val reviews: StateFlow<PagingData<HomeReviewItem>> = _reviews.asStateFlow()
 
     val allStores = mutableStateListOf<HomeBannerItem>()
-//    val allStores: StateFlow<PagingData<HomeBannerItem>> = _allStores.asStateFlow()
 
     val uiState = combine(
         _homeBanners, _nickName
@@ -55,14 +49,14 @@ class HomeViewModel @Inject constructor(
         }.toMutableList()
         homeBanners.add(HomeBannertype.SHOWMOREBANNER)
 
-        homeUiState(
+        HomeUiState(
             homeBanners = homeBanners,
             nickName = nickName
         )
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
-        initialValue = homeUiState()
+        initialValue = HomeUiState()
     )
 
     val categoryUiState: StateFlow<SignInCategoryUiState> =

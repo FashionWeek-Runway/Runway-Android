@@ -1,8 +1,3 @@
-@file:OptIn(
-    ExperimentalPagerApi::class, ExperimentalPagerApi::class, ExperimentalTextApi::class,
-    ExperimentalPagerApi::class, ExperimentalPagerApi::class
-)
-
 package com.cmc12th.runway.ui.home.view
 
 import androidx.compose.foundation.*
@@ -19,7 +14,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
@@ -41,7 +35,6 @@ import com.cmc12th.runway.utils.Constants.DETAIL_ROUTE
 import com.cmc12th.runway.utils.Constants.EDIT_CATEGORY_ROUTE
 import com.cmc12th.runway.utils.Constants.HOME_ALL_STORE_ROUTE
 import com.cmc12th.runway.utils.Constants.REVIEW_DETAIL_ROUTE
-import com.google.accompanist.pager.ExperimentalPagerApi
 
 @Composable
 fun HomeScreen(appState: ApplicationState, viewModel: HomeViewModel) {

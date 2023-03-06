@@ -12,10 +12,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -32,7 +30,6 @@ import com.cmc12th.runway.ui.signin.model.SignInType
 import com.cmc12th.runway.ui.theme.*
 import com.cmc12th.runway.utils.Constants.SIGNIN_COMPLETE_ROUTE
 import com.cmc12th.runway.utils.Constants.SIGNIN_GRAPH
-import kotlin.math.sign
 
 @Composable
 fun SignInCategoryScreen(

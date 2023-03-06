@@ -1,10 +1,10 @@
 package com.cmc12th.runway.ui.components
 
-import android.text.InputType
-import android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD
-import android.util.Log
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -12,20 +12,17 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
-import androidx.compose.runtime.R
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
@@ -33,7 +30,6 @@ import androidx.compose.ui.unit.sp
 import com.cmc12th.runway.ui.components.util.LastPasswordVisibleVisuualTransformation
 import com.cmc12th.runway.ui.components.util.bottomBorder
 import com.cmc12th.runway.ui.theme.Error_Color
-import com.cmc12th.runway.ui.theme.Gray300
 import com.cmc12th.runway.ui.theme.Gray600
 
 /**
@@ -50,7 +46,7 @@ fun LastPasswordVisibleCustomTextField(
     keyboardActions: KeyboardActions? = null,
     value: String,
     onvalueChanged: (String) -> Unit,
-    onErrorState: Boolean = false
+    onErrorState: Boolean = false,
 ) {
     val hasFocus = remember {
         mutableStateOf(false)

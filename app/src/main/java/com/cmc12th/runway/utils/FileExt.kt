@@ -48,18 +48,3 @@ private fun copy(source: InputStream, target: OutputStream) {
     }
 }
 
-fun getImageUri(context: Context, bitmap: Bitmap): Uri? {
-    val bytes = ByteArrayOutputStream()
-    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
-    val date = Date(System.currentTimeMillis())
-    val dateFormat = SimpleDateFormat("yyyy-MM-dd_hh:mm:ss")
-    val getTime: String = dateFormat.format(date)
-    val path =
-        MediaStore.Images.Media.insertImage(
-            context.contentResolver,
-            bitmap,
-            "runway_$getTime",
-            null
-        )
-    return Uri.parse(path)
-}

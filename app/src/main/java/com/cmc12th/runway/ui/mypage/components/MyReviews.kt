@@ -20,11 +20,9 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.cmc12th.runway.R
 import com.cmc12th.runway.data.response.user.MyReviewsItem
-import com.cmc12th.runway.ui.domain.model.ReviewViwerType
 import com.cmc12th.runway.ui.theme.Caption
 import com.cmc12th.runway.ui.theme.Gray100
 import com.cmc12th.runway.ui.theme.Gray200
-import com.cmc12th.runway.utils.Constants
 
 
 @Composable

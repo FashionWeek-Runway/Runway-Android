@@ -4,7 +4,6 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -14,27 +13,16 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil.compose.rememberAsyncImagePainter
-import com.cmc12th.runway.R
-import com.cmc12th.runway.ui.components.WidthSpacerLine
 import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.mypage.MypageViewModel
-import com.cmc12th.runway.ui.signin.SignInViewModel
-import com.cmc12th.runway.ui.signin.model.CategoryTag
-import com.cmc12th.runway.ui.signin.model.Nickname
-import com.cmc12th.runway.ui.signin.model.ProfileImageType
 import com.cmc12th.runway.ui.signin.view.ProfileBox
-import com.cmc12th.runway.ui.theme.*
+import com.cmc12th.runway.ui.theme.Button1
+import com.cmc12th.runway.ui.theme.HeadLine2
+import com.cmc12th.runway.ui.theme.Point
+import com.cmc12th.runway.ui.theme.Primary
 import com.cmc12th.runway.utils.Constants
 import com.cmc12th.runway.utils.Constants.EDIT_PROFILE_IMAGE_ROUTE
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
@@ -43,7 +31,7 @@ import kotlinx.coroutines.delay
 @Composable
 fun EditProfileCompleteScreen(
     appState: ApplicationState,
-    mypageViewModel: MypageViewModel
+    mypageViewModel: MypageViewModel,
 ) {
 
     /** Bouncing 애니메이션 적용 */

@@ -15,14 +15,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.cmc12th.runway.data.response.ErrorResponse
 import com.cmc12th.runway.ui.components.BackIcon
 import com.cmc12th.runway.ui.components.HeightSpacer
 import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.home.HomeViewModel
 import com.cmc12th.runway.ui.signin.view.CategoryGroup
 import com.cmc12th.runway.ui.theme.*
-import com.cmc12th.runway.utils.Constants
 
 @Composable
 fun EditCategoryScreen(

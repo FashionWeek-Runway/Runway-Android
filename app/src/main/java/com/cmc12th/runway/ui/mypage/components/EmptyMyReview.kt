@@ -13,7 +13,6 @@ import com.cmc12th.runway.R
 import com.cmc12th.runway.ui.components.HeightSpacer
 import com.cmc12th.runway.ui.theme.Black
 import com.cmc12th.runway.ui.theme.Body1
-import com.cmc12th.runway.ui.theme.Body2
 
 @Composable
 fun ColumnScope.EmptyMyReview() {

@@ -132,7 +132,7 @@ private fun BookmarkIcon(
             }
     ) {
         Icon(
-            modifier = Modifier.padding(8.dp), // TODO 높이 값 바꿔야 될 수도 있음
+            modifier = Modifier.padding(8.dp),
             painter = painterResource(id = R.drawable.ic_baseline_bookmark_24),
             contentDescription = "IC_BASELINE_BOOKMAR",
             tint = if (isBookmarked) Point else Gray400

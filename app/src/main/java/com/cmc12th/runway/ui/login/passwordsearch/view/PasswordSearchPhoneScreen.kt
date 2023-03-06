@@ -10,7 +10,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -22,7 +21,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
@@ -47,8 +45,10 @@ import com.cmc12th.runway.ui.signin.components.OnBoardHeadLine
 import com.cmc12th.runway.ui.signin.model.MobileCarrier
 import com.cmc12th.runway.ui.signin.model.Phone
 import com.cmc12th.runway.ui.signin.model.Phone.Companion.PHONE_NUMBER_LENGTH
-import com.cmc12th.runway.ui.theme.*
-import com.cmc12th.runway.utils.Constants
+import com.cmc12th.runway.ui.theme.Body1B
+import com.cmc12th.runway.ui.theme.Gray300
+import com.cmc12th.runway.ui.theme.Gray400
+import com.cmc12th.runway.ui.theme.Gray600
 import com.cmc12th.runway.utils.Constants.PASSWORD_SEARCH_PHONE_VERIFY_ROUTE
 import kotlinx.coroutines.launch
 
@@ -88,7 +88,6 @@ fun PasswordSearchPhoneContents(
 ) {
 
     val uiState by viewModel.searchPasswordPhoneUiState.collectAsStateWithLifecycle()
-    val coroutineScope = rememberCoroutineScope()
     val passwordErrorMessage = remember {
         mutableStateOf("")
     }

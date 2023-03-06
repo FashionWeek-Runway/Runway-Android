@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cmc12th.runway.data.repository.AuthRepositoryImpl
 import com.cmc12th.runway.data.request.OauthLoginRequest
-import com.cmc12th.runway.data.request.PasswordAndPhoneNumberRequest
 import com.cmc12th.runway.data.response.ErrorResponse
 import com.cmc12th.runway.data.response.user.UserInformationManagamentInfo
 import com.cmc12th.runway.domain.repository.AuthRepository
@@ -29,7 +28,7 @@ data class SettingPersonalInfoUiState(
 @HiltViewModel
 class SettingViewModel @Inject constructor(
     private val authRepository: AuthRepository,
-    private val signInRepository: SignInRepository
+    private val signInRepository: SignInRepository,
 ) : ViewModel() {
 
     private val _personalInfo = MutableStateFlow(UserInformationManagamentInfo.default())
@@ -39,7 +38,7 @@ class SettingViewModel @Inject constructor(
 
     val personalInfoUiState: StateFlow<SettingPersonalInfoUiState> =
         combine(_personalInfo) { flowArr ->
-            SettingPersonalInfoUiState(personalInfo = flowArr[0] as UserInformationManagamentInfo)
+            SettingPersonalInfoUiState(personalInfo = flowArr[0])
         }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),

@@ -17,7 +17,7 @@ fun OnBoardStep(step: Int) {
             .fillMaxWidth(1f)
             .background(Gray100),
     ) {
-        steps.forEachIndexed { index, now ->
+        steps.forEachIndexed { _, now ->
             Spacer(
                 modifier = Modifier
                     .weight(1f)

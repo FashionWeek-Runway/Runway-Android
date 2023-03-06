@@ -5,18 +5,18 @@
 
 package com.cmc12th.runway.ui.detail.photoreview.view
 
-import android.app.Activity
 import android.graphics.Bitmap
 import android.net.Uri
-import android.util.Log
 import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.foundation.*
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.*
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
@@ -31,7 +31,9 @@ import androidx.compose.ui.platform.*
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.unit.*
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberAsyncImagePainter
 import com.cmc12th.runway.R
@@ -264,17 +266,12 @@ private fun GenerateImageView(
                 topbarheight = with(localDensity) { statusBarHeight.toPx() },
                 bottomBarHeight = with(localDensity) { navigationBarsHeight.toPx() + bottomBarHeight.toPx() },
                 onBitmapReady = { bitmap: Bitmap ->
-                    // TODO - use generated bitmap
                     generateBitmap(bitmap)
-                    // updateEvent(false)
                 },
-                onBitmapError = { exception: Exception ->
+                onBitmapError = { _: Exception ->
                     // TODO - handle exception
                 }
             )
-//            captureView(view, activity.window) {
-//                generateBitmap(it)
-//            }
         }
     }
 

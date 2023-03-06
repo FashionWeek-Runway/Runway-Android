@@ -1,7 +1,6 @@
 package com.cmc12th.runway.ui.map.model
 
 import com.naver.maps.geometry.LatLng
-import com.squareup.moshi.Json
 import ted.gun0912.clustering.clustering.TedClusterItem
 import ted.gun0912.clustering.geometry.TedLatLng
 

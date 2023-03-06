@@ -3,7 +3,6 @@ package com.cmc12th.runway.data.repository
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import com.cmc12th.runway.data.pagingsource.BookmarkedPagingSource
 import com.cmc12th.runway.data.pagingsource.HomeReviewItemPagingSource
 import com.cmc12th.runway.data.response.home.HomeBanner
 import com.cmc12th.runway.data.response.home.HomeReviewItem
@@ -17,8 +16,6 @@ import com.cmc12th.runway.utils.ApiWrapper
 import com.cmc12th.runway.utils.DefaultApiWrapper
 import com.cmc12th.runway.utils.PagingApiWrapper
 import kotlinx.coroutines.flow.Flow
-import retrofit2.http.Body
-import retrofit2.http.PATCH
 import javax.inject.Inject
 
 class HomeRepositoryImpl @Inject constructor(

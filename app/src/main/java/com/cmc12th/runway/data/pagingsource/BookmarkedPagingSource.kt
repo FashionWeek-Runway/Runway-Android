@@ -4,13 +4,12 @@ import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.cmc12th.runway.data.response.user.StoreMetaDataItem
 import com.cmc12th.runway.domain.repository.AuthRepository
-import com.cmc12th.runway.domain.repository.StoreRepository
 import com.cmc12th.runway.network.model.ApiState
 import com.cmc12th.runway.utils.Constants
 import kotlinx.coroutines.flow.first
 
 class BookmarkedPagingSource(
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
 ) : PagingSource<Int, StoreMetaDataItem>() {
 
     override fun getRefreshKey(state: PagingState<Int, StoreMetaDataItem>): Int? {

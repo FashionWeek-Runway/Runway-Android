@@ -5,15 +5,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.items
 import com.cmc12th.runway.data.response.map.MapInfoItem
 import com.cmc12th.runway.data.response.user.StoreMetaDataItem
-import com.cmc12th.runway.ui.detail.view.DetailScreen
 import com.cmc12th.runway.ui.map.components.BottomDetailItem
-import com.cmc12th.runway.ui.map.components.DetailState
 
 @Composable
 fun BookmarkedStore(

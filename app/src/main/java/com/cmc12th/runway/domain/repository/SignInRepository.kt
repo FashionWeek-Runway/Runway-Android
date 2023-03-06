@@ -8,7 +8,6 @@ import com.cmc12th.runway.utils.DefaultApiWrapper
 import kotlinx.coroutines.flow.Flow
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
-import retrofit2.http.Body
 
 interface SignInRepository {
     fun login(loginRequest: LoginRequest): Flow<ApiWrapper<LoginResponse>>

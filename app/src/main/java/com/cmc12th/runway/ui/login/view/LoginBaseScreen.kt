@@ -13,22 +13,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.cmc12th.runway.R
 import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.login.LoginViewModel
 import com.cmc12th.runway.ui.theme.Black
 import com.cmc12th.runway.ui.theme.Body1
-import com.cmc12th.runway.ui.theme.HeadLine1
 import com.cmc12th.runway.ui.theme.White
-import com.cmc12th.runway.utils.Constants
 import com.cmc12th.runway.utils.Constants.LOGIN_GRAPH
 import com.cmc12th.runway.utils.Constants.LOGIN_ID_PW_ROUTE
 import com.cmc12th.runway.utils.Constants.MAIN_GRAPH
-import com.cmc12th.runway.utils.Constants.PASSWORD_SEARCH_GRAPH
 import com.cmc12th.runway.utils.Constants.SIGNIN_GRAPH
 import com.cmc12th.runway.utils.Constants.SIGNIN_PROFILE_IMAGE_ROUTE
 

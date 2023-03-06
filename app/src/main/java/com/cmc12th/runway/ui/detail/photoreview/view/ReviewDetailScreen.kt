@@ -60,14 +60,15 @@ enum class ReviewMoveDirection {
 
 @Composable
 fun ReviewDetailScreen(
-    appState: ApplicationState, reviewId: Int,
+    appState: ApplicationState,
+    argReviewId: Int,
     viewerType: ReviewViwerType,
 ) {
 
     val bottomsheetState = rememberBottomSheet()
     val coroutineScope = rememberCoroutineScope()
     val reviewViewModel: ReviewViewModel = hiltViewModel()
-    var reviewId = reviewId
+    var reviewId = argReviewId
 
     val showBottomSheet: (BottomSheetContent) -> Unit = {
         coroutineScope.launch {
@@ -449,7 +450,6 @@ private fun BoxScope.Bookmark(
                     onCLick = { updateBookmark() }
                 )
             }
-            // Text(text = reviewDetail.bookmarkCnt.toString(), color = White, style = Caption)
         }
     }
 }

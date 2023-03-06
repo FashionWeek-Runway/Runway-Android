@@ -13,13 +13,10 @@ import com.cmc12th.runway.data.response.ErrorResponse
 import com.cmc12th.runway.domain.repository.AuthRepository
 import com.cmc12th.runway.domain.repository.SignInRepository
 import com.cmc12th.runway.network.model.ServiceInterceptor
-import com.cmc12th.runway.network.model.ServiceInterceptor.Companion.accessToken
-import com.cmc12th.runway.network.model.ServiceInterceptor.Companion.refreshToken
 import com.cmc12th.runway.ui.domain.model.RunwayCategory
-import com.cmc12th.runway.utils.toPlainRequestBody
 import com.cmc12th.runway.ui.signin.model.*
-import com.cmc12th.runway.utils.Constants.CATEGORYS
 import com.cmc12th.runway.utils.fileFromContentUri
+import com.cmc12th.runway.utils.toPlainRequestBody
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.*

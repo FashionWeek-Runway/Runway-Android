@@ -1,9 +1,6 @@
 package com.cmc12th.runway.utils
 
-import android.util.Log
 import com.cmc12th.runway.data.response.ErrorResponse
-import com.cmc12th.runway.data.response.NotRegisteredResponse
-import com.cmc12th.runway.data.response.ResponseWrapper
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 

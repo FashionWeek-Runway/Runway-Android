@@ -18,7 +18,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.cmc12th.runway.broadcast.ComposeFileProvider
 import com.cmc12th.runway.ui.components.*
 import com.cmc12th.runway.ui.detail.DetailViewModel
 import com.cmc12th.runway.ui.detail.components.*
@@ -43,7 +42,6 @@ fun DetailScreen(
     val detailViewModel: DetailViewModel = hiltViewModel()
     val uiState by detailViewModel.uiState.collectAsState()
     val coroutineScope = rememberCoroutineScope()
-    val context = LocalContext.current
 
     val scrollState = rememberScrollState()
     val topbarColor = remember {
@@ -128,8 +126,6 @@ fun DetailScreen(
                 ShowRoomBanner(uiState.storeDetail)
                 ShowRoomTitle(uiState.storeDetail)
                 ShowRoomDetail(uiState.storeDetail)
-                // WidthSpacerLine(height = 1.dp, color = Gray200)
-                // ShopNews()
                 WidthSpacerLine(height = 2.dp, color = Black)
                 UserReview(
                     userReviews = detailViewModel.userReviews,

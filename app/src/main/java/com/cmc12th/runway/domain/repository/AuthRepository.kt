@@ -18,37 +18,37 @@ interface AuthRepository {
     fun getToken(type: Preferences.Key<String>): Flow<String>
     suspend fun setToken(type: Preferences.Key<String>, value: String)
     fun validateRefreshToken(refreshToken: String): Flow<ApiWrapper<LoginResponse>>
-    suspend fun logout(): Flow<DefaultApiWrapper>
+    fun logout(): Flow<DefaultApiWrapper>
 
-    suspend fun getMyInfo(): Flow<ApiWrapper<MyPageInfo>>
-    suspend fun getBookmarkedReview(
+    fun getMyInfo(): Flow<ApiWrapper<MyPageInfo>>
+    fun getBookmarkedReview(
         page: Int, size: Int,
     ): Flow<PagingApiWrapper<MyReviewsItem>>
 
-    suspend fun getMyBookmarkedReviewDetail(
+    fun getMyBookmarkedReviewDetail(
         reviewId: Int,
     ): Flow<ApiWrapper<UserReviewDetail>>
 
-    suspend fun getMyReviewDetail(
+    fun getMyReviewDetail(
         reviewId: Int,
     ): Flow<ApiWrapper<UserReviewDetail>>
 
-    suspend fun getInformationManagementInfo(): Flow<ApiWrapper<UserInformationManagamentInfo>>
-    suspend fun linkToKakao(oauthLoginRequest: OauthLoginRequest): Flow<DefaultApiWrapper>
-    suspend fun unLinkToKakao(): Flow<DefaultApiWrapper>
-    suspend fun getProfileInfoToEdit(): Flow<ApiWrapper<ImgUrlAndNickname>>
-    suspend fun getMyReview(
+    fun getInformationManagementInfo(): Flow<ApiWrapper<UserInformationManagamentInfo>>
+    fun linkToKakao(oauthLoginRequest: OauthLoginRequest): Flow<DefaultApiWrapper>
+    fun unLinkToKakao(): Flow<DefaultApiWrapper>
+    fun getProfileInfoToEdit(): Flow<ApiWrapper<ImgUrlAndNickname>>
+    fun getMyReview(
         page: Int, size: Int,
     ): Flow<PagingApiWrapper<MyReviewsItem>>
 
-    suspend fun getBookmarkedStore(
+    fun getBookmarkedStore(
         page: Int, size: Int,
     ): Flow<PagingApiWrapper<StoreMetaDataItem>>
 
     fun myReviewPaging(): Flow<PagingData<MyReviewsItem>>
     fun bookmarkedStorePaging(): Flow<PagingData<StoreMetaDataItem>>
 
-    suspend fun patchProfileImage(
+    fun patchProfileImage(
         basic: MultipartBody.Part?,
         multipartFile: MultipartBody.Part?,
         nickname: MultipartBody.Part?,

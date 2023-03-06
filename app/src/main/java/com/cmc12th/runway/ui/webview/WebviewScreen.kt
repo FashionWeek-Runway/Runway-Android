@@ -1,11 +1,6 @@
 package com.cmc12th.runway.ui.webview
 
-import android.content.Intent
-import android.net.Uri
 import android.util.Log
-import android.webkit.WebResourceRequest
-import android.webkit.WebView
-import android.webkit.WebViewClient
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable

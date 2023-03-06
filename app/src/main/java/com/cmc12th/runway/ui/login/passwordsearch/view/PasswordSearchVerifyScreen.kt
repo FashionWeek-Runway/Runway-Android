@@ -2,8 +2,6 @@
 
 package com.cmc12th.runway.ui.login.passwordsearch.view
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -15,10 +13,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -31,13 +27,10 @@ import com.cmc12th.runway.broadcast.parseSmsMessage
 import com.cmc12th.runway.ui.components.BackIcon
 import com.cmc12th.runway.ui.components.CustomTextField
 import com.cmc12th.runway.ui.components.HeightSpacer
-import com.cmc12th.runway.ui.components.WidthSpacer
 import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.login.passwordsearch.PasswordSearchViewModel
 import com.cmc12th.runway.ui.signin.components.OnBoardHeadLine
-import com.cmc12th.runway.ui.signin.components.OnBoardStep
 import com.cmc12th.runway.ui.signin.components.RetryContainer
-import com.cmc12th.runway.ui.signin.view.TestButon
 import com.cmc12th.runway.ui.theme.*
 import com.cmc12th.runway.utils.Constants
 import com.cmc12th.runway.utils.Constants.PASSWORD_SEARCH_PHONE_CHANGE_PASSWORD

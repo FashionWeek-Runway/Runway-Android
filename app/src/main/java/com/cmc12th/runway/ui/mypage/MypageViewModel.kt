@@ -1,8 +1,6 @@
 package com.cmc12th.runway.ui.mypage
 
 import android.content.Context
-import android.util.Log
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
@@ -13,7 +11,6 @@ import com.cmc12th.runway.data.response.user.StoreMetaDataItem
 import com.cmc12th.runway.domain.repository.AuthRepository
 import com.cmc12th.runway.domain.repository.SignInRepository
 import com.cmc12th.runway.ui.domain.model.RunwayCategory
-import com.cmc12th.runway.ui.login.passwordsearch.SearchPasswordPhoneUiState
 import com.cmc12th.runway.ui.map.components.DetailState
 import com.cmc12th.runway.ui.mypage.view.MypageTabInfo
 import com.cmc12th.runway.ui.signin.SignInCompleteUiState
@@ -160,7 +157,7 @@ class MypageViewModel @Inject constructor(
         ).collect { apiState ->
             apiState.onSuccess {
                 updateNickName(it.result.nickname)
-                _categoryTags.value = it.result.categoryList.mapIndexed { index, categoryName ->
+                _categoryTags.value = it.result.categoryList.mapIndexed { _, categoryName ->
                     CategoryTag(-1, categoryName, -1)
                 }.toMutableList()
                 if (it.result.imgUrl == null) {

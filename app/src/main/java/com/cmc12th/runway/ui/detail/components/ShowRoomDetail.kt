@@ -1,6 +1,5 @@
 package com.cmc12th.runway.ui.detail.components
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -15,7 +14,6 @@ import com.cmc12th.runway.ui.components.RunwayIconButton
 import com.cmc12th.runway.ui.theme.Blue900
 import com.cmc12th.runway.ui.theme.Body2
 import com.cmc12th.runway.ui.theme.Button2
-import com.cmc12th.runway.ui.theme.Gray200
 import com.cmc12th.runway.utils.skeletonUI
 
 @Composable

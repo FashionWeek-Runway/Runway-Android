@@ -9,7 +9,6 @@ import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.content.pm.PackageManager
 import android.location.Location
-import android.util.Log
 import android.widget.TextView
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -177,23 +176,14 @@ private fun MapViewContents(
 
     val onMapClick: () -> Unit = {
         when (mapUiState.mapStatus) {
-            MapStatus.DEFAULT -> {
-            }
-            MapStatus.ZOOM -> {
-            }
-            MapStatus.LOCATION_SEARCH -> {
-            }
-            MapStatus.SHOP_SEARCH -> {
-            }
-            MapStatus.SEARCH_ZOOM -> {
-            }
             MapStatus.MARKER_CLICKED -> {
                 collapsBottomSheet()
             }
             MapStatus.LOCATION_SEARCH_MARKER_CLICKED -> {
                 collapsBottomSheet()
             }
-            MapStatus.SEARCH_TAB -> {
+            else -> {
+                // Do Nothing
             }
         }
         mapViewModel.onMapClick()
@@ -510,13 +500,14 @@ private fun RunwayNaverMap(
 ) {
 
     LaunchedEffect(key1 = cameraPositionState.position) {
-        // Log.i("dlgocks1", cameraPositionState.position.target.toString())
         updateRefershIconVisiblity(true)
     }
 
     LaunchedEffect(key1 = uiState.movingCameraPosition) {
         when (uiState.movingCameraPosition) {
-            MovingCameraWrapper.DEFAULT -> {}
+            MovingCameraWrapper.DEFAULT -> {
+                // Do Nothing
+            }
             is MovingCameraWrapper.MOVING -> {
                 cameraPositionState.animate(
                     update = CameraUpdate.scrollAndZoomTo(
@@ -530,10 +521,6 @@ private fun RunwayNaverMap(
 
     val context = LocalContext.current
     var clusterManager by remember { mutableStateOf<TedNaverClustering<NaverItem>?>(null) }
-
-    val resetSelectedMakrer: () -> Unit = {
-        mapViewModel.resetSelectedMarkers()
-    }
 
     DisposableEffect(Unit) {
         mapViewModel.addLocationListener()

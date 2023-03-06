@@ -46,7 +46,6 @@ fun LoginIdPasswdScreen(
     loginViewModel: LoginViewModel = hiltViewModel(),
 ) {
 
-    val onkeyboardState by keyboardAsState()
     val keyboardController = LocalSoftwareKeyboardController.current
     val loginIdPasswordUiState by loginViewModel.loginIdPasswordUiState.collectAsStateWithLifecycle()
 

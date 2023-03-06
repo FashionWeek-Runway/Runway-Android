@@ -68,7 +68,6 @@ fun SignInProfileImageScreen(
 
     val uiState by signInViewModel.profileImageUiState.collectAsStateWithLifecycle()
 
-    val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     val bottomsheetState = rememberBottomSheet()
     val isKeyboardOpen by keyboardAsState() // Keyboard.Opened or Keyboard.Closed

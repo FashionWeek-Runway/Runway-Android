@@ -56,7 +56,6 @@ fun EditProfileScreen(
     val bottomsheetState = rememberBottomSheet()
     val uiState by viewModel.profileImageUiState.collectAsStateWithLifecycle()
     val isKeyboardOpen by keyboardAsState() // Keyboard.Opened or Keyboard.Closed
-    val context = LocalContext.current
 
     LaunchedEffect(Unit) {
         viewModel.getMyProfile()

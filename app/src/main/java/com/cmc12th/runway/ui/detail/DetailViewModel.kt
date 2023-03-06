@@ -1,8 +1,6 @@
 package com.cmc12th.runway.ui.detail
 
 import android.graphics.Bitmap
-import android.util.Base64
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
@@ -11,15 +9,9 @@ import com.cmc12th.runway.data.response.store.BlogReview
 import com.cmc12th.runway.data.response.store.StoreDetail
 import com.cmc12th.runway.data.response.store.UserReview
 import com.cmc12th.runway.domain.repository.StoreRepository
-import com.cmc12th.runway.utils.toPlainRequestBody
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import okhttp3.MediaType
-import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.MultipartBody
-import okhttp3.RequestBody
-import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.ByteArrayOutputStream
 import javax.inject.Inject
@@ -27,12 +19,12 @@ import javax.inject.Inject
 
 data class DetailUiState(
     val storeDetail: StoreDetail = StoreDetail(),
-    val blogReview: List<BlogReview> = emptyList()
+    val blogReview: List<BlogReview> = emptyList(),
 )
 
 @HiltViewModel
 class DetailViewModel @Inject constructor(
-    private val storeRepository: StoreRepository
+    private val storeRepository: StoreRepository,
 ) : ViewModel() {
 
     private val _storeDetail = MutableStateFlow(StoreDetail())
@@ -59,7 +51,6 @@ class DetailViewModel @Inject constructor(
         val baos = ByteArrayOutputStream()
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
         val imageBytes: ByteArray = baos.toByteArray()
-        // val encodedImage: String = Base64.encodeToString(imageBytes, Base64.DEFAULT)
 
         storeRepository.writeUserReview(
             storeId,

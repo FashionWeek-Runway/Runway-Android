@@ -18,13 +18,11 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.cmc12th.runway.R
 import com.cmc12th.runway.ui.components.BackIcon
 import com.cmc12th.runway.ui.components.HeightSpacer
-import com.cmc12th.runway.ui.components.RunwayIconButton
 import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.home.HomeViewModel
 import com.cmc12th.runway.ui.theme.*
@@ -36,7 +34,6 @@ fun HomeAllStore(
     viewModel: HomeViewModel,
 ) {
 
-//    val allStores = viewModel.allStores.collectAsLazyPagingItems()
     val navigateToDetail: (storeId: Int, storeName: String) -> Unit = { storeId, storeName ->
         appState.navigate(
             "${DETAIL_ROUTE}?storeId=$storeId&storeName=$storeName"

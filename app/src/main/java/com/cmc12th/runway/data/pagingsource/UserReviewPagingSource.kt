@@ -6,12 +6,11 @@ import com.cmc12th.runway.data.response.store.UserReview
 import com.cmc12th.runway.domain.repository.StoreRepository
 import com.cmc12th.runway.network.model.ApiState
 import com.cmc12th.runway.utils.Constants.INIT_PAGE_INDEX
-import com.google.android.gms.common.api.Api
 import kotlinx.coroutines.flow.first
 
 class UserReviewPagingSource(
     private val storeId: Int,
-    private val storeRepository: StoreRepository
+    private val storeRepository: StoreRepository,
 ) : PagingSource<Int, UserReview>() {
 
     override fun getRefreshKey(state: PagingState<Int, UserReview>): Int? {

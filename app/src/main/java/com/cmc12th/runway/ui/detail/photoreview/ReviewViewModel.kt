@@ -19,7 +19,7 @@ data class ReviewReportUiState(
         ReviewReportWrapper(it.id, it.reason)
     },
     val reportContents: String = "",
-    val selectedReportId: Int = -1
+    val selectedReportId: Int = -1,
 )
 
 data class ReviewReportWrapper(
@@ -32,10 +32,9 @@ data class ReviewReportWrapper(
 class ReviewViewModel @Inject constructor(
     private val storeRepository: StoreRepository,
     private val authRepository: AuthRepository,
-    private val homeRepository: HomeRepository
+    private val homeRepository: HomeRepository,
 ) : ViewModel() {
 
-    //    private val _reviewDetail = MutableStateFlow(UserReviewDetail.default())
     private val _reviewDetail = mutableStateOf(UserReviewDetail.default())
     val reviewDetail: State<UserReviewDetail> get() = _reviewDetail
 

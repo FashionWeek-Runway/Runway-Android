@@ -160,8 +160,3 @@ fun ReviewReportScreen(appState: ApplicationState, reivewId: Int) {
     }
 }
 
-//@Preview
-//@Composable
-//fun ReviewReportScreenPreview() {
-//    ReviewReportScreen()
-//}

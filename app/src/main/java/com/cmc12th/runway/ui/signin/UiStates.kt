@@ -3,8 +3,6 @@ package com.cmc12th.runway.ui.signin
 import com.cmc12th.runway.ui.domain.model.RunwayCategory
 import com.cmc12th.runway.ui.signin.SignInViewModel.Companion.DEFAULT_RETRY_TIME
 import com.cmc12th.runway.ui.signin.model.*
-import com.cmc12th.runway.utils.Constants
-import com.cmc12th.runway.utils.Constants.CATEGORYS
 
 data class SignInUserVerificationUiState(
     val nameAndNationality: NameAndNationality = NameAndNationality.default(),

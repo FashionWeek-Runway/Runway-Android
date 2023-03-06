@@ -14,13 +14,10 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.paging.filter
-import androidx.paging.map
 import com.cmc12th.runway.data.model.RecentStr
 import com.cmc12th.runway.data.model.SearchType
-import com.cmc12th.runway.ui.map.model.NaverItem
 import com.cmc12th.runway.data.request.map.MapFilterRequest
 import com.cmc12th.runway.data.request.map.MapSearchRequest
-import com.cmc12th.runway.data.response.map.MapInfoItem
 import com.cmc12th.runway.data.response.map.RegionSearch
 import com.cmc12th.runway.data.response.map.StoreSearch
 import com.cmc12th.runway.data.response.map.toNaverMapItem
@@ -32,6 +29,7 @@ import com.cmc12th.runway.ui.map.components.DetailState
 import com.cmc12th.runway.ui.map.model.BottomSheetContent
 import com.cmc12th.runway.ui.map.model.MapStatus
 import com.cmc12th.runway.ui.map.model.MovingCameraWrapper
+import com.cmc12th.runway.ui.map.model.NaverItem
 import com.cmc12th.runway.ui.signin.model.CategoryTag
 import com.google.android.gms.location.*
 import com.naver.maps.geometry.LatLng

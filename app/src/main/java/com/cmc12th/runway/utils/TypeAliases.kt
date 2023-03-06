@@ -1,6 +1,5 @@
 package com.cmc12th.runway.utils
 
-import com.cmc12th.runway.data.response.PagingMetadata
 import com.cmc12th.runway.data.response.PagingResponse
 import com.cmc12th.runway.data.response.ResponseWrapper
 import com.cmc12th.runway.network.model.ApiState

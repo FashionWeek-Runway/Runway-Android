@@ -58,7 +58,6 @@ fun SettingPersonalInfoManagementScreen(appState: ApplicationState, viewModel: S
                 positiveButton = DialogButtonContent(
                     title = "연결 해제",
                     onClick = {
-                        //TODO 계정 헤지
                         viewModel.unLinkToKakao(
                             onError = {
                                 appState.showSnackbar(it.message)

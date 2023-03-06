@@ -7,18 +7,16 @@ import android.content.IntentFilter
 import android.os.Build
 import android.os.Bundle
 import android.telephony.SmsMessage
-import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.platform.LocalContext
-import com.cmc12th.runway.MainActivity
 
 @Composable
 fun SystemBroadcastReceiver(
     systemAction: String,
-    onSystemEvent: (intent: Intent?) -> Unit
+    onSystemEvent: (intent: Intent?) -> Unit,
 ) {
     val context = LocalContext.current
 

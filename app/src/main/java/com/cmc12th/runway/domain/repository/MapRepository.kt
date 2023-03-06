@@ -8,7 +8,6 @@ import com.cmc12th.runway.utils.ApiWrapper
 import com.cmc12th.runway.utils.PagingApiWrapper
 import kotlinx.coroutines.flow.Flow
 import retrofit2.http.Path
-import retrofit2.http.Query
 
 interface MapRepository {
     fun mapFiltering(mapFilterRequest: MapFilterRequest): Flow<ApiWrapper<List<MapFilterItem>>>
