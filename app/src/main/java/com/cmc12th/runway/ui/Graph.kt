@@ -1,25 +1,19 @@
 package com.cmc12th.runway.ui
 
-import android.net.Uri
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.*
 import androidx.navigation.compose.composable
-import com.cmc12th.runway.ui.detail.photoreview.view.ReviewWriteScreen
-import com.cmc12th.runway.ui.detail.photoreview.view.ReviewDetailScreen
-import com.cmc12th.runway.ui.detail.photoreview.view.ReviewReportScreen
-import com.cmc12th.runway.ui.detail.view.DetailScreen
 import com.cmc12th.runway.ui.domain.model.ApplicationState
-import com.cmc12th.runway.ui.domain.model.ReviewViwerType
 import com.cmc12th.runway.ui.home.view.EditCategoryScreen
 import com.cmc12th.runway.ui.home.view.HomeAllStore
 import com.cmc12th.runway.ui.home.view.HomeScreen
-import com.cmc12th.runway.ui.login.view.LoginIdPasswdScreen
 import com.cmc12th.runway.ui.login.passwordsearch.view.PasswordSearchChagnePasswordScreen
 import com.cmc12th.runway.ui.login.passwordsearch.view.PasswordSearchPhoneScreen
 import com.cmc12th.runway.ui.login.passwordsearch.view.PasswordSearchVerifyScreen
 import com.cmc12th.runway.ui.login.view.LoginBaseScreen
+import com.cmc12th.runway.ui.login.view.LoginIdPasswdScreen
 import com.cmc12th.runway.ui.map.view.MapScreen
 import com.cmc12th.runway.ui.mypage.view.EditProfileCompleteScreen
 import com.cmc12th.runway.ui.mypage.view.EditProfileScreen
@@ -28,9 +22,7 @@ import com.cmc12th.runway.ui.setting.SettingMainScreen
 import com.cmc12th.runway.ui.setting.view.SettingPersonalInfoManagementScreen
 import com.cmc12th.runway.ui.setting.view.SettingWithdrawalScreen
 import com.cmc12th.runway.ui.signin.view.*
-import com.cmc12th.runway.ui.webview.WebviewScreen
-import com.cmc12th.runway.utils.Constants.DETAIL_ROUTE
-import com.cmc12th.runway.utils.Constants.EDIT_CATEGORY_ROUTE
+import com.cmc12th.runway.utils.Constants
 import com.cmc12th.runway.utils.Constants.EDIT_PROFILE_IMAGE_ROUTE
 import com.cmc12th.runway.utils.Constants.HOME_ALL_STORE_ROUTE
 import com.cmc12th.runway.utils.Constants.LOGIN_BASE_ROUTE
@@ -43,9 +35,6 @@ import com.cmc12th.runway.utils.Constants.PASSWORD_SEARCH_GRAPH
 import com.cmc12th.runway.utils.Constants.PASSWORD_SEARCH_PHONE_CHANGE_PASSWORD
 import com.cmc12th.runway.utils.Constants.PASSWORD_SEARCH_PHONE_ROUTE
 import com.cmc12th.runway.utils.Constants.PASSWORD_SEARCH_PHONE_VERIFY_ROUTE
-import com.cmc12th.runway.utils.Constants.REVIEW_DETAIL_ROUTE
-import com.cmc12th.runway.utils.Constants.REVIEW_REPORT_ROUTE
-import com.cmc12th.runway.utils.Constants.REVIEW_WRITE_ROUTE
 import com.cmc12th.runway.utils.Constants.SETTING_GRAPH
 import com.cmc12th.runway.utils.Constants.SETTING_MAIN_ROUTE
 import com.cmc12th.runway.utils.Constants.SETTING_PERSONAL_INFO_MANAGEMENT_ROUTE
@@ -59,7 +48,6 @@ import com.cmc12th.runway.utils.Constants.SIGNIN_PASSWORD_ROUTE
 import com.cmc12th.runway.utils.Constants.SIGNIN_PHONE_VERIFY_ROUTE
 import com.cmc12th.runway.utils.Constants.SIGNIN_PROFILE_IMAGE_ROUTE
 import com.cmc12th.runway.utils.Constants.SIGNIN_USER_VERIFICATION_ROUTE
-import com.cmc12th.runway.utils.Constants.WEB_VIEW_ROUTE
 
 
 fun NavGraphBuilder.mainGraph(
@@ -78,16 +66,8 @@ fun NavGraphBuilder.mainGraph(
             HomeAllStore(appState, hiltViewModel(backStackEntry))
         }
 
-        composable(Screen.Map.route) {
-            MapScreen(appState)
-        }
-
-        composable(Screen.Mypage.route) {
-            MypageScreen(appState)
-        }
-
         composable(
-            route = "$EDIT_CATEGORY_ROUTE?nickName={nickName}",
+            route = "${Constants.EDIT_CATEGORY_ROUTE}?nickName={nickName}",
             arguments = listOf(
                 navArgument("nickName") {
                     type = NavType.StringType
@@ -100,86 +80,13 @@ fun NavGraphBuilder.mainGraph(
             )
         }
 
-        composable(
-            route = "$DETAIL_ROUTE?storeId={storeId}&storeName={storeName}",
-            arguments = listOf(
-                navArgument("storeId") {
-                    type = NavType.IntType
-                },
-                navArgument("storeName") {
-                    type = NavType.StringType
-                },
-            )
-        ) { entry ->
-            val storeId = entry.arguments?.getInt("storeId") ?: -1
-            val storeName = entry.arguments?.getString("storeName") ?: ""
-            DetailScreen(
-                appState = appState,
-                idx = storeId,
-                storeName = storeName,
-                onBackPress = { appState.popBackStack() }
-            )
+        composable(Screen.Map.route) {
+            MapScreen(appState)
         }
 
-        composable(
-            route = "$WEB_VIEW_ROUTE?title={title}&url={url}",
-            arguments = listOf(
-                navArgument("title") {
-                    type = NavType.StringType
-                },
-                navArgument("url") {
-                    type = NavType.StringType
-                },
-            )
-        ) { entry ->
-            val title = entry.arguments?.getString("title") ?: ""
-            val url = entry.arguments?.getString("url") ?: ""
-            WebviewScreen(appState, title, url)
+        composable(Screen.Mypage.route) {
+            MypageScreen(appState)
         }
-
-        composable(route = "$REVIEW_WRITE_ROUTE?idx={idx}",
-            arguments = listOf(
-                navArgument("idx") {
-                    type = NavType.IntType
-                }
-            )) { entry ->
-            val idx = entry.arguments?.getInt("idx") ?: 0
-            val userObject =
-                appState.navController.previousBackStackEntry?.arguments?.getParcelable<Uri>(
-                    "uri"
-                )
-            ReviewWriteScreen(appState, idx, userObject)
-        }
-
-        composable(
-            route = "$REVIEW_DETAIL_ROUTE?reviewId={reviewId}&viewerType={viewerType}",
-            arguments = listOf(
-                navArgument("reviewId") {
-                    type = NavType.IntType
-                },
-                navArgument("viewerType") {
-                    type = NavType.StringType
-                },
-            )
-        ) { entry ->
-            val idx = entry.arguments?.getInt("reviewId") ?: 0
-            val viewerType =
-                ReviewViwerType.convertStringToEnum(
-                    entry.arguments?.getString("viewerType") ?: "STORE_DETAIL"
-                )
-            ReviewDetailScreen(appState, idx, viewerType)
-        }
-
-        composable(route = "$REVIEW_REPORT_ROUTE?reviewId={reviewId}",
-            arguments = listOf(
-                navArgument("reviewId") {
-                    type = NavType.IntType
-                }
-            )) { entry ->
-            val idx = entry.arguments?.getInt("reviewId") ?: 0
-            ReviewReportScreen(appState, idx)
-        }
-
     }
 }
 
