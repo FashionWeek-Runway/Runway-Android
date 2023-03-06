@@ -202,11 +202,13 @@ class MapViewModel @Inject constructor(
             latitude = latLng.latitude,
             longitude = latLng.longitude,
             category = _categoryItems.value.filter { it.isSelected }.map { it.name },
-        )).cachedIn(viewModelScope).collect {
+        )
+        ).cachedIn(viewModelScope).collect {
             _bottomsheetItem.value =
                 BottomSheetContent.MULTI(
                     "[지역이름]을 어디서 구해오지??",
-                    MutableStateFlow(PagingData.empty())).apply {
+                    MutableStateFlow(PagingData.empty())
+                ).apply {
                     this.contents.value = if (_isBookmarked.value) it.filter { it.bookmark } else it
                 }
         }
@@ -314,8 +316,10 @@ class MapViewModel @Inject constructor(
 
 
     fun saveTempDatas() {
-        scrollTemp = _bottomsheetItem.value
-        markerItemsTemp = _markerItems.value
+        if (_bottomsheetItem.value is BottomSheetContent.MULTI) {
+            scrollTemp = _bottomsheetItem.value
+            markerItemsTemp = _markerItems.value
+        }
     }
 
     fun saveLocationTempDatas() {
@@ -323,7 +327,6 @@ class MapViewModel @Inject constructor(
     }
 
     fun loadTempDatas() {
-        Log.i("dlgocks1", scrollTemp.toString())
         _bottomsheetItem.value = scrollTemp
         _markerItems.value = markerItemsTemp
     }
