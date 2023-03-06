@@ -34,7 +34,7 @@ import javax.inject.Inject
 
 data class MypageUiState(
     val onDetail: DetailState = DetailState.default(),
-    val selectedPage: MypageTabInfo = MypageTabInfo.MY_REVIEW
+    val selectedPage: MypageTabInfo = MypageTabInfo.MY_REVIEW,
 )
 
 @HiltViewModel
@@ -142,14 +142,19 @@ class MypageViewModel @Inject constructor(
 
     fun modifyProfile(
         onSuccess: () -> Unit,
-        onError: (ErrorResponse) -> Unit
+        onError: (ErrorResponse) -> Unit,
     ) = viewModelScope.launch {
+        val basic = when (_profileImage.value) {
+            ProfileImageType.DEFAULT -> 1
+            else -> 0
+        }
         val multipartFile = convetProfileImageToMultipartFile()
         val nickname = MultipartBody.Part.createFormData(
             "nickname",
             _nickName.value.text
         )
         authRepository.patchProfileImage(
+            basic = MultipartBody.Part.createFormData("basic", basic.toString()),
             multipartFile = multipartFile,
             nickname = nickname,
         ).collect { apiState ->

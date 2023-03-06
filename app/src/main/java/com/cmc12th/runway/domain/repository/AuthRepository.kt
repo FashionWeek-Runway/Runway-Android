@@ -22,15 +22,15 @@ interface AuthRepository {
 
     suspend fun getMyInfo(): Flow<ApiWrapper<MyPageInfo>>
     suspend fun getBookmarkedReview(
-        page: Int, size: Int
+        page: Int, size: Int,
     ): Flow<PagingApiWrapper<MyReviewsItem>>
 
     suspend fun getMyBookmarkedReviewDetail(
-        reviewId: Int
+        reviewId: Int,
     ): Flow<ApiWrapper<UserReviewDetail>>
 
     suspend fun getMyReviewDetail(
-        reviewId: Int
+        reviewId: Int,
     ): Flow<ApiWrapper<UserReviewDetail>>
 
     suspend fun getInformationManagementInfo(): Flow<ApiWrapper<UserInformationManagamentInfo>>
@@ -38,17 +38,18 @@ interface AuthRepository {
     suspend fun unLinkToKakao(): Flow<DefaultApiWrapper>
     suspend fun getProfileInfoToEdit(): Flow<ApiWrapper<ImgUrlAndNickname>>
     suspend fun getMyReview(
-        page: Int, size: Int
+        page: Int, size: Int,
     ): Flow<PagingApiWrapper<MyReviewsItem>>
 
     suspend fun getBookmarkedStore(
-        page: Int, size: Int
+        page: Int, size: Int,
     ): Flow<PagingApiWrapper<StoreMetaDataItem>>
 
     fun myReviewPaging(): Flow<PagingData<MyReviewsItem>>
     fun bookmarkedStorePaging(): Flow<PagingData<StoreMetaDataItem>>
 
     suspend fun patchProfileImage(
+        basic: MultipartBody.Part?,
         multipartFile: MultipartBody.Part?,
         nickname: MultipartBody.Part?,
     ): Flow<ApiWrapper<ImgUrlAndNicknameAndCategorys>>

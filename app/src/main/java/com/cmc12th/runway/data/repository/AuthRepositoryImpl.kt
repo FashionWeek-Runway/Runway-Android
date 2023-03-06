@@ -30,7 +30,7 @@ import javax.inject.Inject
 
 class AuthRepositoryImpl @Inject constructor(
     private val preferenceDataStore: DataStore<Preferences>,
-    private val runwayClient: RunwayClient
+    private val runwayClient: RunwayClient,
 ) : AuthRepository {
 
     override suspend fun setToken(type: Preferences.Key<String>, value: String) {
@@ -68,7 +68,7 @@ class AuthRepositoryImpl @Inject constructor(
 
     override suspend fun getBookmarkedReview(
         page: Int,
-        size: Int
+        size: Int,
     ): Flow<PagingApiWrapper<MyReviewsItem>> = safePagingFlow {
         runwayClient.getBookmarkedReview(page, size)
     }
@@ -133,15 +133,16 @@ class AuthRepositoryImpl @Inject constructor(
     }
 
     override suspend fun patchProfileImage(
+        basic: MultipartBody.Part?,
         multipartFile: MultipartBody.Part?,
-        nickname: MultipartBody.Part?
+        nickname: MultipartBody.Part?,
     ): Flow<ApiWrapper<ImgUrlAndNicknameAndCategorys>> = safeFlow {
-        runwayClient.patchProfileImage(multipartFile, nickname)
+        runwayClient.patchProfileImage(basic, multipartFile, nickname)
     }
 
     override suspend fun getBookmarkedStore(
         page: Int,
-        size: Int
+        size: Int,
     ): Flow<PagingApiWrapper<StoreMetaDataItem>> = safePagingFlow {
         runwayClient.getBookmarkedStore(page, size)
     }

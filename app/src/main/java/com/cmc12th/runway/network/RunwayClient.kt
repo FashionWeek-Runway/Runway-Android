@@ -66,9 +66,10 @@ class RunwayClient @Inject constructor(
     suspend fun unLinkToKakao() = authService.unLinkToKakao()
     suspend fun getProfileInfoToEdit() = authService.getProfileInfoToEdit()
     suspend fun patchProfileImage(
+        basic: MultipartBody.Part?,
         multipartFile: MultipartBody.Part?,
         nickname: MultipartBody.Part?,
-    ) = authService.patchProfileImage(multipartFile, nickname)
+    ) = authService.patchProfileImage(basic, multipartFile, nickname)
 
     suspend fun getMyReview(page: Int, size: Int) = authService.getMyReview(page, size)
     suspend fun getBookmarkedStore(page: Int, size: Int) =

@@ -63,6 +63,7 @@ interface AuthService {
     @Multipart
     @PATCH("/users/profile")
     suspend fun patchProfileImage(
+        @Part basic: MultipartBody.Part?,
         @Part multipartFile: MultipartBody.Part?,
         @Part nickname: MultipartBody.Part?,
     ): NetworkResponse<ImgUrlAndNicknameAndCategorys>
