@@ -253,10 +253,18 @@ private fun MapViewContents(
                     if (MapViewModel.initialMarkerLoadFlag) {
                         MapViewModel.initialMarkerLoadFlag = false
                         mapViewModel.initialLodingStatus.value = false
-                        mapViewModel.mapFiltering(LatLng(mapUiState.userPosition.latitude,
-                            mapUiState.userPosition.longitude))
-                        mapViewModel.mapScrollInfoPaging(LatLng(mapUiState.userPosition.latitude,
-                            mapUiState.userPosition.longitude))
+                        mapViewModel.mapFiltering(
+                            LatLng(
+                                mapUiState.userPosition.latitude,
+                                mapUiState.userPosition.longitude
+                            )
+                        )
+                        mapViewModel.mapScrollInfoPaging(
+                            LatLng(
+                                mapUiState.userPosition.latitude,
+                                mapUiState.userPosition.longitude
+                            )
+                        )
                         mapViewModel.updateMovingCamera(MovingCameraWrapper.MOVING(Location("UserPosition").apply {
                             latitude = mapUiState.userPosition.latitude
                             longitude = mapUiState.userPosition.longitude
@@ -564,8 +572,19 @@ private fun RunwayNaverMap(
                     }.customMarker {
                         Marker().apply {
                             icon =
-                                if (it.isClicked) OverlayImage.fromResource(R.mipmap.ic_map_selceted_marker)
-                                else OverlayImage.fromResource(R.drawable.ic_fill_map_marker_default_24)
+                                if (it.isClicked) {
+                                    if (it.bookmark) {
+                                        OverlayImage.fromResource(R.drawable.ic_fill_map_marker_bookmarked_24)
+                                    } else {
+                                        OverlayImage.fromResource(R.mipmap.ic_map_selceted_marker)
+                                    }
+                                } else {
+                                    if (it.bookmark) {
+                                        OverlayImage.fromResource(R.drawable.ic_fill_map_marker_bookmarked_24)
+                                    } else {
+                                        OverlayImage.fromResource(R.drawable.ic_fill_map_marker_default_24)
+                                    }
+                                }
                             width = if (it.isClicked) 140 else 90
                             height = if (it.isClicked) 165 else 90
                             captionText = it.title
