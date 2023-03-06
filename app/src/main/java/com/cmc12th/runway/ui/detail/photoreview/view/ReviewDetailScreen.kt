@@ -61,7 +61,7 @@ enum class ReviewMoveDirection {
 @Composable
 fun ReviewDetailScreen(
     appState: ApplicationState, reviewId: Int,
-    viewerType: ReviewViwerType
+    viewerType: ReviewViwerType,
 ) {
 
     val bottomsheetState = rememberBottomSheet()
@@ -160,7 +160,7 @@ private fun DetailContents(
     updateBookmark: () -> Unit,
     getReviewDetail: (idx: Int, onSuccess: () -> Unit) -> Unit,
     deleteReview: () -> Unit,
-    navigateToDetail: (storeId: Int, storeName: String) -> Unit
+    navigateToDetail: (storeId: Int, storeName: String) -> Unit,
 ) {
 
     var offsetX by remember { mutableStateOf(0.dp.value) }
@@ -285,6 +285,7 @@ private fun MainImage(
 ) {
     AsyncImage(
         modifier = Modifier
+            .background(Black)
             .fillMaxSize()
             .offset {
                 IntOffset(x = offsetX.roundToInt(), y = 0)
@@ -293,7 +294,6 @@ private fun MainImage(
             .data(reviewDetail.imgUrl)
             .crossfade(true)
             .build(),
-        placeholder = painterResource(id = R.drawable.img_dummy),
         error = painterResource(id = R.drawable.img_dummy),
         contentDescription = "IMG_REVIEW",
         contentScale = ContentScale.Crop,
@@ -303,7 +303,7 @@ private fun MainImage(
 @Composable
 private fun BottomBar(
     reviewDetail: UserReviewDetail,
-    navigateToDetail: (storeId: Int, storeName: String) -> Unit
+    navigateToDetail: (storeId: Int, storeName: String) -> Unit,
 ) {
     Box(
         modifier = Modifier
@@ -375,12 +375,13 @@ private fun BoxScope.Topbar(
             modifier = Modifier
                 .clip(CircleShape)
                 .size(30.dp)
+                .background(Gray200)
                 .border(BorderStroke(1.dp, Color.White), CircleShape),
             model = ImageRequest.Builder(LocalContext.current)
                 .data(reviewDetail.profileImgUrl)
                 .crossfade(true)
                 .build(),
-            placeholder = painterResource(R.drawable.img_dummy),
+            placeholder = painterResource(R.drawable.ic_defailt_profile),
             error = painterResource(id = R.drawable.img_dummy),
             contentDescription = "IMG_PROFILE",
             contentScale = ContentScale.Crop,

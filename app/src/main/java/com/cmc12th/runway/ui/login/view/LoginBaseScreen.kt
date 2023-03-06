@@ -2,10 +2,12 @@ package com.cmc12th.runway.ui.login.view
 
 import android.content.Context
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -18,7 +20,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.cmc12th.runway.R
 import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.login.LoginViewModel
+import com.cmc12th.runway.ui.theme.Black
+import com.cmc12th.runway.ui.theme.Body1
 import com.cmc12th.runway.ui.theme.HeadLine1
+import com.cmc12th.runway.ui.theme.White
 import com.cmc12th.runway.utils.Constants
 import com.cmc12th.runway.utils.Constants.LOGIN_GRAPH
 import com.cmc12th.runway.utils.Constants.LOGIN_ID_PW_ROUTE
@@ -52,39 +57,40 @@ fun LoginBaseScreen(
 
     }
 
+    DisposableEffect(key1 = Unit) {
 
+        appState.systmeUiController.setStatusBarColor(Color.Black)
+        appState.systmeUiController.setNavigationBarColor(Color.Black)
+
+        onDispose {
+            appState.systmeUiController.setStatusBarColor(Color.White)
+            appState.systmeUiController.setNavigationBarColor(Color.White)
+
+        }
+    }
     Box(
         modifier = Modifier
             .fillMaxSize()
+            .background(Black)
             .statusBarsPadding()
             .navigationBarsPadding()
     )
     {
-        /** 배경 */
-        Box(
+
+        Column(verticalArrangement = Arrangement.spacedBy(12.dp),
             modifier = Modifier
                 .align(Alignment.TopCenter)
-                .fillMaxWidth()
-                .fillMaxHeight(0.9f),
-        )
-
-        /** 왼쪽 위 런웨이 설명 */
-        Column(
-            modifier = Modifier
-                .align(Alignment.TopStart)
-                .padding(top = 150.dp, start = 40.dp)
-        ) {
-            Text(
-                text = "런웨이 설명",
-                fontSize = 28.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.White
-            )
-            Spacer(modifier = Modifier.height(20.dp))
+                .padding(top = 60.dp),
+            horizontalAlignment = Alignment.CenterHorizontally) {
             Image(
-                modifier = Modifier.size(66.dp),
-                painter = painterResource(id = R.drawable.img_splash_logo),
-                contentDescription = "IMG_SPLASH_LOGO"
+                modifier = Modifier.size(54.dp),
+                painter = painterResource(id = R.mipmap.img_logo_point),
+                contentDescription = "IMG_LOGO"
+            )
+            Image(
+                modifier = Modifier.size(100.dp, 18.dp),
+                painter = painterResource(id = R.mipmap.img_logo_text_point),
+                contentDescription = "IMG_LOGO"
             )
         }
 
@@ -126,8 +132,8 @@ private fun BoxScope.BottomLoginButtons(
         Text(
             modifier = Modifier.clickable { navigateToSignIn() },
             text = "간편하게 가입하기",
-            fontSize = 14.sp,
-            style = HeadLine1
+            style = Body1,
+            color = White
         )
         Spacer(modifier = Modifier.height(20.dp))
         Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {

@@ -3,6 +3,7 @@ package com.cmc12th.runway.ui.detail.components
 import android.net.Uri
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
@@ -108,6 +109,10 @@ fun UserReview(
                 )
             }
         }
+        when (userReviewsPaging.loadState) {
+
+        }
+
         if (userReviewsPaging.itemCount == 0) {
             Column(
                 modifier = Modifier
@@ -137,6 +142,7 @@ fun UserReview(
                     AsyncImage(
                         modifier = Modifier
                             .size(132.dp, 200.dp)
+                            .background(Gray100)
                             .clickable {
                                 navigateToUserReviewDetail(it)
                             },
@@ -144,7 +150,6 @@ fun UserReview(
                             .data(it.imgUrl)
                             .crossfade(true)
                             .build(),
-                        placeholder = painterResource(R.drawable.img_dummy),
                         error = painterResource(id = R.drawable.img_dummy),
                         contentDescription = "IMG_SELECTED_IMG",
                         contentScale = ContentScale.Crop,

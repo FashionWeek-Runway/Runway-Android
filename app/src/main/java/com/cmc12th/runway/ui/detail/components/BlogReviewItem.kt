@@ -1,5 +1,6 @@
 package com.cmc12th.runway.ui.detail.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Text
@@ -54,12 +55,12 @@ fun BlogReviewItem(
             WidthSpacer(width = 20.dp)
             AsyncImage(
                 modifier = Modifier
+                    .background(Gray200)
                     .size(108.dp),
                 model = ImageRequest.Builder(LocalContext.current)
                     .data(blogReview.imgUrl)
                     .crossfade(true)
                     .build(),
-                placeholder = painterResource(R.drawable.img_dummy),
                 error = painterResource(id = R.drawable.img_dummy),
                 contentDescription = "BLOG_IMG",
                 contentScale = ContentScale.Crop,

@@ -280,14 +280,20 @@ private fun HomeStoreBanner(
                     )
                 }
 
-                Text(
-                    text = "#페미닌 #미니멀 #시티보이",
-                    color = Point,
-                    style = Button2,
-                    modifier = Modifier
-                        .background(Primary)
-                        .padding(4.dp)
-                )
+                Row(
+                    modifier = Modifier.background(Primary),
+                ) {
+                    banner.categoryList.forEach {
+                        Text(
+                            text = "#$it",
+                            color = Point,
+                            style = Button2,
+                            modifier = Modifier
+                                .padding(2.dp, 4.dp)
+                        )
+                    }
+                }
+
                 HeightSpacer(height = 16.dp)
                 Image(
                     painter = painterResource(id = R.mipmap.img_runway_barcord),

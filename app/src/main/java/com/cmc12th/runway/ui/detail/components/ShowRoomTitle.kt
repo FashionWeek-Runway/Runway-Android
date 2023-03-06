@@ -2,6 +2,7 @@
 
 package com.cmc12th.runway.ui.detail.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -9,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.cmc12th.runway.data.response.store.StoreDetail
+import com.cmc12th.runway.ui.theme.Gray300
 import com.cmc12th.runway.ui.theme.HeadLine2
 
 
@@ -20,7 +22,13 @@ fun ShowRoomTitle(storeDetail: StoreDetail) {
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
 
-        Text(text = storeDetail.storeName, style = HeadLine2, color = Color.Black)
+        if (storeDetail.storeName.isEmpty()) {
+            Box(modifier = Modifier
+                .size(180.dp, 24.dp)
+                .background(Gray300))
+        } else {
+            Text(text = storeDetail.storeName, style = HeadLine2, color = Color.Black)
+        }
         FlowRow {
             storeDetail.category.forEach {
                 ShowRoomTag(it)

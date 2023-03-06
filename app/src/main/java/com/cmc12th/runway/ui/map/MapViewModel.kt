@@ -92,6 +92,8 @@ class MapViewModel @Inject constructor(
         MutableStateFlow(RunwayCategory.generateCategoryTags())
     private val _isBookmarked: MutableStateFlow<Boolean> = MutableStateFlow(false)
 
+    val initialLodingStatus = mutableStateOf(true)
+
     /** 해당 값은 변할 시 카메라가 이동함 */
     private val _movingCameraPosition: MutableStateFlow<MovingCameraWrapper> =
         MutableStateFlow(MovingCameraWrapper.DEFAULT)
@@ -457,12 +459,14 @@ class MapViewModel @Inject constructor(
     inner class CustomLocationCallback : LocationCallback() {
         override fun onLocationResult(locationResult: LocationResult) {
             super.onLocationResult(locationResult)
+
             locationResult.lastLocation?.let {
                 // 초기 1회 진입할 때 마커 불러오기
                 if (initialMarkerLoadFlag) {
+                    initialMarkerLoadFlag = false
+                    initialLodingStatus.value = false
                     mapFiltering(LatLng(it.latitude, it.longitude))
                     mapScrollInfoPaging(LatLng(it.latitude, it.longitude))
-                    initialMarkerLoadFlag = false
                     _movingCameraPosition.value = MovingCameraWrapper.MOVING(it)
                 }
                 _userPosition.value = LatLng(it.latitude, it.longitude)

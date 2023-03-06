@@ -284,26 +284,28 @@ private fun SelectedProfileImage(
     Box {
         if (selectedImage is ProfileImageType.SOCIAL) {
             AsyncImage(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .background(Gray200)
+                    .fillMaxSize(),
                 model = ImageRequest.Builder(LocalContext.current)
                     .data(selectedImage.imgUrl)
                     .crossfade(true)
                     .build(),
-                placeholder = painterResource(R.drawable.img_dummy),
-                error = painterResource(id = R.drawable.img_dummy),
+                error = painterResource(id = R.drawable.ic_defailt_profile),
                 contentDescription = "IMG_SELECTED_IMG",
                 contentScale = ContentScale.Crop,
             )
         }
         if (selectedImage is ProfileImageType.LOCAL) {
             AsyncImage(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .background(Gray200)
+                    .fillMaxSize(),
                 model = ImageRequest.Builder(LocalContext.current)
                     .data(selectedImage.uri)
                     .crossfade(true)
                     .build(),
-                placeholder = painterResource(R.drawable.img_dummy),
-                error = painterResource(id = R.drawable.img_dummy),
+                error = painterResource(id = R.drawable.ic_defailt_profile),
                 contentDescription = "IMG_SELECTED_IMG",
                 contentScale = ContentScale.Crop,
             )

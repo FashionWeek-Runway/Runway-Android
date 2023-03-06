@@ -1,5 +1,6 @@
 package com.cmc12th.runway.ui.mypage.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -22,12 +23,13 @@ import com.cmc12th.runway.data.response.user.MyReviewsItem
 import com.cmc12th.runway.ui.domain.model.ReviewViwerType
 import com.cmc12th.runway.ui.theme.Caption
 import com.cmc12th.runway.ui.theme.Gray100
+import com.cmc12th.runway.ui.theme.Gray200
 import com.cmc12th.runway.utils.Constants
 
 
 @Composable
 fun ColumnScope.MyReviews(
-    navigateToUserReviewDetail: (index: Int) -> Unit, myReviews: LazyPagingItems<MyReviewsItem>
+    navigateToUserReviewDetail: (index: Int) -> Unit, myReviews: LazyPagingItems<MyReviewsItem>,
 ) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(3),
@@ -43,13 +45,13 @@ fun ColumnScope.MyReviews(
                 }) {
                 AsyncImage(
                     modifier = Modifier
+                        .background(Gray200)
                         .aspectRatio(0.65f)
                         .fillMaxSize(),
                     model = ImageRequest.Builder(LocalContext.current)
                         .data(myReviews[index]?.imgUrl)
                         .crossfade(true)
                         .build(),
-                    placeholder = painterResource(R.drawable.img_dummy),
                     error = painterResource(id = R.drawable.img_dummy),
                     contentDescription = "IMG_PROFILE",
                     contentScale = ContentScale.Crop,

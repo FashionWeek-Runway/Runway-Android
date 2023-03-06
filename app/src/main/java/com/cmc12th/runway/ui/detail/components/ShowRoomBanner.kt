@@ -3,6 +3,7 @@
 package com.cmc12th.runway.ui.detail.components
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.runtime.Composable
@@ -17,6 +18,7 @@ import coil.request.ImageRequest
 import com.cmc12th.runway.R
 import com.cmc12th.runway.data.response.store.StoreDetail
 import com.cmc12th.runway.ui.map.components.TopGradient
+import com.cmc12th.runway.ui.theme.Gray200
 
 @Composable
 fun ShowRoomBanner(storeDetail: StoreDetail) {
@@ -33,12 +35,13 @@ fun ShowRoomBanner(storeDetail: StoreDetail) {
                 .aspectRatio(1.2f)
         ) {
             AsyncImage(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .background(Gray200)
+                    .fillMaxSize(),
                 model = ImageRequest.Builder(LocalContext.current)
                     .data(storeDetail.imgUrlList[it])
                     .crossfade(true)
                     .build(),
-                placeholder = painterResource(R.drawable.img_dummy),
                 error = painterResource(id = R.drawable.img_dummy),
                 contentDescription = "SHOP_IMAGE",
                 contentScale = ContentScale.Crop,

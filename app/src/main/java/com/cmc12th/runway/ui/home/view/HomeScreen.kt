@@ -194,12 +194,12 @@ private fun HomeReviews(
                 }) {
                 AsyncImage(
                     modifier = Modifier
+                        .background(Gray100)
                         .fillMaxSize(),
                     model = ImageRequest.Builder(LocalContext.current)
                         .data(reviews[index]?.imgUrl)
                         .crossfade(true)
                         .build(),
-                    placeholder = painterResource(R.drawable.img_dummy),
                     error = painterResource(id = R.drawable.img_dummy),
                     contentDescription = "IMG_PROFILE",
                     contentScale = ContentScale.Crop,

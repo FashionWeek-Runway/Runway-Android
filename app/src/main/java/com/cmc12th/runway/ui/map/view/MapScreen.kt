@@ -8,6 +8,7 @@ package com.cmc12th.runway.ui.map.view
 import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.content.pm.PackageManager
+import android.location.Location
 import android.util.Log
 import android.widget.TextView
 import androidx.activity.compose.ManagedActivityResultLauncher
@@ -48,6 +49,7 @@ import com.cmc12th.runway.ui.map.model.BottomSheetContent
 import com.cmc12th.runway.ui.map.model.MapStatus
 import com.cmc12th.runway.ui.map.model.MovingCameraWrapper
 import com.cmc12th.runway.ui.theme.Body1B
+import com.cmc12th.runway.ui.theme.Primary
 import com.cmc12th.runway.utils.Constants.BOTTOM_NAVIGATION_HEIGHT
 import com.google.accompanist.systemuicontroller.SystemUiController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
@@ -222,7 +224,6 @@ private fun MapViewContents(
         mapViewModel.updateMapStatus(MapStatus.SEARCH_TAB)
     }
 
-    Log.i("dlgocks1", mapUiState.bottomSheetContents.toString())
     BottomSheetScaffold(
         modifier = Modifier
             .fillMaxSize(),
@@ -257,7 +258,19 @@ private fun MapViewContents(
                 onMarkerClick = onMarkerClick,
                 onSearching = onSearching,
                 updateRefershIconVisiblity = { refershIconVisiblity.value = it },
-                expandBottomSheet = { expandBottomSheet() }
+                expandBottomSheet = { expandBottomSheet() },
+                onMapLoaded = {
+                    MapViewModel.initialMarkerLoadFlag = false
+                    mapViewModel.initialLodingStatus.value = false
+                    mapViewModel.mapFiltering(LatLng(mapUiState.userPosition.latitude,
+                        mapUiState.userPosition.longitude))
+                    mapViewModel.mapScrollInfoPaging(LatLng(mapUiState.userPosition.latitude,
+                        mapUiState.userPosition.longitude))
+                    mapViewModel.updateMovingCamera(MovingCameraWrapper.MOVING(Location("UserPosition").apply {
+                        latitude = mapUiState.userPosition.latitude
+                        longitude = mapUiState.userPosition.longitude
+                    }))
+                }
             )
 
             RefreshIcon(
@@ -340,6 +353,14 @@ private fun MapViewContents(
                 )
             }
 
+            if (mapViewModel.initialLodingStatus.value) {
+                CircularProgressIndicator(
+                    modifier = Modifier.align(Alignment.Center),
+                    color = Primary,
+                    strokeWidth = 4.dp,
+                )
+            }
+
         }
     }
 
@@ -354,6 +375,8 @@ private fun MapViewContents(
             }
         )
     }
+
+
 }
 
 @Composable
@@ -482,6 +505,7 @@ private fun RunwayNaverMap(
     onSearching: MutableState<Boolean>,
     updateRefershIconVisiblity: (Boolean) -> Unit,
     expandBottomSheet: () -> Unit,
+    onMapLoaded: () -> Unit,
 ) {
 
     LaunchedEffect(key1 = cameraPositionState.position) {
@@ -527,6 +551,9 @@ private fun RunwayNaverMap(
         properties = MapProperties(
             locationTrackingMode = LocationTrackingMode.None,
         ),
+        onMapLoaded = {
+            onMapLoaded()
+        }
     ) {
         DisposableMapEffect(uiState.markerItems) { map ->
             if (clusterManager == null) {
@@ -551,8 +578,8 @@ private fun RunwayNaverMap(
                             icon =
                                 if (it.isClicked) OverlayImage.fromResource(R.mipmap.ic_map_selceted_marker)
                                 else OverlayImage.fromResource(R.drawable.ic_fill_map_marker_default_24)
-                            width = if (it.isClicked) 160 else 90
-                            height = if (it.isClicked) 160 else 90
+                            width = if (it.isClicked) 140 else 90
+                            height = if (it.isClicked) 165 else 90
                             captionText = it.title
                         }
                     }

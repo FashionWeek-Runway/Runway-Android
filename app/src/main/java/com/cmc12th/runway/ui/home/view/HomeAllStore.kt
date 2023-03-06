@@ -81,13 +81,13 @@ fun HomeAllStore(
 
                     AsyncImage(
                         modifier = Modifier
+                            .background(Gray200)
                             .aspectRatio(0.75f)
                             .fillMaxSize(),
                         model = ImageRequest.Builder(LocalContext.current)
                             .data(store.imgUrl)
                             .crossfade(true)
                             .build(),
-                        placeholder = painterResource(R.drawable.img_dummy),
                         error = painterResource(id = R.drawable.img_dummy),
                         contentDescription = "IMG_PROFILE",
                         contentScale = ContentScale.Crop,

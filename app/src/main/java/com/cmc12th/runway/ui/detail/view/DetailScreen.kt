@@ -141,6 +141,7 @@ fun DetailScreen(
                         appState.navigate("$REVIEW_DETAIL_ROUTE?reviewId=${it.reviewId}&viewerType=${ReviewViwerType.STORE_DETAIL.typeToString}")
                     }
                 )
+                HeightSpacer(height = 20.dp)
                 WidthSpacerLine(height = 8.dp, color = Gray100)
                 BlogReview()
                 uiState.blogReview.map {

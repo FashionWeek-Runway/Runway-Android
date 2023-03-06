@@ -30,7 +30,7 @@ import com.cmc12th.runway.ui.theme.Primary
 fun MainProfileInfo(
     navigateToEditProfile: () -> Unit,
     nickName: String,
-    profileImage: ProfileImageType
+    profileImage: ProfileImageType,
 ) {
     Row(
         modifier = Modifier
@@ -58,8 +58,8 @@ fun MainProfileInfo(
                     )
                     .crossfade(true)
                     .build(),
-                placeholder = painterResource(R.drawable.img_dummy),
-                error = painterResource(id = R.drawable.img_dummy),
+                placeholder = painterResource(R.drawable.ic_defailt_profile),
+                error = painterResource(id = R.drawable.ic_defailt_profile),
                 contentDescription = "IMG_PROFILE",
                 contentScale = ContentScale.Crop,
             )
