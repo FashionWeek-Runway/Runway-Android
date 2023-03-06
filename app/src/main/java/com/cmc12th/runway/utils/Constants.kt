@@ -23,6 +23,8 @@ object Constants {
     const val WEB_VIEW_ROUTE = "nav-web-view"
 
     const val EDIT_CATEGORY_ROUTE = "nav-edit_category"
+    const val HOME_ALL_STORE_ROUTE = "nav-home-all-store"
+
     const val EDIT_PROFILE_IMAGE_ROUTE = "nav-edit_profile_image"
     const val MYPAGE_EDIT_PROFILE_ROUTE = "nav-mypage-edit-profile"
     const val MYPAGE_EDIT_PROFILE_COMPLETE_ROUTE = "nav-mypage-edit-profile-complete"

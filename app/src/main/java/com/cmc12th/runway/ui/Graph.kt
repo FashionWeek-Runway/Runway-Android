@@ -13,6 +13,7 @@ import com.cmc12th.runway.ui.detail.view.DetailScreen
 import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.domain.model.ReviewViwerType
 import com.cmc12th.runway.ui.home.view.EditCategoryScreen
+import com.cmc12th.runway.ui.home.view.HomeAllStore
 import com.cmc12th.runway.ui.home.view.HomeScreen
 import com.cmc12th.runway.ui.login.view.LoginIdPasswdScreen
 import com.cmc12th.runway.ui.login.passwordsearch.view.PasswordSearchChagnePasswordScreen
@@ -28,10 +29,10 @@ import com.cmc12th.runway.ui.setting.view.SettingPersonalInfoManagementScreen
 import com.cmc12th.runway.ui.setting.view.SettingWithdrawalScreen
 import com.cmc12th.runway.ui.signin.view.*
 import com.cmc12th.runway.ui.webview.WebviewScreen
-import com.cmc12th.runway.utils.Constants.DETAIL_GRAPH
 import com.cmc12th.runway.utils.Constants.DETAIL_ROUTE
 import com.cmc12th.runway.utils.Constants.EDIT_CATEGORY_ROUTE
 import com.cmc12th.runway.utils.Constants.EDIT_PROFILE_IMAGE_ROUTE
+import com.cmc12th.runway.utils.Constants.HOME_ALL_STORE_ROUTE
 import com.cmc12th.runway.utils.Constants.LOGIN_BASE_ROUTE
 import com.cmc12th.runway.utils.Constants.LOGIN_GRAPH
 import com.cmc12th.runway.utils.Constants.LOGIN_ID_PW_ROUTE
@@ -65,8 +66,22 @@ fun NavGraphBuilder.mainGraph(
     appState: ApplicationState,
 ) {
     navigation(startDestination = Screen.Home.route, route = MAIN_GRAPH) {
-        composable(Screen.Home.route) { HomeScreen(appState) }
-        composable(Screen.Map.route) { MapScreen(appState) }
+        composable(Screen.Home.route) { entry ->
+            val backStackEntry =
+                rememberNavControllerBackEntry(entry, appState, MAIN_GRAPH)
+            HomeScreen(appState, hiltViewModel(backStackEntry))
+        }
+
+        composable(route = HOME_ALL_STORE_ROUTE) { entry ->
+            val backStackEntry =
+                rememberNavControllerBackEntry(entry, appState, MAIN_GRAPH)
+            HomeAllStore(appState, hiltViewModel(backStackEntry))
+        }
+
+        composable(Screen.Map.route) {
+            MapScreen(appState)
+        }
+
         composable(Screen.Mypage.route) {
             MypageScreen(appState)
         }
@@ -169,7 +184,7 @@ fun NavGraphBuilder.mainGraph(
 }
 
 fun NavGraphBuilder.editProfileGraph(
-    appState: ApplicationState
+    appState: ApplicationState,
 ) {
     navigation(startDestination = MYPAGE_EDIT_PROFILE_ROUTE, route = EDIT_PROFILE_IMAGE_ROUTE) {
         composable(route = MYPAGE_EDIT_PROFILE_ROUTE) { entry ->

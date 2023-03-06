@@ -39,6 +39,7 @@ import com.cmc12th.runway.ui.theme.*
 import com.cmc12th.runway.utils.Constants.BOTTOM_NAVIGATION_HEIGHT
 import com.cmc12th.runway.utils.Constants.DETAIL_ROUTE
 import com.cmc12th.runway.utils.Constants.EDIT_CATEGORY_ROUTE
+import com.cmc12th.runway.utils.Constants.HOME_ALL_STORE_ROUTE
 import com.cmc12th.runway.utils.Constants.REVIEW_DETAIL_ROUTE
 import com.google.accompanist.pager.ExperimentalPagerApi
 
@@ -81,6 +82,9 @@ fun HomeScreen(appState: ApplicationState, viewModel: HomeViewModel) {
                     appState.navigate(
                         "${DETAIL_ROUTE}?storeId=$storeId&storeName=$storeName"
                     )
+                },
+                navigateToShowMoreStore = {
+                    appState.navigate(HOME_ALL_STORE_ROUTE)
                 }
             )
 
@@ -89,6 +93,9 @@ fun HomeScreen(appState: ApplicationState, viewModel: HomeViewModel) {
                 nickname = uiState.nickName,
                 navigateToEditCategory = {
                     appState.navigate("${EDIT_CATEGORY_ROUTE}?nickName={${uiState.nickName}")
+                },
+                navigateToShowMoreStore = {
+                    appState.navigate(HOME_ALL_STORE_ROUTE)
                 }
             )
         }

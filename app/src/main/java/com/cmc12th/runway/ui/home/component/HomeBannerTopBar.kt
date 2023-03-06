@@ -1,5 +1,6 @@
 package com.cmc12th.runway.ui.home.component
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -20,7 +21,8 @@ import com.cmc12th.runway.ui.theme.White
 @Composable
 fun BoxScope.HomeBannerTopBar(
     nickname: String,
-    navigateToEditCategory: () -> Unit
+    navigateToEditCategory: () -> Unit,
+    navigateToShowMoreStore: () -> Unit,
 ) {
     Box(
         Modifier
@@ -52,7 +54,9 @@ fun BoxScope.HomeBannerTopBar(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(2.dp)
             ) {
-                Text(text = "전체보기", style = Body2M, color = White)
+                Text(text = "전체보기", style = Body2M, color = White, modifier = Modifier.clickable {
+                    navigateToShowMoreStore()
+                })
                 Icon(
                     painter = painterResource(id = R.drawable.ic_arrow),
                     contentDescription = "IC_ARROW",

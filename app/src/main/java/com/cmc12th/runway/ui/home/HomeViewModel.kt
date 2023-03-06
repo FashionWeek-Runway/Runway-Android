@@ -1,6 +1,7 @@
 package com.cmc12th.runway.ui.home
 
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
@@ -42,6 +43,9 @@ class HomeViewModel @Inject constructor(
     private val _categoryTags = MutableStateFlow(RunwayCategory.generateCategoryTags())
 
     val reviews: StateFlow<PagingData<HomeReviewItem>> = _reviews.asStateFlow()
+
+    val allStores = mutableStateListOf<HomeBannerItem>()
+//    val allStores: StateFlow<PagingData<HomeBannerItem>> = _allStores.asStateFlow()
 
     val uiState = combine(
         _homeBanners, _nickName
@@ -87,9 +91,17 @@ class HomeViewModel @Inject constructor(
     }
 
     fun getHomeBanner(type: Int) = viewModelScope.launch {
-        homeRepository.getHomeBanner(type).collect { apiState ->
-            apiState.onSuccess {
-                _homeBanners.value = it.result
+        if (type == 0) {
+            homeRepository.getHomeBanner(type).collect { apiState ->
+                apiState.onSuccess {
+                    _homeBanners.value = it.result
+                }
+            }
+        } else if (type == 1) {
+            homeRepository.getHomeBanner(type).collect { apiState ->
+                apiState.onSuccess {
+                    allStores.addAll(it.result)
+                }
             }
         }
     }
@@ -137,6 +149,11 @@ class HomeViewModel @Inject constructor(
                 )
             }.toMutableList()
             updatedList
+        }
+        for (i in 0 until allStores.size) {
+            if (allStores[i].storeId == storedId) {
+                allStores[i] = allStores[i].copy(bookmark = bookmarked)
+            }
         }
     }
 

@@ -40,6 +40,7 @@ fun BoxScope.HomeBannerComponents(
     homeBanners: MutableList<HomeBannertype>,
     updateBookmark: (storeId: Int, bookmarked: Boolean) -> Unit,
     navigateToDetail: (storeId: Int, storeName: String) -> Unit,
+    navigateToShowMoreStore: () -> Unit,
 ) {
     val pagerState = rememberPagerState()
     HorizontalPager(
@@ -50,13 +51,12 @@ fun BoxScope.HomeBannerComponents(
     ) { page ->
         when (val banner = homeBanners[page]) {
             HomeBannertype.SHOWMOREBANNER -> {
-//                ShowMoreBanner()
                 Box(
                     modifier = Modifier
                         .clip(RoundedCornerShape(4.dp))
                         .fillMaxSize()
                         .clickable {
-                            // TODO 쇼룸 전체보기로 넘기기
+                            navigateToShowMoreStore()
                         }
                 ) {
 
