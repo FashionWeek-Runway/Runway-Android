@@ -260,16 +260,18 @@ private fun MapViewContents(
                 updateRefershIconVisiblity = { refershIconVisiblity.value = it },
                 expandBottomSheet = { expandBottomSheet() },
                 onMapLoaded = {
-                    MapViewModel.initialMarkerLoadFlag = false
-                    mapViewModel.initialLodingStatus.value = false
-                    mapViewModel.mapFiltering(LatLng(mapUiState.userPosition.latitude,
-                        mapUiState.userPosition.longitude))
-                    mapViewModel.mapScrollInfoPaging(LatLng(mapUiState.userPosition.latitude,
-                        mapUiState.userPosition.longitude))
-                    mapViewModel.updateMovingCamera(MovingCameraWrapper.MOVING(Location("UserPosition").apply {
-                        latitude = mapUiState.userPosition.latitude
-                        longitude = mapUiState.userPosition.longitude
-                    }))
+                    if (MapViewModel.initialMarkerLoadFlag) {
+                        MapViewModel.initialMarkerLoadFlag = false
+                        mapViewModel.initialLodingStatus.value = false
+                        mapViewModel.mapFiltering(LatLng(mapUiState.userPosition.latitude,
+                            mapUiState.userPosition.longitude))
+                        mapViewModel.mapScrollInfoPaging(LatLng(mapUiState.userPosition.latitude,
+                            mapUiState.userPosition.longitude))
+                        mapViewModel.updateMovingCamera(MovingCameraWrapper.MOVING(Location("UserPosition").apply {
+                            latitude = mapUiState.userPosition.latitude
+                            longitude = mapUiState.userPosition.longitude
+                        }))
+                    }
                 }
             )
 
@@ -389,7 +391,6 @@ private fun ManageMapStatus(
     bottomSheetScaffoldState: BottomSheetScaffoldState,
 ) {
     LaunchedEffect(key1 = mapStatus) {
-        Log.i("mapStatus", mapStatus.toString())
         systemUiController.setNavigationBarColor(Color.White)
         when (mapStatus) {
             /** 기본 상태 */
