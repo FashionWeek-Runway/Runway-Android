@@ -108,6 +108,14 @@ val Caption = TextStyle(
     fontSize = 12.sp,
 )
 
+
+val Caption2 = TextStyle(
+    fontFamily = SpoqaHansSansNeo,
+    fontWeight = FontWeight.Normal,
+    fontSize = 12.sp,
+)
+
+
 val Button1 = TextStyle(
     fontFamily = SpoqaHansSansNeo,
     fontWeight = FontWeight.Medium,
