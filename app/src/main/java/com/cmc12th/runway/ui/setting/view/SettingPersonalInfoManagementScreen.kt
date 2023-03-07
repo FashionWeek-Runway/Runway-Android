@@ -88,32 +88,40 @@ fun SettingPersonalInfoManagementScreen(appState: ApplicationState, viewModel: S
                     .fillMaxWidth()
                     .padding(20.dp, 12.dp),
             ) {
-                Text(text = "로그인 정보",
+                Text(
+                    text = "로그인 정보",
                     modifier = Modifier.padding(vertical = 12.dp),
                     style = Body1B,
-                    color = Gray600)
+                    color = Gray600
+                )
                 Row(
                     modifier = Modifier
                         .padding(0.dp, 24.dp)
                         .fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically) {
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     Text(text = "전화번호", style = Body1M, color = Black)
                     val phoneNumber = uiState.value.personalInfo.phone
-                    Text(text = if (phoneNumber == "-") "-" else
-                        "${phoneNumber.slice(0..2)}-****-${phoneNumber.slice(7..10)}",
+                    Text(
+                        text = if (phoneNumber == "-") "-" else
+                            "${phoneNumber.slice(0..2)}-****-${phoneNumber.slice(7..10)}",
                         style = Body1M,
-                        color = Black)
+                        color = Black
+                    )
                 }
                 Row(
                     modifier = Modifier
                         .padding(0.dp, 24.dp)
                         .fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically) {
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     Text(text = "비밀번호 변경", style = Body1M, color = Black)
                     Button(
-                        onClick = { /*TODO*/ },
+                        onClick = {
+                            // TODO 비밀번호 변경하기
+                        },
                         colors = ButtonDefaults.buttonColors(Blue100),
                         contentPadding = PaddingValues(14.dp, 8.dp),
                         shape = RoundedCornerShape(4.dp)
@@ -132,21 +140,29 @@ fun SettingPersonalInfoManagementScreen(appState: ApplicationState, viewModel: S
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                Text(text = "SNS 연결",
+                Text(
+                    text = "SNS 연결",
                     style = Body1B,
-                    color = Gray600)
+                    color = Gray600
+                )
                 Text(text = "연결된 SNS 계정으로 로그인할 수 있습니다.", style = Body2, color = Gray800)
             }
 
-            Row(modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                Image(painter = painterResource(id = R.drawable.img_kakao_btn),
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.img_kakao_btn),
                     contentDescription = "IMG_KAKAO_BTN",
-                    modifier = Modifier.size(30.dp))
-                Text(text = "카카오 로그인 연결",
+                    modifier = Modifier.size(30.dp)
+                )
+                Text(
+                    text = "카카오 로그인 연결",
                     style = Body1,
                     color = Black,
-                    modifier = Modifier.weight(1f))
+                    modifier = Modifier.weight(1f)
+                )
                 if (uiState.value.personalInfo.social) {
                     Text(text = "연결 완료", style = Body2M, color = Gray600)
                 } else {

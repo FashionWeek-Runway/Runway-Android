@@ -9,6 +9,13 @@ object Constants {
     val BOTTOM_NAVIGATION_HEIGHT = 56.dp
     val BOTTOM_NAV_ITEMS = listOf<Screen>(Screen.Home, Screen.Map, Screen.Mypage)
     val CATEGORYS = listOf("미니멀", "캐주얼", "시티보이", "스트릿", "빈티지", "페미닌")
+
+    const val SERVICE_TERMS = "https://www.notion.so/cc75bccc6c0a421a8d1c117ee39eec2c?pvs=4"
+    const val LOCATION_USE_TERMS = "https://www.notion.so/053a8e4ce8f942dda44dc9352a7bc08b?pvs=4"
+    const val PERSONAL_INFO_USE_TERMS =
+        "https://www.notion.so/d46c2a16fe7d48638219feaa11dc9c1d?pvs=4"
+    const val MARKETING_INFO_TERMS = "https://www.notion.so/f1bb27670f5848ac8980d0d8e7d45cc3?pvs=4"
+
     const val SNS_INTENT_ACTION = "android.provider.Telephony.SMS_RECEIVED"
     const val INIT_PAGE_INDEX = 0
 

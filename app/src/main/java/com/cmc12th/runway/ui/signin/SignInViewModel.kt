@@ -15,6 +15,7 @@ import com.cmc12th.runway.domain.repository.SignInRepository
 import com.cmc12th.runway.network.model.ServiceInterceptor
 import com.cmc12th.runway.ui.domain.model.RunwayCategory
 import com.cmc12th.runway.ui.signin.model.*
+import com.cmc12th.runway.utils.Constants
 import com.cmc12th.runway.utils.fileFromContentUri
 import com.cmc12th.runway.utils.toPlainRequestBody
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -57,10 +58,22 @@ class SignInViewModel @Inject constructor(
 
     private val _agreements = MutableStateFlow(
         mutableListOf(
-            Agreement("이용약관 동의 (필수)", true),
-            Agreement("개인정보 처리 방침 동의 (필수)", true),
-            Agreement("위치정보 이용 약관 동의 (필수)", true),
-            Agreement("마케팅 정보 수신 동의 (선택)", false),
+            Agreement(
+                "이용약관 동의 (필수)", true,
+                link = Constants.SERVICE_TERMS
+            ),
+            Agreement(
+                "개인정보 처리 방침 동의 (필수)", true,
+                link = Constants.PERSONAL_INFO_USE_TERMS
+            ),
+            Agreement(
+                "위치정보 이용 약관 동의 (필수)", true,
+                link = Constants.LOCATION_USE_TERMS
+            ),
+            Agreement(
+                "마케팅 정보 수신 동의 (선택)", false,
+                link = Constants.MARKETING_INFO_TERMS
+            ),
         )
     )
 

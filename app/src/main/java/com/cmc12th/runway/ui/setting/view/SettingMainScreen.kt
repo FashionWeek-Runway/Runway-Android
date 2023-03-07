@@ -1,5 +1,7 @@
 package com.cmc12th.runway.ui.setting
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -11,16 +13,26 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat.startActivity
 import com.cmc12th.runway.ui.components.BackIcon
 import com.cmc12th.runway.ui.components.RunwayHorizontalDialog
 import com.cmc12th.runway.ui.components.RunwaySwitch
 import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.domain.model.DialogButtonContent
-import com.cmc12th.runway.ui.theme.*
+import com.cmc12th.runway.ui.theme.Body1B
+import com.cmc12th.runway.ui.theme.Body1M
+import com.cmc12th.runway.ui.theme.Body2B
+import com.cmc12th.runway.ui.theme.Gray600
 import com.cmc12th.runway.utils.Constants
+import com.cmc12th.runway.utils.Constants.LOCATION_USE_TERMS
+import com.cmc12th.runway.utils.Constants.MARKETING_INFO_TERMS
+import com.cmc12th.runway.utils.Constants.PERSONAL_INFO_USE_TERMS
+import com.cmc12th.runway.utils.Constants.SERVICE_TERMS
 import com.cmc12th.runway.utils.Constants.SETTING_PERSONAL_INFO_MANAGEMENT_ROUTE
-import com.cmc12th.runway.utils.Constants.SIGNIN_AGREEMENT_DETAIL_ROUTE
+import com.cmc12th.runway.utils.Constants.WEB_VIEW_ROUTE
+
 
 data class MypageItemWrapper(
     val title: String,
@@ -37,21 +49,22 @@ fun SettingMainScreen(
         appState.navigate(SETTING_PERSONAL_INFO_MANAGEMENT_ROUTE)
     }))
     val inquiry = listOf(MypageItemWrapper("쇼룸 추가 요청", onClick = {
-        appState.navigate("${Constants.WEB_VIEW_ROUTE}?title=${""}&url=${"https://docs.google.com/forms/d/e/1FAIpQLScmcpp4nMMziU6t8xgsct18IKeYXy2KTjNDIdRDILKv4bazkA/viewform"}")
+        appState.navigate("${WEB_VIEW_ROUTE}?title=${""}&url=${"https://docs.google.com/forms/d/e/1FAIpQLScmcpp4nMMziU6t8xgsct18IKeYXy2KTjNDIdRDILKv4bazkA/viewform"}")
     }))
 
+    val context = LocalContext.current
     val policies = listOf(
         MypageItemWrapper("이용약관", onClick = {
-            appState.navigate(SIGNIN_AGREEMENT_DETAIL_ROUTE)
+            context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(SERVICE_TERMS)))
         }),
         MypageItemWrapper("개인정보 처리 방침", onClick = {
-            appState.navigate(SIGNIN_AGREEMENT_DETAIL_ROUTE)
+            context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(PERSONAL_INFO_USE_TERMS)))
         }),
         MypageItemWrapper("위치정보 이용 약관", onClick = {
-            appState.navigate(SIGNIN_AGREEMENT_DETAIL_ROUTE)
+            context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(LOCATION_USE_TERMS)))
         }),
         MypageItemWrapper("마케팅 정보 수신 동의 약관", onClick = {
-            appState.navigate(SIGNIN_AGREEMENT_DETAIL_ROUTE)
+            context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(MARKETING_INFO_TERMS)))
         }),
     )
 

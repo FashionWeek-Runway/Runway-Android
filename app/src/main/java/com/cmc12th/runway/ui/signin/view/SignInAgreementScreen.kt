@@ -1,5 +1,7 @@
 package com.cmc12th.runway.ui.signin.view
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.*
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.scrollable
@@ -14,6 +16,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -27,6 +30,7 @@ import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.signin.SignInViewModel
 import com.cmc12th.runway.ui.signin.model.Agreement
 import com.cmc12th.runway.ui.theme.*
+import com.cmc12th.runway.utils.Constants
 import com.cmc12th.runway.utils.Constants.SIGNIN_AGREEMENT_DETAIL_ROUTE
 import com.cmc12th.runway.utils.Constants.SIGNIN_PROFILE_IMAGE_ROUTE
 
@@ -80,10 +84,13 @@ fun SignInAgreementScreen(
                 WidthSpacerLine(1.dp, Gray300)
                 HeightSpacer(height = 14.dp)
 
+                val context = LocalContext.current
                 /** 개별 약관 동의 */
                 uiState.agreements.forEachIndexed { index, value ->
                     AgreementComponent(
-                        onClick = { appState.navController.navigate(SIGNIN_AGREEMENT_DETAIL_ROUTE) },
+                        onClick = {
+                            context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(value.link)))
+                        },
                         agreement = value,
                         isChecked = uiState.agreements[index].isChecked,
                         onCheck = {
