@@ -47,6 +47,10 @@ class MypageViewModel @Inject constructor(
     private val _profileImage = MutableStateFlow<ProfileImageType>(ProfileImageType.DEFAULT)
     private val _categoryTags = MutableStateFlow(RunwayCategory.generateCategoryTags())
 
+    init {
+        getMyReviews()
+    }
+
     val complteUiState: StateFlow<SignInCompleteUiState> =
         combine(_profileImage, _nickName, _categoryTags) { profileImage, nickName, categoryTags ->
             SignInCompleteUiState(

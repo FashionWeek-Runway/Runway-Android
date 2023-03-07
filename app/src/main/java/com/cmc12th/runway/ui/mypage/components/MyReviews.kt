@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -15,6 +16,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
@@ -24,56 +26,62 @@ import com.cmc12th.runway.ui.theme.Caption
 import com.cmc12th.runway.ui.theme.Gray100
 import com.cmc12th.runway.ui.theme.Gray200
 
-
 @Composable
 fun ColumnScope.MyReviews(
     navigateToUserReviewDetail: (index: Int) -> Unit, myReviews: LazyPagingItems<MyReviewsItem>,
 ) {
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(3),
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(3.dp),
-        verticalArrangement = Arrangement.spacedBy(3.dp)
-    ) {
-        items(myReviews.itemCount) { index ->
-            Box(modifier = Modifier
-                .weight(1f)
-                .clickable {
-                    navigateToUserReviewDetail(myReviews[index]?.reviewId ?: 0)
-                }) {
-                AsyncImage(
-                    modifier = Modifier
-                        .background(Gray200)
-                        .aspectRatio(0.65f)
-                        .fillMaxSize(),
-                    model = ImageRequest.Builder(LocalContext.current)
-                        .data(myReviews[index]?.imgUrl)
-                        .crossfade(true)
-                        .build(),
-                    error = painterResource(id = R.drawable.img_dummy),
-                    contentDescription = "IMG_PROFILE",
-                    contentScale = ContentScale.Crop,
-                )
-                Row(
-                    modifier = Modifier
-                        .align(Alignment.BottomStart)
-                        .padding(6.dp),
-                    horizontalArrangement = Arrangement.spacedBy(3.dp)
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_filled_review_location_16),
-                        contentDescription = "IC_LOCATION",
-                        modifier = Modifier.size(14.dp),
-                        tint = Color.Unspecified
+    if (myReviews.loadState.refresh is LoadState.Loading) {
+        CircularProgressIndicator(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(100.dp)
+        )
+    } else {
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(3),
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(3.dp),
+            verticalArrangement = Arrangement.spacedBy(3.dp)
+        ) {
+            items(myReviews.itemCount) { index ->
+                Box(modifier = Modifier
+                    .weight(1f)
+                    .clickable {
+                        navigateToUserReviewDetail(myReviews[index]?.reviewId ?: 0)
+                    }) {
+                    AsyncImage(
+                        modifier = Modifier
+                            .background(Gray200)
+                            .aspectRatio(0.65f)
+                            .fillMaxSize(),
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .data(myReviews[index]?.imgUrl)
+                            .crossfade(true)
+                            .build(),
+                        error = painterResource(id = R.drawable.img_dummy),
+                        contentDescription = "IMG_PROFILE",
+                        contentScale = ContentScale.Crop,
                     )
-                    Text(
-                        text = myReviews[index]?.regionInfo ?: "",
-                        style = Caption,
-                        color = Gray100
-                    )
+                    Row(
+                        modifier = Modifier
+                            .align(Alignment.BottomStart)
+                            .padding(6.dp),
+                        horizontalArrangement = Arrangement.spacedBy(3.dp)
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_filled_review_location_16),
+                            contentDescription = "IC_LOCATION",
+                            modifier = Modifier.size(14.dp),
+                            tint = Color.Unspecified
+                        )
+                        Text(
+                            text = myReviews[index]?.regionInfo ?: "",
+                            style = Caption,
+                            color = Gray100
+                        )
+                    }
                 }
             }
-
         }
     }
 }

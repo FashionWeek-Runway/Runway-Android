@@ -1,9 +1,11 @@
 package com.cmc12th.runway.ui.mypage.view
 
-import androidx.compose.foundation.*
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -20,7 +22,9 @@ import com.cmc12th.runway.ui.map.components.DetailState
 import com.cmc12th.runway.ui.mypage.MypageViewModel
 import com.cmc12th.runway.ui.mypage.components.*
 import com.cmc12th.runway.ui.mypage.model.MypageTabInfo
-import com.cmc12th.runway.ui.theme.*
+import com.cmc12th.runway.ui.theme.Black
+import com.cmc12th.runway.ui.theme.Gray50
+import com.cmc12th.runway.ui.theme.HeadLine4
 import com.cmc12th.runway.utils.Constants
 import com.cmc12th.runway.utils.Constants.BOTTOM_NAVIGATION_HEIGHT
 import com.cmc12th.runway.utils.Constants.EDIT_PROFILE_IMAGE_ROUTE
@@ -43,10 +47,11 @@ fun MypageScreen(appState: ApplicationState) {
     appState.systmeUiController.setStatusBarColor(Gray50)
 
     LaunchedEffect(key1 = Unit) {
-        viewModel.getMyReviews()
         viewModel.getBookmarkedStore()
         viewModel.getMyProfile()
+        myReviews.refresh()
     }
+
 
     CollapsingToolbarScaffold(
         modifier = Modifier
@@ -81,9 +86,9 @@ fun MypageScreen(appState: ApplicationState) {
             TopBar { appState.navigate(SETTING_GRAPH) }
         }
     ) {
-        when (uiState.selectedPage) {
-            MypageTabInfo.MY_REVIEW -> {
-                Column {
+        Column {
+            when (uiState.selectedPage) {
+                MypageTabInfo.MY_REVIEW -> {
                     if (myReviews.itemCount == 0) {
                         EmptyMyReview()
                     } else {
@@ -95,9 +100,7 @@ fun MypageScreen(appState: ApplicationState) {
                         )
                     }
                 }
-            }
-            MypageTabInfo.STORAGE -> {
-                Column {
+                MypageTabInfo.STORAGE -> {
                     if (bookmarkedStore.itemCount == 0) {
                         EmptyStorage()
                     } else {
