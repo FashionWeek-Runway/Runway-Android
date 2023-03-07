@@ -85,12 +85,14 @@ fun MapScreen(appState: ApplicationState) {
     ) {
         granted = true
     }
-
-    if (granted) {
-        MapViewContents(appState = appState, mapViewModel = mapViewModel)
-    } else {
-        PermissionGranted(launcher)
+    LaunchedEffect(key1 = Unit) {
+        if (!granted) {
+            launcher.launch(ACCESS_FINE_LOCATION)
+        }
     }
+    MapViewContents(appState = appState, mapViewModel = mapViewModel)
+//    PermissionGranted(launcher)
+
 }
 
 
