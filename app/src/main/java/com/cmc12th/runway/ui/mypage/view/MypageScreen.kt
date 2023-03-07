@@ -49,9 +49,8 @@ fun MypageScreen(appState: ApplicationState) {
     LaunchedEffect(key1 = Unit) {
         viewModel.getBookmarkedStore()
         viewModel.getMyProfile()
-        myReviews.refresh()
+        viewModel.getMyReviews()
     }
-
 
     CollapsingToolbarScaffold(
         modifier = Modifier
