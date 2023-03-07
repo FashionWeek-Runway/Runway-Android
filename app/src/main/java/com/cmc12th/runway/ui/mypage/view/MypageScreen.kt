@@ -19,6 +19,7 @@ import com.cmc12th.runway.ui.domain.model.ReviewViwerType
 import com.cmc12th.runway.ui.map.components.DetailState
 import com.cmc12th.runway.ui.mypage.MypageViewModel
 import com.cmc12th.runway.ui.mypage.components.*
+import com.cmc12th.runway.ui.mypage.model.MypageTabInfo
 import com.cmc12th.runway.ui.theme.*
 import com.cmc12th.runway.utils.Constants
 import com.cmc12th.runway.utils.Constants.BOTTOM_NAVIGATION_HEIGHT
@@ -29,18 +30,14 @@ import me.onebone.toolbar.CollapsingToolbarScope
 import me.onebone.toolbar.ScrollStrategy
 import me.onebone.toolbar.rememberCollapsingToolbarScaffoldState
 
-enum class MypageTabInfo(val id: Int) {
-    MY_REVIEW(1), STORAGE(2);
-}
-
 @Composable
 fun MypageScreen(appState: ApplicationState) {
 
     val viewModel: MypageViewModel = hiltViewModel()
-    val myReviews = viewModel.myReviews.collectAsLazyPagingItems()
-    val bookmarkedStore = viewModel.bookmarkedStore.collectAsLazyPagingItems()
     val state = rememberCollapsingToolbarScaffoldState()
-    val uiState = viewModel.uiState.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val myReviews = uiState.myReviews.collectAsLazyPagingItems()
+    val bookmarkedStore = uiState.bookmarkedStore.collectAsLazyPagingItems()
     val profileImageUiState = viewModel.profileImageUiState.collectAsStateWithLifecycle()
 
     appState.systmeUiController.setStatusBarColor(Gray50)
@@ -76,7 +73,7 @@ fun MypageScreen(appState: ApplicationState) {
                 HeightSpacer(height = 34.dp)
                 /** 나의 후기, 저장 로우탭 */
                 MypageCustomRowTab(
-                    selectedPage = uiState.value.selectedPage
+                    selectedPage = uiState.selectedPage
                 ) {
                     viewModel.updateSelectedPage(it)
                 }
@@ -84,7 +81,7 @@ fun MypageScreen(appState: ApplicationState) {
             TopBar { appState.navigate(SETTING_GRAPH) }
         }
     ) {
-        when (uiState.value.selectedPage) {
+        when (uiState.selectedPage) {
             MypageTabInfo.MY_REVIEW -> {
                 Column {
                     if (myReviews.itemCount == 0) {
@@ -115,10 +112,10 @@ fun MypageScreen(appState: ApplicationState) {
     }
 
     /** 디테일 뷰 위에 깔아버리기 */
-    if (!uiState.value.onDetail.isDefault()) {
+    if (!uiState.onDetail.isDefault()) {
         DetailScreen(appState = appState,
-            idx = uiState.value.onDetail.id,
-            storeName = uiState.value.onDetail.storeName,
+            idx = uiState.onDetail.id,
+            storeName = uiState.onDetail.storeName,
             onBackPress = {
                 appState.bottomBarState.value = true
                 appState.systmeUiController.setSystemBarsColor(color = Color.White)

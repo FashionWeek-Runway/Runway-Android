@@ -2,13 +2,12 @@ package com.cmc12th.runway.ui.mypage.model
 
 import androidx.annotation.DrawableRes
 import com.cmc12th.runway.R
-import com.cmc12th.runway.ui.mypage.view.MypageTabInfo
 
 enum class MypageTabRowItem(
     val mypageTabInfo: MypageTabInfo,
     val title: String,
     @DrawableRes val drawableResId: Int,
-    @DrawableRes val selecteddrawableResId: Int
+    @DrawableRes val selecteddrawableResId: Int,
 ) {
     MYREVIEW(
         MypageTabInfo.MY_REVIEW,

@@ -12,8 +12,8 @@ import androidx.compose.ui.unit.dp
 import com.cmc12th.runway.ui.components.HeightSpacer
 import com.cmc12th.runway.ui.components.util.bottomBorder
 import com.cmc12th.runway.ui.components.util.topBorder
+import com.cmc12th.runway.ui.mypage.model.MypageTabInfo
 import com.cmc12th.runway.ui.mypage.model.MypageTabRowItem
-import com.cmc12th.runway.ui.mypage.view.MypageTabInfo
 import com.cmc12th.runway.ui.theme.Black
 import com.cmc12th.runway.ui.theme.Body2
 import com.cmc12th.runway.ui.theme.Gray200

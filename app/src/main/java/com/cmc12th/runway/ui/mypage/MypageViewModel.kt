@@ -11,7 +11,7 @@ import com.cmc12th.runway.domain.repository.AuthRepository
 import com.cmc12th.runway.domain.usecase.GetMyProfileDataUseCase
 import com.cmc12th.runway.ui.domain.model.RunwayCategory
 import com.cmc12th.runway.ui.map.components.DetailState
-import com.cmc12th.runway.ui.mypage.view.MypageTabInfo
+import com.cmc12th.runway.ui.mypage.model.MypageTabInfo
 import com.cmc12th.runway.ui.signin.SignInCompleteUiState
 import com.cmc12th.runway.ui.signin.SignInProfileImageUiState
 import com.cmc12th.runway.ui.signin.model.CategoryTag
@@ -26,6 +26,9 @@ import javax.inject.Inject
 data class MypageUiState(
     val onDetail: DetailState = DetailState.default(),
     val selectedPage: MypageTabInfo = MypageTabInfo.MY_REVIEW,
+    val myReviews: MutableStateFlow<PagingData<MyReviewsItem>> = MutableStateFlow(PagingData.empty()),
+    val bookmarkedStore: MutableStateFlow<PagingData<StoreMetaDataItem>> = MutableStateFlow(
+        PagingData.empty()),
 )
 
 @HiltViewModel
@@ -35,10 +38,8 @@ class MypageViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _myReviews = MutableStateFlow<PagingData<MyReviewsItem>>(PagingData.empty())
-    val myReviews: StateFlow<PagingData<MyReviewsItem>> = _myReviews.asStateFlow()
     private val _bookmarkedStore =
         MutableStateFlow<PagingData<StoreMetaDataItem>>(PagingData.empty())
-    val bookmarkedStore: StateFlow<PagingData<StoreMetaDataItem>> = _bookmarkedStore.asStateFlow()
     private val _onDetail = MutableStateFlow(DetailState.default())
     private val _selectedPage = MutableStateFlow(MypageTabInfo.MY_REVIEW)
 
@@ -68,16 +69,22 @@ class MypageViewModel @Inject constructor(
             initialValue = SignInProfileImageUiState()
         )
 
-    val uiState = combine(_onDetail, _selectedPage) { onDetail, selectedPage ->
-        MypageUiState(
-            onDetail = onDetail,
-            selectedPage = selectedPage
+    val uiState =
+        combine(_onDetail,
+            _selectedPage,
+            _myReviews,
+            _bookmarkedStore) { onDetail, selectedPage, _, _ ->
+            MypageUiState(
+                onDetail = onDetail,
+                selectedPage = selectedPage,
+                myReviews = _myReviews,
+                bookmarkedStore = _bookmarkedStore
+            )
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = MypageUiState()
         )
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000),
-        initialValue = MypageUiState()
-    )
 
     fun getMyReviews() = viewModelScope.launch {
         getMyProfileDataUseCase.myReviewPaging().cachedIn(viewModelScope).collect {
