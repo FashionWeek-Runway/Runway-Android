@@ -104,32 +104,6 @@ class AuthRepositoryImpl @Inject constructor(
             runwayClient.getMyReview(page, size)
         }
 
-    override fun myReviewPaging(): Flow<PagingData<MyReviewsItem>> {
-        return Pager(
-            config = PagingConfig(
-                pageSize = 10,
-            ),
-            pagingSourceFactory = {
-                MyReviewPagingSource(
-                    authRepository = this
-                )
-            },
-        ).flow
-    }
-
-    override fun bookmarkedStorePaging(): Flow<PagingData<StoreMetaDataItem>> {
-        return Pager(
-            config = PagingConfig(
-                pageSize = 10,
-            ),
-            pagingSourceFactory = {
-                BookmarkedPagingSource(
-                    authRepository = this
-                )
-            },
-        ).flow
-    }
-
     override fun patchProfileImage(
         basic: MultipartBody.Part?,
         multipartFile: MultipartBody.Part?,

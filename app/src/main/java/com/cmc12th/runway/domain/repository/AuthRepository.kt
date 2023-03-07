@@ -45,9 +45,6 @@ interface AuthRepository {
         page: Int, size: Int,
     ): Flow<PagingApiWrapper<StoreMetaDataItem>>
 
-    fun myReviewPaging(): Flow<PagingData<MyReviewsItem>>
-    fun bookmarkedStorePaging(): Flow<PagingData<StoreMetaDataItem>>
-
     fun patchProfileImage(
         basic: MultipartBody.Part?,
         multipartFile: MultipartBody.Part?,

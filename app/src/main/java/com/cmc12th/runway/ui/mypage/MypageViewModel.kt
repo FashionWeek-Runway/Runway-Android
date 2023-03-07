@@ -1,6 +1,5 @@
 package com.cmc12th.runway.ui.mypage
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
@@ -9,7 +8,7 @@ import com.cmc12th.runway.data.response.ErrorResponse
 import com.cmc12th.runway.data.response.user.MyReviewsItem
 import com.cmc12th.runway.data.response.user.StoreMetaDataItem
 import com.cmc12th.runway.domain.repository.AuthRepository
-import com.cmc12th.runway.domain.repository.SignInRepository
+import com.cmc12th.runway.domain.usecase.GetMyProfileDataUseCase
 import com.cmc12th.runway.ui.domain.model.RunwayCategory
 import com.cmc12th.runway.ui.map.components.DetailState
 import com.cmc12th.runway.ui.mypage.view.MypageTabInfo
@@ -18,15 +17,10 @@ import com.cmc12th.runway.ui.signin.SignInProfileImageUiState
 import com.cmc12th.runway.ui.signin.model.CategoryTag
 import com.cmc12th.runway.ui.signin.model.Nickname
 import com.cmc12th.runway.ui.signin.model.ProfileImageType
-import com.cmc12th.runway.utils.fileFromContentUri
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
-import okhttp3.RequestBody
-import okhttp3.RequestBody.Companion.asRequestBody
 import javax.inject.Inject
 
 data class MypageUiState(
@@ -37,8 +31,7 @@ data class MypageUiState(
 @HiltViewModel
 class MypageViewModel @Inject constructor(
     private val authRepository: AuthRepository,
-    private val signInRepository: SignInRepository,
-    @ApplicationContext private val context: Context,
+    private val getMyProfileDataUseCase: GetMyProfileDataUseCase,
 ) : ViewModel() {
 
     private val _myReviews = MutableStateFlow<PagingData<MyReviewsItem>>(PagingData.empty())
@@ -86,24 +79,14 @@ class MypageViewModel @Inject constructor(
         initialValue = MypageUiState()
     )
 
-    fun checkNickname(onSuccess: () -> Unit, onError: (ErrorResponse) -> Unit) =
-        viewModelScope.launch {
-            signInRepository.checkNickname(nickname = _nickName.value.text).collect {
-                it.onSuccess {
-                    onSuccess()
-                }
-                it.onError(onError)
-            }
-        }
-
     fun getMyReviews() = viewModelScope.launch {
-        authRepository.myReviewPaging().cachedIn(viewModelScope).collect {
+        getMyProfileDataUseCase.myReviewPaging().cachedIn(viewModelScope).collect {
             _myReviews.value = it
         }
     }
 
     fun getBookmarkedStore() = viewModelScope.launch {
-        authRepository.bookmarkedStorePaging().cachedIn(viewModelScope).collect {
+        getMyProfileDataUseCase.bookmarkedStorePaging().cachedIn(viewModelScope).collect {
             _bookmarkedStore.value = it
         }
     }
@@ -145,7 +128,9 @@ class MypageViewModel @Inject constructor(
             ProfileImageType.DEFAULT -> 1
             else -> 0
         }
-        val multipartFile = convetProfileImageToMultipartFile()
+        val multipartFile =
+            getMyProfileDataUseCase.convetProfileImageToMultipartFile(_profileImage.value,
+                "multipartFile")
         val nickname = MultipartBody.Part.createFormData(
             "nickname",
             _nickName.value.text
@@ -173,14 +158,4 @@ class MypageViewModel @Inject constructor(
         }
     }
 
-    private fun convetProfileImageToMultipartFile() =
-        when (val profileImage = _profileImage.value) {
-            ProfileImageType.DEFAULT -> null
-            is ProfileImageType.SOCIAL -> null
-            is ProfileImageType.LOCAL -> {
-                val file = fileFromContentUri(context, profileImage.uri)
-                val requestBody: RequestBody = file.asRequestBody("image/*".toMediaType())
-                MultipartBody.Part.createFormData("multipartFile", file.name, requestBody)
-            }
-        }
 }
