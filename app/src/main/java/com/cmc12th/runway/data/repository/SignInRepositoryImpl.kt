@@ -1,6 +1,7 @@
 package com.cmc12th.runway.data.repository
 
 import com.cmc12th.runway.data.request.*
+import com.cmc12th.runway.data.request.auth.PasswordRequest
 import com.cmc12th.runway.data.response.LoginResponse
 import com.cmc12th.runway.data.response.SignUpResponse
 import com.cmc12th.runway.domain.repository.SignInRepository
@@ -35,6 +36,16 @@ class SignInRepositoryImpl @Inject constructor(
     override fun checkNickname(nickname: String): Flow<DefaultApiWrapper> = safeFlow {
         runwayClient.checkNickname(nickname)
     }
+
+    override fun verifyPassword(passwordRequest: PasswordRequest): Flow<DefaultApiWrapper> =
+        safeFlow {
+            runwayClient.verifyPassword(passwordRequest)
+        }
+
+    override fun modifyPassword(passwordRequest: PasswordRequest): Flow<DefaultApiWrapper> =
+        safeFlow {
+            runwayClient.modifyPassword(passwordRequest)
+        }
 
     override fun modifyPassword(passwordAndPhoneNumberRequest: PasswordAndPhoneNumberRequest): Flow<DefaultApiWrapper> =
         safeFlow {

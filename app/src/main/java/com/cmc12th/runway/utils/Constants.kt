@@ -61,6 +61,8 @@ object Constants {
     const val SETTING_MAIN_ROUTE = "nav-setting-main"
     const val SETTING_PERSONAL_INFO_MANAGEMENT_ROUTE = "nav-setting-personal-info-manamgent"
     const val SETTING_WITHDRAWAL_ROUTE = "nav-setting-withdrawal"
+    const val SETTING_EDIT_PASSWORD_ROUTE = "nav-setting-edit-password"
+    const val SETTING_VERIFY_PASSWORD_ROTUE = "nav-setting-verify-password"
 
     /** Graph Id */
     const val MAIN_GRAPH = "main-graph"

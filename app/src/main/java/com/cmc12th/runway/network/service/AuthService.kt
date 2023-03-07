@@ -1,6 +1,7 @@
 package com.cmc12th.runway.network.service
 
 import com.cmc12th.runway.data.request.OauthLoginRequest
+import com.cmc12th.runway.data.request.auth.PasswordRequest
 import com.cmc12th.runway.data.response.LoginResponse
 import com.cmc12th.runway.data.response.ResponseWrapper
 import com.cmc12th.runway.data.response.store.ImgUrlAndNicknameAndCategorys
@@ -95,5 +96,12 @@ interface AuthService {
     /** 홈화면 카테고리 선택 */
     @PATCH("/home/categories")
     suspend fun setCategories(@Body patchCategoryBody: PatchCategoryBody): DefaultResponse
+
+    @POST("/users/password")
+    suspend fun verifyPassword(@Body passwordRequest: PasswordRequest): DefaultResponse
+
+    @PATCH("/users/password")
+    suspend fun modifyPassword(@Body passwordRequest: PasswordRequest): DefaultResponse
+
 
 }

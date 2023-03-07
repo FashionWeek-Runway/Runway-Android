@@ -1,6 +1,7 @@
 package com.cmc12th.runway.network
 
 import com.cmc12th.runway.data.request.*
+import com.cmc12th.runway.data.request.auth.PasswordRequest
 import com.cmc12th.runway.data.request.map.MapFilterRequest
 import com.cmc12th.runway.data.request.map.MapSearchRequest
 import com.cmc12th.runway.data.request.store.ReviewReportRequest
@@ -8,6 +9,9 @@ import com.cmc12th.runway.data.response.user.PatchCategoryBody
 import com.cmc12th.runway.network.service.*
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import retrofit2.http.Body
+import retrofit2.http.PATCH
+import retrofit2.http.POST
 import javax.inject.Inject
 
 class RunwayClient @Inject constructor(
@@ -48,6 +52,11 @@ class RunwayClient @Inject constructor(
         multipartFile: MultipartBody.Part?,
     ) = loginService.kakoSignUp(feedPostReqeust, categoryList, multipartFile)
 
+    suspend fun verifyPassword(passwordRequest: PasswordRequest) =
+        authService.verifyPassword(passwordRequest)
+
+    suspend fun modifyPassword(passwordRequest: PasswordRequest) =
+        authService.modifyPassword(passwordRequest)
 
     /** 마이페이지 */
     suspend fun logout() = authService.logout()

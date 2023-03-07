@@ -28,6 +28,8 @@ import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.domain.model.DialogButtonContent
 import com.cmc12th.runway.ui.setting.SettingViewModel
 import com.cmc12th.runway.ui.theme.*
+import com.cmc12th.runway.utils.Constants
+import com.cmc12th.runway.utils.Constants.SETTING_VERIFY_PASSWORD_ROTUE
 import com.cmc12th.runway.utils.Constants.SETTING_WITHDRAWAL_ROUTE
 
 //social 값이 true = FRAME setting 03 , false = FRAME setting 02 kakao,apple boolean 값으로 화면에 보여주면 됩니다!
@@ -120,7 +122,7 @@ fun SettingPersonalInfoManagementScreen(appState: ApplicationState, viewModel: S
                     Text(text = "비밀번호 변경", style = Body1M, color = Black)
                     Button(
                         onClick = {
-                            // TODO 비밀번호 변경하기
+                            appState.navigate(SETTING_VERIFY_PASSWORD_ROTUE)
                         },
                         colors = ButtonDefaults.buttonColors(Blue100),
                         contentPadding = PaddingValues(14.dp, 8.dp),

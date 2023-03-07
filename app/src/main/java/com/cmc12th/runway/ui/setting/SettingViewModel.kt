@@ -6,11 +6,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cmc12th.runway.data.repository.AuthRepositoryImpl
 import com.cmc12th.runway.data.request.OauthLoginRequest
+import com.cmc12th.runway.data.request.auth.PasswordRequest
 import com.cmc12th.runway.data.response.ErrorResponse
 import com.cmc12th.runway.data.response.user.UserInformationManagamentInfo
 import com.cmc12th.runway.domain.repository.AuthRepository
 import com.cmc12th.runway.domain.repository.SignInRepository
-import com.cmc12th.runway.ui.signin.SignInPasswordUiState
 import com.cmc12th.runway.ui.signin.model.Password
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.model.ClientError
@@ -25,6 +25,14 @@ data class SettingPersonalInfoUiState(
     val personalInfo: UserInformationManagamentInfo = UserInformationManagamentInfo.default(),
 )
 
+data class EditPasswordUiState(
+    val verifyPassword: Password = Password.default(),
+    val newPassword: Password = Password.default(),
+    val checkNewPassword: Password = Password.default(),
+) {
+    fun checkValidate() = newPassword.isValidatePassword(checkNewPassword)
+}
+
 @HiltViewModel
 class SettingViewModel @Inject constructor(
     private val authRepository: AuthRepository,
@@ -33,8 +41,9 @@ class SettingViewModel @Inject constructor(
 
     private val _personalInfo = MutableStateFlow(UserInformationManagamentInfo.default())
 
-    private val _password = MutableStateFlow(Password.default())
-    private val _retryPassword = MutableStateFlow(Password.default())
+    private val _verifyPassword = MutableStateFlow(Password.default())
+    private val _newPassword = MutableStateFlow(Password.default())
+    private val _checkNewPassword = MutableStateFlow(Password.default())
 
     val personalInfoUiState: StateFlow<SettingPersonalInfoUiState> =
         combine(_personalInfo) { flowArr ->
@@ -45,13 +54,19 @@ class SettingViewModel @Inject constructor(
             initialValue = SettingPersonalInfoUiState()
         )
 
-    val passwordUiState: StateFlow<SignInPasswordUiState> =
-        combine(_password, _retryPassword) { password, retryPassword ->
-            SignInPasswordUiState(password = password, retryPassword = retryPassword)
+    val editPasswordUiState: StateFlow<EditPasswordUiState> =
+        combine(
+            _verifyPassword,
+            _newPassword,
+            _checkNewPassword
+        ) { verifyPassword, newPassword, checkNewPassword ->
+            EditPasswordUiState(
+                verifyPassword, newPassword, checkNewPassword
+            )
         }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
-            initialValue = SignInPasswordUiState()
+            initialValue = EditPasswordUiState()
         )
 
 //    fun modifyPassword(onSuccess: () -> Unit, onError: (ErrorResponse) -> Unit) =
@@ -162,5 +177,39 @@ class SettingViewModel @Inject constructor(
         }
 
     }
+
+    fun verifyPassword(onSuccess: () -> Unit, onError: (ErrorResponse) -> Unit) =
+        viewModelScope.launch {
+            signInRepository.verifyPassword(PasswordRequest(_verifyPassword.value.value))
+                .collect { apiState ->
+                    apiState.onSuccess {
+                        onSuccess()
+                    }
+                    apiState.onError(onError)
+                }
+        }
+
+    fun modifyPassword(onSuccess: () -> Unit) = viewModelScope.launch {
+        signInRepository.modifyPassword(PasswordRequest(_checkNewPassword.value.value))
+            .collect { apiState ->
+                apiState.onSuccess {
+                    onSuccess()
+                }
+            }
+
+    }
+
+    fun updateVerifyPassword(password: Password) {
+        _verifyPassword.value = password
+    }
+
+    fun updateNewPassword(password: Password) {
+        _newPassword.value = password
+    }
+
+    fun updateCheckNewPassword(password: Password) {
+        _checkNewPassword.value = password
+    }
+
 
 }

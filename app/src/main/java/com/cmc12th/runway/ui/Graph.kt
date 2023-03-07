@@ -19,8 +19,10 @@ import com.cmc12th.runway.ui.mypage.view.EditProfileCompleteScreen
 import com.cmc12th.runway.ui.mypage.view.EditProfileScreen
 import com.cmc12th.runway.ui.mypage.view.MypageScreen
 import com.cmc12th.runway.ui.setting.SettingMainScreen
+import com.cmc12th.runway.ui.setting.view.EditPasswordScreen
 import com.cmc12th.runway.ui.setting.view.SettingPersonalInfoManagementScreen
 import com.cmc12th.runway.ui.setting.view.SettingWithdrawalScreen
+import com.cmc12th.runway.ui.setting.view.VerifyPasswordScreen
 import com.cmc12th.runway.ui.signin.view.*
 import com.cmc12th.runway.utils.Constants
 import com.cmc12th.runway.utils.Constants.EDIT_PROFILE_IMAGE_ROUTE
@@ -35,9 +37,11 @@ import com.cmc12th.runway.utils.Constants.PASSWORD_SEARCH_GRAPH
 import com.cmc12th.runway.utils.Constants.PASSWORD_SEARCH_PHONE_CHANGE_PASSWORD
 import com.cmc12th.runway.utils.Constants.PASSWORD_SEARCH_PHONE_ROUTE
 import com.cmc12th.runway.utils.Constants.PASSWORD_SEARCH_PHONE_VERIFY_ROUTE
+import com.cmc12th.runway.utils.Constants.SETTING_EDIT_PASSWORD_ROUTE
 import com.cmc12th.runway.utils.Constants.SETTING_GRAPH
 import com.cmc12th.runway.utils.Constants.SETTING_MAIN_ROUTE
 import com.cmc12th.runway.utils.Constants.SETTING_PERSONAL_INFO_MANAGEMENT_ROUTE
+import com.cmc12th.runway.utils.Constants.SETTING_VERIFY_PASSWORD_ROTUE
 import com.cmc12th.runway.utils.Constants.SETTING_WITHDRAWAL_ROUTE
 import com.cmc12th.runway.utils.Constants.SIGNIN_AGREEMENT_DETAIL_ROUTE
 import com.cmc12th.runway.utils.Constants.SIGNIN_AGREEMENT_ROUTE
@@ -160,6 +164,14 @@ fun NavGraphBuilder.settingGraph(
         composable(SETTING_WITHDRAWAL_ROUTE) { entry ->
             val backStackEntry = rememberNavControllerBackEntry(entry, appState, SETTING_GRAPH)
             SettingWithdrawalScreen(appState, hiltViewModel(backStackEntry))
+        }
+        composable(SETTING_VERIFY_PASSWORD_ROTUE) { entry ->
+            val backStackEntry = rememberNavControllerBackEntry(entry, appState, SETTING_GRAPH)
+            VerifyPasswordScreen(appState, hiltViewModel(backStackEntry))
+        }
+        composable(SETTING_EDIT_PASSWORD_ROUTE) { entry ->
+            val backStackEntry = rememberNavControllerBackEntry(entry, appState, SETTING_GRAPH)
+            EditPasswordScreen(appState, hiltViewModel(backStackEntry))
         }
     }
 }
