@@ -9,8 +9,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 class LastPasswordVisibleVisuualTransformation(
     private val mask: Char = '\u2022',
     private val isFocused: Boolean,
-) :
-    VisualTransformation {
+) : VisualTransformation {
     override fun filter(text: AnnotatedString): TransformedText {
         return TransformedText(
             text = if (isFocused) {
@@ -28,7 +27,7 @@ class LastPasswordVisibleVisuualTransformation(
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other !is PasswordVisualTransformation) return false
+        if (other !is LastPasswordVisibleVisuualTransformation) return false
         if (mask != other.mask) return false
         return true
     }
