@@ -182,8 +182,8 @@
 
 # 프로젝트를 진행하며 공부한 것 및 정리할 것
 
-1. `LastPasswordVisibleCustomTextField` 만들고 에러 메시지를 뛰우는 과정
-2. `imePadding()`사용법과 키보드가 올라왔을 때 버튼을 위로 올리는 법
+1. [Compose에서 마지막 자리만 보이는 텍스트 필드를 만들어 보자 - BasicTextField 커스텀 좌충우돌](https://velog.io/@cksgodl/AndroidCompose-Compose%EC%97%90%EC%84%9C-%EB%A7%88%EC%A7%80%EB%A7%89-%EC%9E%90%EB%A6%AC%EB%A7%8C-%EB%B3%B4%EC%9D%B4%EB%8A%94-%ED%85%8D%EC%8A%A4%ED%8A%B8-%ED%95%84%EB%93%9C%EB%A5%BC-%EB%A7%8C%EB%93%A4%EC%96%B4-%EB%B3%B4%EC%9E%90)
+2. [Window Insets을 Compose에서 다루는 방법](https://velog.io/@cksgodl/AndroidCompose-WindowInsets%EC%9D%84-Compose%EC%97%90%EC%84%9C-%EA%B4%80%EB%A6%AC%ED%95%98%EB%8A%94-%EB%B0%A9%EB%B2%95)
 3. 상태 호이스팅을 활용한 `Screen`과 `Stateholder`의 관리 예제
 4. `CustomBottomSheet`만드는 과정과 동작 방법 (`rememberBottomSheet`를 활용해 `Stateholder`를 만들어 재사용하는 과정)
     * 내가 만든 CustomBottomSheet 공유
