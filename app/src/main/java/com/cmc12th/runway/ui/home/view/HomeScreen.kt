@@ -104,9 +104,8 @@ fun HomeScreen(appState: ApplicationState, viewModel: HomeViewModel) {
                 appState.navigate("${REVIEW_DETAIL_ROUTE}?reviewId=${index}&viewerType=${ReviewViwerType.HOME.typeToString}")
             },
         )
-
-        ShowNews()
-
+        HeightSpacer(height = 20.dp)
+//        ShowNews()
     }
 }
 
