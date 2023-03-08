@@ -30,6 +30,7 @@ import com.cmc12th.runway.ui.theme.*
 import com.cmc12th.runway.utils.Constants.REVIEW_DETAIL_ROUTE
 import com.cmc12th.runway.utils.Constants.REVIEW_WRITE_ROUTE
 import com.cmc12th.runway.utils.Constants.WEB_VIEW_ROUTE
+import com.cmc12th.runway.utils.viewLogEvent
 import kotlinx.coroutines.launch
 
 @Composable
@@ -99,6 +100,7 @@ fun DetailScreen(
     )
 
     LaunchedEffect(key1 = Unit) {
+        viewLogEvent("DetailScreen")
         appState.bottomBarState.value = false
         detailViewModel.getUserReviewPaging(idx)
         detailViewModel.getDetailInfo(idx)

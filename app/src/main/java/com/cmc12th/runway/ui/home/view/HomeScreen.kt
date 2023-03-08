@@ -20,6 +20,7 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.cmc12th.runway.MainActivity
 import com.cmc12th.runway.R
 import com.cmc12th.runway.data.response.home.HomeReviewItem
 import com.cmc12th.runway.ui.components.HeightSpacer
@@ -35,6 +36,9 @@ import com.cmc12th.runway.utils.Constants.DETAIL_ROUTE
 import com.cmc12th.runway.utils.Constants.EDIT_CATEGORY_ROUTE
 import com.cmc12th.runway.utils.Constants.HOME_ALL_STORE_ROUTE
 import com.cmc12th.runway.utils.Constants.REVIEW_DETAIL_ROUTE
+import com.cmc12th.runway.utils.viewLogEvent
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.ktx.logEvent
 
 @Composable
 fun HomeScreen(appState: ApplicationState, viewModel: HomeViewModel) {
@@ -44,6 +48,7 @@ fun HomeScreen(appState: ApplicationState, viewModel: HomeViewModel) {
     val reviews = viewModel.reviews.collectAsLazyPagingItems()
 
     LaunchedEffect(key1 = Unit) {
+        viewLogEvent("HomeScreen")
         viewModel.getHomeBanner(0)
         viewModel.getProfile()
         viewModel.getHomeReview()

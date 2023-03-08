@@ -50,6 +50,7 @@ import com.cmc12th.runway.ui.domain.rememberBottomSheet
 import com.cmc12th.runway.ui.theme.*
 import com.cmc12th.runway.utils.Constants
 import com.cmc12th.runway.utils.Constants.REVIEW_REPORT_ROUTE
+import com.cmc12th.runway.utils.viewLogEvent
 import kotlinx.coroutines.launch
 import kotlin.math.abs
 import kotlin.math.roundToInt
@@ -77,6 +78,7 @@ fun ReviewDetailScreen(
         }
     }
     LaunchedEffect(key1 = Unit) {
+        viewLogEvent("UserReviewDetailScreen")
         appState.bottomBarState.value = false
         bottomsheetState.modalSheetState.hide()
         when (viewerType) {
