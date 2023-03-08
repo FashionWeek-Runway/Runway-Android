@@ -50,6 +50,7 @@ fun ReviewReportScreen(appState: ApplicationState, reivewId: Int) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             BackIcon {
+                appState.popBackStack()
             }
             Text(text = "사용자 후기 신고", style = Body1B, color = Color.Black)
         }
