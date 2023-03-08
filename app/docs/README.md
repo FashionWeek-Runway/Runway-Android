@@ -188,8 +188,9 @@
 4. `CustomBottomSheet`만드는 과정과 동작 방법 (`rememberBottomSheet`를 활용해 `Stateholder`를 만들어 재사용하는 과정)
     * 내가 만든 CustomBottomSheet 공유
 5. 람다 식을 전달할 때의 멤버참조와 코틀린의 리플렉션에 관하여
-6. Compose에서 BroadCast를 활용하여 인증문자에서 번호 가져오기
+6. Compose에서 BroadCast를 활용하여 인증문자에서 번호 가져오기 및 카메라 FileProvider를 활용하여 카메라 이미지 가져오기
+    * contentUri와 fileUri의 차이점은 무엇인지
 7. Authenticator를 활용해 401에러일 때 바로 토큰 재발급 하기
 8. 인스타그램과 같이 이미지 위에 글자를 넣어서 저장해보자.
 9. (@+) 네트워크 요청을 실패, 성공, 로딩 중일 때 화면 처리
-10. 
+10. Firebase - Analytics 및 Crashlytics를 활용해 앱 사용자에 대한 데이터를 수집해보자.
