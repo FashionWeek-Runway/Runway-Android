@@ -584,7 +584,7 @@ private fun RunwayNaverMap(
                                     }
                                 } else {
                                     if (it.bookmark) {
-                                        OverlayImage.fromResource(R.drawable.ic_fill_map_marker_bookmarked_24)
+                                        OverlayImage.fromResource(R.mipmap.ic_map_selceted_bookmark_marker)
                                     } else {
                                         OverlayImage.fromResource(R.drawable.ic_fill_map_marker_default_24)
                                     }
