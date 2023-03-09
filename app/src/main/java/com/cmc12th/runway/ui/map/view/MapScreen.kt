@@ -76,6 +76,13 @@ fun MapScreen(appState: ApplicationState) {
         contract = ActivityResultContracts.RequestPermission(),
         onResult = { isGranted ->
             granted = isGranted
+            if (isGranted) {
+                mapViewModel.addLocationListener()
+            } else {
+                appState.showSnackbar("위치정보 권한을 허가해 주세요.")
+                MapViewModel.initialMarkerLoadFlag = false
+                mapViewModel.initialLodingStatus.value = false
+            }
         },
     )
     if (ContextCompat.checkSelfPermission(
