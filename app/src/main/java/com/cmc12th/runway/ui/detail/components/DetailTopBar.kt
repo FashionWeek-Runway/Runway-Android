@@ -69,13 +69,13 @@ fun BoxScope.DetailTopBar(
                 }
             }
 
-            IconButton(onClick = {}, modifier = Modifier.size(28.dp)) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_border_share_24),
-                    contentDescription = "IC_SHARE",
-                    tint = topbarIconAnimateColor
-                )
-            }
+//            IconButton(onClick = {}, modifier = Modifier.size(28.dp)) {
+//                Icon(
+//                    painter = painterResource(id = R.drawable.ic_border_share_24),
+//                    contentDescription = "IC_SHARE",
+//                    tint = topbarIconAnimateColor
+//                )
+//            }
         }
     }
 }

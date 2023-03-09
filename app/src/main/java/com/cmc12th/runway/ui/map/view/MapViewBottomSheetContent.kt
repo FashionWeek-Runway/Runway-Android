@@ -64,9 +64,11 @@ fun MapViewBottomSheetContent(
 
         /** 풀스크린이 아니고 확장상태가 아니면 탑바가 보인다. */
         if (!(isFullScreen && isExpanded)) {
-            Box(modifier = Modifier
-                .fillMaxWidth()
-                .align(Alignment.CenterHorizontally)) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.CenterHorizontally)
+            ) {
                 Spacer(
                     modifier = Modifier
                         .clip(RoundedCornerShape(5.dp))
@@ -83,10 +85,10 @@ fun MapViewBottomSheetContent(
                 BottomSheetContent.LOADING -> {}
                 is BottomSheetContent.MULTI -> {
                     HeightSpacer(height = 10.dp)
-                    Text(
-                        text = contents.locationName, style = Body1M, color = Color.Black,
-                        modifier = Modifier.padding(bottom = 20.dp)
-                    )
+//                    Text(
+//                        text = contents.locationName, style = Body1M, color = Color.Black,
+//                        modifier = Modifier.padding(bottom = 20.dp)
+//                    )
                 }
                 is BottomSheetContent.SINGLE -> {
                     HeightSpacer(height = 10.dp)

@@ -206,7 +206,7 @@ class MapViewModel @Inject constructor(
         ).cachedIn(viewModelScope).collect {
             _bottomsheetItem.value =
                 BottomSheetContent.MULTI(
-                    "[지역이름]을 어디서 구해오지??",
+                    "",
                     MutableStateFlow(PagingData.empty())
                 ).apply {
                     this.contents.value = if (_isBookmarked.value) it.filter { it.bookmark } else it
