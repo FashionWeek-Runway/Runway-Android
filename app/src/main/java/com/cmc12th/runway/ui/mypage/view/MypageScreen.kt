@@ -2,15 +2,18 @@ package com.cmc12th.runway.ui.mypage.view
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.cmc12th.runway.R
 import com.cmc12th.runway.ui.components.HeightSpacer
@@ -25,6 +28,7 @@ import com.cmc12th.runway.ui.mypage.model.MypageTabInfo
 import com.cmc12th.runway.ui.theme.Black
 import com.cmc12th.runway.ui.theme.Gray50
 import com.cmc12th.runway.ui.theme.HeadLine4
+import com.cmc12th.runway.ui.theme.Primary
 import com.cmc12th.runway.utils.Constants
 import com.cmc12th.runway.utils.Constants.BOTTOM_NAVIGATION_HEIGHT
 import com.cmc12th.runway.utils.Constants.EDIT_PROFILE_IMAGE_ROUTE
@@ -90,15 +94,35 @@ fun MypageScreen(appState: ApplicationState) {
         Column {
             when (uiState.selectedPage) {
                 MypageTabInfo.MY_REVIEW -> {
-                    if (myReviews.itemCount == 0) {
-                        EmptyMyReview()
-                    } else {
-                        MyReviews(
-                            navigateToUserReviewDetail = { index ->
-                                appState.navigate("${Constants.REVIEW_DETAIL_ROUTE}?reviewId=${index}&viewerType=${ReviewViwerType.MYPAGE.typeToString}")
-                            },
-                            myReviews = myReviews
-                        )
+                    when (myReviews.loadState.refresh) {
+                        is LoadState.Error -> {
+                            EmptyMyReview("네트워크 연결을 확인해주세요.")
+                        }
+                        LoadState.Loading -> {
+                            Box(modifier = Modifier.fillMaxSize()) {
+                                CircularProgressIndicator(
+                                    modifier = Modifier
+                                        .size(50.dp)
+                                        .align(Alignment.TopCenter)
+                                        .padding(top = 100.dp),
+                                    color = Primary,
+                                    strokeWidth = 4.dp,
+                                )
+                            }
+
+                        }
+                        is LoadState.NotLoading -> {
+                            if (myReviews.itemCount == 0) {
+                                EmptyMyReview("내 스타일의 매장에 방문하고\n기록해보세요!")
+                            } else {
+                                MyReviews(
+                                    navigateToUserReviewDetail = { index ->
+                                        appState.navigate("${Constants.REVIEW_DETAIL_ROUTE}?reviewId=${index}&viewerType=${ReviewViwerType.MYPAGE.typeToString}")
+                                    },
+                                    myReviews = myReviews
+                                )
+                            }
+                        }
                     }
                 }
                 MypageTabInfo.STORAGE -> {

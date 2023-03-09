@@ -20,10 +20,12 @@ object UseCaseModule {
     fun provideGetMyProfileDataUseCase(
         authRepository: AuthRepository,
         @ApplicationContext context: Context,
+        @DispatcherModule.IoDispatcher ioDispatcher: kotlinx.coroutines.CoroutineDispatcher,
     ): GetMyProfileDataUseCase {
         return GetMyProfileDataUseCaseImpl(
             authRepository = authRepository,
-            context = context
+            context = context,
+            ioDispatcher = ioDispatcher,
         )
     }
 }

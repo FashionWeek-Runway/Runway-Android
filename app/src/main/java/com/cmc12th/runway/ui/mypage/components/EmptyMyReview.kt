@@ -8,6 +8,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.cmc12th.runway.R
 import com.cmc12th.runway.ui.components.HeightSpacer
@@ -15,7 +16,7 @@ import com.cmc12th.runway.ui.theme.Black
 import com.cmc12th.runway.ui.theme.Body1
 
 @Composable
-fun ColumnScope.EmptyMyReview() {
+fun ColumnScope.EmptyMyReview(title: String) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -31,7 +32,6 @@ fun ColumnScope.EmptyMyReview() {
             contentScale = ContentScale.Crop
         )
         HeightSpacer(height = 30.dp)
-        Text(text = "내 스타일의 매장에 방문하고", style = Body1, color = Black)
-        Text(text = "기록해보세요!", style = Body1, color = Black)
+        Text(text = title, style = Body1, color = Black, textAlign = TextAlign.Center)
     }
 }

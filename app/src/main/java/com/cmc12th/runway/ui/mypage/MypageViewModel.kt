@@ -1,5 +1,6 @@
 package com.cmc12th.runway.ui.mypage
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
@@ -28,7 +29,8 @@ data class MypageUiState(
     val selectedPage: MypageTabInfo = MypageTabInfo.MY_REVIEW,
     val myReviews: MutableStateFlow<PagingData<MyReviewsItem>> = MutableStateFlow(PagingData.empty()),
     val bookmarkedStore: MutableStateFlow<PagingData<StoreMetaDataItem>> = MutableStateFlow(
-        PagingData.empty()),
+        PagingData.empty()
+    ),
 )
 
 @HiltViewModel
@@ -74,10 +76,12 @@ class MypageViewModel @Inject constructor(
         )
 
     val uiState =
-        combine(_onDetail,
+        combine(
+            _onDetail,
             _selectedPage,
             _myReviews,
-            _bookmarkedStore) { onDetail, selectedPage, _, _ ->
+            _bookmarkedStore
+        ) { onDetail, selectedPage, _, _ ->
             MypageUiState(
                 onDetail = onDetail,
                 selectedPage = selectedPage,
@@ -140,8 +144,10 @@ class MypageViewModel @Inject constructor(
             else -> 0
         }
         val multipartFile =
-            getMyProfileDataUseCase.convetProfileImageToMultipartFile(_profileImage.value,
-                "multipartFile")
+            getMyProfileDataUseCase.convetProfileImageToMultipartFile(
+                _profileImage.value,
+                "multipartFile"
+            )
         val nickname = MultipartBody.Part.createFormData(
             "nickname",
             _nickName.value.text

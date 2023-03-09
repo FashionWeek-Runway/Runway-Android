@@ -28,7 +28,8 @@ import com.cmc12th.runway.ui.theme.Gray200
 
 @Composable
 fun ColumnScope.MyReviews(
-    navigateToUserReviewDetail: (index: Int) -> Unit, myReviews: LazyPagingItems<MyReviewsItem>,
+    navigateToUserReviewDetail: (index: Int) -> Unit,
+    myReviews: LazyPagingItems<MyReviewsItem>,
 ) {
     if (myReviews.loadState.refresh is LoadState.Loading) {
         CircularProgressIndicator(

@@ -10,6 +10,7 @@ import okhttp3.MultipartBody
 interface GetMyProfileDataUseCase {
 
     fun myReviewPaging(): Flow<PagingData<MyReviewsItem>>
+
     fun bookmarkedStorePaging(): Flow<PagingData<StoreMetaDataItem>>
 
     fun convetProfileImageToMultipartFile(

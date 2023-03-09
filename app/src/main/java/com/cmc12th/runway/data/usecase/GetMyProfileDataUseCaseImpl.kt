@@ -12,8 +12,8 @@ import com.cmc12th.runway.domain.repository.AuthRepository
 import com.cmc12th.runway.domain.usecase.GetMyProfileDataUseCase
 import com.cmc12th.runway.ui.signin.model.ProfileImageType
 import com.cmc12th.runway.utils.fileFromContentUri
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOn
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -22,20 +22,19 @@ import javax.inject.Inject
 
 class GetMyProfileDataUseCaseImpl @Inject constructor(
     private val authRepository: AuthRepository,
-    @ApplicationContext private val context: Context,
+    private val context: Context,
+    private val ioDispatcher: kotlinx.coroutines.CoroutineDispatcher,
 ) : GetMyProfileDataUseCase {
-    override fun myReviewPaging(): Flow<PagingData<MyReviewsItem>> {
-        return Pager(
-            config = PagingConfig(
-                pageSize = 10,
-            ),
-            pagingSourceFactory = {
-                MyReviewPagingSource(
-                    authRepository = authRepository
-                )
-            },
-        ).flow
-    }
+    override fun myReviewPaging(): Flow<PagingData<MyReviewsItem>> = Pager(
+        config = PagingConfig(
+            pageSize = 10,
+        ),
+        pagingSourceFactory = {
+            MyReviewPagingSource(
+                authRepository = authRepository
+            )
+        },
+    ).flow.flowOn(ioDispatcher)
 
     override fun bookmarkedStorePaging(): Flow<PagingData<StoreMetaDataItem>> {
         return Pager(
