@@ -107,6 +107,16 @@ class SettingViewModel @Inject constructor(
         }
     }
 
+    fun withdrawal(onSuccess: () -> Unit) = viewModelScope.launch {
+        authRepository.setToken(AuthRepositoryImpl.ACCESS_TOKEN, "")
+        authRepository.setToken(AuthRepositoryImpl.REFRESH_TOKEN, "")
+        authRepository.withdrawal().collect {
+            it.onSuccess {
+                onSuccess()
+            }
+        }
+    }
+
     private fun linkToKakao(
         kakaoToken: String,
         onSuccess: () -> Unit,

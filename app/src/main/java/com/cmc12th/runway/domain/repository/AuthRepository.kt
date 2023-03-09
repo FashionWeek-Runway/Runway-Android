@@ -12,6 +12,7 @@ import com.cmc12th.runway.utils.DefaultApiWrapper
 import com.cmc12th.runway.utils.PagingApiWrapper
 import kotlinx.coroutines.flow.Flow
 import okhttp3.MultipartBody
+import retrofit2.http.PATCH
 
 interface AuthRepository {
 
@@ -19,7 +20,7 @@ interface AuthRepository {
     suspend fun setToken(type: Preferences.Key<String>, value: String)
     fun validateRefreshToken(refreshToken: String): Flow<ApiWrapper<LoginResponse>>
     fun logout(): Flow<DefaultApiWrapper>
-
+    fun withdrawal(): Flow<DefaultApiWrapper>
     fun getMyInfo(): Flow<ApiWrapper<MyPageInfo>>
     fun getBookmarkedReview(
         page: Int, size: Int,

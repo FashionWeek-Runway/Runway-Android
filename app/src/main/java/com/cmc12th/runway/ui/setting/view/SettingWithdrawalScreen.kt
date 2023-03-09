@@ -25,11 +25,17 @@ import com.cmc12th.runway.ui.components.RunwayVerticalDialog
 import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.domain.model.DialogButtonContent
 import com.cmc12th.runway.ui.setting.SettingViewModel
+import com.cmc12th.runway.ui.splash.SplashScreen
 import com.cmc12th.runway.ui.theme.*
 import com.cmc12th.runway.utils.Constants
+import com.cmc12th.runway.utils.Constants.MAIN_GRAPH
+import com.cmc12th.runway.utils.Constants.SPLASH_ROUTE
 
 @Composable
-fun SettingWithdrawalScreen(appState: ApplicationState, viewModel: SettingViewModel) {
+fun SettingWithdrawalScreen(
+    appState: ApplicationState,
+    viewModel: SettingViewModel
+) {
 
     val withDrawalCheckbox = remember {
         mutableStateOf(false)
@@ -153,8 +159,13 @@ fun SettingWithdrawalScreen(appState: ApplicationState, viewModel: SettingViewMo
 
         Button(
             onClick = {
-                // TODO 회원탈퇴 진행
-                appState.showSnackbar("회원탈퇴 API가 없어요~")
+                viewModel.withdrawal {
+                    appState.navController.navigate(SPLASH_ROUTE) {
+                        popUpTo(MAIN_GRAPH) {
+                            inclusive = true
+                        }
+                    }
+                }
             },
             modifier = Modifier
                 .fillMaxWidth()

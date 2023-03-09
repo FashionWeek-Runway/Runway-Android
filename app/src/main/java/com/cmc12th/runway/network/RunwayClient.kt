@@ -60,6 +60,7 @@ class RunwayClient @Inject constructor(
 
     /** 마이페이지 */
     suspend fun logout() = authService.logout()
+    suspend fun withdrawal() = authService.withdrawal()
     suspend fun loginRefresh(refreshToken: String) = authService.loginRefresh(refreshToken)
     suspend fun getMyInfo() = authService.getMyInfo()
     suspend fun getBookmarkedReview(page: Int, size: Int) =

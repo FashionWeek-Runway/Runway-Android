@@ -20,6 +20,10 @@ interface AuthService {
     @GET("/users/logout")
     suspend fun logout(): DefaultResponse
 
+    /** 유저 탈퇴 */
+    @PATCH("/users/active")
+    suspend fun withdrawal(): DefaultResponse
+
     /** 리프레쉬 토큰 유효성 검증  */
     @POST("/login/refresh")
     suspend fun loginRefresh(@Header("X-REFRESH-TOKEN") refreshToken: String): NetworkResponse<LoginResponse>

@@ -60,6 +60,10 @@ class AuthRepositoryImpl @Inject constructor(
         runwayClient.logout()
     }
 
+    override fun withdrawal(): Flow<DefaultApiWrapper> = safeFlow {
+        runwayClient.withdrawal()
+    }
+
     override fun getMyInfo(): Flow<ApiWrapper<MyPageInfo>> = safeFlow {
         runwayClient.getMyInfo()
     }
