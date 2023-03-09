@@ -41,7 +41,7 @@ class MainActivity : ComponentActivity() {
             firebaseAnalytics?.setUserProperty(ANALYTICS_USER_PROP, STATUS_INSTALLED)
         }
 
-        requestSMSReceivePermission()
+//        requestSMSReceivePermission()
         setContent {
             val appState = rememberApplicationState()
             val navBackStackEntry by appState.navController.currentBackStackEntryAsState()
