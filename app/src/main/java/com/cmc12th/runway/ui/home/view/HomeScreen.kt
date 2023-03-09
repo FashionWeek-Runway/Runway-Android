@@ -3,6 +3,7 @@ package com.cmc12th.runway.ui.home.view
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -16,6 +17,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
@@ -159,77 +161,114 @@ private fun HomeReviews(
 
     HeightSpacer(height = 16.dp)
 
-    if (reviews.itemCount == 0) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(20.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Image(
-                painter = painterResource(id = R.mipmap.img_empty_home_review),
-                contentDescription = "IMG_EMPTY_HOME_REVIEW",
-                modifier = Modifier.size(128.dp, 115.dp)
-            )
-            HeightSpacer(height = 30.dp)
-            Text(text = "아직 내 취향의 후기가 없어요.", style = Body1, color = Color.Black)
-            HeightSpacer(height = 5.dp)
-            Text(text = "스타일 카테고리를 추가해서\n다양한 후기를 만나보세요.", style = Body2, color = Gray500)
-        }
-    }
-    LazyRow(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(5.dp)
-    ) {
-        item { WidthSpacer(width = 15.dp) }
-
-        items(reviews.itemCount) { index ->
-            Box(modifier = Modifier
-                .size(132.dp, 200.dp)
-                .clickable {
-                    navigateToUserReviewDetail(reviews[index]?.reviewId ?: 0)
-                }) {
-                AsyncImage(
+    when (reviews.loadState.refresh) {
+        LoadState.Loading -> {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(114.dp)
+            ) {
+                CircularProgressIndicator(
                     modifier = Modifier
-                        .background(Gray100)
-                        .fillMaxSize(),
-                    model = ImageRequest.Builder(LocalContext.current)
-                        .data(reviews[index]?.imgUrl)
-                        .crossfade(true)
-                        .build(),
-                    error = painterResource(id = R.drawable.img_dummy),
-                    contentDescription = "IMG_PROFILE",
-                    contentScale = ContentScale.Crop,
+                        .size(50.dp)
+                        .align(Alignment.Center),
+                    color = Primary,
+                    strokeWidth = 4.dp,
                 )
-                Row(
-                    modifier = Modifier
-                        .align(Alignment.BottomStart)
-                        .padding(6.dp),
-                    horizontalArrangement = Arrangement.spacedBy(3.dp)
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_filled_review_location_16),
-                        contentDescription = "IC_LOCATION",
-                        modifier = Modifier.size(14.dp),
-                        tint = Color.Unspecified
-                    )
-                    Text(
-                        text = reviews[index]?.regionInfo ?: "",
-                        style = Caption,
-                        color = Gray100
-                    )
-                }
-
-                if (reviews[index]?.read == true) {
-                    Box(
-                        modifier = Modifier
-                            .background(Black40)
-                            .fillMaxSize()
-                    )
-                }
             }
         }
-        item { WidthSpacer(width = 15.dp) }
+        is LoadState.Error -> {
+            EmptyUserReview(
+                title = "네트워크 연결을 확인해주세요.",
+            )
+        }
+        is LoadState.NotLoading -> {
+            if (reviews.itemCount == 0) {
+                EmptyUserReview(
+                    title = "아직 내 취향의 후기가 없어요.",
+                    subtitle = "스타일 카테고리를 추가해서\n다양한 후기를 만나보세요."
+                )
+            }
+            LazyRow(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(5.dp)
+            ) {
+                item { WidthSpacer(width = 15.dp) }
+
+                items(reviews.itemCount) { index ->
+                    Box(modifier = Modifier
+                        .size(132.dp, 200.dp)
+                        .clickable {
+                            navigateToUserReviewDetail(reviews[index]?.reviewId ?: 0)
+                        }) {
+                        AsyncImage(
+                            modifier = Modifier
+                                .background(Gray100)
+                                .fillMaxSize(),
+                            model = ImageRequest.Builder(LocalContext.current)
+                                .data(reviews[index]?.imgUrl)
+                                .crossfade(true)
+                                .build(),
+                            error = painterResource(id = R.drawable.img_dummy),
+                            contentDescription = "IMG_PROFILE",
+                            contentScale = ContentScale.Crop,
+                        )
+                        Row(
+                            modifier = Modifier
+                                .align(Alignment.BottomStart)
+                                .padding(6.dp),
+                            horizontalArrangement = Arrangement.spacedBy(3.dp)
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_filled_review_location_16),
+                                contentDescription = "IC_LOCATION",
+                                modifier = Modifier.size(14.dp),
+                                tint = Color.Unspecified
+                            )
+                            Text(
+                                text = reviews[index]?.regionInfo ?: "",
+                                style = Caption,
+                                color = Gray100
+                            )
+                        }
+
+                        if (reviews[index]?.read == true) {
+                            Box(
+                                modifier = Modifier
+                                    .background(Black40)
+                                    .fillMaxSize()
+                            )
+                        }
+                    }
+                }
+                item { WidthSpacer(width = 15.dp) }
+            }
+        }
+    }
+
+
+}
+
+@Composable
+private fun EmptyUserReview(
+    title: String,
+    subtitle: String = "",
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(20.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Image(
+            painter = painterResource(id = R.mipmap.img_empty_home_review),
+            contentDescription = "IMG_EMPTY_HOME_REVIEW",
+            modifier = Modifier.size(128.dp, 115.dp)
+        )
+        HeightSpacer(height = 30.dp)
+        Text(text = title, style = Body1, color = Color.Black)
+        HeightSpacer(height = 5.dp)
+        Text(text = subtitle, style = Body2, color = Gray500)
     }
 }
 
