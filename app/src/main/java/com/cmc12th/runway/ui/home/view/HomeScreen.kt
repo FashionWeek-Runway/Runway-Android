@@ -1,5 +1,6 @@
 package com.cmc12th.runway.ui.home.view
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
@@ -15,6 +16,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
@@ -22,7 +24,6 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.cmc12th.runway.MainActivity
 import com.cmc12th.runway.R
 import com.cmc12th.runway.data.response.home.HomeReviewItem
 import com.cmc12th.runway.ui.components.HeightSpacer
@@ -39,8 +40,6 @@ import com.cmc12th.runway.utils.Constants.EDIT_CATEGORY_ROUTE
 import com.cmc12th.runway.utils.Constants.HOME_ALL_STORE_ROUTE
 import com.cmc12th.runway.utils.Constants.REVIEW_DETAIL_ROUTE
 import com.cmc12th.runway.utils.viewLogEvent
-import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.firebase.analytics.ktx.logEvent
 
 @Composable
 fun HomeScreen(appState: ApplicationState, viewModel: HomeViewModel) {
@@ -106,8 +105,7 @@ fun HomeScreen(appState: ApplicationState, viewModel: HomeViewModel) {
                 appState.navigate("${REVIEW_DETAIL_ROUTE}?reviewId=${index}&viewerType=${ReviewViwerType.HOME.typeToString}")
             },
         )
-        HeightSpacer(height = 20.dp)
-//        ShowNews()
+        ShowNews()
     }
 }
 
@@ -122,27 +120,32 @@ private fun ShowNews() {
         color = Color.Black
     )
 
-    Column(
-        modifier = Modifier
-            .padding(20.dp),
-        verticalArrangement = Arrangement.spacedBy(20.dp)
-    ) {
-        (0..4).toList().forEach {
-            Column(
-                verticalArrangement = Arrangement.spacedBy(14.dp)
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.img_dummy),
-                    contentDescription = "IMG_STORE_NEWS",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .aspectRatio(1.39f),
-                    contentScale = ContentScale.Crop
-                )
-                Text(text = "'PRESENT' 'FUTURE' 'PAST'", style = Body1B, color = Gray900)
-            }
-        }
-    }
+    EmptyResultView(
+        drawableid = R.mipmap.img_empty_notice,
+        title = "소식은 준비 중이예요",
+    )
+
+//    Column(
+//        modifier = Modifier
+//            .padding(20.dp),
+//        verticalArrangement = Arrangement.spacedBy(20.dp)
+//    ) {
+//        (0..4).toList().forEach {
+//            Column(
+//                verticalArrangement = Arrangement.spacedBy(14.dp)
+//            ) {
+//                Image(
+//                    painter = painterResource(id = R.drawable.img_dummy),
+//                    contentDescription = "IMG_STORE_NEWS",
+//                    modifier = Modifier
+//                        .fillMaxWidth()
+//                        .aspectRatio(1.39f),
+//                    contentScale = ContentScale.Crop
+//                )
+//                Text(text = "'PRESENT' 'FUTURE' 'PAST'", style = Body1B, color = Gray900)
+//            }
+//        }
+//    }
 }
 
 @Composable
@@ -178,13 +181,15 @@ private fun HomeReviews(
             }
         }
         is LoadState.Error -> {
-            EmptyUserReview(
+            EmptyResultView(
+                drawableid = R.mipmap.img_empty_home_review,
                 title = "네트워크 연결을 확인해주세요.",
             )
         }
         is LoadState.NotLoading -> {
             if (reviews.itemCount == 0) {
-                EmptyUserReview(
+                EmptyResultView(
+                    drawableid = R.mipmap.img_empty_home_review,
                     title = "아직 내 취향의 후기가 없어요.",
                     subtitle = "스타일 카테고리를 추가해서\n다양한 후기를 만나보세요."
                 )
@@ -250,7 +255,8 @@ private fun HomeReviews(
 }
 
 @Composable
-private fun EmptyUserReview(
+private fun EmptyResultView(
+    @DrawableRes drawableid: Int,
     title: String,
     subtitle: String = "",
 ) {
@@ -261,14 +267,14 @@ private fun EmptyUserReview(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Image(
-            painter = painterResource(id = R.mipmap.img_empty_home_review),
+            painter = painterResource(id = drawableid),
             contentDescription = "IMG_EMPTY_HOME_REVIEW",
             modifier = Modifier.size(128.dp, 115.dp)
         )
         HeightSpacer(height = 30.dp)
-        Text(text = title, style = Body1, color = Color.Black)
+        Text(text = title, style = Body1, color = Color.Black, textAlign = TextAlign.Center)
         HeightSpacer(height = 5.dp)
-        Text(text = subtitle, style = Body2, color = Gray500)
+        Text(text = subtitle, style = Body2, color = Gray500, textAlign = TextAlign.Center)
     }
 }
 
