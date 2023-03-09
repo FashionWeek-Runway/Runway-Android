@@ -4,21 +4,31 @@
 
 package com.cmc12th.runway.ui.detail.view
 
+import android.content.ActivityNotFoundException
+import android.content.Intent
 import android.net.Uri
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.foundation.*
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat.startActivity
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.cmc12th.runway.ui.components.*
+import com.cmc12th.runway.ui.components.CustomBottomSheet
+import com.cmc12th.runway.ui.components.HeightSpacer
+import com.cmc12th.runway.ui.components.WidthSpacerLine
 import com.cmc12th.runway.ui.detail.DetailViewModel
 import com.cmc12th.runway.ui.detail.components.*
 import com.cmc12th.runway.ui.detail.domain.ManageSystemBarColor
@@ -26,12 +36,14 @@ import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.domain.model.BottomSheetContent
 import com.cmc12th.runway.ui.domain.model.ReviewViwerType
 import com.cmc12th.runway.ui.domain.rememberBottomSheet
-import com.cmc12th.runway.ui.theme.*
+import com.cmc12th.runway.ui.theme.Black
+import com.cmc12th.runway.ui.theme.Gray100
 import com.cmc12th.runway.utils.Constants.REVIEW_DETAIL_ROUTE
 import com.cmc12th.runway.utils.Constants.REVIEW_WRITE_ROUTE
 import com.cmc12th.runway.utils.Constants.WEB_VIEW_ROUTE
 import com.cmc12th.runway.utils.viewLogEvent
 import kotlinx.coroutines.launch
+
 
 @Composable
 fun DetailScreen(
@@ -75,6 +87,7 @@ fun DetailScreen(
     var imageUri by remember {
         mutableStateOf<Uri?>(null)
     }
+    val context = LocalContext.current
 
     LaunchedEffect(key1 = hasImage) {
         if (hasImage) {
@@ -127,7 +140,28 @@ fun DetailScreen(
             ) {
                 ShowRoomBanner(uiState.storeDetail)
                 ShowRoomTitle(uiState.storeDetail)
-                ShowRoomDetail(uiState.storeDetail)
+                ShowRoomDetail(
+                    storeDetail = uiState.storeDetail,
+                    navigateToWeb = { storeUrl ->
+                        appState.navigate("$WEB_VIEW_ROUTE?title=${""}&url=${storeUrl}")
+                    },
+                    navigateToInstgram = { instagramUrl ->
+                        val uri = Uri.parse(instagramUrl)
+                        val instaIntent = Intent(Intent.ACTION_VIEW, uri)
+                        instaIntent.setPackage("com.instagram.android")
+                        try {
+                            context.startActivity(instaIntent)
+                        } catch (e: ActivityNotFoundException) {
+                            // If Instagram app is not installed on the device, open the profile on the web
+                            context.startActivity(
+                                Intent(
+                                    Intent.ACTION_VIEW,
+                                    Uri.parse(instagramUrl)
+                                )
+                            )
+                        }
+                    }
+                )
                 WidthSpacerLine(height = 2.dp, color = Black)
                 UserReview(
                     userReviews = detailViewModel.userReviews,

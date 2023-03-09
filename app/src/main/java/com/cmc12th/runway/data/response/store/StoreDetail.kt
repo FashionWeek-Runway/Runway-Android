@@ -15,7 +15,7 @@ data class StoreDetail(
     @Json(name = "imgUrlList")
     val imgUrlList: List<String> = emptyList(),
     @Json(name = "instagram")
-    val instagram: String = "",
+    val instagram: String? = "",
     @Json(name = "storeId")
     val storeId: Int = -1,
     @Json(name = "storeName")
