@@ -46,79 +46,14 @@ fun BoxScope.HomeBannerComponents(
     HorizontalPager(
         state = pagerState,
         modifier = Modifier
+            .background(Gray200)
             .fillMaxSize(),
         count = homeBanners.size,
     ) { page ->
         when (val banner = homeBanners[page]) {
             HomeBannertype.SHOWMOREBANNER -> {
-                Box(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(4.dp))
-                        .fillMaxSize()
-                        .clickable {
-                            navigateToShowMoreStore()
-                        }
-                ) {
-
-                    /** 배경 이미지 */
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(Black),
-                    )
-
-                    /** 하얀색 네모 박스 안 */
-                    Box(
-                        modifier = Modifier
-                            .padding(top = 130.dp, start = 39.dp, end = 39.dp, bottom = 20.dp)
-                            .fillMaxHeight()
-                            .fillMaxWidth()
-                            .clip(RoundedCornerShape(4.dp))
-                            .align(Alignment.TopCenter)
-                            .border(BorderStroke(1.dp, brush = Brush.horizontalGradient(
-                                listOf(Blue600, Blue900)
-                            )), RoundedCornerShape(4.dp))
-                    ) {
-
-                        Image(painter = painterResource(id = R.mipmap.img_home_banner_show_more_store),
-                            contentDescription = "IMG_HOME_BANNER_SHOW_MORE_STORE",
-                            modifier = Modifier.fillMaxSize(),
-                            contentScale = ContentScale.Crop)
-
-                        Box(
-                            modifier = Modifier
-                                .padding(top = 11.dp)
-                                .align(Alignment.TopCenter)
-                                .size(12.dp)
-                                .clip(CircleShape)
-                                .background(Black)
-                                .border(BorderStroke(1.dp, White), CircleShape)
-                        )
-
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .align(Alignment.BottomCenter)
-                                .padding(bottom = 10.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Text(
-                                text = "SHOW\nMORE\nSHOP",
-                                style = TextStyle.Default.copy(
-                                    fontSize = 24.sp,
-                                    fontFamily = blackHanSans,
-                                ),
-                                color = Point,
-                                textAlign = TextAlign.Center
-                            )
-                            HeightSpacer(height = 28.dp)
-                            Image(
-                                painter = painterResource(id = R.mipmap.img_runway_barcord),
-                                contentDescription = "IMG_RUNWAY_BARCORD",
-                                modifier = Modifier.size(63.dp, 21.dp)
-                            )
-                        }
-                    }
+                if (homeBanners.size > 1) {
+                    ShowMoreBanner(navigateToShowMoreStore)
                 }
             }
             is HomeBannertype.STOREBANNER -> {
@@ -136,6 +71,85 @@ fun BoxScope.HomeBannerComponents(
         step = pagerState.currentPage + 1,
         maxSize = homeBanners.size
     )
+}
+
+@Composable
+private fun ShowMoreBanner(navigateToShowMoreStore: () -> Unit) {
+    Box(
+        modifier = Modifier
+            .clip(RoundedCornerShape(4.dp))
+            .fillMaxSize()
+            .clickable {
+                navigateToShowMoreStore()
+            }
+    ) {
+
+        /** 배경 이미지 */
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Black),
+        )
+
+        /** 하얀색 네모 박스 안 */
+        Box(
+            modifier = Modifier
+                .padding(top = 130.dp, start = 39.dp, end = 39.dp, bottom = 20.dp)
+                .fillMaxHeight()
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(4.dp))
+                .align(Alignment.TopCenter)
+                .border(
+                    BorderStroke(
+                        1.dp, brush = Brush.horizontalGradient(
+                            listOf(Blue600, Blue900)
+                        )
+                    ), RoundedCornerShape(4.dp)
+                )
+        ) {
+
+            Image(
+                painter = painterResource(id = R.mipmap.img_home_banner_show_more_store),
+                contentDescription = "IMG_HOME_BANNER_SHOW_MORE_STORE",
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop
+            )
+
+            Box(
+                modifier = Modifier
+                    .padding(top = 11.dp)
+                    .align(Alignment.TopCenter)
+                    .size(12.dp)
+                    .clip(CircleShape)
+                    .background(Black)
+                    .border(BorderStroke(1.dp, White), CircleShape)
+            )
+
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 10.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "SHOW\nMORE\nSHOP",
+                    style = TextStyle.Default.copy(
+                        fontSize = 24.sp,
+                        fontFamily = blackHanSans,
+                    ),
+                    color = Point,
+                    textAlign = TextAlign.Center
+                )
+                HeightSpacer(height = 28.dp)
+                Image(
+                    painter = painterResource(id = R.mipmap.img_runway_barcord),
+                    contentDescription = "IMG_RUNWAY_BARCORD",
+                    modifier = Modifier.size(63.dp, 21.dp)
+                )
+            }
+        }
+    }
 }
 
 @Composable
