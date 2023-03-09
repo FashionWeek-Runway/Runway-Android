@@ -9,6 +9,7 @@ import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.content.pm.PackageManager
 import android.location.Location
+import android.util.Log
 import android.widget.TextView
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -43,6 +44,7 @@ import com.cmc12th.runway.ui.detail.view.DetailScreen
 import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.map.MapUiState
 import com.cmc12th.runway.ui.map.MapViewModel
+import com.cmc12th.runway.ui.map.MapViewModel.Companion.DEFAULT_LATLNG
 import com.cmc12th.runway.ui.map.components.*
 import com.cmc12th.runway.ui.map.model.BottomSheetContent
 import com.cmc12th.runway.ui.map.model.MapStatus
@@ -255,24 +257,28 @@ private fun MapViewContents(
                 expandBottomSheet = { expandBottomSheet() },
                 onMapLoaded = {
                     if (MapViewModel.initialMarkerLoadFlag) {
-                        MapViewModel.initialMarkerLoadFlag = false
-                        mapViewModel.initialLodingStatus.value = false
-                        mapViewModel.mapFiltering(
-                            LatLng(
-                                mapUiState.userPosition.latitude,
-                                mapUiState.userPosition.longitude
+                        if (mapUiState.userPosition != DEFAULT_LATLNG) {
+                            MapViewModel.initialMarkerLoadFlag = false
+                            mapViewModel.initialLodingStatus.value = false
+                            mapViewModel.mapFiltering(
+                                LatLng(
+                                    mapUiState.userPosition.latitude,
+                                    mapUiState.userPosition.longitude
+                                )
                             )
-                        )
-                        mapViewModel.mapScrollInfoPaging(
-                            LatLng(
-                                mapUiState.userPosition.latitude,
-                                mapUiState.userPosition.longitude
+                            mapViewModel.mapScrollInfoPaging(
+                                LatLng(
+                                    mapUiState.userPosition.latitude,
+                                    mapUiState.userPosition.longitude
+                                )
                             )
-                        )
-                        mapViewModel.updateMovingCamera(MovingCameraWrapper.MOVING(Location("UserPosition").apply {
-                            latitude = mapUiState.userPosition.latitude
-                            longitude = mapUiState.userPosition.longitude
-                        }))
+                            mapViewModel.updateMovingCamera(
+                                MovingCameraWrapper.MOVING(Location("UserPosition").apply {
+                                    latitude = mapUiState.userPosition.latitude
+                                    longitude = mapUiState.userPosition.longitude
+                                })
+                            )
+                        }
                     }
                 }
             )
@@ -608,15 +614,18 @@ private fun RunwayNaverMap(
             }
         }
 
-        Marker(
-            state = MarkerState(position = uiState.userPosition),
-            icon = OverlayImage.fromResource(R.drawable.ic_map_user),
-            height = 24.dp,
-            width = 24.dp,
-            onClick = {
-                true
-            }
-        )
+        if (uiState.userPosition != MapViewModel.DEFAULT_LATLNG) {
+            Marker(
+                state = MarkerState(position = uiState.userPosition),
+                icon = OverlayImage.fromResource(R.drawable.ic_map_user),
+                height = 24.dp,
+                width = 24.dp,
+                onClick = {
+                    true
+                }
+            )
+        }
+
     }
 
     /** 검색 스크린을 위에 깔아버리기 */
