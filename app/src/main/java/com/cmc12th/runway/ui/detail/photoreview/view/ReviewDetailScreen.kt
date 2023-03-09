@@ -6,15 +6,13 @@
 package com.cmc12th.runway.ui.detail.photoreview.view
 
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.gestures.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -36,6 +34,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
+import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
 import com.cmc12th.runway.R
 import com.cmc12th.runway.data.response.store.UserReviewDetail
@@ -286,21 +285,59 @@ private fun MainImage(
     offsetX: Float,
     reviewDetail: UserReviewDetail,
 ) {
-    AsyncImage(
+    SubcomposeAsyncImage(
+        model = ImageRequest.Builder(LocalContext.current)
+            .data(reviewDetail.imgUrl)
+            .crossfade(true)
+            .build(),
+        loading = {
+            Box(modifier = Modifier.fillMaxSize()) {
+                CircularProgressIndicator(
+                    modifier = Modifier
+                        .size(50.dp)
+                        .align(Alignment.Center),
+                    color = Primary,
+                    strokeWidth = 4.dp,
+                )
+            }
+        },
+        contentDescription = "IMG_REVIEW",
+        contentScale = ContentScale.Crop,
         modifier = Modifier
             .background(Black)
             .fillMaxSize()
             .offset {
                 IntOffset(x = offsetX.roundToInt(), y = 0)
             },
-        model = ImageRequest.Builder(LocalContext.current)
-            .data(reviewDetail.imgUrl)
-            .crossfade(true)
-            .build(),
-        error = painterResource(id = R.drawable.img_dummy),
-        contentDescription = "IMG_REVIEW",
-        contentScale = ContentScale.Crop,
+        error = {
+            Image(
+                painter = painterResource(id = R.drawable.img_dummy),
+                contentDescription = "IMG_REVIEW",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .background(Black)
+                    .fillMaxSize()
+                    .offset {
+                        IntOffset(x = offsetX.roundToInt(), y = 0)
+                    },
+            )
+        },
     )
+//    AsyncImage(
+//        modifier = Modifier
+//            .background(Black)
+//            .fillMaxSize()
+//            .offset {
+//                IntOffset(x = offsetX.roundToInt(), y = 0)
+//            },
+//        model = ImageRequest.Builder(LocalContext.current)
+//            .data(reviewDetail.imgUrl)
+//            .crossfade(true)
+//            .build(),
+//        error = painterResource(id = R.drawable.img_dummy),
+//        contentDescription = "IMG_REVIEW",
+//        contentScale = ContentScale.Crop,
+//    )
 }
 
 @Composable
