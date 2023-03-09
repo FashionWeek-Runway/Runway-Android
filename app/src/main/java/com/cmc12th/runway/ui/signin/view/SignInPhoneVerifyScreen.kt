@@ -81,9 +81,9 @@ fun SignInPhoneVerifyScreen(
             }
         }
         OnBoardStep(2)
-        TestButon {
-            appState.navController.navigate(SIGNIN_PASSWORD_ROUTE)
-        }
+//        TestButon {
+//            appState.navController.navigate(SIGNIN_PASSWORD_ROUTE)
+//        }
         Column(
             modifier = Modifier
                 .weight(1f)

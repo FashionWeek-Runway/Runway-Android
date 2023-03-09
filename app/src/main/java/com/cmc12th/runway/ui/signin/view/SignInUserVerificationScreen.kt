@@ -144,9 +144,9 @@ private fun UserVerificationContents(
             }
         }
         OnBoardStep(1)
-        TestButon {
-            appState.navigate(SIGNIN_PHONE_VERIFY_ROUTE)
-        }
+//        TestButon {
+//            appState.navigate(SIGNIN_PHONE_VERIFY_ROUTE)
+//        }
         Column(
             modifier = Modifier
                 .padding(top = 20.dp, start = 20.dp, end = 20.dp)
