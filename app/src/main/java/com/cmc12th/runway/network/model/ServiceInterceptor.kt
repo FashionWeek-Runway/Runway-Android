@@ -17,7 +17,6 @@ class ServiceInterceptor : Interceptor {
         if (request.header("No-Authentication") == null) {
             if (!accessToken.isNullOrEmpty()) {
                 val finalToken = "$accessToken"
-                Log.i("#dlgocks1-ServiceInterceptor", finalToken)
                 request = request.newBuilder().apply {
                     addHeader("X-AUTH-TOKEN", finalToken)
                 }.build()
