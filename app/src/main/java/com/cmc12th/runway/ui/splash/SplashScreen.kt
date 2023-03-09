@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -24,6 +25,8 @@ import kotlinx.coroutines.delay
 fun SplashScreen(appState: ApplicationState) {
 
     val splashViewModel: SplashViewModel = hiltViewModel()
+
+    appState.systmeUiController.setStatusBarColor(Color.White)
 
     LaunchedEffect(key1 = Unit) {
         delay(200L)
@@ -53,29 +56,13 @@ fun SplashScreen(appState: ApplicationState) {
     ) {
         Image(
             modifier = Modifier
-                .align(Alignment.TopCenter)
-                .fillMaxWidth()
-                .fillMaxHeight(0.7f),
-            painter = painterResource(id = R.drawable.img_splash_background),
-            contentDescription = "SPLAH_BACKGROUND",
-            contentScale = ContentScale.Crop
-        )
-        Image(
-            modifier = Modifier
                 .align(Alignment.Center)
-                .size(94.dp, 100.dp),
-            painter = painterResource(id = R.drawable.img_splash_logo),
+                .padding(bottom = 70.dp)
+                .size(110.dp, 110.dp),
+            painter = painterResource(id = R.mipmap.img_logo_point),
             contentDescription = "SPLAH_LOGO"
         )
 
-        Text(
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(bottom = 20.dp),
-            text = "RUNWAY",
-            fontSize = 40.sp,
-            fontWeight = FontWeight.Bold
-        )
     }
 }
 
