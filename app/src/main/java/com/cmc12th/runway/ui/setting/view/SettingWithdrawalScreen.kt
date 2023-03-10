@@ -90,7 +90,7 @@ fun SettingWithdrawalScreen(
                 .fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Text(text = "[닉네임]님.. 정말 탈퇴하시겠어요..?", style = HeadLine4, color = Black)
+            Text(text = "정말 탈퇴하시겠어요..?", style = HeadLine4, color = Black)
             Text(text = "너무 아쉽지만..\n떠나기 전에 아래 내용을 확인해주세요.", style = Body1, color = Black)
         }
 
