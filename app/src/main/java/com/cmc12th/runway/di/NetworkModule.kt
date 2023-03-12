@@ -1,5 +1,6 @@
 package com.cmc12th.runway.di
 
+import com.cmc12th.runway.BuildConfig
 import com.cmc12th.runway.network.RunwayClient
 import com.cmc12th.runway.network.model.ServiceInterceptor
 import com.cmc12th.runway.network.model.TokenAuthenticator
@@ -20,7 +21,7 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
-    val DEV_SERVER = "https://dev.runwayserver.shop/"
+
     private val httpLoggingInterceptor =
         HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
 
@@ -61,7 +62,7 @@ object NetworkModule {
     ): Retrofit {
         return Retrofit.Builder()
             .client(okHttpClient)
-            .baseUrl(DEV_SERVER)
+            .baseUrl(BuildConfig.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .addConverterFactory(MoshiConverterFactory.create())
             .build()

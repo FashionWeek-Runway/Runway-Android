@@ -1,9 +1,9 @@
 package com.cmc12th.runway.network.model
 
 import android.util.Log
+import com.cmc12th.runway.BuildConfig
 import com.cmc12th.runway.data.request.OauthLoginRequest
 import com.cmc12th.runway.data.response.ResponseWrapper
-import com.cmc12th.runway.di.NetworkModule.DEV_SERVER
 import com.cmc12th.runway.network.model.ServiceInterceptor.Companion.accessToken
 import com.cmc12th.runway.network.service.AuthService
 import kotlinx.coroutines.delay
@@ -36,7 +36,7 @@ class TokenAuthenticator @Inject constructor() : Authenticator {
 class RefreshTokenService {
 
     private val refreshRetrofit = Retrofit.Builder()
-        .baseUrl(DEV_SERVER)
+        .baseUrl(BuildConfig.BASE_URL)
         .client(
             OkHttpClient.Builder()
                 .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
