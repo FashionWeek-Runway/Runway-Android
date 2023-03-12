@@ -158,7 +158,7 @@ private fun MapViewContents(
         mutableStateOf(0.dp)
     }
 
-    val expandBottomSheet = {
+    val expandBottomSheet: () -> Unit = {
         coroutineScope.launch {
             bottomSheetScaffoldState.bottomSheetState.expand()
         }
@@ -182,9 +182,6 @@ private fun MapViewContents(
             mapViewModel.updateMarker(it.copy(isClicked = !it.isClicked))
             mapViewModel.mapInfo(it.storeId)
         }
-        coroutineScope.launch {
-            bottomSheetScaffoldState.bottomSheetState.expand()
-        }
     }
 
     val onMapClick: () -> Unit = {
@@ -200,17 +197,8 @@ private fun MapViewContents(
             }
         }
         mapViewModel.onMapClick()
+        collapsBottomSheet()
     }
-
-    /** 맵 인터렉션 관리 */
-    ManageMapStatus(
-        mapUiState.mapStatus,
-        systemUiController,
-        onSearching,
-        peekHeight,
-        appState,
-        bottomSheetScaffoldState,
-    )
 
     val refershIconVisiblity = remember {
         mutableStateOf(true)
@@ -219,13 +207,25 @@ private fun MapViewContents(
     val setMapStatusDefault: () -> Unit = {
         mapViewModel.updateMapStatus(MapStatus.DEFAULT)
         mapViewModel.loadTempDatas()
-        coroutineScope.launch {
-            bottomSheetScaffoldState.bottomSheetState.collapse()
-        }
+        collapsBottomSheet()
     }
+
     val setMapStatusOnSearch = {
         mapViewModel.updateMapStatus(MapStatus.SEARCH_TAB)
     }
+
+    /** 맵 인터렉션 관리 */
+    ManageMapStatus(
+        mapStatus = mapUiState.mapStatus,
+        systemUiController = systemUiController,
+        onSearching = onSearching,
+        peekHeight = peekHeight,
+        changeBottomBarVisibility = {
+            appState.changeBottomBarVisibility(it)
+        },
+        expandBottomSheet = expandBottomSheet,
+        collapsBottomSheet = collapsBottomSheet,
+    )
 
     BottomSheetScaffold(
         modifier = Modifier
@@ -239,12 +239,13 @@ private fun MapViewContents(
                 contents = mapUiState.bottomSheetContents,
                 screenHeight = screenHeight - topBarHeight + BOTTOM_NAVIGATION_HEIGHT,
                 isFullScreen = mapUiState.mapStatus == MapStatus.LOCATION_SEARCH,
-                isExpanded = bottomSheetScaffoldState.bottomSheetState.targetValue == BottomSheetValue.Expanded,
+                isExpandedTagetValue = bottomSheetScaffoldState.bottomSheetState.targetValue == BottomSheetValue.Expanded,
+                isExpanded = bottomSheetScaffoldState.bottomSheetState.isExpanded,
                 setMapStatusDefault = setMapStatusDefault,
                 setMapStatusOnSearch = setMapStatusOnSearch,
                 navigateToDetail = { id, storeName ->
                     mapViewModel.onDetail.value = DetailState(true, id, storeName)
-                }
+                },
             )
         }
     ) {
@@ -334,8 +335,8 @@ private fun MapViewContents(
                         categoryItems = mapUiState.categoryItems,
                         updateCategoryTags = {
                             mapViewModel.updateCategoryTags(
-                                it,
-                                appState.cameraPositionState.position.target
+                                categoryTag = it,
+                                position = appState.cameraPositionState.position.target
                             )
                         },
                         updateIsBookmarked = {
@@ -402,8 +403,9 @@ private fun ManageMapStatus(
     systemUiController: SystemUiController,
     onSearching: MutableState<Boolean>,
     peekHeight: MutableState<Dp>,
-    appState: ApplicationState,
-    bottomSheetScaffoldState: BottomSheetScaffoldState,
+    changeBottomBarVisibility: (Boolean) -> Unit,
+    expandBottomSheet: () -> Unit,
+    collapsBottomSheet: () -> Unit,
 ) {
     LaunchedEffect(key1 = mapStatus) {
         systemUiController.setNavigationBarColor(Color.White)
@@ -413,7 +415,8 @@ private fun ManageMapStatus(
                 onSearching.value = false
                 systemUiController.setSystemBarsColor(Color.White)
                 peekHeight.value = BOTTOM_NAVIGATION_HEIGHT + 100.dp
-                appState.changeBottomBarVisibility(true)
+                changeBottomBarVisibility(true)
+                collapsBottomSheet()
             }
             /** 한번 클릭했을 때 */
             MapStatus.ZOOM -> {
@@ -421,42 +424,42 @@ private fun ManageMapStatus(
                 systemUiController.setSystemBarsColor(Color.Transparent)
                 systemUiController.setNavigationBarColor(Color.Transparent)
                 peekHeight.value = 0.dp
-                appState.changeBottomBarVisibility(false)
-                bottomSheetScaffoldState.bottomSheetState.collapse()
+                changeBottomBarVisibility(false)
+                collapsBottomSheet()
             }
             /** 검색 탭에 들어갔을 때 */
             MapStatus.SEARCH_TAB -> {
                 onSearching.value = true
-                bottomSheetScaffoldState.bottomSheetState.collapse()
-                appState.changeBottomBarVisibility(false)
+                collapsBottomSheet()
+                changeBottomBarVisibility(false)
                 peekHeight.value = 0.dp
             }
             /** 지역 클릭 */
             MapStatus.LOCATION_SEARCH -> {
                 onSearching.value = false
-                appState.changeBottomBarVisibility(false)
+                changeBottomBarVisibility(false)
                 peekHeight.value = BOTTOM_NAVIGATION_HEIGHT + 100.dp
             }
             /** 매장 클릭 */
             MapStatus.SHOP_SEARCH -> {
                 onSearching.value = false
-                appState.changeBottomBarVisibility(false)
+                changeBottomBarVisibility(false)
                 peekHeight.value = BOTTOM_NAVIGATION_HEIGHT + 100.dp
             }
             MapStatus.SEARCH_ZOOM -> {
                 systemUiController.setNavigationBarColor(Color.Transparent)
                 peekHeight.value = 0.dp
-                appState.changeBottomBarVisibility(false)
-                bottomSheetScaffoldState.bottomSheetState.collapse()
+                changeBottomBarVisibility(false)
+                collapsBottomSheet()
             }
             /** 장소 검색에서 마커 클릭 */
             MapStatus.LOCATION_SEARCH_MARKER_CLICKED -> {
-                bottomSheetScaffoldState.bottomSheetState.expand()
+                expandBottomSheet()
                 peekHeight.value = BOTTOM_NAVIGATION_HEIGHT + 100.dp
             }
             /** 마커 클릭 */
             MapStatus.MARKER_CLICKED -> {
-                bottomSheetScaffoldState.bottomSheetState.expand()
+                expandBottomSheet()
                 peekHeight.value = BOTTOM_NAVIGATION_HEIGHT + 100.dp
             }
         }

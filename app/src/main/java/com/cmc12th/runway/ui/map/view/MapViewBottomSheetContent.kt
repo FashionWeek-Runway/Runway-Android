@@ -12,7 +12,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -31,11 +30,12 @@ fun MapViewBottomSheetContent(
     appState: ApplicationState,
     screenHeight: Dp,
     isFullScreen: Boolean,
-    isExpanded: Boolean,
+    isExpandedTagetValue: Boolean,
     setMapStatusOnSearch: () -> Unit,
     setMapStatusDefault: () -> Unit,
     contents: BottomSheetContent,
     navigateToDetail: (id: Int, storeName: String) -> Unit,
+    isExpanded: Boolean,
 ) {
     Column(
         modifier = Modifier
@@ -51,7 +51,7 @@ fun MapViewBottomSheetContent(
             )
     ) {
         AnimatedVisibility(
-            visible = isFullScreen && isExpanded,
+            visible = isFullScreen && isExpandedTagetValue,
             enter = fadeIn(),
         ) {
             SearchResultBar(
@@ -63,7 +63,7 @@ fun MapViewBottomSheetContent(
         }
 
         /** 풀스크린이 아니고 확장상태가 아니면 탑바가 보인다. */
-        if (!(isFullScreen && isExpanded)) {
+        if (!(isFullScreen && isExpandedTagetValue)) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -96,7 +96,6 @@ fun MapViewBottomSheetContent(
             }
         }
 
-
         /** 본문 내용 */
         when (contents) {
             BottomSheetContent.DEFAULT -> {
@@ -104,7 +103,10 @@ fun MapViewBottomSheetContent(
             }
             is BottomSheetContent.MULTI -> {
                 val pagingContents = contents.contents.collectAsLazyPagingItems()
-                LazyColumn(verticalArrangement = Arrangement.spacedBy(20.dp)) {
+                LazyColumn(
+                    modifier = Modifier.pagingHeight(isExpanded, screenHeight),
+                    verticalArrangement = Arrangement.spacedBy(20.dp)
+                ) {
                     items(pagingContents) {
                         it?.let {
                             BottomDetailItem(navigateToDetail, it)
@@ -142,6 +144,13 @@ private fun MapBottomSheetEmptyStore() {
     }
 }
 
+private fun Modifier.pagingHeight(isExpanded: Boolean, peekHeight: Dp): Modifier {
+    return if (isExpanded) {
+        Modifier.wrapContentHeight()
+    } else {
+        Modifier.height(peekHeight)
+    }
+}
 
 private fun Modifier.isFullScreen(isFullScreen: Boolean, screenHeight: Dp): Modifier {
     return if (isFullScreen) {
