@@ -1,7 +1,11 @@
 package com.cmc12th.runway.ui.setting
 
 import android.content.Intent
+import android.content.pm.PackageInfo
+import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
+import androidx.browser.customtabs.CustomTabsClient.getPackageName
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -184,7 +188,12 @@ fun SettingMainScreen(
                         .padding(vertical = 12.dp)
                         .weight(1f)
                 )
-                Text(text = "[버전]")
+                Text(
+                    text = context.packageManager.getPackageInfoCompat(
+                        context.packageName,
+                        0
+                    ).versionName
+                )
             }
         }
 
@@ -242,3 +251,10 @@ private fun BaseSettingWrapper(title: String, items: List<MypageItemWrapper>) {
 
     }
 }
+
+fun PackageManager.getPackageInfoCompat(packageName: String, flags: Int = 0): PackageInfo =
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        getPackageInfo(packageName, PackageManager.PackageInfoFlags.of(flags.toLong()))
+    } else {
+        @Suppress("DEPRECATION") getPackageInfo(packageName, flags)
+    }
