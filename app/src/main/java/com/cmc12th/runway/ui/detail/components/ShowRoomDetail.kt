@@ -39,7 +39,10 @@ fun ShowRoomDetail(
             horizontalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             storeDetail.address.skeletonUI(size = 230.dp to 18.dp) {
-                RunwayIconButton(size = 18.dp, drawable = R.drawable.ic_border_map_18)
+                RunwayIconButton(size = 18.dp, drawable = R.drawable.ic_border_map_18) {
+                    context.copyToClipboard(storeDetail.address)
+                    showSnackbar("주소가 복사되었습니다.")
+                }
                 Text(text = storeDetail.address, style = Body2, color = Color.Black)
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
