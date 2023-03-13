@@ -21,6 +21,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.cmc12th.runway.R
+import com.cmc12th.runway.data.response.user.MyReviewsItem
 import com.cmc12th.runway.data.response.user.StoreMetaDataItem
 import com.cmc12th.runway.ui.components.HeightSpacer
 import com.cmc12th.runway.ui.components.RunwayIconButton
@@ -51,6 +52,7 @@ fun MypageScreen(appState: ApplicationState) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val myReviews = uiState.myReviews.collectAsLazyPagingItems()
     val bookmarkedStore = uiState.bookmarkedStore.collectAsLazyPagingItems()
+    val bookmarkedReview = uiState.bookmarkedReview.collectAsLazyPagingItems()
     val profileImageUiState = viewModel.profileImageUiState.collectAsStateWithLifecycle()
 
     appState.systmeUiController.setStatusBarColor(Gray50)
@@ -125,7 +127,7 @@ fun MypageScreen(appState: ApplicationState) {
                         }
                         MypageBookmarkTabInfo.REVIEW -> {
                             BookmarkReviewContainer(
-                                bookmarkedStore = bookmarkedStore,
+                                bookmarkedReview = bookmarkedReview,
                                 navigateToUserReviewDetail = { index ->
                                     appState.navigate("${REVIEW_DETAIL_ROUTE}?reviewId=${index}&viewerType=${ReviewViwerType.BOOKMARK.typeToString}")
                                 }
@@ -149,14 +151,6 @@ fun MypageScreen(appState: ApplicationState) {
             }
         )
     }
-}
-
-@Composable
-fun BookmarkReviewContainer(
-    bookmarkedStore: LazyPagingItems<StoreMetaDataItem>,
-    navigateToUserReviewDetail: (Int) -> Unit,
-) {
-    // TODO : 북마크 후기 리스트
 }
 
 

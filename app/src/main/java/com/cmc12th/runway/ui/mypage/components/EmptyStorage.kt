@@ -1,5 +1,6 @@
 package com.cmc12th.runway.ui.mypage.components
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Text
@@ -15,8 +16,9 @@ import com.cmc12th.runway.ui.theme.Black
 import com.cmc12th.runway.ui.theme.Body1
 
 @Composable
-fun ColumnScope.EmptyBookmarkStorage(
+fun ColumnScope.EmptyStorage(
     title: String,
+    @DrawableRes drawableResId: Int,
 ) {
     Column(
         modifier = Modifier
@@ -27,7 +29,7 @@ fun ColumnScope.EmptyBookmarkStorage(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(
-            painter = painterResource(id = R.mipmap.img_empty_bookmark),
+            painter = painterResource(id = drawableResId),
             contentDescription = "IMG_EMPTY_BOOKMARK",
             modifier = Modifier.size(182.dp, 163.dp),
             contentScale = ContentScale.Crop
