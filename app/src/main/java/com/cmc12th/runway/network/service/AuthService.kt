@@ -37,6 +37,7 @@ interface AuthService {
     suspend fun getMyInfo(): NetworkResponse<MyPageInfo>
 
     /** 내가 북마크한 리스트 조회 */
+    @GET("/users/bookmark/review")
     suspend fun getBookmarkedReview(
         @Query("page") page: Int,
         @Query("size") size: Int,
