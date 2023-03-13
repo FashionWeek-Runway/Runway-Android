@@ -2,6 +2,8 @@ package com.cmc12th.runway.ui.mypage.view
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -12,17 +14,15 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.cmc12th.runway.R
-import com.cmc12th.runway.data.response.user.MyReviewsItem
-import com.cmc12th.runway.data.response.user.StoreMetaDataItem
 import com.cmc12th.runway.ui.components.HeightSpacer
 import com.cmc12th.runway.ui.components.RunwayIconButton
 import com.cmc12th.runway.ui.detail.view.DetailScreen
@@ -150,65 +150,6 @@ fun MypageScreen(appState: ApplicationState) {
                 viewModel.updateOnDetail(DetailState.default())
             }
         )
-    }
-}
-
-
-@Preview
-@Composable
-fun MypageBookmarkRowTab(
-    selectedPage: MypageBookmarkTabInfo = MypageBookmarkTabInfo.STORE,
-    updateSelectedPage: (MypageBookmarkTabInfo) -> Unit = {},
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(Color(0x50DBDBE2)),
-        horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Button(
-            onClick = {
-                updateSelectedPage(MypageBookmarkTabInfo.STORE)
-            },
-            modifier = Modifier
-                .width(108.dp)
-                .padding(2.dp),
-            colors = ButtonDefaults.buttonColors(if (selectedPage == MypageBookmarkTabInfo.STORE) Color.White else Color.Transparent),
-            shape = RoundedCornerShape(4.dp),
-            border = BorderStroke(
-                if (selectedPage == MypageBookmarkTabInfo.STORE) 1.dp else 0.dp,
-                Gray200
-            )
-        ) {
-            Text(
-                text = "매장",
-                style = if (selectedPage == MypageBookmarkTabInfo.STORE) Body2B else Body2,
-                modifier = Modifier.padding(0.dp, 8.dp),
-                textAlign = TextAlign.Center
-            )
-        }
-        Button(
-            onClick = {
-                updateSelectedPage(MypageBookmarkTabInfo.REVIEW)
-            },
-            modifier = Modifier
-                .width(108.dp)
-                .padding(2.dp),
-            colors = ButtonDefaults.buttonColors(if (selectedPage == MypageBookmarkTabInfo.REVIEW) Color.White else Color.Transparent),
-            shape = RoundedCornerShape(4.dp),
-            border = BorderStroke(
-                if (selectedPage == MypageBookmarkTabInfo.REVIEW) 1.dp else 0.dp,
-                Gray200
-            )
-        ) {
-            Text(
-                text = "사용자 후기",
-                style = if (selectedPage == MypageBookmarkTabInfo.REVIEW) Body2B else Body2,
-                modifier = Modifier.padding(0.dp, 8.dp),
-                textAlign = TextAlign.Center
-            )
-        }
     }
 }
 

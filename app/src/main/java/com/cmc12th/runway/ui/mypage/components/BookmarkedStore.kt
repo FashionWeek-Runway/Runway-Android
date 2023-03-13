@@ -18,7 +18,7 @@ fun BookmarkedStore(
     navigateToDetail: (id: Int, storeName: String) -> Unit,
 ) {
     LazyColumn(
-        modifier = Modifier.padding(20.dp),
+        modifier = Modifier.padding(start = 20.dp, end = 20.dp, bottom = 20.dp),
         verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
         items(bookmarkedStore) {
