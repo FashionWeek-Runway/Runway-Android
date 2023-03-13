@@ -5,6 +5,7 @@
 package com.cmc12th.runway.ui.detail.view
 
 import android.content.ActivityNotFoundException
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import androidx.activity.compose.BackHandler
@@ -24,7 +25,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat.startActivity
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.cmc12th.runway.ui.components.CustomBottomSheet
 import com.cmc12th.runway.ui.components.HeightSpacer
@@ -146,20 +146,13 @@ fun DetailScreen(
                         appState.navigate("$WEB_VIEW_ROUTE?title=${""}&url=${storeUrl}")
                     },
                     navigateToInstgram = { instagramUrl ->
-                        val uri = Uri.parse(instagramUrl)
-                        val instaIntent = Intent(Intent.ACTION_VIEW, uri)
-                        instaIntent.setPackage("com.instagram.android")
-                        try {
-                            context.startActivity(instaIntent)
-                        } catch (e: ActivityNotFoundException) {
-                            // If Instagram app is not installed on the device, open the profile on the web
-                            context.startActivity(
-                                Intent(
-                                    Intent.ACTION_VIEW,
-                                    Uri.parse(instagramUrl)
-                                )
-                            )
-                        }
+                        intentToInstagram(
+                            instagramUrl = instagramUrl,
+                            context = context
+                        )
+                    },
+                    showSnackbar = { message ->
+                        appState.showSnackbar(message)
                     }
                 )
                 WidthSpacerLine(height = 2.dp, color = Black)
@@ -203,5 +196,23 @@ fun DetailScreen(
                 }
             )
         }
+    }
+}
+
+
+private fun intentToInstagram(instagramUrl: String, context: Context) {
+    val uri = Uri.parse(instagramUrl)
+    val instaIntent = Intent(Intent.ACTION_VIEW, uri)
+    instaIntent.setPackage("com.instagram.android")
+    try {
+        context.startActivity(instaIntent)
+    } catch (e: ActivityNotFoundException) {
+        // 인스타그램이 설치되어 있지 않다면 Web에서 해당페이지를 연다.
+        context.startActivity(
+            Intent(
+                Intent.ACTION_VIEW,
+                Uri.parse(instagramUrl)
+            )
+        )
     }
 }
