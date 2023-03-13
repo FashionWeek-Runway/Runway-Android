@@ -7,6 +7,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -18,6 +19,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.cmc12th.runway.R
 import com.cmc12th.runway.ui.components.BackIcon
 import com.cmc12th.runway.ui.components.RunwayCheckBox
@@ -34,8 +36,10 @@ import com.cmc12th.runway.utils.Constants.SPLASH_ROUTE
 @Composable
 fun SettingWithdrawalScreen(
     appState: ApplicationState,
-    viewModel: SettingViewModel
+    viewModel: SettingViewModel,
 ) {
+
+    val uiState by viewModel.personalInfoUiState.collectAsStateWithLifecycle()
 
     val withDrawalCheckbox = remember {
         mutableStateOf(false)
@@ -90,7 +94,7 @@ fun SettingWithdrawalScreen(
                 .fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Text(text = "정말 탈퇴하시겠어요..?", style = HeadLine4, color = Black)
+            Text(text = "${uiState.nickname}님 정말 탈퇴하시겠어요..?", style = HeadLine4, color = Black)
             Text(text = "너무 아쉽지만..\n떠나기 전에 아래 내용을 확인해주세요.", style = Body1, color = Black)
         }
 

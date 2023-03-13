@@ -28,7 +28,6 @@ import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.domain.model.DialogButtonContent
 import com.cmc12th.runway.ui.setting.SettingViewModel
 import com.cmc12th.runway.ui.theme.*
-import com.cmc12th.runway.utils.Constants
 import com.cmc12th.runway.utils.Constants.SETTING_VERIFY_PASSWORD_ROTUE
 import com.cmc12th.runway.utils.Constants.SETTING_WITHDRAWAL_ROUTE
 
@@ -43,6 +42,7 @@ fun SettingPersonalInfoManagementScreen(appState: ApplicationState, viewModel: S
     }
     LaunchedEffect(key1 = Unit) {
         viewModel.getPersonalInfo()
+        viewModel.getNickname()
     }
 
     Column(

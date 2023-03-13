@@ -23,6 +23,7 @@ import javax.inject.Inject
 
 data class SettingPersonalInfoUiState(
     val personalInfo: UserInformationManagamentInfo = UserInformationManagamentInfo.default(),
+    val nickname: String = "",
 )
 
 data class EditPasswordUiState(
@@ -40,14 +41,18 @@ class SettingViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _personalInfo = MutableStateFlow(UserInformationManagamentInfo.default())
+    private val _nickname = MutableStateFlow("")
 
     private val _verifyPassword = MutableStateFlow(Password.default())
     private val _newPassword = MutableStateFlow(Password.default())
     private val _checkNewPassword = MutableStateFlow(Password.default())
 
     val personalInfoUiState: StateFlow<SettingPersonalInfoUiState> =
-        combine(_personalInfo) { flowArr ->
-            SettingPersonalInfoUiState(personalInfo = flowArr[0])
+        combine(_personalInfo, _nickname) { personalInfo, nickname ->
+            SettingPersonalInfoUiState(
+                personalInfo = personalInfo,
+                nickname = nickname
+            )
         }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
@@ -69,23 +74,18 @@ class SettingViewModel @Inject constructor(
             initialValue = EditPasswordUiState()
         )
 
-//    fun modifyPassword(onSuccess: () -> Unit, onError: (ErrorResponse) -> Unit) =
-//        viewModelScope.launch {
-//            signInRepository.modifyPassword(
-//                passwordAndPhoneNumberRequest = PasswordAndPhoneNumberRequest(
-//                    phone = _phone.value.number,
-//                    password = _retryPassword.value.value
-//                )
-//            ).collect { apiState ->
-//                apiState.onSuccess { onSuccess() }
-//                apiState.onError { onError(it) }
-//            }
-//        }
-
     fun getPersonalInfo() = viewModelScope.launch {
         authRepository.getInformationManagementInfo().collectLatest { apiState ->
             apiState.onSuccess {
                 _personalInfo.value = it.result
+            }
+        }
+    }
+
+    fun getNickname() = viewModelScope.launch {
+        authRepository.getProfileInfoToEdit().collectLatest { apiState ->
+            apiState.onSuccess {
+                _nickname.value = it.result.nickname
             }
         }
     }
