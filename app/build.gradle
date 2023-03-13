@@ -9,10 +9,26 @@ plugins {
 
 Properties properties = new Properties()
 properties.load(project.rootProject.file('local.properties').newDataInputStream())
-
+def keystorePropertiesFile = rootProject.file("keystore.properties")
+def keystoreProperties = new Properties()
+keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 tasks.withType(Test) { useJUnitPlatform() }
 
 android {
+    signingConfigs {
+        debug {
+            keyAlias keystoreProperties['keyAlias_dev']
+            keyPassword keystoreProperties['keyPassword_dev']
+            storeFile file(keystoreProperties['storeFile_dev'])
+            storePassword keystoreProperties['storePassword_dev']
+        }
+        release {
+            keyAlias keystoreProperties['keyAlias_prod']
+            keyPassword keystoreProperties['keyPassword_prod']
+            storeFile file(keystoreProperties['storeFile_prod'])
+            storePassword keystoreProperties['storePassword_prod']
+        }
+    }
     namespace 'com.cmc12th.runway'
     compileSdk 33
 
@@ -20,8 +36,8 @@ android {
         applicationId "com.cmc12th.runway"
         minSdk 21
         targetSdk 33
-        versionCode 1
-        versionName "1.0"
+        versionCode 3
+        versionName "1.11"
 
         buildConfigField "String", "KAKAO_NATIVE_APP_KEY", properties["kakao.native.app.key"]
         resValue "string", "KAKAO_NATIVE_APP_KEY_FULL", properties["kakao.native.app.key.full"]
@@ -32,13 +48,31 @@ android {
         }
     }
 
+    flavorDimensions "1.0"
+    productFlavors {
+
+        dev {
+            // 개발용
+            buildConfigField "String", "BASE_URL", "\"https://dev.runwayserver.shop/\""
+            manifestPlaceholders = [appLabel: "DevApp"]
+        }
+
+        prod {
+            //  배포용
+            buildConfigField "String", "BASE_URL", "\"https://prod.runwayserver.shop/\""
+            manifestPlaceholders = [appLabel: "ProdApp"]
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            release {
+                signingConfig signingConfigs.release
+            }
         }
     }
-
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -141,7 +175,7 @@ dependencies {
     implementation platform('com.google.firebase:firebase-bom:31.2.1')
 
     // Room DB
-    
+
     implementation("androidx.room:room-runtime:2.5.0")
     kapt("androidx.room:room-compiler:2.5.0")
     // optional - Kotlin Extensions and Coroutines support for Room
