@@ -6,7 +6,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ModalBottomSheetLayout
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -36,7 +39,7 @@ fun CustomBottomSheet(
                     .imePadding()
             ) {
                 if (bottomsheetState.bottomsheetContent.value.title.isNotBlank()) {
-                    androidx.compose.material3.Text(
+                    Text(
                         text = bottomsheetState.bottomsheetContent.value.title,
                         style = HeadLine4,
                         modifier = Modifier.padding(20.dp, 30.dp)
@@ -59,7 +62,7 @@ fun CustomBottomSheet(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        androidx.compose.material3.Text(
+                        Text(
                             modifier = Modifier
                                 .padding(20.dp, 20.dp),
                             text = it.itemName,
@@ -68,7 +71,7 @@ fun CustomBottomSheet(
                             color = it.itemTextColor
                         )
                         if (it.isSeleceted) {
-                            androidx.compose.material3.Icon(
+                            Icon(
                                 painter = painterResource(id = com.cmc12th.runway.R.drawable.ic_check),
                                 contentDescription = "IC_CHECK",
                                 tint = Primary,
