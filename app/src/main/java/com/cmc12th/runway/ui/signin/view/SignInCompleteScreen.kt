@@ -232,7 +232,7 @@ fun ProfileBox(
                         .padding(top = 3.dp, bottom = 7.dp)
                         .align(Alignment.CenterHorizontally),
                     contentScale = ContentScale.FillWidth,
-                    painter = painterResource(id = R.drawable.img_congratuation),
+                    painter = painterResource(id = R.mipmap.img_congratuation),
                     contentDescription = "IMG_CONGRATUATION"
                 )
                 WidthSpacerLine(1.dp, Primary)
