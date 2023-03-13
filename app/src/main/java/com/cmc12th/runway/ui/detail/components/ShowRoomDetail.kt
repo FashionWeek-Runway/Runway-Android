@@ -63,31 +63,31 @@ fun ShowRoomDetail(
                 Text(text = storeDetail.storePhone, style = Body2, color = Color.Black)
             }
         }
-        storeDetail.instagram?.let { instagram ->
+        if (!storeDetail.instagram.isNullOrBlank()) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable {
-                        navigateToInstgram(instagram)
+                        navigateToInstgram(storeDetail.instagram)
                     },
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
             ) {
                 RunwayIconButton(size = 18.dp, drawable = R.drawable.ic_border_instagram_18)
                 Text(
-                    text = instagram,
+                    text = storeDetail.instagram,
                     textDecoration = TextDecoration.Underline,
                     style = Body2,
                     color = Color.Black
                 )
             }
         }
-        storeDetail.webSite?.let { webSite ->
+        if (!storeDetail.webSite.isNullOrBlank()) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable {
-                        navigateToWeb(webSite)
+                        navigateToWeb(storeDetail.webSite)
                     },
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(10.dp)
@@ -95,7 +95,7 @@ fun ShowRoomDetail(
                 storeDetail.webSite.skeletonUI(size = 118.dp to 18.dp) {
                     RunwayIconButton(size = 18.dp, drawable = R.drawable.ic_border_web_18)
                     Text(
-                        text = webSite,
+                        text = storeDetail.webSite,
                         textDecoration = TextDecoration.Underline,
                         style = Body2,
                         color = Color.Black
