@@ -1,8 +1,10 @@
 package com.cmc12th.runway.di
 
 import android.content.Context
+import com.cmc12th.runway.data.usecase.EditMyProfileUseCaseImpl
 import com.cmc12th.runway.data.usecase.GetMyProfileDataUseCaseImpl
 import com.cmc12th.runway.domain.repository.AuthRepository
+import com.cmc12th.runway.domain.usecase.EditMyProfileUseCase
 import com.cmc12th.runway.domain.usecase.GetMyProfileDataUseCase
 import dagger.Module
 import dagger.Provides
@@ -28,4 +30,15 @@ object UseCaseModule {
             ioDispatcher = ioDispatcher,
         )
     }
+
+    @Provides
+    @ViewModelScoped
+    fun provideEditMyProfileDataUseCase(
+        authRepository: AuthRepository,
+    ): EditMyProfileUseCase {
+        return EditMyProfileUseCaseImpl(
+            authRepository = authRepository,
+        )
+    }
+    
 }

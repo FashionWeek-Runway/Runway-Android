@@ -1,6 +1,5 @@
 package com.cmc12th.runway.ui.mypage
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
@@ -8,7 +7,7 @@ import androidx.paging.cachedIn
 import com.cmc12th.runway.data.response.ErrorResponse
 import com.cmc12th.runway.data.response.user.MyReviewsItem
 import com.cmc12th.runway.data.response.user.StoreMetaDataItem
-import com.cmc12th.runway.domain.repository.AuthRepository
+import com.cmc12th.runway.domain.usecase.EditMyProfileUseCase
 import com.cmc12th.runway.domain.usecase.GetMyProfileDataUseCase
 import com.cmc12th.runway.ui.domain.model.RunwayCategory
 import com.cmc12th.runway.ui.map.components.DetailState
@@ -38,7 +37,7 @@ data class MypageUiState(
 
 @HiltViewModel
 class MypageViewModel @Inject constructor(
-    private val authRepository: AuthRepository,
+    private val editMyProfileUseCase: EditMyProfileUseCase,
     private val getMyProfileDataUseCase: GetMyProfileDataUseCase,
 ) : ViewModel() {
 
@@ -143,7 +142,7 @@ class MypageViewModel @Inject constructor(
     }
 
     fun getMyProfile() = viewModelScope.launch {
-        authRepository.getProfileInfoToEdit().collect { apiState ->
+        editMyProfileUseCase.getProfileInfoToEdit().collect { apiState ->
             apiState.onSuccess {
                 updateNickName(it.result.nickname)
                 if (it.result.imgUrl == null) {
@@ -172,7 +171,7 @@ class MypageViewModel @Inject constructor(
             "nickname",
             _nickName.value.text
         )
-        authRepository.patchProfileImage(
+        editMyProfileUseCase.patchProfileImage(
             basic = MultipartBody.Part.createFormData("basic", basic.toString()),
             multipartFile = multipartFile,
             nickname = nickname,
