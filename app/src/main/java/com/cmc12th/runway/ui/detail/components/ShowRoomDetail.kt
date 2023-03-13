@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import com.cmc12th.runway.R
@@ -15,14 +16,19 @@ import com.cmc12th.runway.ui.components.RunwayIconButton
 import com.cmc12th.runway.ui.theme.Blue900
 import com.cmc12th.runway.ui.theme.Body2
 import com.cmc12th.runway.ui.theme.Button2
+import com.cmc12th.runway.utils.copyToClipboard
 import com.cmc12th.runway.utils.skeletonUI
+
 
 @Composable
 fun ShowRoomDetail(
     storeDetail: StoreDetail,
     navigateToWeb: (String) -> Unit,
     navigateToInstgram: (String) -> Unit,
+    showSnackbar: (String) -> Unit,
 ) {
+    val context = LocalContext.current
+
     Column(
         modifier = Modifier.padding(20.dp, 16.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp),
@@ -36,7 +42,12 @@ fun ShowRoomDetail(
                 RunwayIconButton(size = 18.dp, drawable = R.drawable.ic_border_map_18)
                 Text(text = storeDetail.address, style = Body2, color = Color.Black)
                 Row(
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.clickable {
+                        // 클립보드 객체 얻기
+                        context.copyToClipboard(storeDetail.address)
+                        showSnackbar("주소가 복사되었습니다.")
+                    }
                 ) {
                     RunwayIconButton(drawable = R.drawable.ic_border_copy_14, size = 14.dp)
                     Text(text = "복사", style = Button2, color = Blue900)

@@ -1,5 +1,7 @@
 package com.cmc12th.runway.utils
 
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.graphics.Bitmap
 import android.net.Uri
@@ -48,3 +50,8 @@ private fun copy(source: InputStream, target: OutputStream) {
     }
 }
 
+fun Context.copyToClipboard(text: CharSequence) {
+    val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+    val clip = ClipData.newPlainText("label", text)
+    clipboard.setPrimaryClip(clip)
+}
