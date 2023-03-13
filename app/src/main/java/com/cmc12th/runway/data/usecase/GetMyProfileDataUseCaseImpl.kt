@@ -5,6 +5,7 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.cmc12th.runway.data.pagingsource.BookmarkedPagingSource
+import com.cmc12th.runway.data.pagingsource.BookmarkedReviewPagingSource
 import com.cmc12th.runway.data.pagingsource.MyReviewPagingSource
 import com.cmc12th.runway.data.response.user.MyReviewsItem
 import com.cmc12th.runway.data.response.user.StoreMetaDataItem
@@ -48,6 +49,17 @@ class GetMyProfileDataUseCaseImpl @Inject constructor(
             },
         ).flow
     }
+
+    override fun bookmarkedReviewPaging(): Flow<PagingData<MyReviewsItem>> = Pager(
+        config = PagingConfig(
+            pageSize = 10,
+        ),
+        pagingSourceFactory = {
+            BookmarkedReviewPagingSource(
+                authRepository = authRepository
+            )
+        },
+    ).flow.flowOn(ioDispatcher)
 
     override fun convetProfileImageToMultipartFile(
         profileImage: ProfileImageType,

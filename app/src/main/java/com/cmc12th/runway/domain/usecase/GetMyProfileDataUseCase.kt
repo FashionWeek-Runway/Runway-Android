@@ -13,6 +13,8 @@ interface GetMyProfileDataUseCase {
 
     fun bookmarkedStorePaging(): Flow<PagingData<StoreMetaDataItem>>
 
+    fun bookmarkedReviewPaging(): Flow<PagingData<MyReviewsItem>>
+
     fun convetProfileImageToMultipartFile(
         profileImage: ProfileImageType,
         argsName: String,

@@ -12,6 +12,7 @@ import com.cmc12th.runway.domain.repository.AuthRepository
 import com.cmc12th.runway.domain.usecase.GetMyProfileDataUseCase
 import com.cmc12th.runway.ui.domain.model.RunwayCategory
 import com.cmc12th.runway.ui.map.components.DetailState
+import com.cmc12th.runway.ui.mypage.model.MypageBookmarkTabInfo
 import com.cmc12th.runway.ui.mypage.model.MypageTabInfo
 import com.cmc12th.runway.ui.signin.SignInCompleteUiState
 import com.cmc12th.runway.ui.signin.SignInProfileImageUiState
@@ -27,10 +28,12 @@ import javax.inject.Inject
 data class MypageUiState(
     val onDetail: DetailState = DetailState.default(),
     val selectedPage: MypageTabInfo = MypageTabInfo.MY_REVIEW,
+    val selectedBookmarkPage: MypageBookmarkTabInfo = MypageBookmarkTabInfo.STORE,
     val myReviews: MutableStateFlow<PagingData<MyReviewsItem>> = MutableStateFlow(PagingData.empty()),
     val bookmarkedStore: MutableStateFlow<PagingData<StoreMetaDataItem>> = MutableStateFlow(
         PagingData.empty()
     ),
+    val bookmarkedReview: MutableStateFlow<PagingData<MyReviewsItem>> = MutableStateFlow(PagingData.empty()),
 )
 
 @HiltViewModel
@@ -42,8 +45,11 @@ class MypageViewModel @Inject constructor(
     private val _myReviews = MutableStateFlow<PagingData<MyReviewsItem>>(PagingData.empty())
     private val _bookmarkedStore =
         MutableStateFlow<PagingData<StoreMetaDataItem>>(PagingData.empty())
+    private val _bookmarkedReview =
+        MutableStateFlow<PagingData<MyReviewsItem>>(PagingData.empty())
     private val _onDetail = MutableStateFlow(DetailState.default())
     private val _selectedPage = MutableStateFlow(MypageTabInfo.MY_REVIEW)
+    private val _selectedBookmarkPage = MutableStateFlow(MypageBookmarkTabInfo.STORE)
 
     private val _nickName = MutableStateFlow(Nickname.default())
     private val _profileImage = MutableStateFlow<ProfileImageType>(ProfileImageType.DEFAULT)
@@ -79,14 +85,18 @@ class MypageViewModel @Inject constructor(
         combine(
             _onDetail,
             _selectedPage,
+            _selectedBookmarkPage,
             _myReviews,
-            _bookmarkedStore
-        ) { onDetail, selectedPage, _, _ ->
+            _bookmarkedStore,
+            _bookmarkedReview
+        ) { flowArr ->
             MypageUiState(
-                onDetail = onDetail,
-                selectedPage = selectedPage,
+                onDetail = flowArr[0] as DetailState,
+                selectedPage = flowArr[1] as MypageTabInfo,
+                selectedBookmarkPage = flowArr[2] as MypageBookmarkTabInfo,
                 myReviews = _myReviews,
-                bookmarkedStore = _bookmarkedStore
+                bookmarkedStore = _bookmarkedStore,
+                bookmarkedReview = _bookmarkedReview
             )
         }.stateIn(
             scope = viewModelScope,
@@ -106,12 +116,22 @@ class MypageViewModel @Inject constructor(
         }
     }
 
+    fun getBookmarkedReview() = viewModelScope.launch {
+        getMyProfileDataUseCase.bookmarkedReviewPaging().cachedIn(viewModelScope).collect {
+            _bookmarkedReview.value = it
+        }
+    }
+
     fun updateOnDetail(state: DetailState) {
         _onDetail.value = state
     }
 
     fun updateSelectedPage(tabInfo: MypageTabInfo) {
         _selectedPage.value = tabInfo
+    }
+
+    fun updateSelectedBookmarkPage(mypageBookmarkTabInfo: MypageBookmarkTabInfo) {
+        _selectedBookmarkPage.value = mypageBookmarkTabInfo
     }
 
     fun updateProfileImage(profileImage: ProfileImageType) {

@@ -15,7 +15,9 @@ import com.cmc12th.runway.ui.theme.Black
 import com.cmc12th.runway.ui.theme.Body1
 
 @Composable
-fun ColumnScope.EmptyStorage() {
+fun ColumnScope.EmptyBookmarkStorage(
+    title: String,
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -31,6 +33,6 @@ fun ColumnScope.EmptyStorage() {
             contentScale = ContentScale.Crop
         )
         HeightSpacer(height = 30.dp)
-        Text(text = "마음에 드는 매장을 저장해 보세요", style = Body1, color = Black)
+        Text(text = title, style = Body1, color = Black)
     }
 }
