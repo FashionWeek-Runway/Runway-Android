@@ -2,12 +2,14 @@ package com.cmc12th.runway.ui.detail.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import com.cmc12th.runway.R
@@ -39,10 +41,7 @@ fun ShowRoomDetail(
             horizontalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             storeDetail.address.skeletonUI(size = 230.dp to 18.dp) {
-                RunwayIconButton(size = 18.dp, drawable = R.drawable.ic_border_map_18) {
-                    context.copyToClipboard(storeDetail.address)
-                    showSnackbar("주소가 복사되었습니다.")
-                }
+                RunwayIconButton(size = 18.dp, drawable = R.drawable.ic_border_map_18)
                 Text(text = storeDetail.address, style = Body2, color = Color.Black)
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -52,7 +51,10 @@ fun ShowRoomDetail(
                         showSnackbar("주소가 복사되었습니다.")
                     }
                 ) {
-                    RunwayIconButton(drawable = R.drawable.ic_border_copy_14, size = 14.dp)
+                    RunwayIconButton(drawable = R.drawable.ic_border_copy_14, size = 14.dp) {
+                        context.copyToClipboard(storeDetail.address)
+                        showSnackbar("주소가 복사되었습니다.")
+                    }
                     Text(text = "복사", style = Button2, color = Blue900)
                 }
             }
