@@ -296,6 +296,8 @@ private fun MapViewContents(
                 yOffset = topBarHeight + 12.dp,
                 onClick = {
                     refershIconVisiblity.value = false
+                    MapViewModel.initialMarkerLoadFlag = false
+                    mapViewModel.initialLodingStatus.value = false
                     mapViewModel.mapFiltering(appState.cameraPositionState.position.target)
                     mapViewModel.mapScrollInfoPaging(appState.cameraPositionState.position.target)
                 }
