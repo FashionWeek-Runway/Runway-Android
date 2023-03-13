@@ -127,7 +127,7 @@ fun MypageScreen(appState: ApplicationState) {
                             BookmarkReviewContainer(
                                 bookmarkedStore = bookmarkedStore,
                                 navigateToUserReviewDetail = { index ->
-                                    appState.navigate("${REVIEW_DETAIL_ROUTE}?reviewId=${index}&viewerType=${ReviewViwerType.MYPAGE.typeToString}")
+                                    appState.navigate("${REVIEW_DETAIL_ROUTE}?reviewId=${index}&viewerType=${ReviewViwerType.BOOKMARK.typeToString}")
                                 }
                             )
                         }

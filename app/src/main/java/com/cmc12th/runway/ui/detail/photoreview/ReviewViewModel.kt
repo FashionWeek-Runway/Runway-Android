@@ -81,7 +81,7 @@ class ReviewViewModel @Inject constructor(
             }
         }
 
-    /** 마이페이지에서의 내가 북마크한 리뷰 디테일 조회 */
+    /** 마이페이지에서의 내가 올린 리뷰 디테일 조회 */
     fun getReviewDetailMypage(reviewId: Int, onSuccess: () -> Unit = {}) =
         viewModelScope.launch {
             authRepository.getMyReviewDetail(reviewId).collect { apiState ->
@@ -91,6 +91,16 @@ class ReviewViewModel @Inject constructor(
                 }
             }
         }
+
+    /** 마이페이지 내가 북마크한 리뷰 디테일 상세 조회 */
+    fun getReviewDetailBookmark(reviewId: Int, onSuccess: () -> Unit = {}) = viewModelScope.launch {
+        authRepository.getMyBookmarkedReviewDetail(reviewId).collect { apiState ->
+            apiState.onSuccess {
+                _reviewDetail.value = it.result
+                onSuccess()
+            }
+        }
+    }
 
     fun updateBookmark(reviewId: Int, onSuccess: () -> Unit) = viewModelScope.launch {
         storeRepository.reviewBookmark(reviewId).collect {
@@ -133,5 +143,6 @@ class ReviewViewModel @Inject constructor(
     fun updateReportContents(str: String) {
         _reportContents.value = str
     }
+
 
 }

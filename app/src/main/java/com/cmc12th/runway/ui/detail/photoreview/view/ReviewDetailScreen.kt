@@ -90,6 +90,9 @@ fun ReviewDetailScreen(
             ReviewViwerType.HOME -> {
                 reviewViewModel.getReviewDetailHome(reviewId)
             }
+            ReviewViwerType.BOOKMARK -> {
+                reviewViewModel.getReviewDetailBookmark(reviewId)
+            }
         }
     }
 
@@ -134,6 +137,11 @@ fun ReviewDetailScreen(
                             onSuccess()
                         }
                     }
+                    ReviewViwerType.BOOKMARK -> {
+                        reviewViewModel.getReviewDetailBookmark(idx) {
+                            onSuccess()
+                        }
+                    }
                 }
             },
             deleteReview = {
@@ -166,7 +174,7 @@ private fun DetailContents(
 ) {
 
     var offsetX by remember { mutableStateOf(0.dp.value) }
-    var animateOffsetX = animateFloatAsState(targetValue = offsetX)
+    val animateOffsetX = animateFloatAsState(targetValue = offsetX)
 
     val updateOffestX: (mx: Float) -> Unit = {
         val dx = offsetX + it * 1.4f
