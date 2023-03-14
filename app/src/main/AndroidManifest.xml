@@ -32,7 +32,7 @@
 
         <meta-data
             android:name="com.naver.maps.map.CLIENT_ID"
-            android:value="idnv21ixjy" />
+            android:value="y8626v0p2c" />
 
         <activity
             android:name=".MainActivity"
