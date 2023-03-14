@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
+import androidx.core.graphics.applyCanvas
 import com.cmc12th.runway.ui.theme.Gray200
 
 
@@ -74,12 +75,25 @@ fun View.toBitmap(
                 Handler(Looper.getMainLooper())
             )
         } else {
+            val temporalBitmap =
+                Bitmap.createBitmap(
+                    this.width,
+                    this.height,
+                    Bitmap.Config.RGB_565
+                )
 
-            val temporalBitmap = Bitmap.createBitmap(this.width, this.height, Bitmap.Config.RGB_565)
             val canvas = Canvas(temporalBitmap)
             this.draw(canvas)
             canvas.setBitmap(null)
-            onBitmapReady(temporalBitmap)
+            onBitmapReady(
+                Bitmap.createBitmap(
+                    temporalBitmap,
+                    0,
+                    topbarheight.toInt(),
+                    temporalBitmap.width,
+                    temporalBitmap.height - bottomBarHeight.toInt()
+                )
+            )
         }
 
     } catch (exception: Exception) {
@@ -132,12 +146,13 @@ fun String.skeletonUI(
     content: @Composable () -> Unit,
 ) {
     if (this.isEmpty()) {
-        Box(modifier = Modifier
-            .size(
-                width = size.first,
-                height = size.second,
-            )
-            .background(color)
+        Box(
+            modifier = Modifier
+                .size(
+                    width = size.first,
+                    height = size.second,
+                )
+                .background(color)
         )
     } else {
         content()
