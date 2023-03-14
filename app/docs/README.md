@@ -9,7 +9,7 @@
 6. 람다 식을 전달할 때의 멤버참조와 코틀린의 리플렉션에 관하여
 7. Compose에서 BroadCast를 활용하여 인증문자에서 번호 가져오기
 8. [Content URI와 File URI의 차이점, File Provider와 Content URI를 활용하여 카메라 이미지 가져오기](https://velog.io/@cksgodl/Android-Content-URI%EC%99%80-File-URI%EC%9D%98-%EC%B0%A8%EC%9D%B4%EC%A0%90-File-Provider%EC%99%80-Content-URI%EB%A5%BC-%ED%99%9C%EC%9A%A9%ED%95%98%EC%97%AC-%EC%B9%B4%EB%A9%94%EB%9D%BC-%EC%9D%B4%EB%AF%B8%EC%A7%80-%EA%B0%80%EC%A0%B8%EC%98%A4%EA%B8%B0)
-9. Authenticator를 활용해 401에러일 때 바로 토큰 재발급 하기
+9. [JWT란??, Authenticator를 활용해 401에러일 때 서비스에 막힘없이 토큰 재발급 하기](https://velog.io/@cksgodl/Android-JWT%EB%9E%80-Authenticator%EB%A5%BC-%ED%99%9C%EC%9A%A9%ED%95%B4-401%EC%97%90%EB%9F%AC%EC%9D%BC-%EB%95%8C-%EC%84%9C%EB%B9%84%EC%8A%A4%EC%97%90-%EB%A7%89%ED%9E%98%EC%97%86%EC%9D%B4-%ED%86%A0%ED%81%B0-%EC%9E%AC%EB%B0%9C%EA%B8%89-%ED%95%98%EA%B8%B0)
 10. 인스타그램과 같이 이미지 위에 글자를 넣어서 저장해보자.
 11. (@+) 네트워크 요청을 실패, 성공, 로딩 중일 때 화면 처리
 12. Firebase - Analytics 및 Crashlytics를 활용해 앱 사용자에 대한 데이터를 수집해보자.
