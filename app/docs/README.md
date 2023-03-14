@@ -26,6 +26,8 @@
 
 ### 로그인 뷰
 
+[loginFlow.webm](https://user-images.githubusercontent.com/14178811/225029466-df25b088-77a6-467e-840d-d26d84c59dff.webm)
+
 * 로그인을 진행하며 `AccessToken`과 `RefreshToken`을 업데이트한다.
 
 #### 카카오로 로그인
@@ -45,7 +47,10 @@
     * 비밀번호 입력시 마지막 번호가 보이는 것은 `VisualTranformation`을 커스텀한 `LastPasswordVisibleVisualTransformation`
       를 `TextField`에서 사용한다. 이는 `LastPasswordVisibleCustomTextField`컴포저블로 구현이 되어 있다.
 
+
 ### 회원가입 (유저 인적사항 입력)
+
+[device-2023-03-14-231441.webm](https://user-images.githubusercontent.com/14178811/225029025-8f2beb7a-a81d-443b-bb84-50c14248e088.webm)
 
 유저 정보 예외처리 사항
 
@@ -105,9 +110,12 @@
 
 카테고리는 최소 1개, 최대는 제한이 없다.
 
+
 ---
 
 ## 지도 화면 📗
+
+[mapFlow.webm](https://user-images.githubusercontent.com/14178811/225031422-0b6100da-701f-4a18-9af8-ebcabac3408f.webm)
 
 초기 로딩 시 사용자 위치정보를 가져오고, 네이버 지도가 준비되면 해당 위치로 카메라를 이동시키고 관련 쇼룸 정보를 가져온다.
 
@@ -173,6 +181,8 @@ enum class MapStatus {
 
 ### 검색 탭을 클릭 시 (검색 화면)
 
+[searchFlow.webm](https://user-images.githubusercontent.com/14178811/225031665-4f1ddbbf-fcd0-4b6f-aa5b-2e030f63f87c.webm)
+
 1. 검색 화면으로 이동함과 동시에 키보드 포커스를 요청해야 한다.
     * `focusManager.requestFocus()`를 통해 포커스를 요청한다.
 2. 검색 화면과 지도화면은 같은 네이버지도를 공유함으로 검색 화면에 들어오기 전 마커 상태, 바텀시트 상태를 저장한 후 지도화면으로 돌아올 때 상태를 복구해야한다.
@@ -230,6 +240,8 @@ class ApplicationState(
 
 ## 쇼룸 디테일 화면 📖
 
+[detailFlow.webm](https://user-images.githubusercontent.com/14178811/225032713-de772dfc-e8d2-4532-815f-dabcf0c89770.webm)
+
 1. 쇼룸이미지, 매장명, 전화번호, 등등의 정보를 제공해야 하며 정보가 로딩되며 스켈레톤 UI를 제공해야한다.
     * 스켈레톤 UI는 다음과 같은 확장함수를 제공한다.
 
@@ -251,6 +263,9 @@ route = "${WEB_VIEW_ROUTE}?title={title}&url={url}"
 과 같은 형식으로 라우팅을 통해 데이터를 전달한다.
 
 ## 리뷰 작성 및 디테일 화면 ✅
+
+[reviewWirteFlow.webm](https://user-images.githubusercontent.com/14178811/225033201-56701a22-7856-4eee-a2c7-4dd9263ee7dd.webm)
+
 
 리뷰 작성 시 카메라 및 갤러리에서 이미지를 불러와 원하는 문구를 위에 작성할 수 있어야 한다.
 
@@ -358,6 +373,8 @@ Box(modifier = Modifier
 
 ## 홈 화면 🏚
 
+[homeFlow.webm](https://user-images.githubusercontent.com/14178811/225033643-417c0807-e44e-4de0-b7fa-d1b71bf286cf.webm)
+
 1. 상단 배너는 최대 10개까지 뷰페이저를 제공하며, 마지막 페이지는 항상 더 많은 쇼룸 보기 배너어야 한다.
 2. 사용자 리뷰는 페이징을 제공해야 하며, 이미 읽은 기록이 있는 리뷰는 음영처리를 해야한다.
 3. 상단 아이콘을 활용해 카테고리 수정이 가능해야 한다.
@@ -365,10 +382,14 @@ Box(modifier = Modifier
 
 ## 마이페이지 화면 🧹
 
+[mypageFlow.webm](https://user-images.githubusercontent.com/14178811/225033874-2ae95408-1fe7-4029-bea2-e65b432ed1ce.webm)
+
 1. 내가 쓴 리뷰, 북마크한 쇼룸 및 후기에 대한 조회가 가능해야 하며 페이징을 제공해야 한다.
 2. 내 프로필 이미지 및 닉네임 수정이 가능해야 한다.
 
 ## 설정 화면 ⚙️
+
+[settingFlow.webm](https://user-images.githubusercontent.com/14178811/225034042-6a5f9ba2-1330-4aed-aef9-d8e4358ace84.webm)
 
 1. 약관 상세보기, 쇼룸 추가 URL, 앱 버전 등의 정보를 제공해야 한다.
 2. 로그아웃 기능을 제공해야 한다.
