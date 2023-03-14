@@ -30,7 +30,7 @@ interface AuthService {
 
     /** 토큰 재발급  */
     @POST("/users/refresh")
-    suspend fun tokenReissuance(@Header("X-REFRESH-TOKEN") refreshToken: String): Call<ResponseWrapper<OauthLoginRequest>>
+    fun tokenReissuance(@Header("X-REFRESH-TOKEN") refreshToken: String): Call<ResponseWrapper<OauthLoginRequest>>
 
     /** 마이페이지 조회 */
     @GET("/users")

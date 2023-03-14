@@ -21,19 +21,22 @@ import javax.inject.Inject
  * 실패한 요청을 다시 시도할 때 Authenticator에게 자격 증명을 자동으로 요청한다.
  */
 class TokenAuthenticator @Inject constructor() : Authenticator {
-
     override fun authenticate(route: Route?, response: Response): Request? {
-        val refreshTokenService = RefreshTokenService()
-        val newAccessToken = refreshTokenService.refreshToken()
         if (response.code == 200) return null
-        return response.request.newBuilder()
-            .removeHeader("X-AUTH-TOKEN").apply {
-                addHeader("X-AUTH-TOKEN", newAccessToken)
-            }.build()
+        return try {
+            val newAccessToken = RefreshTokenService.refreshToken()
+            response.request.newBuilder()
+                .removeHeader("X-AUTH-TOKEN").apply {
+                    addHeader("X-AUTH-TOKEN", newAccessToken)
+                }.build()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
     }
 }
 
-class RefreshTokenService {
+object RefreshTokenService {
 
     private val refreshRetrofit = Retrofit.Builder()
         .baseUrl(BuildConfig.BASE_URL)
@@ -49,30 +52,14 @@ class RefreshTokenService {
     private val refreshService = refreshRetrofit.create(AuthService::class.java)
 
     fun refreshToken(): String {
-        var newAccessToken = ""
-        runBlocking {
-            refreshService.tokenReissuance(ServiceInterceptor.refreshToken)
-                .enqueue(object : retrofit2.Callback<ResponseWrapper<OauthLoginRequest>> {
-                    override fun onResponse(
-                        call: Call<ResponseWrapper<OauthLoginRequest>>,
-                        response: retrofit2.Response<ResponseWrapper<OauthLoginRequest>>,
-                    ) {
-                        Log.i("Authenticator1", response.body().toString())
-                        if (response.isSuccessful) {
-                            newAccessToken = response.body()?.result?.accessToken ?: ""
-                            accessToken = response.body()?.result?.accessToken ?: ""
-                        }
-                    }
-
-                    override fun onFailure(
-                        call: Call<ResponseWrapper<OauthLoginRequest>>,
-                        t: Throwable,
-                    ) {
-                        t.printStackTrace()
-                    }
-                })
-            delay(200L)
+        val res = refreshService.tokenReissuance(ServiceInterceptor.refreshToken).execute()
+        if (res.isSuccessful) {
+            val newAccessToken = res.body()?.result?.accessToken ?: ""
+            if (newAccessToken.isNotBlank()) {
+                accessToken = newAccessToken
+                return newAccessToken
+            }
         }
-        return newAccessToken
+        throw IllegalStateException("토큰 재발급 실패")
     }
 }
