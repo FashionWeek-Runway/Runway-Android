@@ -66,11 +66,13 @@ fun BoxScope.HomeBannerComponents(
         }
     }
 
-    HomeBannerStep(
-        modifier = Modifier.align(Alignment.BottomCenter),
-        step = pagerState.currentPage + 1,
-        maxSize = homeBanners.size
-    )
+    if (pagerState.currentPage + 1 <= homeBanners.size) {
+        HomeBannerStep(
+            modifier = Modifier.align(Alignment.BottomCenter),
+            step = pagerState.currentPage + 1,
+            maxSize = homeBanners.size
+        )
+    }
 }
 
 @Composable

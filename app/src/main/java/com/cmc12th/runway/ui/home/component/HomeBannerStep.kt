@@ -12,9 +12,12 @@ import com.cmc12th.runway.ui.theme.Gray100_50
 import com.cmc12th.runway.ui.theme.Point
 
 @Composable
-fun HomeBannerStep(modifier: Modifier, step: Int = 0, maxSize: Int = 1) {
-    val steps = MutableList(maxSize.coerceAtLeast(1)) { false }
-    (0 until step).forEach { steps[it] = true }
+fun HomeBannerStep(modifier: Modifier, step: Int, maxSize: Int) {
+    val steps = MutableList(maxSize) { false }
+    for (i in 0 until step) {
+        steps[i] = true
+    }
+//    (0 until step).forEach { steps[it] = true }
     Row(
         modifier = modifier
             .fillMaxWidth(1f)
