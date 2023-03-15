@@ -11,7 +11,7 @@
 7. [Content URI와 File URI의 차이점, File Provider와 Content URI를 활용하여 카메라 이미지 가져오기](https://velog.io/@cksgodl/Android-Content-URI%EC%99%80-File-URI%EC%9D%98-%EC%B0%A8%EC%9D%B4%EC%A0%90-File-Provider%EC%99%80-Content-URI%EB%A5%BC-%ED%99%9C%EC%9A%A9%ED%95%98%EC%97%AC-%EC%B9%B4%EB%A9%94%EB%9D%BC-%EC%9D%B4%EB%AF%B8%EC%A7%80-%EA%B0%80%EC%A0%B8%EC%98%A4%EA%B8%B0)
 8. [JWT란??, Authenticator를 활용해 401에러일 때 서비스에 막힘없이 토큰 재발급 하기](https://velog.io/@cksgodl/Android-JWT%EB%9E%80-Authenticator%EB%A5%BC-%ED%99%9C%EC%9A%A9%ED%95%B4-401%EC%97%90%EB%9F%AC%EC%9D%BC-%EB%95%8C-%EC%84%9C%EB%B9%84%EC%8A%A4%EC%97%90-%EB%A7%89%ED%9E%98%EC%97%86%EC%9D%B4-%ED%86%A0%ED%81%B0-%EC%9E%AC%EB%B0%9C%EA%B8%89-%ED%95%98%EA%B8%B0)
 9. 인스타그램과 같이 이미지 위에 글자를 넣어서 저장해보자. - Pixel To copy를 활용해 스크린샷을 찍는 방법과 View를 Bitmap으로 변환하는 방법
-10. Firebase - Analytics 및 Crashlytics를 활용해 앱 사용자에 대한 데이터를 수집해보자.
+10. [Firebase - Analytics 및 Crashlytics를 활용해 앱 사용자에 대한 데이터를 수집해보자.](https://velog.io/@cksgodl/Android-Firebase-Analytics-%EB%B0%8F-Crashlytics%EB%A5%BC-%ED%99%9C%EC%9A%A9%ED%95%B4-%EC%95%B1-%EC%82%AC%EC%9A%A9%EC%9E%90%EC%97%90-%EB%8C%80%ED%95%9C-%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%A5%BC-%EC%88%98%EC%A7%91%ED%95%B4%EB%B3%B4%EC%9E%90)
 
 * (Compose에서 BroadCast를 활용하여 인증문자에서 번호 가져오기는) 플레이스토어에서 해당 권한을 더이상 허용하지 않는다.
     * SmsRetriever을 활용하여 수정 필요
@@ -46,7 +46,6 @@
   시 비밀번호 계속 보여짐
     * 비밀번호 입력시 마지막 번호가 보이는 것은 `VisualTranformation`을 커스텀한 `LastPasswordVisibleVisualTransformation`
       를 `TextField`에서 사용한다. 이는 `LastPasswordVisibleCustomTextField`컴포저블로 구현이 되어 있다.
-
 
 ### 회원가입 (유저 인적사항 입력)
 
@@ -265,7 +264,6 @@ route = "${WEB_VIEW_ROUTE}?title={title}&url={url}"
 ## 리뷰 작성 및 디테일 화면 ✅
 
 [reviewWirteFlow.webm](https://user-images.githubusercontent.com/14178811/225033201-56701a22-7856-4eee-a2c7-4dd9263ee7dd.webm)
-
 
 리뷰 작성 시 카메라 및 갤러리에서 이미지를 불러와 원하는 문구를 위에 작성할 수 있어야 한다.
 
