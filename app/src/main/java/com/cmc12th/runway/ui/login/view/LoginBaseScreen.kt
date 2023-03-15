@@ -1,26 +1,30 @@
 package com.cmc12th.runway.ui.login.view
 
 import android.content.Context
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.cmc12th.runway.R
+import com.cmc12th.runway.ui.components.HeightSpacer
 import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.login.LoginViewModel
-import com.cmc12th.runway.ui.theme.Black
-import com.cmc12th.runway.ui.theme.Body1
-import com.cmc12th.runway.ui.theme.White
+import com.cmc12th.runway.ui.theme.*
 import com.cmc12th.runway.utils.Constants.LOGIN_GRAPH
 import com.cmc12th.runway.utils.Constants.LOGIN_ID_PW_ROUTE
 import com.cmc12th.runway.utils.Constants.MAIN_GRAPH
@@ -53,39 +57,63 @@ fun LoginBaseScreen(
     }
 
     DisposableEffect(key1 = Unit) {
-
-        appState.systmeUiController.setStatusBarColor(Color.Black)
-        appState.systmeUiController.setNavigationBarColor(Color.Black)
-
+        appState.systmeUiController.setSystemBarsColor(Color.Transparent)
+        appState.systmeUiController.setNavigationBarColor(SplashColor2)
         onDispose {
             appState.systmeUiController.setStatusBarColor(Color.White)
             appState.systmeUiController.setNavigationBarColor(Color.White)
-
         }
     }
-    Box(
+    Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Black)
+            .background(SplashColor)
             .statusBarsPadding()
             .navigationBarsPadding()
-    )
-    {
-
-        Column(verticalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(20.dp),
             modifier = Modifier
-                .align(Alignment.TopCenter)
-                .padding(top = 60.dp),
-            horizontalAlignment = Alignment.CenterHorizontally) {
-            Image(
-                modifier = Modifier.size(54.dp),
-                painter = painterResource(id = R.mipmap.img_logo_point),
-                contentDescription = "IMG_LOGO"
-            )
+                .fillMaxWidth()
+                .padding(top = 100.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
             Image(
                 modifier = Modifier.size(100.dp, 18.dp),
                 painter = painterResource(id = R.mipmap.img_logo_text_point),
                 contentDescription = "IMG_LOGO"
+            )
+            Text(
+                text = "내 손 안에 간편한\n패션 쇼핑 지도",
+                style = Body1B,
+                color = White,
+                textAlign = TextAlign.Center
+            )
+        }
+
+        Box(modifier = Modifier.weight(1f)) {
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.TopCenter)
+                    .fillMaxHeight(0.5f)
+                    .background(SplashColor)
+            )
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.BottomCenter)
+                    .fillMaxHeight(0.5f)
+                    .background(SplashColor2)
+            )
+            Image(
+                painter = painterResource(id = R.mipmap.img_splash_street),
+                contentDescription = "IMG_SPLASH_STREET",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.Center),
+                contentScale = ContentScale.FillWidth
             )
         }
 
@@ -112,26 +140,55 @@ fun LoginBaseScreen(
 
 
 @Composable
-private fun BoxScope.BottomLoginButtons(
+private fun BottomLoginButtons(
     navigateToSignIn: () -> Unit,
     navigateToLogin: () -> Unit,
     kakaoLogin: (Context) -> Unit,
 ) {
     val context = LocalContext.current
+    val density = LocalDensity.current
     Column(
         modifier = Modifier.Companion
-            .align(Alignment.BottomCenter)
-            .fillMaxHeight(0.2f),
-        horizontalAlignment = Alignment.CenterHorizontally
+            .background(SplashColor2)
+            .fillMaxWidth()
+            .fillMaxHeight(0.4f),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
     ) {
-        Text(
-            modifier = Modifier.clickable { navigateToSignIn() },
-            text = "간편하게 가입하기",
-            style = Body1,
-            color = White
-        )
-        Spacer(modifier = Modifier.height(20.dp))
-        Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Box(
+                modifier = Modifier
+                    .wrapContentWidth()
+                    .clip(RoundedCornerShape(50))
+                    .background(Point)
+            ) {
+                Text(
+                    text = "런웨이 입장하기",
+                    style = Body1B,
+                    color = Primary,
+                    modifier = Modifier.padding(20.dp, 10.dp),
+                    textAlign = TextAlign.Center
+                )
+            }
+            Canvas(
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .fillMaxWidth()
+                    .height(18.dp)
+            ) {
+                drawPath(path = Path().apply {
+                    moveTo((size.width / 2f) - with(density) { 11.5.dp.toPx() }, 0f)
+                    lineTo((size.width / 2f) + with(density) { 11.5.dp.toPx() }, 0f)
+                    lineTo(size.width / 2f, size.height)
+                    close()
+                }, color = Point)
+            }
+        }
+
+        Spacer(modifier = Modifier.height(30.dp))
+        Row(horizontalArrangement = Arrangement.spacedBy(20.dp)) {
             Image(
                 modifier = Modifier
                     .size(60.dp)
