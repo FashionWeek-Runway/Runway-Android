@@ -20,7 +20,6 @@ fun rememberApplicationState(
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
     uiController: SystemUiController = rememberSystemUiController(),
     cameraPositionState: CameraPositionState = rememberCameraPositionState {
-//        position = CameraPosition(LatLng(37.5437, 127.0659), 8.0)
     },
 ) = remember(Unit) {
     ApplicationState(
