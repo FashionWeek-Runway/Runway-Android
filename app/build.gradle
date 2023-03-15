@@ -195,4 +195,8 @@ dependencies {
     implementation 'com.google.firebase:firebase-crashlytics-ktx:18.3.5'
     implementation 'com.google.firebase:firebase-analytics-ktx:21.2.0'
 
+    // Lottie
+    implementation "com.airbnb.android:lottie-compose:6.0.0"
+
+
 }
