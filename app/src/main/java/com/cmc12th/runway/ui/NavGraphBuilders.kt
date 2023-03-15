@@ -11,11 +11,13 @@ import com.cmc12th.runway.ui.detail.photoreview.view.ReviewWriteScreen
 import com.cmc12th.runway.ui.detail.view.DetailScreen
 import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.domain.model.ReviewViwerType
+import com.cmc12th.runway.ui.splash.SplashScreen
 import com.cmc12th.runway.ui.webview.WebviewScreen
 import com.cmc12th.runway.utils.Constants.DETAIL_ROUTE
 import com.cmc12th.runway.utils.Constants.REVIEW_DETAIL_ROUTE
 import com.cmc12th.runway.utils.Constants.REVIEW_REPORT_ROUTE
 import com.cmc12th.runway.utils.Constants.REVIEW_WRITE_ROUTE
+import com.cmc12th.runway.utils.Constants.SPLASH_ROUTE
 import com.cmc12th.runway.utils.Constants.WEB_VIEW_ROUTE
 
 fun NavGraphBuilder.detailComposable(appState: ApplicationState) {
@@ -38,6 +40,12 @@ fun NavGraphBuilder.detailComposable(appState: ApplicationState) {
             storeName = storeName,
             onBackPress = { appState.popBackStack() }
         )
+    }
+}
+
+fun NavGraphBuilder.splashComposeable(appState: ApplicationState) {
+    composable(SPLASH_ROUTE) {
+        SplashScreen(appState)
     }
 }
 

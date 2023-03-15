@@ -33,7 +33,6 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         firebaseAnalytics = FirebaseAnalytics.getInstance(this)
         if (InstantApps.isInstantApp(this)) {
             firebaseAnalytics?.setUserProperty(ANALYTICS_USER_PROP, STATUS_INSTANT)
@@ -41,13 +40,12 @@ class MainActivity : ComponentActivity() {
             firebaseAnalytics?.setUserProperty(ANALYTICS_USER_PROP, STATUS_INSTALLED)
         }
 
-//        requestSMSReceivePermission()
+        WindowCompat.setDecorFitsSystemWindows(window, false)
         setContent {
             val appState = rememberApplicationState()
             val navBackStackEntry by appState.navController.currentBackStackEntryAsState()
             RunwayTheme {
                 ManageBottomBarState(navBackStackEntry, appState)
-                appState.systmeUiController.setSystemBarsColor(color = Color.White)
                 Surface(
                     modifier = Modifier
                         .fillMaxSize()
@@ -58,7 +56,6 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
-        WindowCompat.setDecorFitsSystemWindows(window, false)
     }
 
     fun requestSMSReceivePermission() {

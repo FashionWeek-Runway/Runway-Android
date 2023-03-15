@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavBackStackEntry
+import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.cmc12th.runway.ui.*
@@ -62,9 +63,7 @@ fun RootNavhost(
                     .padding(innerPadding)
                     .background(color = Color.White),
             ) {
-                composable(Constants.SPLASH_ROUTE) {
-                    SplashScreen(appState)
-                }
+                splashComposeable(appState)
                 mainGraph(appState)
                 loginGraph(appState)
                 editProfileGraph(appState)
