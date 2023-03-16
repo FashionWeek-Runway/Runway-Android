@@ -36,8 +36,8 @@ android {
         applicationId "com.cmc12th.runway"
         minSdk 21
         targetSdk 33
-        versionCode 3
-        versionName "1.11"
+        versionCode 4
+        versionName "1.12"
 
         buildConfigField "String", "KAKAO_NATIVE_APP_KEY", properties["kakao.native.app.key"]
         resValue "string", "KAKAO_NATIVE_APP_KEY_FULL", properties["kakao.native.app.key.full"]
