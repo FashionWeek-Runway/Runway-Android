@@ -9,12 +9,9 @@ import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.content.pm.PackageManager
 import android.location.Location
-import android.util.Log
-import android.widget.TextView
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.content.res.AppCompatResources
 import androidx.compose.animation.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -33,10 +30,8 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
-import androidx.core.content.res.ResourcesCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.cmc12th.runway.ui.map.model.NaverItem
 import com.cmc12th.runway.R
 import com.cmc12th.runway.data.model.SearchType
 import com.cmc12th.runway.ui.components.RunwayIconButton
@@ -49,6 +44,7 @@ import com.cmc12th.runway.ui.map.components.*
 import com.cmc12th.runway.ui.map.model.BottomSheetContent
 import com.cmc12th.runway.ui.map.model.MapStatus
 import com.cmc12th.runway.ui.map.model.MovingCameraWrapper
+import com.cmc12th.runway.ui.map.model.NaverItem
 import com.cmc12th.runway.ui.theme.Body1B
 import com.cmc12th.runway.ui.theme.Primary
 import com.cmc12th.runway.utils.Constants.BOTTOM_NAVIGATION_HEIGHT
@@ -58,7 +54,6 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraUpdate
 import com.naver.maps.map.compose.*
-import com.naver.maps.map.overlay.Marker
 import com.naver.maps.map.overlay.OverlayImage
 import kotlinx.coroutines.launch
 import ted.gun0912.clustering.naver.TedNaverClustering
@@ -182,6 +177,14 @@ private fun MapViewContents(
             mapViewModel.updateMarker(it.copy(isClicked = !it.isClicked))
             mapViewModel.mapInfo(it.storeId)
         }
+        mapViewModel.updateMovingCamera(
+            MovingCameraWrapper.MOVING(
+                Location("SelectedMarker").apply {
+                    latitude = it.position.latitude - 0.01
+                    longitude = it.position.longitude
+                }
+            )
+        )
     }
 
     val onMapClick: () -> Unit = {
@@ -540,9 +543,7 @@ private fun RunwayNaverMap(
             }
             is MovingCameraWrapper.MOVING -> {
                 cameraPositionState.animate(
-                    update = CameraUpdate.scrollAndZoomTo(
-                        LatLng(uiState.movingCameraPosition.location), 13.0
-                    )
+                    update = CameraUpdate.scrollTo(LatLng(uiState.movingCameraPosition.location))
                 )
                 mapViewModel.updateMovingCamera(MovingCameraWrapper.DEFAULT)
             }
@@ -573,60 +574,87 @@ private fun RunwayNaverMap(
             onMapLoaded()
         }
     ) {
-        DisposableMapEffect(uiState.markerItems) { map ->
-            if (clusterManager == null) {
-                clusterManager = TedNaverClustering.with<NaverItem>(context, map)
-                    .customCluster {
-                        TextView(context).apply {
-                            text = it.size.toString()
-                            background = AppCompatResources.getDrawable(
-                                context,
-                                R.drawable.circle_clustor
-                            )
-                            setTextColor(R.color.primary)
-                            setTextAppearance(R.style.clustorText)
-                            typeface = ResourcesCompat.getFont(
-                                this.context,
-                                R.font.spoqa_han_sans_neo_bold
-                            )
-                            setPadding(100, 100, 100, 100)
-                        }
-                    }.customMarker {
-                        Marker().apply {
-                            icon =
-                                if (it.isClicked) {
-                                    if (it.bookmark) {
-                                        OverlayImage.fromResource(R.mipmap.ic_map_selceted_bookmark_marker)
-                                    } else {
-                                        OverlayImage.fromResource(R.mipmap.ic_map_selceted_marker)
-                                    }
-                                } else {
-                                    if (it.bookmark) {
-                                        OverlayImage.fromResource(R.drawable.ic_fill_map_marker_bookmarked_24)
-                                    } else {
-                                        OverlayImage.fromResource(R.drawable.ic_fill_map_marker_default_24)
-                                    }
-                                }
-                            width = if (it.isClicked) 140 else 90
-                            height = if (it.isClicked) 165 else 90
-                            captionText = it.title
-                        }
-                    }
-                    .clusterAnimation(false)
-                    .markerClickListener {
-                        onMarkerClick(it)
-                    }
-                    .make()
-            }
+//        DisposableMapEffect(uiState.markerItems) { map ->
+//            if (clusterManager == null) {
+//                clusterManager = TedNaverClustering.with<NaverItem>(context, map)
+//                    .customCluster {
+//                        TextView(context).apply {
+//                            text = it.size.toString()
+//                            background = AppCompatResources.getDrawable(
+//                                context,
+//                                R.drawable.circle_clustor
+//                            )
+//                            setTextColor(R.color.primary)
+//                            setTextAppearance(R.style.clustorText)
+//                            typeface = ResourcesCompat.getFont(
+//                                this.context,
+//                                R.font.spoqa_han_sans_neo_bold
+//                            )
+//                            setPadding(100, 100, 100, 100)
+//                        }
+//                    }.customMarker {
+//                        Marker().apply {
+//                            icon =
+//                                if (it.isClicked) {
+//                                    if (it.bookmark) {
+//                                        OverlayImage.fromResource(R.mipmap.ic_map_selceted_bookmark_marker)
+//                                    } else {
+//                                        OverlayImage.fromResource(R.mipmap.ic_map_selceted_marker)
+//                                    }
+//                                } else {
+//                                    if (it.bookmark) {
+//                                        OverlayImage.fromResource(R.drawable.ic_fill_map_marker_bookmarked_24)
+//                                    } else {
+//                                        OverlayImage.fromResource(R.drawable.ic_fill_map_marker_default_24)
+//                                    }
+//                                }
+//                            width = if (it.isClicked) 140 else 90
+//                            height = if (it.isClicked) 165 else 90
+//                            captionText = it.title
+//                        }
+//                    }
+//                    .clusterAnimation(false)
+//                    .markerClickListener {
+//                        onMarkerClick(it)
+//                    }
+//                    .make()
+//            }
+//
+//            clusterManager?.addItems(uiState.markerItems)
+//
+//            onDispose {
+//                clusterManager?.clearItems()
+//            }
+//        }
 
-            clusterManager?.addItems(uiState.markerItems)
-
-            onDispose {
-                clusterManager?.clearItems()
-            }
+        uiState.markerItems.forEach {
+            Marker(
+                state = MarkerState(position = it.position),
+                icon =
+                if (it.isClicked) {
+                    if (it.bookmark) {
+                        OverlayImage.fromResource(R.mipmap.ic_map_selceted_bookmark_marker)
+                    } else {
+                        OverlayImage.fromResource(R.mipmap.ic_map_selceted_marker)
+                    }
+                } else {
+                    if (it.bookmark) {
+                        OverlayImage.fromResource(R.drawable.ic_fill_map_marker_bookmarked_24)
+                    } else {
+                        OverlayImage.fromResource(R.drawable.ic_fill_map_marker_default_24)
+                    }
+                },
+                captionText = it.title,
+                height = if (it.isClicked) 63.dp else 30.dp,
+                width = if (it.isClicked) 52.dp else 30.dp,
+                onClick = { marker ->
+                    onMarkerClick(it)
+                    true
+                }
+            )
         }
 
-        if (uiState.userPosition != MapViewModel.DEFAULT_LATLNG) {
+        if (uiState.userPosition != DEFAULT_LATLNG) {
             Marker(
                 state = MarkerState(position = uiState.userPosition),
                 icon = OverlayImage.fromResource(R.drawable.ic_map_user),

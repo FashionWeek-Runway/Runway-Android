@@ -272,7 +272,7 @@ class MapViewModel @Inject constructor(
                 updateMovingCamera(
                     MovingCameraWrapper.MOVING(
                         Location("SelectedMarker").apply {
-                            latitude = it.result.mapMarker.latitude - 0.01
+                            latitude = it.result.mapMarker.latitude
                             longitude = it.result.mapMarker.longitude
                         }
                     )
