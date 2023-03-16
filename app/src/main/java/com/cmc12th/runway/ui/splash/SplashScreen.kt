@@ -37,7 +37,7 @@ fun SplashScreen(appState: ApplicationState) {
     appState.systmeUiController.setNavigationBarColor(SplashColor2)
 
     LaunchedEffect(key1 = Unit) {
-        delay(1000L)
+        delay(1500L)
         splashViewModel.loginCheck(
             navigateToMain = {
                 appState.systmeUiController.setStatusBarColor(Color.White)
