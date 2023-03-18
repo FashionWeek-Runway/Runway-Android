@@ -317,19 +317,6 @@ private fun MainImage(
             .offset {
                 IntOffset(x = offsetX.roundToInt(), y = 0)
             },
-        error = {
-            Image(
-                painter = painterResource(id = R.drawable.img_dummy),
-                contentDescription = "IMG_REVIEW",
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .background(Black)
-                    .fillMaxSize()
-                    .offset {
-                        IntOffset(x = offsetX.roundToInt(), y = 0)
-                    },
-            )
-        },
     )
 //    AsyncImage(
 //        modifier = Modifier
