@@ -180,7 +180,7 @@ private fun MapViewContents(
         mapViewModel.updateMovingCamera(
             MovingCameraWrapper.MOVING(
                 Location("SelectedMarker").apply {
-                    latitude = it.position.latitude - 0.01
+                    latitude = it.position.latitude
                     longitude = it.position.longitude
                 }
             )
