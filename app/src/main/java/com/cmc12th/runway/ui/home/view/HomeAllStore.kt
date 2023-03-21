@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalGlideComposeApi::class)
+
 package com.cmc12th.runway.ui.home.view
 
 import androidx.compose.foundation.background
@@ -20,6 +22,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
+import com.bumptech.glide.signature.ObjectKey
 import com.cmc12th.runway.R
 import com.cmc12th.runway.ui.components.BackIcon
 import com.cmc12th.runway.ui.components.HeightSpacer
@@ -76,22 +81,22 @@ fun HomeAllStore(
                         )
                     }) {
 
-                    AsyncImage(
+                    GlideImage(
                         modifier = Modifier
                             .background(Gray200)
                             .aspectRatio(0.75f)
                             .fillMaxSize(),
-                        model = ImageRequest.Builder(LocalContext.current)
-                            .data(store.imgUrl)
-                            .crossfade(true)
-                            .build(),
-                        error = painterResource(id = R.drawable.img_dummy),
+                        model = store.imgUrl,
                         contentDescription = "IMG_PROFILE",
                         contentScale = ContentScale.Crop,
+                    ) {
+                        it.placeholder(R.color.gray200).signature(ObjectKey(store.storeId))
+                    }
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(Black10)
                     )
-                    Box(modifier = Modifier
-                        .fillMaxSize()
-                        .background(Black10))
 
                     if (!store.bookmark) {
                         IconButton(
@@ -137,9 +142,11 @@ fun HomeAllStore(
                             .padding(12.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Text(text = store.storeName,
+                        Text(
+                            text = store.storeName,
                             style = Body2B,
-                            color = White)
+                            color = White
+                        )
                         HeightSpacer(height = 2.dp)
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
@@ -151,18 +158,22 @@ fun HomeAllStore(
                                 modifier = Modifier.size(12.dp),
                                 tint = Color.Unspecified
                             )
-                            Text(text = store.regionInfo,
+                            Text(
+                                text = store.regionInfo,
                                 style = Caption,
-                                color = Gray50)
+                                color = Gray50
+                            )
                         }
                         HeightSpacer(height = 6.dp)
                         Row(
                             horizontalArrangement = Arrangement.spacedBy(4.dp)
                         ) {
                             store.categoryList.forEach {
-                                Text(text = "#$it",
+                                Text(
+                                    text = "#$it",
                                     style = Caption2,
-                                    color = Gray50)
+                                    color = Gray50
+                                )
                             }
                         }
                     }
