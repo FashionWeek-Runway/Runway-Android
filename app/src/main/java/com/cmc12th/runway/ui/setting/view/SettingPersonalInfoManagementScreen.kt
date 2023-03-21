@@ -155,7 +155,7 @@ fun SettingPersonalInfoManagementScreen(appState: ApplicationState, viewModel: S
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.img_kakao_btn),
+                    painter = painterResource(id = R.mipmap.img_kakao_btn),
                     contentDescription = "IMG_KAKAO_BTN",
                     modifier = Modifier.size(30.dp)
                 )

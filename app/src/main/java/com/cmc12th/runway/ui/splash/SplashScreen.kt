@@ -9,6 +9,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -149,14 +150,21 @@ fun SplashScreen(appState: ApplicationState) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .align(Alignment.TopCenter)
-                    .fillMaxHeight(0.5f)
+                    .fillMaxHeight(0.3f)
                     .background(SplashColor)
             )
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .align(Alignment.Center)
+                    .fillMaxHeight(0.6f)
+                    .background(brush = Brush.verticalGradient(listOf(SplashColor, SplashColor2)))
+            )
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
                     .align(Alignment.BottomCenter)
-                    .fillMaxHeight(0.5f)
+                    .fillMaxHeight(0.3f)
                     .background(SplashColor2)
             )
             Image(

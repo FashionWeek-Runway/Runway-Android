@@ -78,14 +78,14 @@ fun BottomLoginButtons(
                 modifier = Modifier
                     .size(60.dp)
                     .clickable { kakaoLogin(context) },
-                painter = painterResource(id = R.drawable.img_kakao_btn),
+                painter = painterResource(id = R.mipmap.img_kakao_btn),
                 contentDescription = "IMG_KAKAO_BTN"
             )
             Image(
                 modifier = Modifier
                     .size(60.dp)
                     .clickable { navigateToLoginIdPasswd() },
-                painter = painterResource(id = R.drawable.img_dial_btn),
+                painter = painterResource(id = R.mipmap.img_dial_btn),
                 contentDescription = "IMG_DIAL_BTN"
             )
         }
