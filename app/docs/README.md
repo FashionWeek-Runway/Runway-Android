@@ -12,6 +12,7 @@
 8. [JWT란??, Authenticator를 활용해 401에러일 때 서비스에 막힘없이 토큰 재발급 하기](https://velog.io/@cksgodl/Android-JWT%EB%9E%80-Authenticator%EB%A5%BC-%ED%99%9C%EC%9A%A9%ED%95%B4-401%EC%97%90%EB%9F%AC%EC%9D%BC-%EB%95%8C-%EC%84%9C%EB%B9%84%EC%8A%A4%EC%97%90-%EB%A7%89%ED%9E%98%EC%97%86%EC%9D%B4-%ED%86%A0%ED%81%B0-%EC%9E%AC%EB%B0%9C%EA%B8%89-%ED%95%98%EA%B8%B0)
 9. 인스타그램과 같이 이미지 위에 글자를 넣어서 저장해보자. - Pixel To copy를 활용해 스크린샷을 찍는 방법과 View를 Bitmap으로 변환하는 방법
 10. [Firebase - Analytics 및 Crashlytics를 활용해 앱 사용자에 대한 데이터를 수집해보자.](https://velog.io/@cksgodl/Android-Firebase-Analytics-%EB%B0%8F-Crashlytics%EB%A5%BC-%ED%99%9C%EC%9A%A9%ED%95%B4-%EC%95%B1-%EC%82%AC%EC%9A%A9%EC%9E%90%EC%97%90-%EB%8C%80%ED%95%9C-%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%A5%BC-%EC%88%98%EC%A7%91%ED%95%B4%EB%B3%B4%EC%9E%90)
+11. 서버에서 주는 이미지가 너무커서 로딩이 오래걸릴 때 안드로이드 개발자가 할 수 있는 방법들 정리
 
 * (Compose에서 BroadCast를 활용하여 인증문자에서 번호 가져오기는) 플레이스토어에서 해당 권한을 더이상 허용하지 않는다.
     * SmsRetriever을 활용하여 수정 필요
