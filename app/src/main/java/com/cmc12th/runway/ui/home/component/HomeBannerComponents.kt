@@ -1,4 +1,7 @@
-@file:OptIn(ExperimentalTextApi::class, ExperimentalPagerApi::class)
+@file:OptIn(
+    ExperimentalTextApi::class, ExperimentalPagerApi::class,
+    ExperimentalGlideComposeApi::class
+)
 
 package com.cmc12th.runway.ui.home.component
 
@@ -29,6 +32,10 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.imageLoader
 import coil.request.ImageRequest
+import com.bumptech.glide.Glide
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
+import com.bumptech.glide.signature.ObjectKey
 import com.cmc12th.runway.R
 import com.cmc12th.runway.ui.components.HeightSpacer
 import com.cmc12th.runway.ui.home.model.HomeBannertype
@@ -36,6 +43,7 @@ import com.cmc12th.runway.ui.theme.*
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
+import kotlinx.coroutines.newFixedThreadPoolContext
 
 @Composable
 fun BoxScope.HomeBannerComponents(
@@ -45,6 +53,19 @@ fun BoxScope.HomeBannerComponents(
     navigateToShowMoreStore: () -> Unit,
 ) {
     val pagerState = rememberPagerState()
+    val context = LocalContext.current
+
+    // 홈 배너 화면들 미리 로드
+    homeBanners.forEach {
+        if (it is HomeBannertype.STOREBANNER) {
+            Glide.with(context)
+                .load(it.imgUrl)
+                .diskCacheStrategy(com.bumptech.glide.load.engine.DiskCacheStrategy.ALL)
+                .signature(ObjectKey(it.imgUrl))
+                .preload()
+        }
+    }
+
     HorizontalPager(
         state = pagerState,
         modifier = Modifier
@@ -53,8 +74,6 @@ fun BoxScope.HomeBannerComponents(
         count = homeBanners.size,
     ) { page ->
 
-        val context = LocalContext.current
-        val density = LocalDensity.current
         when (val banner = homeBanners[page]) {
             HomeBannertype.SHOWMOREBANNER -> {
                 if (homeBanners.size > 1) {
@@ -62,18 +81,9 @@ fun BoxScope.HomeBannerComponents(
                 }
             }
             is HomeBannertype.STOREBANNER -> {
-                val request: ImageRequest
-                with(density) {
-                    request = ImageRequest.Builder(context)
-                        .data(banner.imgUrl)
-                        .crossfade(true)
-                        .build()
-                    context.imageLoader.enqueue(request)
-                }
                 HomeStoreBanner(
                     navigateToDetail = navigateToDetail,
                     banner = banner,
-                    request = request,
                     updateBookmark = updateBookmark
                 )
             }
@@ -173,7 +183,6 @@ private fun HomeStoreBanner(
     navigateToDetail: (storeId: Int, storeName: String) -> Unit,
     banner: HomeBannertype.STOREBANNER,
     updateBookmark: (storeId: Int, bookmarked: Boolean) -> Unit,
-    request: ImageRequest,
 ) {
     Box(
         modifier = Modifier
@@ -185,15 +194,16 @@ private fun HomeStoreBanner(
     ) {
 
         /** 배경 이미지 */
-        AsyncImage(
+        GlideImage(
             modifier = Modifier
                 .fillMaxSize()
                 .background(Gray200),
-            model = request,
-            error = painterResource(id = R.drawable.img_dummy),
+            model = banner.imgUrl,
             contentDescription = "SHOP_IMAGE",
             contentScale = ContentScale.Crop,
-        )
+        ) {
+            it.signature(ObjectKey(banner.imgUrl))
+        }
 
         /** 배경 깔기 */
         Box(
