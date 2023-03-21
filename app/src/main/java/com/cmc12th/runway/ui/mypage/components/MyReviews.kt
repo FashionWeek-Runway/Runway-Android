@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalGlideComposeApi::class)
+
 package com.cmc12th.runway.ui.mypage.components
 
 import androidx.compose.foundation.background
@@ -20,6 +22,9 @@ import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
+import com.bumptech.glide.signature.ObjectKey
 import com.cmc12th.runway.R
 import com.cmc12th.runway.data.response.user.MyReviewsItem
 import com.cmc12th.runway.ui.theme.Caption
@@ -50,19 +55,18 @@ fun ColumnScope.MyReviews(
                     .clickable {
                         navigateToUserReviewDetail(myReviews[index]?.reviewId ?: 0)
                     }) {
-                    AsyncImage(
+                    GlideImage(
                         modifier = Modifier
                             .background(Gray200)
                             .aspectRatio(0.65f)
                             .fillMaxSize(),
-                        model = ImageRequest.Builder(LocalContext.current)
-                            .data(myReviews[index]?.imgUrl)
-                            .crossfade(true)
-                            .build(),
-                        error = painterResource(id = R.drawable.img_dummy),
+                        model = myReviews[index]?.imgUrl,
                         contentDescription = "IMG_PROFILE",
                         contentScale = ContentScale.Crop,
-                    )
+                    ) {
+                        it.placeholder(R.color.gray200)
+                            .signature(ObjectKey(myReviews[index]?.imgUrl ?: -1))
+                    }
                     Row(
                         modifier = Modifier
                             .align(Alignment.BottomStart)

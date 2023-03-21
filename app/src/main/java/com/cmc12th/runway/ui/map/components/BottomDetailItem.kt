@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalGlideComposeApi::class)
+
 package com.cmc12th.runway.ui.map.components
 
 import androidx.compose.foundation.background
@@ -14,6 +16,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
+import com.bumptech.glide.signature.ObjectKey
 import com.cmc12th.runway.R
 import com.cmc12th.runway.data.response.map.MapInfoItem
 import com.cmc12th.runway.ui.theme.Gray200
@@ -29,19 +34,17 @@ fun BottomDetailItem(
         .clickable {
             navigateToDetail(it.storeId, it.storeName)
         }) {
-        AsyncImage(
+        GlideImage(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(Gray200)
                 .aspectRatio(1.6f),
-            model = ImageRequest.Builder(LocalContext.current)
-                .data(it.storeImg)
-                .crossfade(true)
-                .build(),
-            error = painterResource(id = R.drawable.img_dummy),
+            model = it.storeImg,
             contentDescription = "IMG_SELECTED_IMG",
             contentScale = ContentScale.Crop,
-        )
+        ) { requestBuilder ->
+            requestBuilder.placeholder(R.color.gray200).signature(ObjectKey(it.storeImg))
+        }
         Text(
             text = it.storeName,
             style = HeadLine4,
