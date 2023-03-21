@@ -98,7 +98,7 @@ fun HomeScreen(appState: ApplicationState, viewModel: HomeViewModel) {
             HomeBannerTopBar(
                 nickname = uiState.nickName,
                 navigateToEditCategory = {
-                    appState.navigate("${EDIT_CATEGORY_ROUTE}?nickName={${uiState.nickName}")
+                    appState.navigate("${EDIT_CATEGORY_ROUTE}?nickName=${uiState.nickName}")
                 },
                 navigateToShowMoreStore = {
                     appState.navigate(HOME_ALL_STORE_ROUTE)
@@ -172,7 +172,7 @@ private fun HomeReviews(
         style = HeadLine4,
         color = Color.Black
     )
-    
+
     reviews.itemSnapshotList.forEach { item ->
         Glide.with(context)
             .load(item?.imgUrl)
