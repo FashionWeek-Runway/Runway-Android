@@ -154,17 +154,22 @@ dependencies {
     implementation "com.google.accompanist:accompanist-webview:0.29.1-alpha"
 
     // Coil, Glide
-    implementation("io.coil-kt:coil-compose:2.2.2")
+    implementation "io.coil-kt:coil-compose:2.2.2"
+    implementation "io.coil-kt:coil-base:2.2.2"
     implementation "com.github.bumptech.glide:compose:1.0.0-alpha.1"
+    implementation "com.github.bumptech.glide:okhttp3-integration:4.11.0"
+    kapt "android.arch.lifecycle:compiler:1.1.1"
+    kapt 'com.github.bumptech.glide:compiler:4.14.2'
 
     // Retrofit2
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.retrofit2:converter-moshi:2.9.0'
     implementation 'com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.3'
+    implementation 'com.squareup.okhttp3:okhttp:5.0.0-alpha.3'
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
 
     // Gson
-    implementation 'com.google.code.gson:gson:2.9.0'
+    implementation 'com.google.code.gson:gson:2.10.1'
 
     // Kakao Login
     implementation "com.kakao.sdk:v2-user:2.12.1"
