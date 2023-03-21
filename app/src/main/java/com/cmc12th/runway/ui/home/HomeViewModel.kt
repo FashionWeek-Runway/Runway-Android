@@ -4,6 +4,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.cmc12th.runway.data.response.home.HomeBannerItem
 import com.cmc12th.runway.data.response.home.HomeReviewItem
 import com.cmc12th.runway.data.response.user.PatchCategoryBody
@@ -37,7 +38,8 @@ class HomeViewModel @Inject constructor(
     private val _reviews = MutableStateFlow<PagingData<HomeReviewItem>>(PagingData.empty())
     private val _categoryTags = MutableStateFlow(RunwayCategory.generateCategoryTags())
 
-    val reviews: StateFlow<PagingData<HomeReviewItem>> = _reviews.asStateFlow()
+    val reviews: StateFlow<PagingData<HomeReviewItem>> =
+        _reviews.asStateFlow()
 
     val allStores = mutableStateListOf<HomeBannerItem>()
 
@@ -71,9 +73,12 @@ class HomeViewModel @Inject constructor(
         )
 
     fun getHomeReview() = viewModelScope.launch {
-        homeRepository.getHomeReviewPaging().collect {
-            _reviews.value = it
-        }
+        homeRepository
+            .getHomeReviewPaging()
+            .cachedIn(viewModelScope)
+            .collect {
+                _reviews.value = it
+            }
     }
 
     fun getProfile() = viewModelScope.launch {
