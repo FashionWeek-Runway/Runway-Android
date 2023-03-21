@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalGlideComposeApi::class, ExperimentalGlideComposeApi::class)
+
 package com.cmc12th.runway.ui.detail.components
 
 import android.net.Uri
@@ -21,6 +23,9 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
+import com.bumptech.glide.signature.ObjectKey
 import com.cmc12th.runway.R
 import com.cmc12th.runway.broadcast.ComposeFileProvider
 import com.cmc12th.runway.data.response.store.UserReview
@@ -136,21 +141,19 @@ fun UserReview(
 
             items(userReviewsPaging) {
                 it?.let {
-                    AsyncImage(
+                    GlideImage(
                         modifier = Modifier
                             .size(132.dp, 200.dp)
                             .background(Gray100)
                             .clickable {
                                 navigateToUserReviewDetail(it)
                             },
-                        model = ImageRequest.Builder(LocalContext.current)
-                            .data(it.imgUrl)
-                            .crossfade(true)
-                            .build(),
-                        error = painterResource(id = R.drawable.img_dummy),
+                        model = it.imgUrl,
                         contentDescription = "IMG_SELECTED_IMG",
                         contentScale = ContentScale.Crop,
-                    )
+                    ) {requestBuilder ->
+                        requestBuilder.signature(ObjectKey(it.imgUrl))
+                    }
                 }
             }
             item { WidthSpacer(width = 15.dp) }
