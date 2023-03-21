@@ -51,7 +51,8 @@ fun SplashScreen(appState: ApplicationState) {
         appState.systmeUiController.setNavigationBarColor(Color.White)
         appState.navController.navigate(MAIN_GRAPH) {
             popUpTo(SPLASH_ROUTE) {
-                this.inclusive = true
+                inclusive = true
+                saveState = true
             }
         }
     }
