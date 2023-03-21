@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalGlideComposeApi::class, ExperimentalGlideComposeApi::class)
+
 package com.cmc12th.runway.ui.home.view
 
 import androidx.annotation.DrawableRes
@@ -15,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -22,8 +25,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
+import com.bumptech.glide.Glide
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
+import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.signature.ObjectKey
 import com.cmc12th.runway.R
 import com.cmc12th.runway.data.response.home.HomeReviewItem
 import com.cmc12th.runway.ui.components.HeightSpacer
@@ -40,6 +46,7 @@ import com.cmc12th.runway.utils.Constants.EDIT_CATEGORY_ROUTE
 import com.cmc12th.runway.utils.Constants.HOME_ALL_STORE_ROUTE
 import com.cmc12th.runway.utils.Constants.REVIEW_DETAIL_ROUTE
 import com.cmc12th.runway.utils.viewLogEvent
+
 
 @Composable
 fun HomeScreen(appState: ApplicationState, viewModel: HomeViewModel) {
@@ -153,6 +160,10 @@ private fun HomeReviews(
     reviews: LazyPagingItems<HomeReviewItem>,
     navigateToUserReviewDetail: (Int) -> Unit,
 ) {
+
+    val context = LocalContext.current
+    val density = LocalDensity.current
+
     Text(
         modifier = Modifier
             .fillMaxWidth()
@@ -161,6 +172,18 @@ private fun HomeReviews(
         style = HeadLine4,
         color = Color.Black
     )
+    
+    reviews.itemSnapshotList.forEach { item ->
+        Glide.with(context)
+            .load(item?.imgUrl)
+            .apply(
+                RequestOptions().override(
+                    with(density) { (132.dp.toPx()).toInt() },
+                    with(density) { (200.dp.toPx()).toInt() })
+            )
+            .signature(ObjectKey(item?.imgUrl ?: -1))
+            .preload() // 사전 로드를 사용하여 이미지를 미리 캐시
+    }
 
     HeightSpacer(height = 16.dp)
 
@@ -194,6 +217,7 @@ private fun HomeReviews(
                     subtitle = "스타일 카테고리를 추가해서\n다양한 후기를 만나보세요."
                 )
             }
+
             LazyRow(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(5.dp)
@@ -201,23 +225,31 @@ private fun HomeReviews(
                 item { WidthSpacer(width = 15.dp) }
 
                 items(reviews.itemCount) { index ->
+
                     Box(modifier = Modifier
                         .size(132.dp, 200.dp)
                         .clickable {
                             navigateToUserReviewDetail(reviews[index]?.reviewId ?: 0)
                         }) {
-                        AsyncImage(
+
+                        GlideImage(
                             modifier = Modifier
                                 .background(Gray100)
                                 .fillMaxSize(),
-                            model = ImageRequest.Builder(LocalContext.current)
-                                .data(reviews[index]?.imgUrl)
-                                .crossfade(true)
-                                .build(),
-                            error = painterResource(id = R.drawable.img_dummy),
+                            model = reviews[index]?.imgUrl,
                             contentDescription = "IMG_PROFILE",
-                            contentScale = ContentScale.Crop,
-                        )
+                            contentScale = ContentScale.Crop
+                        ) {
+                            it.apply(
+                                RequestOptions()
+                                    .override(with(density) {
+                                        (132.dp.toPx()).toInt()
+                                    }, with(density) {
+                                        (200.dp.toPx()).toInt()
+                                    })
+                            ).signature(ObjectKey(reviews[index]?.imgUrl ?: -1))
+                        }
+
                         Row(
                             modifier = Modifier
                                 .align(Alignment.BottomStart)
