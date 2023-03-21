@@ -28,6 +28,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.rememberAsyncImagePainter
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.rememberLottieComposition
 import com.cmc12th.runway.R
 import com.cmc12th.runway.ui.components.WidthSpacerLine
 import com.cmc12th.runway.ui.domain.model.ApplicationState
@@ -93,65 +96,79 @@ fun SignInCompleteScreen(
             }
         }
     }
-    Column(
+    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.confetti))
+
+    Box(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.Black)
-            .statusBarsPadding()
-            .navigationBarsPadding()
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 50.dp, bottom = 20.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(text = "회원가입 완료!", style = HeadLine2, color = Color.White)
-            Text(
-                text = "런웨이를 가입한 걸 축하애요!\n이제 내 취향에 맞는 쇼룸을 찾아볼까요?",
-                color = Gray500,
-                style = Body1,
-                textAlign = TextAlign.Center
-            )
-        }
+        LottieAnimation(
+            composition = composition,
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Crop
+        )
 
         Column(
-            modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.Bottom,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            ProfileBox(
-                animatedScale = animatedScale.value,
-                nickname = uiState.nickName,
-                categoryTags = uiState.categoryTags,
-                image = uiState.profileImage
-            )
-        }
-
-        Button(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(20.dp, 30.dp),
-            shape = RoundedCornerShape(5.dp),
-            colors = ButtonDefaults.buttonColors(Point),
-            onClick = {
-                appState.navController.navigate(MAIN_GRAPH) {
-                    popUpTo(LOGIN_GRAPH)
-                }
+                .statusBarsPadding()
+                .navigationBarsPadding()
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(0.3f)
+                    .padding(top = 50.dp, bottom = 20.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(text = "회원가입 완료!", style = HeadLine2, color = Color.White)
+                Text(
+                    text = "런웨이를 가입한 걸 축하애요!\n이제 내 취향에 맞는 쇼룸을 찾아볼까요?",
+                    color = Gray500,
+                    style = Body1,
+                    textAlign = TextAlign.Center
+                )
             }
-        ) {
-            Text(
-                text = "홈으로",
-                modifier = Modifier.padding(0.dp, 5.dp),
-                style = Button1,
-                color = Primary
-            )
 
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                ProfileBox(
+                    animatedScale = animatedScale.value,
+                    nickname = uiState.nickName,
+                    categoryTags = uiState.categoryTags,
+                    image = uiState.profileImage
+                )
+            }
+
+            Button(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(20.dp, 30.dp),
+                shape = RoundedCornerShape(5.dp),
+                colors = ButtonDefaults.buttonColors(Point),
+                onClick = {
+                    appState.navController.navigate(MAIN_GRAPH) {
+                        popUpTo(LOGIN_GRAPH)
+                    }
+                }
+            ) {
+                Text(
+                    text = "홈으로",
+                    modifier = Modifier.padding(0.dp, 5.dp),
+                    style = Button1,
+                    color = Primary
+                )
+
+            }
         }
-    }
 
+    }
 }
+
 
 @Composable
 @Preview
@@ -231,7 +248,7 @@ fun ProfileBox(
                         .fillMaxWidth()
                         .padding(top = 3.dp, bottom = 7.dp)
                         .align(Alignment.CenterHorizontally),
-                    contentScale = ContentScale.FillWidth,
+                    contentScale = ContentScale.Crop,
                     painter = painterResource(id = R.mipmap.img_congratuation),
                     contentDescription = "IMG_CONGRATUATION"
                 )

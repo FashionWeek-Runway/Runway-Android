@@ -14,8 +14,13 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.rememberLottieComposition
+import com.cmc12th.runway.R
 import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.mypage.MypageViewModel
 import com.cmc12th.runway.ui.signin.view.ProfileBox
@@ -80,59 +85,72 @@ fun EditProfileCompleteScreen(
             }
         }
     }
-    Column(
+    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.confetti))
+
+    Box(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.Black)
-            .statusBarsPadding()
-            .navigationBarsPadding()
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 50.dp, bottom = 20.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                text = "닉네임 변경 완료!", style = HeadLine2, color = Color.White
-            )
-        }
+        LottieAnimation(
+            composition = composition,
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.FillWidth
+        )
 
         Column(
-            modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.Bottom,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            ProfileBox(
-                animatedScale = animatedScale.value,
-                nickname = uiState.nickName,
-                categoryTags = uiState.categoryTags,
-                image = uiState.profileImage
-            )
-        }
-
-        Button(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(20.dp, 30.dp),
-            shape = RoundedCornerShape(5.dp),
-            colors = ButtonDefaults.buttonColors(Point),
-            onClick = {
-                appState.navController.navigate(Constants.MAIN_GRAPH) {
-                    popUpTo(EDIT_PROFILE_IMAGE_ROUTE) {
-                        inclusive = true
+                .statusBarsPadding()
+                .navigationBarsPadding()
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(0.3f)
+                    .padding(top = 50.dp, bottom = 20.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "닉네임 변경 완료!", style = HeadLine2, color = Color.White
+                )
+            }
+
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                ProfileBox(
+                    animatedScale = animatedScale.value,
+                    nickname = uiState.nickName,
+                    categoryTags = uiState.categoryTags,
+                    image = uiState.profileImage
+                )
+            }
+
+            Button(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(20.dp, 30.dp),
+                shape = RoundedCornerShape(5.dp),
+                colors = ButtonDefaults.buttonColors(Point),
+                onClick = {
+                    appState.navController.navigate(Constants.MAIN_GRAPH) {
+                        popUpTo(EDIT_PROFILE_IMAGE_ROUTE) {
+                            inclusive = true
+                        }
                     }
                 }
-            }
-        ) {
-            Text(
-                text = "확인",
-                modifier = Modifier.padding(0.dp, 5.dp),
-                style = Button1,
-                color = Primary
-            )
+            ) {
+                Text(
+                    text = "확인",
+                    modifier = Modifier.padding(0.dp, 5.dp),
+                    style = Button1,
+                    color = Primary
+                )
 
+            }
         }
     }
 
