@@ -19,6 +19,7 @@ import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.TextStyle
@@ -26,6 +27,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import coil.imageLoader
 import coil.request.ImageRequest
 import com.cmc12th.runway.R
 import com.cmc12th.runway.ui.components.HeightSpacer
@@ -50,6 +52,9 @@ fun BoxScope.HomeBannerComponents(
             .fillMaxSize(),
         count = homeBanners.size,
     ) { page ->
+
+        val context = LocalContext.current
+        val density = LocalDensity.current
         when (val banner = homeBanners[page]) {
             HomeBannertype.SHOWMOREBANNER -> {
                 if (homeBanners.size > 1) {
@@ -57,9 +62,18 @@ fun BoxScope.HomeBannerComponents(
                 }
             }
             is HomeBannertype.STOREBANNER -> {
+                val request: ImageRequest
+                with(density) {
+                    request = ImageRequest.Builder(context)
+                        .data(banner.imgUrl)
+                        .crossfade(true)
+                        .build()
+                    context.imageLoader.enqueue(request)
+                }
                 HomeStoreBanner(
                     navigateToDetail = navigateToDetail,
                     banner = banner,
+                    request = request,
                     updateBookmark = updateBookmark
                 )
             }
@@ -159,6 +173,7 @@ private fun HomeStoreBanner(
     navigateToDetail: (storeId: Int, storeName: String) -> Unit,
     banner: HomeBannertype.STOREBANNER,
     updateBookmark: (storeId: Int, bookmarked: Boolean) -> Unit,
+    request: ImageRequest,
 ) {
     Box(
         modifier = Modifier
@@ -174,10 +189,7 @@ private fun HomeStoreBanner(
             modifier = Modifier
                 .fillMaxSize()
                 .background(Gray200),
-            model = ImageRequest.Builder(LocalContext.current)
-                .data(banner.imgUrl)
-                .crossfade(true)
-                .build(),
+            model = request,
             error = painterResource(id = R.drawable.img_dummy),
             contentDescription = "SHOP_IMAGE",
             contentScale = ContentScale.Crop,
