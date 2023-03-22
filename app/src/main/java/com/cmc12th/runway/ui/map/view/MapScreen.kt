@@ -56,7 +56,6 @@ import com.naver.maps.map.CameraUpdate
 import com.naver.maps.map.compose.*
 import com.naver.maps.map.overlay.OverlayImage
 import kotlinx.coroutines.launch
-import ted.gun0912.clustering.naver.TedNaverClustering
 
 @Composable
 fun MapScreen(appState: ApplicationState) {
@@ -241,7 +240,7 @@ private fun MapViewContents(
                 appState = appState,
                 contents = mapUiState.bottomSheetContents,
                 screenHeight = screenHeight - topBarHeight + BOTTOM_NAVIGATION_HEIGHT,
-                isFullScreen = mapUiState.mapStatus == MapStatus.LOCATION_SEARCH,
+                isLocationSearch = mapUiState.mapStatus == MapStatus.LOCATION_SEARCH,
                 isExpandedTagetValue = bottomSheetScaffoldState.bottomSheetState.targetValue == BottomSheetValue.Expanded,
                 isExpanded = bottomSheetScaffoldState.bottomSheetState.isExpanded,
                 setMapStatusDefault = setMapStatusDefault,
@@ -388,7 +387,8 @@ private fun MapViewContents(
     }
 
     if (!mapViewModel.onDetail.value.isDefault()) {
-        DetailScreen(appState = appState,
+        DetailScreen(
+            appState = appState,
             idx = mapViewModel.onDetail.value.id,
             storeName = mapViewModel.onDetail.value.storeName,
             onBackPress = {
@@ -532,10 +532,12 @@ private fun RunwayNaverMap(
     onMapLoaded: () -> Unit,
 ) {
 
+    /** 카메라 포지션 변경시 현재위치에서 다시검색 노출 */
     LaunchedEffect(key1 = cameraPositionState.position) {
         updateRefershIconVisiblity(true)
     }
 
+    /** movingCameara에 따라 카메라 포지션 움직이기 */
     LaunchedEffect(key1 = uiState.movingCameraPosition) {
         when (uiState.movingCameraPosition) {
             MovingCameraWrapper.DEFAULT -> {
@@ -549,9 +551,6 @@ private fun RunwayNaverMap(
             }
         }
     }
-
-    val context = LocalContext.current
-    var clusterManager by remember { mutableStateOf<TedNaverClustering<NaverItem>?>(null) }
 
     DisposableEffect(Unit) {
         mapViewModel.addLocationListener()
@@ -574,59 +573,6 @@ private fun RunwayNaverMap(
             onMapLoaded()
         }
     ) {
-//        DisposableMapEffect(uiState.markerItems) { map ->
-//            if (clusterManager == null) {
-//                clusterManager = TedNaverClustering.with<NaverItem>(context, map)
-//                    .customCluster {
-//                        TextView(context).apply {
-//                            text = it.size.toString()
-//                            background = AppCompatResources.getDrawable(
-//                                context,
-//                                R.drawable.circle_clustor
-//                            )
-//                            setTextColor(R.color.primary)
-//                            setTextAppearance(R.style.clustorText)
-//                            typeface = ResourcesCompat.getFont(
-//                                this.context,
-//                                R.font.spoqa_han_sans_neo_bold
-//                            )
-//                            setPadding(100, 100, 100, 100)
-//                        }
-//                    }.customMarker {
-//                        Marker().apply {
-//                            icon =
-//                                if (it.isClicked) {
-//                                    if (it.bookmark) {
-//                                        OverlayImage.fromResource(R.mipmap.ic_map_selceted_bookmark_marker)
-//                                    } else {
-//                                        OverlayImage.fromResource(R.mipmap.ic_map_selceted_marker)
-//                                    }
-//                                } else {
-//                                    if (it.bookmark) {
-//                                        OverlayImage.fromResource(R.drawable.ic_fill_map_marker_bookmarked_24)
-//                                    } else {
-//                                        OverlayImage.fromResource(R.drawable.ic_fill_map_marker_default_24)
-//                                    }
-//                                }
-//                            width = if (it.isClicked) 140 else 90
-//                            height = if (it.isClicked) 165 else 90
-//                            captionText = it.title
-//                        }
-//                    }
-//                    .clusterAnimation(false)
-//                    .markerClickListener {
-//                        onMarkerClick(it)
-//                    }
-//                    .make()
-//            }
-//
-//            clusterManager?.addItems(uiState.markerItems)
-//
-//            onDispose {
-//                clusterManager?.clearItems()
-//            }
-//        }
-
         uiState.markerItems.forEach {
             Marker(
                 state = MarkerState(position = it.position),
@@ -647,7 +593,7 @@ private fun RunwayNaverMap(
                 captionText = it.title,
                 height = if (it.isClicked) 63.dp else 30.dp,
                 width = if (it.isClicked) 52.dp else 30.dp,
-                onClick = { marker ->
+                onClick = { _ ->
                     onMarkerClick(it)
                     true
                 }

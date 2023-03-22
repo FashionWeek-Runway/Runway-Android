@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -29,7 +30,7 @@ import com.cmc12th.runway.utils.Constants.BOTTOM_NAVIGATION_HEIGHT
 fun MapViewBottomSheetContent(
     appState: ApplicationState,
     screenHeight: Dp,
-    isFullScreen: Boolean,
+    isLocationSearch: Boolean,
     isExpandedTagetValue: Boolean,
     setMapStatusOnSearch: () -> Unit,
     setMapStatusDefault: () -> Unit,
@@ -41,21 +42,22 @@ fun MapViewBottomSheetContent(
         modifier = Modifier
             .navigationBarsPadding()
             .fillMaxWidth()
-            .isFullScreen(isFullScreen, screenHeight)
+            .isFullScreen(isLocationSearch, screenHeight)
             .wrapContentHeight()
             .padding(
                 start = 20.dp,
                 end = 20.dp,
-                top = 10.dp,
                 bottom = if (appState.bottomBarState.value) BOTTOM_NAVIGATION_HEIGHT * 2 else BOTTOM_NAVIGATION_HEIGHT
             )
     ) {
+
         AnimatedVisibility(
-            visible = isFullScreen && isExpandedTagetValue,
+            visible = isLocationSearch && isExpandedTagetValue,
             enter = fadeIn(),
         ) {
             SearchResultBar(
-                modifier = Modifier.padding(0.dp, top = 0.dp, bottom = 16.dp),
+                modifier = Modifier
+                    .padding(0.dp, top = 16.dp, bottom = 16.dp),
                 setMapStatusDefault = setMapStatusDefault,
                 setMapStatusOnSearch = setMapStatusOnSearch,
                 bottomSheetContent = contents
@@ -63,10 +65,11 @@ fun MapViewBottomSheetContent(
         }
 
         /** 풀스크린이 아니고 확장상태가 아니면 탑바가 보인다. */
-        if (!(isFullScreen && isExpandedTagetValue)) {
+        if (!(isLocationSearch && isExpandedTagetValue)) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .padding(top = 10.dp, bottom = 10.dp)
                     .align(Alignment.CenterHorizontally)
             ) {
                 Spacer(
@@ -84,14 +87,16 @@ fun MapViewBottomSheetContent(
                 BottomSheetContent.DEFAULT -> {}
                 BottomSheetContent.LOADING -> {}
                 is BottomSheetContent.MULTI -> {
-                    HeightSpacer(height = 10.dp)
-//                    Text(
-//                        text = contents.locationName, style = Body1M, color = Color.Black,
-//                        modifier = Modifier.padding(bottom = 20.dp)
-//                    )
+                    if (contents.locationName.isNotBlank()) {
+                        Text(
+                            text = "[${contents.locationName}] 둘러보기",
+                            style = Body1M,
+                            color = Color.Black,
+                            modifier = Modifier.padding(bottom = 20.dp)
+                        )
+                    }
                 }
                 is BottomSheetContent.SINGLE -> {
-                    HeightSpacer(height = 10.dp)
                 }
             }
         }
@@ -104,8 +109,9 @@ fun MapViewBottomSheetContent(
             is BottomSheetContent.MULTI -> {
                 val pagingContents = contents.contents.collectAsLazyPagingItems()
                 LazyColumn(
-                    modifier = Modifier.pagingHeight(isExpanded, screenHeight),
-                    verticalArrangement = Arrangement.spacedBy(20.dp)
+                    modifier = Modifier
+                        .pagingHeight(isExpanded, screenHeight),
+                    verticalArrangement = Arrangement.spacedBy(20.dp, Alignment.Top)
                 ) {
                     items(pagingContents) {
                         it?.let {
@@ -146,7 +152,7 @@ private fun MapBottomSheetEmptyStore() {
 
 private fun Modifier.pagingHeight(isExpanded: Boolean, peekHeight: Dp): Modifier {
     return if (isExpanded) {
-        Modifier.wrapContentHeight()
+        Modifier.fillMaxHeight()
     } else {
         Modifier.height(peekHeight)
     }
