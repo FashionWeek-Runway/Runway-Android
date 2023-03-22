@@ -16,6 +16,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -109,7 +110,12 @@ fun SignInAgreementScreen(
                     onClick = {
                         appState.navController.navigate("$SIGNIN_PROFILE_IMAGE_ROUTE?profileImage=&kakaoId=")
                     }) {
-                    Text(text = "다음", modifier = Modifier.padding(0.dp, 5.dp), fontSize = 16.sp)
+                    Text(
+                        text = "다음",
+                        modifier = Modifier.padding(0.dp, 5.dp),
+                        fontSize = 16.sp,
+                        color = Color.White,
+                    )
                 }
             }
         }
