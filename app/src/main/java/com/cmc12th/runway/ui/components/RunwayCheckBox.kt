@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.cmc12th.runway.R
 import com.cmc12th.runway.ui.theme.Gray300
@@ -23,16 +24,17 @@ import com.cmc12th.runway.ui.theme.Point
 import com.cmc12th.runway.ui.theme.Primary
 
 
+@Preview
 @Composable
 fun RunwayCheckBox(
-    checkState: Boolean,
-    onChecked: () -> Unit,
+    checkState: Boolean = false,
+    onChecked: () -> Unit = {},
 ) {
     Box(
         modifier = Modifier
             .size(18.dp)
             .clip(RoundedCornerShape(4.dp))
-            .border(BorderStroke(if (checkState) 0.dp else 1.dp, Gray300))
+            .border(BorderStroke(if (checkState) 0.dp else 1.dp, Gray300), RoundedCornerShape(4.dp))
             .background(if (checkState) Primary else Color.White)
             .padding(3.dp)
             .clickable {
