@@ -173,9 +173,11 @@ fun SignInCompleteScreen(
 @Composable
 @Preview
 fun ProfileBoxPreview() {
-    ProfileBox(
-        1f, Nickname("테스트"), emptyList(), ProfileImageType.DEFAULT
-    )
+    Column() {
+        ProfileBox(
+            1f, Nickname("테스트"), emptyList(), ProfileImageType.DEFAULT
+        )
+    }
 }
 
 @Composable
@@ -185,115 +187,126 @@ fun ProfileBox(
     categoryTags: List<CategoryTag>,
     image: ProfileImageType,
 ) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .scale(animatedScale)
-            .padding(start = 50.dp, end = 50.dp)
-            .clip(RoundedCornerShape(10.dp))
-            .background(Color.White)
-    ) {
-        Column() {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(174.dp)
-                    .background(Point)
-            ) {
-                when (image) {
-                    is ProfileImageType.DEFAULT -> {
-                        Image(
-                            modifier = Modifier
-                                .align(Alignment.Center)
-                                .fillMaxHeight()
-                                .aspectRatio(1f),
-                            contentScale = ContentScale.Crop,
-                            painter = painterResource(id = R.drawable.img_profile_default),
-                            contentDescription = "PROFILE_IMAGE"
-                        )
-                    }
-                    else -> {
-                        Image(
-                            modifier = Modifier
-                                .align(Alignment.Center)
-                                .fillMaxHeight()
-                                .aspectRatio(1f),
-                            contentScale = ContentScale.Crop,
-                            painter = rememberAsyncImagePainter(
-                                model = when (image) {
-                                    is ProfileImageType.LOCAL -> image.uri
-                                    is ProfileImageType.SOCIAL -> image.imgUrl
-                                    else -> {}
-                                }
-                            ),
-                            contentDescription = "PROFILE_IMAGE"
-                        )
-                    }
-                }
-
-            }
-
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(20.dp, 15.dp),
-                verticalArrangement = Arrangement.spacedBy(
-                    8.dp,
-                    Alignment.CenterVertically
-                )
-            ) {
-
-                Image(
+    Box(modifier = Modifier.fillMaxWidth()) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth(0.7f)
+                .align(Alignment.Center)
+                .scale(animatedScale)
+                .clip(RoundedCornerShape(10.dp))
+                .background(Color.White)
+        ) {
+            Column() {
+                Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 3.dp, bottom = 7.dp)
-                        .align(Alignment.CenterHorizontally),
-                    contentScale = ContentScale.Crop,
-                    painter = painterResource(id = R.mipmap.img_congratuation),
-                    contentDescription = "IMG_CONGRATUATION"
-                )
-                WidthSpacerLine(1.dp, Primary)
-                Text(text = "NAME", color = Primary, style = Body1)
-                Text(text = nickname.text, color = Primary, style = HeadLine2)
-                WidthSpacerLine(1.dp, Primary)
-                Text(text = "STYLE", color = Primary, style = Body1)
-                Row(
-                    modifier = Modifier.align(Alignment.End),
-                    horizontalArrangement = Arrangement.spacedBy(5.dp)
+                        .height(174.dp)
+                        .background(Point)
                 ) {
-                    categoryTags.take(2).map {
-                        Text(
-                            text = it.name,
-                            modifier = Modifier
-                                .background(Primary)
-                                .padding(8.dp, 4.dp),
-                            color = Color.White
-                        )
-                    }
-
-                    if (categoryTags.size > 2) {
-                        Text(
-                            text = "+${categoryTags.size - 2}",
-                            modifier = Modifier
-                                .background(Primary)
-                                .padding(8.dp, 4.dp),
-                            color = Color.White
-                        )
+                    when (image) {
+                        is ProfileImageType.DEFAULT -> {
+                            Image(
+                                modifier = Modifier
+                                    .align(Alignment.Center)
+                                    .fillMaxHeight()
+                                    .aspectRatio(1f),
+                                contentScale = ContentScale.Crop,
+                                painter = painterResource(id = R.drawable.img_profile_default),
+                                contentDescription = "PROFILE_IMAGE"
+                            )
+                        }
+                        else -> {
+                            Image(
+                                modifier = Modifier
+                                    .align(Alignment.Center)
+                                    .fillMaxHeight()
+                                    .aspectRatio(1f),
+                                contentScale = ContentScale.Crop,
+                                painter = rememberAsyncImagePainter(
+                                    model = when (image) {
+                                        is ProfileImageType.LOCAL -> image.uri
+                                        is ProfileImageType.SOCIAL -> image.imgUrl
+                                        else -> {}
+                                    }
+                                ),
+                                contentDescription = "PROFILE_IMAGE"
+                            )
+                        }
                     }
 
                 }
-                WidthSpacerLine(1.dp, Primary)
-                Image(
-                    contentScale = ContentScale.FillWidth,
-                    painter = painterResource(id = R.drawable.ic_logo_barcode),
-                    contentDescription = "IC_LOGO_BARCOCE",
+
+                Column(
                     modifier = Modifier
-                        .fillMaxWidth(0.4f)
-                        .wrapContentHeight()
-                        .align(Alignment.CenterHorizontally)
-                )
+                        .fillMaxWidth()
+                        .padding(20.dp, 15.dp),
+                    verticalArrangement = Arrangement.spacedBy(
+                        8.dp,
+                        Alignment.CenterVertically
+                    )
+                ) {
+
+                    Image(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 3.dp, bottom = 7.dp)
+                            .align(Alignment.CenterHorizontally),
+                        contentScale = ContentScale.Fit,
+                        painter = painterResource(id = R.mipmap.img_congratuation),
+                        contentDescription = "IMG_CONGRATUATION"
+                    )
+                    WidthSpacerLine(1.dp, Primary)
+                    Text(
+                        text = "NAME",
+                        color = Primary,
+                        style = Body1,
+                    )
+                    Text(
+                        text = nickname.text, color = Primary, style = HeadLine2,
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.Right
+                    )
+                    WidthSpacerLine(1.dp, Primary)
+                    Text(text = "STYLE", color = Primary, style = Body1)
+                    Row(
+                        modifier = Modifier.align(Alignment.End),
+                        horizontalArrangement = Arrangement.spacedBy(5.dp)
+                    ) {
+                        categoryTags.take(2).map {
+                            Text(
+                                text = it.name,
+                                modifier = Modifier
+                                    .background(Primary)
+                                    .padding(8.dp, 4.dp),
+                                color = Color.White
+                            )
+                        }
+
+                        if (categoryTags.size > 2) {
+                            Text(
+                                text = "+${categoryTags.size - 2}",
+                                modifier = Modifier
+                                    .background(Primary)
+                                    .padding(8.dp, 4.dp),
+                                color = Color.White
+                            )
+                        }
+
+                    }
+                    WidthSpacerLine(1.dp, Primary)
+                    Image(
+                        contentScale = ContentScale.FillWidth,
+                        painter = painterResource(id = R.drawable.ic_logo_barcode),
+                        contentDescription = "IC_LOGO_BARCOCE",
+                        modifier = Modifier
+                            .fillMaxWidth(0.4f)
+                            .wrapContentHeight()
+                            .align(Alignment.CenterHorizontally)
+                    )
+                }
             }
         }
     }
+
 }
 
