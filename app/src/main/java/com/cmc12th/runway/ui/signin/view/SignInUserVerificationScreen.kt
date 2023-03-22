@@ -29,6 +29,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
@@ -441,18 +442,19 @@ private fun RowScope.GenderRadioButton(
     }
 }
 
+@Preview(showBackground = true, showSystemUi = true, backgroundColor = 0xFFFFFFFF)
 @Composable
 private fun NameContainter(
-    showBottomSheet: (BottomSheetContent) -> Unit,
-    nameAndNationality: NameAndNationality,
-    updateName: (String) -> Unit,
-    updateNationality: (Nationality) -> Unit,
-    onFocusRequest: () -> Unit,
+    showBottomSheet: (BottomSheetContent) -> Unit = {},
+    nameAndNationality: NameAndNationality = NameAndNationality("", Nationality.LOCAL),
+    updateName: (String) -> Unit = {},
+    updateNationality: (Nationality) -> Unit = {},
+    onFocusRequest: () -> Unit = {},
 ) {
     Column {
         Text(text = "이름", style = Caption, color = Gray700)
         HeightSpacer(height = 10.dp)
-        Row(verticalAlignment = Alignment.Top) {
+        Row(verticalAlignment = Alignment.Bottom) {
             CustomTextField(
                 modifier = Modifier
                     .weight(3f),
@@ -483,7 +485,7 @@ private fun NationalityButton(
     nameAndNationality: NameAndNationality,
 ) {
     Box(
-        modifier = Modifier.padding(0.dp, 4.dp)
+        modifier = Modifier.padding(0.dp)
     ) {
         Button(
             modifier = Modifier
