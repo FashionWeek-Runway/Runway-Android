@@ -28,6 +28,7 @@ import com.cmc12th.runway.ui.signin.components.StyleCategoryCheckBox
 import com.cmc12th.runway.ui.signin.model.CategoryTag
 import com.cmc12th.runway.ui.signin.model.SignInType
 import com.cmc12th.runway.ui.theme.*
+import com.cmc12th.runway.utils.Constants
 import com.cmc12th.runway.utils.Constants.SIGNIN_COMPLETE_ROUTE
 import com.cmc12th.runway.utils.Constants.SIGNIN_GRAPH
 
@@ -51,7 +52,9 @@ fun SignInCategoryScreen(
             }
         }
         OnBoardStep(6)
-
+        TestButon {
+            appState.navigate(SIGNIN_COMPLETE_ROUTE)
+        }
         Column(
             modifier = Modifier
                 .weight(1f)
@@ -105,7 +108,12 @@ fun SignInCategoryScreen(
 
             }
         ) {
-            Text(text = "다음", modifier = Modifier.padding(0.dp, 5.dp), fontSize = 16.sp)
+            Text(
+                text = "다음",
+                modifier = Modifier.padding(0.dp, 5.dp),
+                fontSize = 16.sp,
+                color = Color.White
+            )
         }
     }
 }
