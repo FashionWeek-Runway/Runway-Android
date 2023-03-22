@@ -173,14 +173,14 @@ private fun HomeReviews(
         color = Color.Black
     )
     LaunchedEffect(key1 = Unit) {
-        reviews.itemSnapshotList.forEach { item ->
-            Glide.with(context)
-                .load(item?.imgUrl)
-                .signature(ObjectKey(item?.imgUrl ?: -1))
-                .submit()
-                .get()
+//        reviews.itemSnapshotList.forEach { item ->
+//            Glide.with(context)
+//                .load(item?.imgUrl)
+//                .signature(ObjectKey(item?.imgUrl ?: -1))
+//                .submit()
+//                .get()
 //                .preload() // 사전 로드를 사용하여 이미지를 미리 캐시
-        }
+//        }
     }
 
 
@@ -231,7 +231,6 @@ private fun HomeReviews(
                         .clickable {
                             navigateToUserReviewDetail(reviews[index]?.reviewId ?: 0)
                         }) {
-
                         GlideImage(
                             modifier = Modifier
                                 .background(Gray100)
@@ -240,8 +239,8 @@ private fun HomeReviews(
                             contentDescription = "IMG_PROFILE",
                             contentScale = ContentScale.Crop
                         ) {
-                            it.signature(ObjectKey(reviews[index]?.imgUrl ?: -1))
-
+                            it
+                                .signature(ObjectKey(reviews[index]?.imgUrl ?: -1))
                         }
 
                         Row(

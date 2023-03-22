@@ -55,17 +55,6 @@ fun BoxScope.HomeBannerComponents(
     val pagerState = rememberPagerState()
     val context = LocalContext.current
 
-    // 홈 배너 화면들 미리 로드
-    homeBanners.forEach {
-        if (it is HomeBannertype.STOREBANNER) {
-            Glide.with(context)
-                .load(it.imgUrl)
-                .diskCacheStrategy(com.bumptech.glide.load.engine.DiskCacheStrategy.ALL)
-                .signature(ObjectKey(it.imgUrl))
-                .preload()
-        }
-    }
-
     HorizontalPager(
         state = pagerState,
         modifier = Modifier
