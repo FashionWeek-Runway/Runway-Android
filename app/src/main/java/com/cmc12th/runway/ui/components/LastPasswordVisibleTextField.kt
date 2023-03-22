@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.sp
 import com.cmc12th.runway.ui.components.util.LastPasswordVisibleVisuualTransformation
 import com.cmc12th.runway.ui.components.util.bottomBorder
 import com.cmc12th.runway.ui.theme.Error_Color
+import com.cmc12th.runway.ui.theme.Gray300
 import com.cmc12th.runway.ui.theme.Gray600
 
 /**
@@ -66,7 +67,7 @@ fun LastPasswordVisibleCustomTextField(
                 if (it.isFocused) {
                     bottomLineColor.value = Color.Black
                 } else {
-                    bottomLineColor.value = Gray600
+                    bottomLineColor.value = Gray300
                 }
             }
             .bottomBorder(1.dp, if (onErrorState) Error_Color else bottomLineColor.value),
