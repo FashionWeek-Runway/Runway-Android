@@ -264,7 +264,7 @@ fun InputNickname(
             onDone()
         }),
         onErrorState = errorMessage.isNotBlank() || (nickname.text.isNotBlank() && !nickname.checkValidate()),
-        errorMessage = errorMessage.ifBlank { "닉네임은 한글, 영어 혼합 2~10글자 입니다." }
+        errorMessage = errorMessage.ifBlank { "닉네임은 한글, 영어 혼합 3~10글자 입니다." }
     )
 }
 
