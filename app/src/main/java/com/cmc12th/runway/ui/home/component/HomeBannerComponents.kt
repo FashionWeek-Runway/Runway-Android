@@ -21,18 +21,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.AsyncImage
-import coil.imageLoader
-import coil.request.ImageRequest
-import com.bumptech.glide.Glide
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.signature.ObjectKey
@@ -43,7 +37,6 @@ import com.cmc12th.runway.ui.theme.*
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
-import kotlinx.coroutines.newFixedThreadPoolContext
 
 @Composable
 fun BoxScope.HomeBannerComponents(
@@ -53,7 +46,6 @@ fun BoxScope.HomeBannerComponents(
     navigateToShowMoreStore: () -> Unit,
 ) {
     val pagerState = rememberPagerState()
-    val context = LocalContext.current
 
     HorizontalPager(
         state = pagerState,

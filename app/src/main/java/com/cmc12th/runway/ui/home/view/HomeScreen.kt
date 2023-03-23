@@ -16,7 +16,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
@@ -25,10 +24,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.bumptech.glide.Glide
+import com.bumptech.glide.Priority
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
-import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.signature.ObjectKey
 import com.cmc12th.runway.R
 import com.cmc12th.runway.data.response.home.HomeReviewItem
@@ -161,7 +159,6 @@ private fun HomeReviews(
     navigateToUserReviewDetail: (Int) -> Unit,
 ) {
 
-    val context = LocalContext.current
     val density = LocalDensity.current
 
     Text(
@@ -172,18 +169,6 @@ private fun HomeReviews(
         style = HeadLine4,
         color = Color.Black
     )
-    LaunchedEffect(key1 = Unit) {
-//        reviews.itemSnapshotList.forEach { item ->
-//            Glide.with(context)
-//                .load(item?.imgUrl)
-//                .signature(ObjectKey(item?.imgUrl ?: -1))
-//                .submit()
-//                .get()
-//                .preload() // 사전 로드를 사용하여 이미지를 미리 캐시
-//        }
-    }
-
-
 
     HeightSpacer(height = 16.dp)
 
@@ -236,10 +221,15 @@ private fun HomeReviews(
                                 .background(Gray100)
                                 .fillMaxSize(),
                             model = reviews[index]?.imgUrl,
-                            contentDescription = "IMG_PROFILE",
+                            contentDescription = "IMG_REVIEW",
                             contentScale = ContentScale.Crop
                         ) {
                             it
+                                .priority(Priority.IMMEDIATE)
+                                .override(
+                                    (132 * density.density).toInt(),
+                                    (200 * density.density).toInt()
+                                )
                                 .signature(ObjectKey(reviews[index]?.imgUrl ?: -1))
                         }
 
