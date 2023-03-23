@@ -23,12 +23,10 @@ import androidx.core.content.ContextCompat.startActivity
 import com.cmc12th.runway.ui.components.BackIcon
 import com.cmc12th.runway.ui.components.RunwayHorizontalDialog
 import com.cmc12th.runway.ui.components.RunwaySwitch
+import com.cmc12th.runway.ui.components.WidthSpacerLine
 import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.domain.model.DialogButtonContent
-import com.cmc12th.runway.ui.theme.Body1B
-import com.cmc12th.runway.ui.theme.Body1M
-import com.cmc12th.runway.ui.theme.Body2B
-import com.cmc12th.runway.ui.theme.Gray600
+import com.cmc12th.runway.ui.theme.*
 import com.cmc12th.runway.utils.Constants
 import com.cmc12th.runway.utils.Constants.LOCATION_USE_TERMS
 import com.cmc12th.runway.utils.Constants.MARKETING_INFO_TERMS
@@ -95,7 +93,6 @@ fun SettingMainScreen(
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
             .statusBarsPadding(),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
 
         if (logoutDialog.value) {
@@ -131,44 +128,47 @@ fun SettingMainScreen(
         /** Account */
         BaseSettingWrapper(title = "계정", items = account)
 
+        WidthSpacerLine(height = 8.dp, color = Gray100)
         /** 알람 */
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(20.dp, 12.dp),
-        ) {
-            Text(
-                text = "알림",
-                modifier = Modifier.padding(vertical = 12.dp),
-                style = Body2B,
-                color = Gray600
-            )
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "푸시 알림",
-                    style = Body1M,
-                    color = Color.Black,
-                    modifier = Modifier
-                        .padding(vertical = 12.dp)
-                        .weight(1f)
-                )
-                RunwaySwitch(
-                    isSelected = alarmState.value,
-                    updateSelected = {
-                        alarmState.value = !alarmState.value
-                    }
-                )
-            }
-        }
+//        Column(
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .padding(20.dp, 12.dp),
+//        ) {
+//            Text(
+//                text = "알림",
+//                modifier = Modifier.padding(vertical = 12.dp),
+//                style = Body2B,
+//                color = Gray600
+//            )
+//            Row(
+//                modifier = Modifier.fillMaxWidth(),
+//                verticalAlignment = Alignment.CenterVertically
+//            ) {
+//                Text(
+//                    text = "푸시 알림",
+//                    style = Body1M,
+//                    color = Color.Black,
+//                    modifier = Modifier
+//                        .padding(vertical = 12.dp)
+//                        .weight(1f)
+//                )
+//                RunwaySwitch(
+//                    isSelected = alarmState.value,
+//                    updateSelected = {
+//                        alarmState.value = !alarmState.value
+//                    }
+//                )
+//            }
+//        }
 
         /** 문의 */
         BaseSettingWrapper(title = "문의", items = inquiry)
+        WidthSpacerLine(height = 8.dp, color = Gray100)
 
         /** 약관 및 정책 */
         BaseSettingWrapper(title = "약관 및 정책", items = policies)
+        WidthSpacerLine(height = 8.dp, color = Gray100)
 
         /** 버전 정보 */
         Column(
@@ -196,6 +196,7 @@ fun SettingMainScreen(
                 )
             }
         }
+        WidthSpacerLine(height = 8.dp, color = Gray100)
 
         /** 로그 아웃 */
         Column(

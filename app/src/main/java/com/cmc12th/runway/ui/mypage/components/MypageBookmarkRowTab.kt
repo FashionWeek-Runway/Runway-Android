@@ -45,12 +45,6 @@ fun MypageBookmarkRowTab(
                     .weight(1f)
                     .padding(start = 2.dp, top = 2.dp, bottom = 2.dp)
                     .clip(RoundedCornerShape(4.dp))
-                    .border(
-                        BorderStroke(
-                            if (selectedPage == MypageBookmarkTabInfo.STORE) 1.dp else 0.dp,
-                            Gray200
-                        ), RoundedCornerShape(4.dp)
-                    )
                     .clickable {
                         updateSelectedPage(MypageBookmarkTabInfo.STORE)
                     }
@@ -71,12 +65,6 @@ fun MypageBookmarkRowTab(
                     .weight(1f)
                     .clip(RoundedCornerShape(4.dp))
                     .padding(end = 2.dp, top = 2.dp, bottom = 2.dp)
-                    .border(
-                        BorderStroke(
-                            if (selectedPage == MypageBookmarkTabInfo.REVIEW) 1.dp else 0.dp,
-                            Gray200
-                        ), RoundedCornerShape(4.dp)
-                    )
                     .clickable {
                         updateSelectedPage(MypageBookmarkTabInfo.REVIEW)
                     }

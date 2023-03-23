@@ -24,6 +24,7 @@ import com.cmc12th.runway.R
 import com.cmc12th.runway.ui.components.BackIcon
 import com.cmc12th.runway.ui.components.RunwayHorizontalDialog
 import com.cmc12th.runway.ui.components.RunwaySwitch
+import com.cmc12th.runway.ui.components.WidthSpacerLine
 import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.domain.model.DialogButtonContent
 import com.cmc12th.runway.ui.setting.SettingViewModel
@@ -114,7 +115,7 @@ fun SettingPersonalInfoManagementScreen(appState: ApplicationState, viewModel: S
                 }
                 Row(
                     modifier = Modifier
-                        .padding(0.dp, 24.dp)
+                        .padding(0.dp, top = 12.dp)
                         .fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
@@ -132,6 +133,7 @@ fun SettingPersonalInfoManagementScreen(appState: ApplicationState, viewModel: S
                     }
                 }
             }
+            WidthSpacerLine(height = 8.dp, color = Gray100)
         }
 
         val context = LocalContext.current
@@ -149,7 +151,6 @@ fun SettingPersonalInfoManagementScreen(appState: ApplicationState, viewModel: S
                 )
                 Text(text = "연결된 SNS 계정으로 로그인할 수 있습니다.", style = Body2, color = Gray800)
             }
-
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
@@ -188,6 +189,7 @@ fun SettingPersonalInfoManagementScreen(appState: ApplicationState, viewModel: S
                 }
             }
         }
+        WidthSpacerLine(height = 8.dp, color = Gray100)
 
         Column(
             modifier = Modifier
