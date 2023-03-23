@@ -241,7 +241,7 @@ private fun MapViewContents(
             MapViewBottomSheetContent(
                 appState = appState,
                 contents = mapUiState.bottomSheetContents,
-                screenHeight = screenHeight + BOTTOM_NAVIGATION_HEIGHT - (topBarHeight + paddingValues.calculateBottomPadding() + paddingValues.calculateTopPadding()),
+                screenHeight = screenHeight + BOTTOM_NAVIGATION_HEIGHT - (topBarHeight + paddingValues.calculateBottomPadding()),
                 isLocationSearch = mapUiState.mapStatus == MapStatus.LOCATION_SEARCH,
                 isExpandedTagetValue = bottomSheetScaffoldState.bottomSheetState.targetValue == BottomSheetValue.Expanded,
                 isExpanded = bottomSheetScaffoldState.bottomSheetState.isExpanded,
