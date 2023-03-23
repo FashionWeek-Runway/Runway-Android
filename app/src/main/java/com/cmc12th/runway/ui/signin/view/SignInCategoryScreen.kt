@@ -52,9 +52,9 @@ fun SignInCategoryScreen(
             }
         }
         OnBoardStep(6)
-        TestButon {
-            appState.navigate(SIGNIN_COMPLETE_ROUTE)
-        }
+//        TestButon {
+//            appState.navigate(SIGNIN_COMPLETE_ROUTE)
+//        }
         Column(
             modifier = Modifier
                 .weight(1f)
