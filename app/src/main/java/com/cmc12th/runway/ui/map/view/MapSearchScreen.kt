@@ -257,7 +257,7 @@ private fun ResultItems(
                         modifier = Modifier.size(24.dp)
                     ) {
                         Icon(
-                            painter = painterResource(id = R.drawable.ic_search_location),
+                            painter = painterResource(id = R.drawable.ic_search_location_16),
                             contentDescription = "IC_SEARCH_LOCATION",
                             tint = Color.Unspecified,
                             modifier = Modifier.size(16.dp)
@@ -422,7 +422,13 @@ private fun RecentSearches(
                         modifier = Modifier.size(24.dp)
                     ) {
                         Icon(
-                            painter = painterResource(id = R.drawable.ic_search_location),
+                            painter = painterResource(
+                                id = if (it.searchType.type == LOCATION_TYPE) {
+                                    R.drawable.ic_search_location_16
+                                } else {
+                                    R.drawable.ic_filled_search_store_16
+                                }
+                            ),
                             contentDescription = "IC_SEARCH_LOCATION",
                             tint = Color.Unspecified
                         )
@@ -446,7 +452,8 @@ private fun RecentSearches(
                     ) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_close_baseline_small),
-                            contentDescription = "IC_DUMMY"
+                            contentDescription = "IC_DUMMY",
+                            tint = Gray500
                         )
                     }
                 }
