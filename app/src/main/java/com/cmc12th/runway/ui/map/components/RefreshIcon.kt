@@ -30,6 +30,7 @@ fun BoxScope.RefreshIcon(
 ) {
     AnimatedVisibility(
         modifier = Modifier
+            .statusBarsPadding()
             .align(Alignment.TopCenter),
         visible = visibility,
         enter = fadeIn(),
