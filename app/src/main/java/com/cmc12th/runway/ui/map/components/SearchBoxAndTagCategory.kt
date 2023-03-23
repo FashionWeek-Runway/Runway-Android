@@ -11,13 +11,13 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.cmc12th.runway.R
 import com.cmc12th.runway.ui.components.HeightSpacer
@@ -33,6 +33,7 @@ fun SearchBoxAndTagCategory(
     updateIsBookmarked: (Boolean) -> Unit,
     onSearch: () -> Unit,
 ) {
+
 
     Column(
         modifier = Modifier
@@ -67,12 +68,16 @@ fun SearchBoxAndTagCategory(
         }
         HeightSpacer(height = 10.dp)
 
+        var tagHeight by remember {
+            mutableStateOf(0.dp)
+        }
         /** 카테고리 리스트 */
         LazyRow(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(10.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
+
             item {
                 WidthSpacer(width = 10.dp)
             }
@@ -85,21 +90,25 @@ fun SearchBoxAndTagCategory(
                 BookmarkIcon(
                     isBookmarked = isBookmarked,
                     surfaceColor = surfaceColor,
-                    updateIsBookmarked = updateIsBookmarked
+                    updateIsBookmarked = updateIsBookmarked,
+                    tagHeight = tagHeight
                 )
             }
 
-            items(categoryItems) {
+            items(categoryItems) { categoryTag ->
                 val surfaceColor: State<Color> = animateColorAsState(
-                    if (it.isSelected) Primary else Gray50
+                    if (categoryTag.isSelected) Primary else Gray50
                 )
                 StyleCategoryCheckBoxInMapView(
-                    isSelected = it.isSelected,
+                    isSelected = categoryTag.isSelected,
                     color = surfaceColor.value,
                     onClicked = {
-                        updateCategoryTags(it)
+                        updateCategoryTags(categoryTag)
                     },
-                    title = it.name,
+                    title = categoryTag.name,
+                    updateHeight = {
+                        tagHeight = it
+                    }
                 )
             }
 
@@ -117,15 +126,12 @@ private fun BookmarkIcon(
     isBookmarked: Boolean,
     surfaceColor: State<Color>,
     updateIsBookmarked: (Boolean) -> Unit,
+    tagHeight: Dp,
 ) {
     Box(
         modifier = Modifier
             .clip(RoundedCornerShape(5.dp))
-            .border(
-                1.dp,
-                if (isBookmarked) Primary else Gray200,
-                RoundedCornerShape(5.dp)
-            )
+            .size(tagHeight)
             .background(surfaceColor.value)
             .clickable {
                 updateIsBookmarked(!isBookmarked)

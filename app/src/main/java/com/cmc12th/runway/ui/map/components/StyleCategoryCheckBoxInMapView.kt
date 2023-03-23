@@ -14,6 +14,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.cmc12th.runway.ui.theme.*
 
@@ -23,14 +26,18 @@ fun StyleCategoryCheckBoxInMapView(
     color: Color,
     onClicked: () -> Unit,
     title: String,
+    updateHeight: (Dp) -> Unit,
 ) {
+    val localDensity = LocalDensity.current
     Box(
         modifier = Modifier
             .clip(RoundedCornerShape(5.dp))
-            .border(1.dp, if (isSelected) Primary else Gray200, RoundedCornerShape(5.dp))
             .background(color)
             .clickable {
                 onClicked()
+            }
+            .onGloballyPositioned { coordinates ->
+                updateHeight(with(localDensity) { coordinates.size.height.toDp() })
             }
     ) {
         Row(
