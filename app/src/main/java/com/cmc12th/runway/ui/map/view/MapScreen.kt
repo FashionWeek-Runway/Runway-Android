@@ -229,6 +229,8 @@ private fun MapViewContents(
         collapsBottomSheet = collapsBottomSheet,
     )
 
+    val paddingValues = WindowInsets.systemBars.asPaddingValues() // 시스템바 패딩 계산
+
     BottomSheetScaffold(
         modifier = Modifier
             .fillMaxSize(),
@@ -239,7 +241,7 @@ private fun MapViewContents(
             MapViewBottomSheetContent(
                 appState = appState,
                 contents = mapUiState.bottomSheetContents,
-                screenHeight = screenHeight - topBarHeight + BOTTOM_NAVIGATION_HEIGHT,
+                screenHeight = screenHeight + BOTTOM_NAVIGATION_HEIGHT - (topBarHeight + paddingValues.calculateBottomPadding() + paddingValues.calculateTopPadding()),
                 isLocationSearch = mapUiState.mapStatus == MapStatus.LOCATION_SEARCH,
                 isExpandedTagetValue = bottomSheetScaffoldState.bottomSheetState.targetValue == BottomSheetValue.Expanded,
                 isExpanded = bottomSheetScaffoldState.bottomSheetState.isExpanded,
@@ -295,7 +297,7 @@ private fun MapViewContents(
 
             RefreshIcon(
                 visibility = mapUiState.mapStatus == MapStatus.DEFAULT && refershIconVisiblity.value,
-                yOffset = topBarHeight + 12.dp,
+                yOffset = topBarHeight,
                 onClick = {
                     refershIconVisiblity.value = false
                     MapViewModel.initialMarkerLoadFlag = false
@@ -585,14 +587,14 @@ private fun RunwayNaverMap(
                     }
                 } else {
                     if (it.bookmark) {
-                        OverlayImage.fromResource(R.drawable.ic_fill_map_marker_bookmarked_24)
+                        OverlayImage.fromResource(R.mipmap.ic_fill_map_marker_bookmarked)
                     } else {
-                        OverlayImage.fromResource(R.drawable.ic_fill_map_marker_default_24)
+                        OverlayImage.fromResource(R.mipmap.ic_fill_map_marker_default)
                     }
                 },
                 captionText = it.title,
-                height = if (it.isClicked) 63.dp else 30.dp,
-                width = if (it.isClicked) 52.dp else 30.dp,
+                height = if (it.isClicked) 61.dp else 24.dp,
+                width = if (it.isClicked) 52.dp else 24.dp,
                 onClick = { _ ->
                     onMarkerClick(it)
                     true
