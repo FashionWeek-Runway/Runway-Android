@@ -12,7 +12,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.*
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
@@ -61,14 +63,23 @@ fun BottomLoginButtons(
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
                     .fillMaxWidth()
-                    .height(18.dp)
+                    .offset(y = (-2).dp)
+                    .height(20.dp)
             ) {
-                drawPath(path = Path().apply {
-                    moveTo((size.width / 2f) - with(density) { 11.5.dp.toPx() }, 0f)
-                    lineTo((size.width / 2f) + with(density) { 11.5.dp.toPx() }, 0f)
-                    lineTo(size.width / 2f, size.height)
-                    close()
-                }, color = Point)
+                drawIntoCanvas { canvas ->
+                    canvas.drawOutline(
+                        outline = Outline.Generic(Path().apply {
+                            moveTo((size.width / 2f) - with(density) { 11.5.dp.toPx() }, 0f)
+                            lineTo((size.width / 2f) + with(density) { 11.5.dp.toPx() }, 0f)
+                            lineTo(size.width / 2f, size.height)
+                            close()
+                        }),
+                        paint = Paint().apply {
+                            color = Point
+                            pathEffect = PathEffect.cornerPathEffect(4.dp.toPx())
+                        }
+                    )
+                }
             }
         }
 
