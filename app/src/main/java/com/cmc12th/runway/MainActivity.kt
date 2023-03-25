@@ -3,6 +3,7 @@ package com.cmc12th.runway
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
@@ -12,7 +13,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
@@ -25,11 +25,13 @@ import com.cmc12th.runway.utils.Constants.STATUS_INSTALLED
 import com.cmc12th.runway.utils.Constants.STATUS_INSTANT
 import com.google.android.gms.common.wrappers.InstantApps
 import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.firebase.analytics.ktx.logEvent
 import dagger.hilt.android.AndroidEntryPoint
+
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    private var backBtnTime: Long = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,6 +59,18 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
+    override fun onBackPressed() {
+        val curTime = System.currentTimeMillis()
+        val gapTime: Long = curTime - backBtnTime
+        if (gapTime in 0..2000) {
+            onBackPressedDispatcher.onBackPressed()
+        } else {
+            backBtnTime = curTime
+            Toast.makeText(this, "한번 더 누르면 Runway가 종료됩니다.", Toast.LENGTH_SHORT).show()
+        }
+    }
+
 
     fun requestSMSReceivePermission() {
         val permissions = arrayOf(Manifest.permission.RECEIVE_SMS)
