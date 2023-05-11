@@ -29,8 +29,8 @@ import com.cmc12th.runway.ui.components.LastPasswordVisibleCustomTextField
 import com.cmc12th.runway.ui.domain.keyboardAsState
 import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.login.LoginViewModel
-import com.cmc12th.runway.ui.signin.model.Password
-import com.cmc12th.runway.ui.signin.model.Phone
+import com.cmc12th.domain.model.signin.model.Password
+import com.cmc12th.domain.model.signin.model.Phone
 import com.cmc12th.runway.ui.signin.view.ErrorMessage
 import com.cmc12th.runway.ui.theme.Body1B
 import com.cmc12th.runway.ui.theme.Body2
@@ -138,21 +138,25 @@ fun LoginIdPasswdScreen(
             /** 하단 로그인, 회원가입 */
             BottomButtons(onLogin = onLogin)
 
-            Row(modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-                .height(IntrinsicSize.Max),
-                horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+            Row(
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .height(IntrinsicSize.Max),
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
                 Text(
                     text = "비밀번호 찾기",
                     style = Body2,
                     modifier = Modifier
                         .clickable { navigateToPasswrodSearch() }
                 )
-                Spacer(modifier = Modifier
-                    .width(1.dp)
-                    .fillMaxHeight()
-                    .padding(0.dp, 2.dp)
-                    .background(Gray200))
+                Spacer(
+                    modifier = Modifier
+                        .width(1.dp)
+                        .fillMaxHeight()
+                        .padding(0.dp, 2.dp)
+                        .background(Gray200)
+                )
                 Text(
                     text = "회원가입",
                     style = Body2,
@@ -185,7 +189,7 @@ private fun BottomButtons(
 
 @Composable
 private fun PhoneTextField(
-    phone: Phone,
+    phone: com.cmc12th.domain.model.signin.model.Phone,
     updatePhoneNumber: (String) -> Unit,
     phoneErrorMessage: String,
 ) {
@@ -196,7 +200,7 @@ private fun PhoneTextField(
         value = phone.number,
         placeholderText = "전화번호 입력",
         onvalueChanged = {
-            if (it.length <= Phone.PHONE_NUMBER_LENGTH) {
+            if (it.length <= com.cmc12th.domain.model.signin.model.Phone.PHONE_NUMBER_LENGTH) {
                 updatePhoneNumber(it)
             }
         },
@@ -213,7 +217,7 @@ private fun PhoneTextField(
 
 @Composable
 private fun PasswordTextField(
-    password: Password,
+    password: com.cmc12th.domain.model.signin.model.Password,
     updatePassword: (String) -> Unit,
     onDone: () -> Unit,
     errorState: Boolean,

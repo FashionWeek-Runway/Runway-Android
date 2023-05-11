@@ -22,14 +22,14 @@ import androidx.compose.ui.unit.dp
 import com.cmc12th.runway.R
 import com.cmc12th.runway.ui.components.HeightSpacer
 import com.cmc12th.runway.ui.components.WidthSpacer
-import com.cmc12th.runway.ui.signin.model.CategoryTag
+import com.cmc12th.domain.model.signin.model.CategoryTag
 import com.cmc12th.runway.ui.theme.*
 
 @Composable
 fun SearchBoxAndTagCategory(
     isBookmarked: Boolean,
-    categoryItems: List<CategoryTag>,
-    updateCategoryTags: (CategoryTag) -> Unit,
+    categoryItems: List<com.cmc12th.domain.model.signin.model.CategoryTag>,
+    updateCategoryTags: (com.cmc12th.domain.model.signin.model.CategoryTag) -> Unit,
     updateIsBookmarked: (Boolean) -> Unit,
     onSearch: () -> Unit,
 ) {

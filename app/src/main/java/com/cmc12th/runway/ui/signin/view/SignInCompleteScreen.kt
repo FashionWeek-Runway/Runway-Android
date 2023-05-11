@@ -37,9 +37,9 @@ import com.cmc12th.runway.R
 import com.cmc12th.runway.ui.components.WidthSpacerLine
 import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.signin.SignInViewModel
-import com.cmc12th.runway.ui.signin.model.CategoryTag
-import com.cmc12th.runway.ui.signin.model.Nickname
-import com.cmc12th.runway.ui.signin.model.ProfileImageType
+import com.cmc12th.domain.model.signin.model.CategoryTag
+import com.cmc12th.domain.model.signin.model.Nickname
+import com.cmc12th.domain.model.signin.model.ProfileImageType
 import com.cmc12th.runway.ui.theme.*
 import com.cmc12th.runway.utils.Constants.LOGIN_GRAPH
 import com.cmc12th.runway.utils.Constants.MAIN_GRAPH
@@ -177,7 +177,10 @@ fun SignInCompleteScreen(
 fun ProfileBoxPreview() {
     Column() {
         ProfileBox(
-            1f, Nickname("테스트"), emptyList(), ProfileImageType.DEFAULT
+            1f,
+            com.cmc12th.domain.model.signin.model.Nickname("테스트"),
+            emptyList(),
+            com.cmc12th.domain.model.signin.model.ProfileImageType.DEFAULT
         )
     }
 }
@@ -185,9 +188,9 @@ fun ProfileBoxPreview() {
 @Composable
 fun ProfileBox(
     animatedScale: Float,
-    nickname: Nickname,
-    categoryTags: List<CategoryTag>,
-    image: ProfileImageType,
+    nickname: com.cmc12th.domain.model.signin.model.Nickname,
+    categoryTags: List<com.cmc12th.domain.model.signin.model.CategoryTag>,
+    image: com.cmc12th.domain.model.signin.model.ProfileImageType,
 ) {
     Box(modifier = Modifier.fillMaxWidth()) {
         Box(
@@ -206,7 +209,7 @@ fun ProfileBox(
                         .background(Point)
                 ) {
                     when (image) {
-                        is ProfileImageType.DEFAULT -> {
+                        is com.cmc12th.domain.model.signin.model.ProfileImageType.DEFAULT -> {
                             Image(
                                 modifier = Modifier
                                     .align(Alignment.Center)
@@ -226,8 +229,8 @@ fun ProfileBox(
                                 contentScale = ContentScale.Crop,
                                 painter = rememberAsyncImagePainter(
                                     model = when (image) {
-                                        is ProfileImageType.LOCAL -> image.uri
-                                        is ProfileImageType.SOCIAL -> image.imgUrl
+                                        is com.cmc12th.domain.model.signin.model.ProfileImageType.LOCAL -> image.uri
+                                        is com.cmc12th.domain.model.signin.model.ProfileImageType.SOCIAL -> image.imgUrl
                                         else -> {}
                                     }
                                 ),

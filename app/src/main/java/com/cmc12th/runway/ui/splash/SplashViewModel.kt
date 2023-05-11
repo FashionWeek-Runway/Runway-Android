@@ -7,7 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.cmc12th.runway.data.repository.AuthRepositoryImpl.PreferenceKeys.ACCESS_TOKEN
 import com.cmc12th.runway.data.repository.AuthRepositoryImpl.PreferenceKeys.REFRESH_TOKEN
 import com.cmc12th.runway.di.DispatcherModule
-import com.cmc12th.runway.domain.repository.AuthRepository
+import com.cmc12th.domain.repository.AuthRepository
 import com.cmc12th.runway.network.model.ServiceInterceptor
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
@@ -16,7 +16,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SplashViewModel @Inject constructor(
-    private val authRepository: AuthRepository,
+    private val authRepository: com.cmc12th.domain.repository.AuthRepository,
     @DispatcherModule.IoDispatcher private val IODispatcher: CoroutineDispatcher,
     @DispatcherModule.MainDispatcher private val MainDispatcher: CoroutineDispatcher,
 ) : ViewModel() {

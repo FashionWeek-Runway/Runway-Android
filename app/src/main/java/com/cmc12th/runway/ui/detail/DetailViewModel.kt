@@ -8,7 +8,7 @@ import androidx.paging.cachedIn
 import com.cmc12th.runway.data.response.store.BlogReview
 import com.cmc12th.runway.data.response.store.StoreDetail
 import com.cmc12th.runway.data.response.store.UserReview
-import com.cmc12th.runway.domain.repository.StoreRepository
+import com.cmc12th.domain.repository.StoreRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -24,7 +24,7 @@ data class DetailUiState(
 
 @HiltViewModel
 class DetailViewModel @Inject constructor(
-    private val storeRepository: StoreRepository,
+    private val storeRepository: com.cmc12th.domain.repository.StoreRepository,
 ) : ViewModel() {
 
     private val _storeDetail = MutableStateFlow(StoreDetail())

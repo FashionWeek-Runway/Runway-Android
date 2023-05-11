@@ -2,7 +2,7 @@ package com.cmc12th.runway.ui.domain.model
 
 import androidx.annotation.DrawableRes
 import com.cmc12th.runway.R
-import com.cmc12th.runway.ui.signin.model.CategoryTag
+import com.cmc12th.domain.model.signin.model.CategoryTag
 
 enum class RunwayCategory(
     val visibleName: String,
@@ -14,11 +14,13 @@ enum class RunwayCategory(
     VINTAGE("빈티지", R.drawable.ic_vintage, 5), FEMININE("페미닌", R.drawable.ic_feminine, 6);
 
     companion object {
-        fun generateCategoryTags(): MutableList<CategoryTag> =
+        fun generateCategoryTags(): MutableList<com.cmc12th.domain.model.signin.model.CategoryTag> =
             values().map { category ->
-                CategoryTag(id = category.idx,
+                com.cmc12th.domain.model.signin.model.CategoryTag(
+                    id = category.idx,
                     name = category.visibleName,
-                    iconId = category.iconId)
+                    iconId = category.iconId
+                )
             }.toMutableList()
     }
 }

@@ -3,19 +3,19 @@ package com.cmc12th.runway.ui.detail.photoreview
 import androidx.compose.runtime.*
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.cmc12th.runway.data.model.ReviewReportType
-import com.cmc12th.runway.data.request.store.ReviewReportRequest
+import com.cmc12th.model.ReviewReportType
+import com.cmc12th.domain.model.request.store.ReviewReportRequest
 import com.cmc12th.runway.data.response.store.UserReviewDetail
-import com.cmc12th.runway.domain.repository.AuthRepository
-import com.cmc12th.runway.domain.repository.HomeRepository
-import com.cmc12th.runway.domain.repository.StoreRepository
+import com.cmc12th.domain.repository.AuthRepository
+import com.cmc12th.domain.repository.HomeRepository
+import com.cmc12th.domain.repository.StoreRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class ReviewReportUiState(
-    val reports: List<ReviewReportWrapper> = ReviewReportType.values().map {
+    val reports: List<ReviewReportWrapper> = com.cmc12th.model.ReviewReportType.values().map {
         ReviewReportWrapper(it.id, it.reason)
     },
     val reportContents: String = "",
@@ -30,16 +30,16 @@ data class ReviewReportWrapper(
 
 @HiltViewModel
 class ReviewViewModel @Inject constructor(
-    private val storeRepository: StoreRepository,
-    private val authRepository: AuthRepository,
-    private val homeRepository: HomeRepository,
+    private val storeRepository: com.cmc12th.domain.repository.StoreRepository,
+    private val authRepository: com.cmc12th.domain.repository.AuthRepository,
+    private val homeRepository: com.cmc12th.domain.repository.HomeRepository,
 ) : ViewModel() {
 
     private val _reviewDetail = mutableStateOf(UserReviewDetail.default())
     val reviewDetail: State<UserReviewDetail> get() = _reviewDetail
 
     private val _report: MutableStateFlow<List<ReviewReportWrapper>> = MutableStateFlow(
-        ReviewReportType.values().map {
+        com.cmc12th.model.ReviewReportType.values().map {
             ReviewReportWrapper(it.id, it.reason)
         }
     )
@@ -124,7 +124,7 @@ class ReviewViewModel @Inject constructor(
 
     fun reporteReview(reviewId: Int, onSuccess: () -> Unit) = viewModelScope.launch {
         storeRepository.reportReview(
-            reviewReportRequest = ReviewReportRequest(
+            reviewReportRequest = com.cmc12th.domain.model.request.store.ReviewReportRequest(
                 opinion = _reportContents.value,
                 reviewId = reviewId,
                 reason = _selectedReportId.value,

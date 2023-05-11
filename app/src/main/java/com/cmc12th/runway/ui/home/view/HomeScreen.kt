@@ -29,7 +29,7 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.signature.ObjectKey
 import com.cmc12th.runway.R
-import com.cmc12th.runway.data.response.home.HomeReviewItem
+import com.cmc12th.domain.model.response.home.HomeReviewItem
 import com.cmc12th.runway.ui.components.HeightSpacer
 import com.cmc12th.runway.ui.components.WidthSpacer
 import com.cmc12th.runway.ui.domain.model.ApplicationState
@@ -155,7 +155,7 @@ private fun ShowNews() {
 
 @Composable
 private fun HomeReviews(
-    reviews: LazyPagingItems<HomeReviewItem>,
+    reviews: LazyPagingItems<com.cmc12th.domain.model.response.home.HomeReviewItem>,
     navigateToUserReviewDetail: (Int) -> Unit,
 ) {
 

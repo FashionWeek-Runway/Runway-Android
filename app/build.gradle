@@ -2,7 +2,6 @@ plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-kapt'
-    id 'dagger.hilt.android.plugin'
     id 'com.google.gms.google-services'
     id 'com.google.firebase.crashlytics'
 }
@@ -48,9 +47,7 @@ android {
         }
     }
 
-    flavorDimensions "1.0"
     productFlavors {
-
         dev {
             // 개발용
             buildConfigField "String", "BASE_URL", "\"https://dev.runwayserver.shop/\""
@@ -63,6 +60,9 @@ android {
             manifestPlaceholders = [appLabel: "ProdApp"]
         }
     }
+
+
+    flavorDimensions "1.0"
 
     buildTypes {
         release {
@@ -95,6 +95,8 @@ android {
 }
 
 dependencies {
+
+    implementation project(path: ':data')
 
     implementation 'androidx.core:core-ktx:1.9.0'
     implementation 'androidx.activity:activity-compose:1.6.1'
@@ -130,17 +132,9 @@ dependencies {
     implementation('com.naver.maps:map-sdk:3.16.1') {
         exclude group: 'com.android.support'
     }
-    // MarkerClusting
-    implementation 'io.github.ParkSangGwon:tedclustering-naver:1.0.2'
+
     // FusedLocatino
     implementation 'com.google.android.gms:play-services-location:21.0.1'
-
-    // Hilt
-    implementation "com.google.dagger:hilt-android:2.43.2"
-    kapt "com.google.dagger:hilt-compiler:2.43.2"
-    implementation "androidx.hilt:hilt-navigation-compose:1.0.0"
-    implementation 'com.google.dagger:dagger:2.43.2'
-    kapt 'com.google.dagger:dagger-compiler:2.43.2'
 
     // Lifecycles only (without ViewModel or LiveData)
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.5.1'
@@ -161,34 +155,15 @@ dependencies {
     kapt "android.arch.lifecycle:compiler:1.1.1"
     kapt 'com.github.bumptech.glide:compiler:4.14.2'
 
-    // Retrofit2
-    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
-    implementation 'com.squareup.retrofit2:converter-moshi:2.9.0'
-    implementation 'com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.3'
-    implementation 'com.squareup.okhttp3:okhttp:5.0.0-alpha.3'
-    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
-
     // Gson
     implementation 'com.google.code.gson:gson:2.10.1'
 
     // Kakao Login
     implementation "com.kakao.sdk:v2-user:2.12.1"
 
-    // DataStore
-    implementation 'androidx.datastore:datastore-preferences:1.0.0'
-
     // Firebase
     implementation platform('com.google.firebase:firebase-bom:31.2.1')
 
-    // Room DB
-    implementation("androidx.room:room-runtime:2.5.0")
-    kapt("androidx.room:room-compiler:2.5.0")
-    // optional - Kotlin Extensions and Coroutines support for Room
-    implementation("androidx.room:room-ktx:2.5.0")
-
-    // Paging Compose
-    implementation("androidx.paging:paging-runtime:3.1.1")
-    implementation("androidx.paging:paging-compose:1.0.0-alpha18")
 
     // 중첩 Column 스크롤을 위한 커스텀 Toolbar 레이아웃
     // https://blog.onebone.me/post/jetpack-compose-nested-scroll/
@@ -203,5 +178,11 @@ dependencies {
     // Lottie
     implementation "com.airbnb.android:lottie-compose:6.0.0"
 
+    // Hilt
+    implementation "com.google.dagger:hilt-android:2.43.2"
+    kapt "com.google.dagger:hilt-compiler:2.43.2"
+    implementation "androidx.hilt:hilt-navigation-compose:1.0.0"
+    implementation 'com.google.dagger:dagger:2.43.2'
+    kapt 'com.google.dagger:dagger-compiler:2.43.2'
 
 }

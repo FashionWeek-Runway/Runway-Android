@@ -5,13 +5,13 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cmc12th.runway.data.repository.AuthRepositoryImpl
-import com.cmc12th.runway.data.request.OauthLoginRequest
-import com.cmc12th.runway.data.request.auth.PasswordRequest
-import com.cmc12th.runway.data.response.ErrorResponse
+import com.cmc12th.domain.model.request.OauthLoginRequest
+import com.cmc12th.domain.model.request.auth.PasswordRequest
+import com.cmc12th.domain.model.response.ErrorResponse
 import com.cmc12th.runway.data.response.user.UserInformationManagamentInfo
-import com.cmc12th.runway.domain.repository.AuthRepository
-import com.cmc12th.runway.domain.repository.SignInRepository
-import com.cmc12th.runway.ui.signin.model.Password
+import com.cmc12th.domain.repository.AuthRepository
+import com.cmc12th.domain.repository.SignInRepository
+import com.cmc12th.domain.model.signin.model.Password
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
@@ -27,25 +27,28 @@ data class SettingPersonalInfoUiState(
 )
 
 data class EditPasswordUiState(
-    val verifyPassword: Password = Password.default(),
-    val newPassword: Password = Password.default(),
-    val checkNewPassword: Password = Password.default(),
+    val verifyPassword: com.cmc12th.domain.model.signin.model.Password = com.cmc12th.domain.model.signin.model.Password.default(),
+    val newPassword: com.cmc12th.domain.model.signin.model.Password = com.cmc12th.domain.model.signin.model.Password.default(),
+    val checkNewPassword: com.cmc12th.domain.model.signin.model.Password = com.cmc12th.domain.model.signin.model.Password.default(),
 ) {
     fun checkValidate() = newPassword.isValidatePassword(checkNewPassword)
 }
 
 @HiltViewModel
 class SettingViewModel @Inject constructor(
-    private val authRepository: AuthRepository,
-    private val signInRepository: SignInRepository,
+    private val authRepository: com.cmc12th.domain.repository.AuthRepository,
+    private val signInRepository: com.cmc12th.domain.repository.SignInRepository,
 ) : ViewModel() {
 
     private val _personalInfo = MutableStateFlow(UserInformationManagamentInfo.default())
     private val _nickname = MutableStateFlow("")
 
-    private val _verifyPassword = MutableStateFlow(Password.default())
-    private val _newPassword = MutableStateFlow(Password.default())
-    private val _checkNewPassword = MutableStateFlow(Password.default())
+    private val _verifyPassword =
+        MutableStateFlow(com.cmc12th.domain.model.signin.model.Password.default())
+    private val _newPassword =
+        MutableStateFlow(com.cmc12th.domain.model.signin.model.Password.default())
+    private val _checkNewPassword =
+        MutableStateFlow(com.cmc12th.domain.model.signin.model.Password.default())
 
     val personalInfoUiState: StateFlow<SettingPersonalInfoUiState> =
         combine(_personalInfo, _nickname) { personalInfo, nickname ->
@@ -120,10 +123,10 @@ class SettingViewModel @Inject constructor(
     private fun linkToKakao(
         kakaoToken: String,
         onSuccess: () -> Unit,
-        onError: (ErrorResponse) -> Unit,
+        onError: (com.cmc12th.domain.model.response.ErrorResponse) -> Unit,
     ) = viewModelScope.launch {
         authRepository.linkToKakao(
-            oauthLoginRequest = OauthLoginRequest(accessToken = kakaoToken)
+            oauthLoginRequest = com.cmc12th.domain.model.request.OauthLoginRequest(accessToken = kakaoToken)
         ).collect { apiState ->
             apiState.onSuccess {
                 onSuccess()
@@ -135,7 +138,7 @@ class SettingViewModel @Inject constructor(
     fun getKakaoToken(
         onSuccess: () -> Unit,
         context: Context,
-        onError: (ErrorResponse) -> Unit,
+        onError: (com.cmc12th.domain.model.response.ErrorResponse) -> Unit,
     ) {
         // 카카오계정으로 로그인 공통 callback 구성
         // 카카오톡으로 로그인 할 수 없어 카카오계정으로 로그인할 경우 사용됨
@@ -176,21 +179,29 @@ class SettingViewModel @Inject constructor(
         )
     }
 
-    fun unLinkToKakao(onError: (ErrorResponse) -> Unit) = viewModelScope.launch {
-        authRepository.unLinkToKakao().collect { apiState ->
-            apiState.onSuccess {
-                updateKakaoLinkState(false)
+    fun unLinkToKakao(onError: (com.cmc12th.domain.model.response.ErrorResponse) -> Unit) =
+        viewModelScope.launch {
+            authRepository.unLinkToKakao().collect { apiState ->
+                apiState.onSuccess {
+                    updateKakaoLinkState(false)
+                }
+                apiState.onError {
+                    onError(it)
+                }
             }
-            apiState.onError {
-                onError(it)
-            }
+
         }
 
-    }
-
-    fun verifyPassword(onSuccess: () -> Unit, onError: (ErrorResponse) -> Unit) =
+    fun verifyPassword(
+        onSuccess: () -> Unit,
+        onError: (com.cmc12th.domain.model.response.ErrorResponse) -> Unit
+    ) =
         viewModelScope.launch {
-            signInRepository.verifyPassword(PasswordRequest(_verifyPassword.value.value))
+            signInRepository.verifyPassword(
+                com.cmc12th.domain.model.request.auth.PasswordRequest(
+                    _verifyPassword.value.value
+                )
+            )
                 .collect { apiState ->
                     apiState.onSuccess {
                         onSuccess()
@@ -200,7 +211,11 @@ class SettingViewModel @Inject constructor(
         }
 
     fun modifyPassword(onSuccess: () -> Unit) = viewModelScope.launch {
-        signInRepository.modifyPassword(PasswordRequest(_checkNewPassword.value.value))
+        signInRepository.modifyPassword(
+            com.cmc12th.domain.model.request.auth.PasswordRequest(
+                _checkNewPassword.value.value
+            )
+        )
             .collect { apiState ->
                 apiState.onSuccess {
                     onSuccess()
@@ -209,15 +224,15 @@ class SettingViewModel @Inject constructor(
 
     }
 
-    fun updateVerifyPassword(password: Password) {
+    fun updateVerifyPassword(password: com.cmc12th.domain.model.signin.model.Password) {
         _verifyPassword.value = password
     }
 
-    fun updateNewPassword(password: Password) {
+    fun updateNewPassword(password: com.cmc12th.domain.model.signin.model.Password) {
         _newPassword.value = password
     }
 
-    fun updateCheckNewPassword(password: Password) {
+    fun updateCheckNewPassword(password: com.cmc12th.domain.model.signin.model.Password) {
         _checkNewPassword.value = password
     }
 

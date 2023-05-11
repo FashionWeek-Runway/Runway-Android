@@ -29,7 +29,7 @@ import com.cmc12th.runway.ui.components.*
 import com.cmc12th.runway.ui.signin.components.OnBoardStep
 import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.signin.SignInViewModel
-import com.cmc12th.runway.ui.signin.model.Agreement
+import com.cmc12th.domain.model.signin.model.Agreement
 import com.cmc12th.runway.ui.theme.*
 import com.cmc12th.runway.utils.Constants
 import com.cmc12th.runway.utils.Constants.SIGNIN_AGREEMENT_DETAIL_ROUTE
@@ -142,7 +142,7 @@ fun AgreementComponent(
     onClick: () -> Unit,
     onCheck: () -> Unit,
     isChecked: Boolean,
-    agreement: Agreement,
+    agreement: com.cmc12th.domain.model.signin.model.Agreement,
 ) {
     Row(
         modifier = Modifier

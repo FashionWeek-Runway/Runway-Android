@@ -45,8 +45,8 @@ import com.cmc12th.runway.ui.domain.rememberBottomSheet
 import com.cmc12th.runway.ui.signin.SignInViewModel
 import com.cmc12th.runway.ui.signin.components.OnBoardHeadLine
 import com.cmc12th.runway.ui.signin.model.*
-import com.cmc12th.runway.ui.signin.model.Birth.Companion.BIRTH_LENGTH
-import com.cmc12th.runway.ui.signin.model.Phone.Companion.PHONE_NUMBER_LENGTH
+import com.cmc12th.domain.model.signin.model.Birth.Companion.BIRTH_LENGTH
+import com.cmc12th.domain.model.signin.model.Phone.Companion.PHONE_NUMBER_LENGTH
 import com.cmc12th.runway.ui.theme.*
 import com.cmc12th.runway.utils.Constants.SIGNIN_PHONE_VERIFY_ROUTE
 import kotlinx.coroutines.launch
@@ -275,8 +275,8 @@ fun TestButon(onClick: () -> Unit) {
 fun PhoneContainer(
     changeFocus: (Boolean) -> Unit,
     showBottomSheet: (BottomSheetContent) -> Unit,
-    phone: Phone,
-    updateMobildeCarrier: (MobileCarrier) -> Unit,
+    phone: com.cmc12th.domain.model.signin.model.Phone,
+    updateMobildeCarrier: (com.cmc12th.domain.model.signin.model.MobileCarrier) -> Unit,
     updatePhoneNumber: (String) -> Unit,
     focusRequest: FocusRequester,
     onscrollBottom: () -> Unit,
@@ -303,13 +303,14 @@ fun PhoneContainer(
                         onClick = {
                             showBottomSheet(BottomSheetContent(
                                 title = "통신사",
-                                itemList = MobileCarrier.values().map {
-                                    BottomSheetContentItem(
-                                        itemName = it.getName(),
-                                        onItemClick = { updateMobildeCarrier(it) },
-                                        isSeleceted = it == phone.mobileCarrier
-                                    )
-                                }
+                                itemList = com.cmc12th.domain.model.signin.model.MobileCarrier.values()
+                                    .map {
+                                        BottomSheetContentItem(
+                                            itemName = it.getName(),
+                                            onItemClick = { updateMobildeCarrier(it) },
+                                            isSeleceted = it == phone.mobileCarrier
+                                        )
+                                    }
                             ))
                         },
                         colors = ButtonDefaults.buttonColors(Color.White)
@@ -367,8 +368,8 @@ fun PhoneContainer(
 @Composable
 fun BirthContainer(
     focusRequest: FocusRequester,
-    birth: Birth,
-    updateBirth: (Birth) -> Unit,
+    birth: com.cmc12th.domain.model.signin.model.Birth,
+    updateBirth: (com.cmc12th.domain.model.signin.model.Birth) -> Unit,
     onFocusRequest: () -> Unit,
 ) {
     Column {
@@ -380,7 +381,13 @@ fun BirthContainer(
             value = birth.date,
             focusRequest = focusRequest,
             placeholderText = "19990101",
-            onvalueChanged = { if (it.length <= BIRTH_LENGTH) updateBirth(Birth(it)) },
+            onvalueChanged = {
+                if (it.length <= BIRTH_LENGTH) updateBirth(
+                    com.cmc12th.domain.model.signin.model.Birth(
+                        it
+                    )
+                )
+            },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Phone,
                 imeAction = ImeAction.Next
@@ -395,18 +402,21 @@ fun BirthContainer(
 
 @Composable
 private fun GenderContainer(
-    gender: Gender,
-    updateGender: (Gender) -> Unit,
+    gender: com.cmc12th.domain.model.signin.model.Gender,
+    updateGender: (com.cmc12th.domain.model.signin.model.Gender) -> Unit,
 ) {
     Column {
         Text(text = "성별", style = Caption, color = Gray700)
         HeightSpacer(height = 10.dp)
         Row(modifier = Modifier.fillMaxWidth()) {
-            GenderRadioButton(Gender.Male, gender.isMale()) {
-                updateGender(Gender.Male)
+            GenderRadioButton(com.cmc12th.domain.model.signin.model.Gender.Male, gender.isMale()) {
+                updateGender(com.cmc12th.domain.model.signin.model.Gender.Male)
             }
-            GenderRadioButton(Gender.FeMale, gender.isFemale()) {
-                updateGender(Gender.FeMale)
+            GenderRadioButton(
+                com.cmc12th.domain.model.signin.model.Gender.FeMale,
+                gender.isFemale()
+            ) {
+                updateGender(com.cmc12th.domain.model.signin.model.Gender.FeMale)
             }
         }
     }
@@ -414,7 +424,7 @@ private fun GenderContainer(
 
 @Composable
 private fun RowScope.GenderRadioButton(
-    gender: Gender,
+    gender: com.cmc12th.domain.model.signin.model.Gender,
     checkGender: Boolean,
     updateGender: () -> Unit,
 ) {
@@ -446,9 +456,12 @@ private fun RowScope.GenderRadioButton(
 @Composable
 private fun NameContainter(
     showBottomSheet: (BottomSheetContent) -> Unit = {},
-    nameAndNationality: NameAndNationality = NameAndNationality("", Nationality.LOCAL),
+    nameAndNationality: com.cmc12th.domain.model.signin.model.NameAndNationality = com.cmc12th.domain.model.signin.model.NameAndNationality(
+        "",
+        com.cmc12th.domain.model.signin.model.Nationality.LOCAL
+    ),
     updateName: (String) -> Unit = {},
-    updateNationality: (Nationality) -> Unit = {},
+    updateNationality: (com.cmc12th.domain.model.signin.model.Nationality) -> Unit = {},
     onFocusRequest: () -> Unit = {},
 ) {
     Column {
@@ -481,8 +494,8 @@ private fun NameContainter(
 @Composable
 private fun NationalityButton(
     showBottomSheet: (BottomSheetContent) -> Unit,
-    updateNationality: (Nationality) -> Unit,
-    nameAndNationality: NameAndNationality,
+    updateNationality: (com.cmc12th.domain.model.signin.model.Nationality) -> Unit,
+    nameAndNationality: com.cmc12th.domain.model.signin.model.NameAndNationality,
 ) {
     Box(
         modifier = Modifier.padding(0.dp)
@@ -498,7 +511,7 @@ private fun NationalityButton(
                 showBottomSheet(
                     BottomSheetContent(
                         title = "국가",
-                        itemList = Nationality.values().map {
+                        itemList = com.cmc12th.domain.model.signin.model.Nationality.values().map {
                             BottomSheetContentItem(
                                 itemName = it.getString(),
                                 onItemClick = { updateNationality(it) },

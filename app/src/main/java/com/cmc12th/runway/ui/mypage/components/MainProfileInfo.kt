@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.cmc12th.runway.R
-import com.cmc12th.runway.ui.signin.model.ProfileImageType
+import com.cmc12th.domain.model.signin.model.ProfileImageType
 import com.cmc12th.runway.ui.theme.Black
 import com.cmc12th.runway.ui.theme.HeadLine3
 import com.cmc12th.runway.ui.theme.HeadLine4M
@@ -30,7 +30,7 @@ import com.cmc12th.runway.ui.theme.Primary
 fun MainProfileInfo(
     navigateToEditProfile: () -> Unit,
     nickName: String,
-    profileImage: ProfileImageType,
+    profileImage: com.cmc12th.domain.model.signin.model.ProfileImageType,
 ) {
     Row(
         modifier = Modifier
@@ -51,9 +51,9 @@ fun MainProfileInfo(
                 model = ImageRequest.Builder(LocalContext.current)
                     .data(
                         when (profileImage) {
-                            ProfileImageType.DEFAULT -> null
-                            is ProfileImageType.LOCAL -> null
-                            is ProfileImageType.SOCIAL -> profileImage.imgUrl
+                            com.cmc12th.domain.model.signin.model.ProfileImageType.DEFAULT -> null
+                            is com.cmc12th.domain.model.signin.model.ProfileImageType.LOCAL -> null
+                            is com.cmc12th.domain.model.signin.model.ProfileImageType.SOCIAL -> profileImage.imgUrl
                         }
                     )
                     .crossfade(true)

@@ -28,7 +28,7 @@ import com.cmc12th.runway.ui.components.LastPasswordVisibleCustomTextField
 import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.setting.SettingViewModel
 import com.cmc12th.runway.ui.signin.components.OnBoardHeadLine
-import com.cmc12th.runway.ui.signin.model.Password
+import com.cmc12th.domain.model.signin.model.Password
 import com.cmc12th.runway.ui.theme.Body1B
 import com.cmc12th.runway.ui.theme.Gray300
 import com.cmc12th.runway.utils.Constants
@@ -94,7 +94,13 @@ fun VerifyPasswordScreen(
                     fontSize = 16.sp,
                     value = uiState.verifyPassword.value,
                     placeholderText = "비밀번호 입력",
-                    onvalueChanged = { viewModel.updateVerifyPassword(Password(it)) },
+                    onvalueChanged = {
+                        viewModel.updateVerifyPassword(
+                            com.cmc12th.domain.model.signin.model.Password(
+                                it
+                            )
+                        )
+                    },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Password, imeAction = ImeAction.Done
                     ),

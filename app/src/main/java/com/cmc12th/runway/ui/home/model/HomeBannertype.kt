@@ -1,6 +1,6 @@
 package com.cmc12th.runway.ui.home.model
 
-import com.cmc12th.runway.data.response.home.HomeBannerItem
+import com.cmc12th.domain.model.response.home.HomeBannerItem
 
 sealed class HomeBannertype {
     data class STOREBANNER(
@@ -16,7 +16,7 @@ sealed class HomeBannertype {
     object SHOWMOREBANNER : HomeBannertype()
 
     companion object {
-        fun toStoreBanner(homeBannerItem: HomeBannerItem): STOREBANNER {
+        fun toStoreBanner(homeBannerItem: com.cmc12th.domain.model.response.home.HomeBannerItem): STOREBANNER {
             return STOREBANNER(
                 bookmark = homeBannerItem.bookmark,
                 bookmarkCnt = homeBannerItem.bookmarkCnt,

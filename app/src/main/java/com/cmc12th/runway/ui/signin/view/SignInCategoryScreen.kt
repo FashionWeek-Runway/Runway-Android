@@ -18,15 +18,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.cmc12th.runway.data.response.ErrorResponse
+import com.cmc12th.domain.model.response.ErrorResponse
 import com.cmc12th.runway.ui.components.BackIcon
 import com.cmc12th.runway.ui.components.HeightSpacer
 import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.signin.SignInViewModel
 import com.cmc12th.runway.ui.signin.components.OnBoardStep
 import com.cmc12th.runway.ui.signin.components.StyleCategoryCheckBox
-import com.cmc12th.runway.ui.signin.model.CategoryTag
-import com.cmc12th.runway.ui.signin.model.SignInType
+import com.cmc12th.domain.model.signin.model.CategoryTag
+import com.cmc12th.domain.model.signin.model.SignInType
 import com.cmc12th.runway.ui.theme.*
 import com.cmc12th.runway.utils.Constants
 import com.cmc12th.runway.utils.Constants.SIGNIN_COMPLETE_ROUTE
@@ -94,13 +94,14 @@ fun SignInCategoryScreen(
                         popUpTo(SIGNIN_GRAPH)
                     }
                 }
-                val onError: (ErrorResponse) -> Unit = { appState.showSnackbar(it.message) }
+                val onError: (com.cmc12th.domain.model.response.ErrorResponse) -> Unit =
+                    { appState.showSnackbar(it.message) }
                 when (uiState.signInType) {
-                    SignInType.Phone -> signInViewModel.signUp(
+                    com.cmc12th.domain.model.signin.model.SignInType.Phone -> signInViewModel.signUp(
                         onSuccess = onSuccess,
                         onError = onError
                     )
-                    SignInType.SOCIAL -> signInViewModel.kakaoSignUp(
+                    com.cmc12th.domain.model.signin.model.SignInType.SOCIAL -> signInViewModel.kakaoSignUp(
                         onSuccess = onSuccess,
                         onError = onError
                     )
@@ -120,8 +121,8 @@ fun SignInCategoryScreen(
 
 @Composable
 fun CategoryGroup(
-    categoryTags: MutableList<CategoryTag>,
-    updateCategoryTag: (CategoryTag) -> Unit,
+    categoryTags: MutableList<com.cmc12th.domain.model.signin.model.CategoryTag>,
+    updateCategoryTag: (com.cmc12th.domain.model.signin.model.CategoryTag) -> Unit,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(15.dp)) {
         categoryTags.chunked(2).forEach { item ->

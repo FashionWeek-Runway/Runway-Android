@@ -50,8 +50,8 @@ import com.cmc12th.runway.ui.domain.model.KeyboardStatus
 import com.cmc12th.runway.ui.domain.rememberBottomSheet
 import com.cmc12th.runway.ui.signin.SignInViewModel
 import com.cmc12th.runway.ui.signin.components.OnBoardStep
-import com.cmc12th.runway.ui.signin.model.Nickname
-import com.cmc12th.runway.ui.signin.model.ProfileImageType
+import com.cmc12th.domain.model.signin.model.Nickname
+import com.cmc12th.domain.model.signin.model.ProfileImageType
 import com.cmc12th.runway.ui.theme.*
 import com.cmc12th.runway.utils.Constants.MAX_NICKNAME_LENGTH
 import com.cmc12th.runway.utils.Constants.SIGNIN_CATEGORY_ROUTE
@@ -115,7 +115,7 @@ fun SignInProfileImageScreen(
     }
     val setImageToViewModel: (Uri?) -> Unit = { uri ->
         if (uri != null) {
-            val image = ProfileImageType.LOCAL(uri = uri)
+            val image = com.cmc12th.domain.model.signin.model.ProfileImageType.LOCAL(uri = uri)
             signInViewModel.updateProfileImage(image)
         }
     }
@@ -195,7 +195,7 @@ fun SignInProfileImageScreen(
                     takePhotoFromCameraLauncher = takePhotoFromCameraLauncher,
                     updateImageUri = { imageUri = it },
                     showBottomSheet = showBottomSheet
-                ) { signInViewModel.updateProfileImage(ProfileImageType.DEFAULT) }
+                ) { signInViewModel.updateProfileImage(com.cmc12th.domain.model.signin.model.ProfileImageType.DEFAULT) }
 
                 /** 닉네임 입력 칸 */
                 HeightSpacer(height = heightSpacerSize)
@@ -242,7 +242,7 @@ fun SignInProfileImageScreen(
 
 @Composable
 fun InputNickname(
-    nickname: Nickname,
+    nickname: com.cmc12th.domain.model.signin.model.Nickname,
     updateNickName: (String) -> Unit,
     errorMessage: String,
     onDone: () -> Unit,
@@ -270,7 +270,7 @@ fun InputNickname(
 
 @Composable
 fun ProfileImageIcon(
-    profileImageType: ProfileImageType,
+    profileImageType: com.cmc12th.domain.model.signin.model.ProfileImageType,
     profileSize: Float,
     galleryLauncher: ManagedActivityResultLauncher<String, Uri?>,
     takePhotoFromCameraLauncher: ManagedActivityResultLauncher<Uri, Boolean>,
@@ -292,7 +292,7 @@ fun ProfileImageIcon(
             shape = CircleShape
         ) {
             when (profileImageType) {
-                is ProfileImageType.DEFAULT -> {
+                is com.cmc12th.domain.model.signin.model.ProfileImageType.DEFAULT -> {
                     DefaultProfileImage(
                         galleryLauncher = galleryLauncher,
                         takePhotoFromCameraLauncher = takePhotoFromCameraLauncher,
@@ -317,7 +317,7 @@ fun ProfileImageIcon(
 
 @Composable
 private fun SelectedProfileImage(
-    selectedImage: ProfileImageType,
+    selectedImage: com.cmc12th.domain.model.signin.model.ProfileImageType,
     takePhotoFromCameraLauncher: ManagedActivityResultLauncher<Uri, Boolean>,
     galleryLauncher: ManagedActivityResultLauncher<String, Uri?>,
     showBottomSheet: (BottomSheetContent) -> Unit,
@@ -326,7 +326,7 @@ private fun SelectedProfileImage(
 ) {
     val context = LocalContext.current
     Box {
-        if (selectedImage is ProfileImageType.SOCIAL) {
+        if (selectedImage is com.cmc12th.domain.model.signin.model.ProfileImageType.SOCIAL) {
             AsyncImage(
                 modifier = Modifier
                     .background(Gray200)
@@ -340,7 +340,7 @@ private fun SelectedProfileImage(
                 contentScale = ContentScale.Crop,
             )
         }
-        if (selectedImage is ProfileImageType.LOCAL) {
+        if (selectedImage is com.cmc12th.domain.model.signin.model.ProfileImageType.LOCAL) {
             AsyncImage(
                 modifier = Modifier
                     .background(Gray200)

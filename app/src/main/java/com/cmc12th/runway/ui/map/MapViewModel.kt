@@ -14,23 +14,23 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.paging.filter
-import com.cmc12th.runway.data.model.RecentStr
-import com.cmc12th.runway.data.model.SearchType
-import com.cmc12th.runway.data.request.map.MapFilterRequest
-import com.cmc12th.runway.data.request.map.MapSearchRequest
+import com.cmc12th.model.RecentStr
+import com.cmc12th.model.SearchType
+import com.cmc12th.domain.model.request.map.MapFilterRequest
+import com.cmc12th.domain.model.request.map.MapSearchRequest
 import com.cmc12th.runway.data.response.map.RegionSearch
 import com.cmc12th.runway.data.response.map.StoreSearch
-import com.cmc12th.runway.data.response.map.toNaverMapItem
-import com.cmc12th.runway.domain.repository.MapRepository
-import com.cmc12th.runway.domain.repository.SearchRepository
+import com.cmc12th.domain.model.response.map.toNaverMapItem
+import com.cmc12th.domain.repository.MapRepository
+import com.cmc12th.domain.repository.SearchRepository
 import com.cmc12th.runway.ui.domain.model.RunwayCategory
 import com.cmc12th.runway.ui.map.MapViewModel.Companion.DEFAULT_LATLNG
 import com.cmc12th.runway.ui.map.components.DetailState
-import com.cmc12th.runway.ui.map.model.BottomSheetContent
-import com.cmc12th.runway.ui.map.model.MapStatus
-import com.cmc12th.runway.ui.map.model.MovingCameraWrapper
-import com.cmc12th.runway.ui.map.model.NaverItem
-import com.cmc12th.runway.ui.signin.model.CategoryTag
+import com.cmc12th.domain.model.map.model.BottomSheetContent
+import com.cmc12th.domain.model.map.model.MapStatus
+import com.cmc12th.domain.model.map.model.MovingCameraWrapper
+import com.cmc12th.domain.model.map.model.NaverItem
+import com.cmc12th.domain.model.signin.model.CategoryTag
 import com.google.android.gms.location.*
 import com.naver.maps.geometry.LatLng
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -45,13 +45,13 @@ import javax.inject.Inject
 
 @Stable
 data class MapUiState(
-    val markerItems: List<NaverItem> = emptyList(),
-    val categoryItems: List<CategoryTag> = emptyList(),
+    val markerItems: List<com.cmc12th.domain.model.map.model.NaverItem> = emptyList(),
+    val categoryItems: List<com.cmc12th.domain.model.signin.model.CategoryTag> = emptyList(),
     val isBookmarked: Boolean = false,
     val userPosition: LatLng = DEFAULT_LATLNG,
-    val movingCameraPosition: MovingCameraWrapper = MovingCameraWrapper.DEFAULT,
-    val bottomSheetContents: BottomSheetContent = BottomSheetContent.DEFAULT,
-    val mapStatus: MapStatus = MapStatus.DEFAULT,
+    val movingCameraPosition: com.cmc12th.domain.model.map.model.MovingCameraWrapper = com.cmc12th.domain.model.map.model.MovingCameraWrapper.DEFAULT,
+    val bottomSheetContents: com.cmc12th.domain.model.map.model.BottomSheetContent = com.cmc12th.domain.model.map.model.BottomSheetContent.DEFAULT,
+    val mapStatus: com.cmc12th.domain.model.map.model.MapStatus = com.cmc12th.domain.model.map.model.MapStatus.DEFAULT,
 )
 
 @Stable
@@ -59,14 +59,14 @@ data class SearchUiState(
     val searchText: TextFieldValue = TextFieldValue(""),
     val regionSearchs: List<RegionSearch> = emptyList(),
     val storeSearchs: List<StoreSearch> = emptyList(),
-    val recentSearchs: List<RecentStr> = emptyList(),
+    val recentSearchs: List<com.cmc12th.model.RecentStr> = emptyList(),
 )
 
 @HiltViewModel
 class MapViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val mapRepository: MapRepository,
-    private val searchRepository: SearchRepository,
+    private val mapRepository: com.cmc12th.domain.repository.MapRepository,
+    private val searchRepository: com.cmc12th.domain.repository.SearchRepository,
 ) : ViewModel(), LifecycleObserver {
 
     private val fusedLocationClient: FusedLocationProviderClient =
@@ -79,25 +79,26 @@ class MapViewModel @Inject constructor(
     private val locationCallback: CustomLocationCallback = CustomLocationCallback()
 
     // 맵에 찍히는 마커 아이템
-    private val _markerItems: MutableStateFlow<List<NaverItem>> = MutableStateFlow(emptyList())
+    private val _markerItems: MutableStateFlow<List<com.cmc12th.domain.model.map.model.NaverItem>> =
+        MutableStateFlow(emptyList())
 
     // 바텀 시트 아이템
-    private val _bottomsheetItem: MutableStateFlow<BottomSheetContent> =
-        MutableStateFlow(BottomSheetContent.DEFAULT)
+    private val _bottomsheetItem: MutableStateFlow<com.cmc12th.domain.model.map.model.BottomSheetContent> =
+        MutableStateFlow(com.cmc12th.domain.model.map.model.BottomSheetContent.DEFAULT)
 
     // 검색 탭 및 필터링 되는 아이템들
-    private val _categoryItems: MutableStateFlow<List<CategoryTag>> =
+    private val _categoryItems: MutableStateFlow<List<com.cmc12th.domain.model.signin.model.CategoryTag>> =
         MutableStateFlow(RunwayCategory.generateCategoryTags())
     private val _isBookmarked: MutableStateFlow<Boolean> = MutableStateFlow(false)
 
     val initialLodingStatus = mutableStateOf(true)
 
     /** 해당 값은 변할 시 카메라가 이동함 */
-    private val _movingCameraPosition: MutableStateFlow<MovingCameraWrapper> =
-        MutableStateFlow(MovingCameraWrapper.DEFAULT)
+    private val _movingCameraPosition: MutableStateFlow<com.cmc12th.domain.model.map.model.MovingCameraWrapper> =
+        MutableStateFlow(com.cmc12th.domain.model.map.model.MovingCameraWrapper.DEFAULT)
 
-    private val _mapStatus: MutableStateFlow<MapStatus> =
-        MutableStateFlow<MapStatus>(MapStatus.DEFAULT)
+    private val _mapStatus: MutableStateFlow<com.cmc12th.domain.model.map.model.MapStatus> =
+        MutableStateFlow<com.cmc12th.domain.model.map.model.MapStatus>(com.cmc12th.domain.model.map.model.MapStatus.DEFAULT)
 
     private val _userPosition = MutableStateFlow(DEFAULT_LATLNG)
 
@@ -114,13 +115,13 @@ class MapViewModel @Inject constructor(
     ) { resultArr ->
         @Suppress("UNCHECKED_CAST")
         MapUiState(
-            markerItems = resultArr[0] as List<NaverItem>,
-            categoryItems = resultArr[1] as List<CategoryTag>,
+            markerItems = resultArr[0] as List<com.cmc12th.domain.model.map.model.NaverItem>,
+            categoryItems = resultArr[1] as List<com.cmc12th.domain.model.signin.model.CategoryTag>,
             isBookmarked = resultArr[2] as Boolean,
             userPosition = resultArr[3] as LatLng,
-            movingCameraPosition = resultArr[4] as MovingCameraWrapper,
-            bottomSheetContents = resultArr[5] as BottomSheetContent,
-            mapStatus = resultArr[6] as MapStatus
+            movingCameraPosition = resultArr[4] as com.cmc12th.domain.model.map.model.MovingCameraWrapper,
+            bottomSheetContents = resultArr[5] as com.cmc12th.domain.model.map.model.BottomSheetContent,
+            mapStatus = resultArr[6] as com.cmc12th.domain.model.map.model.MapStatus
         )
     }.stateIn(
         scope = viewModelScope,
@@ -132,7 +133,7 @@ class MapViewModel @Inject constructor(
     private val _regionSearch = MutableStateFlow(listOf<RegionSearch>())
     private val _storeSearch = MutableStateFlow(listOf<StoreSearch>())
 
-    private val _recentSearchs = MutableStateFlow(emptyList<RecentStr>())
+    private val _recentSearchs = MutableStateFlow(emptyList<com.cmc12th.model.RecentStr>())
 
     init {
         viewModelScope.launch {
@@ -154,7 +155,7 @@ class MapViewModel @Inject constructor(
             searchText = flowArr[0] as TextFieldValue,
             regionSearchs = flowArr[1] as List<RegionSearch>,
             storeSearchs = flowArr[2] as List<StoreSearch>,
-            recentSearchs = flowArr[3] as List<RecentStr>
+            recentSearchs = flowArr[3] as List<com.cmc12th.model.RecentStr>
         )
     }.stateIn(
         scope = viewModelScope,
@@ -181,7 +182,7 @@ class MapViewModel @Inject constructor(
             delay(200) // 디바운싱 0.2초 적용
             if (_searchText.value.text.isNotBlank()) {
                 mapRepository.mapSearch(
-                    MapSearchRequest(
+                    com.cmc12th.domain.model.request.map.MapSearchRequest(
                         content = _searchText.value.text,
                         latitude = _userPosition.value.latitude,
                         longitude = _userPosition.value.longitude
@@ -198,14 +199,14 @@ class MapViewModel @Inject constructor(
 
     /** 맵 스크롤 정보(여러개) 가져오기 */
     fun mapScrollInfoPaging(latLng: LatLng) = viewModelScope.launch {
-        mapRepository.getMpaInfoPagingItem(mapFilterRequest = MapFilterRequest(
+        mapRepository.getMpaInfoPagingItem(mapFilterRequest = com.cmc12th.domain.model.request.map.MapFilterRequest(
             latitude = latLng.latitude,
             longitude = latLng.longitude,
             category = _categoryItems.value.filter { it.isSelected }.map { it.name },
         )
         ).cachedIn(viewModelScope).collect {
             _bottomsheetItem.value =
-                BottomSheetContent.MULTI(
+                com.cmc12th.domain.model.map.model.BottomSheetContent.MULTI(
                     "",
                     MutableStateFlow(PagingData.empty())
                 ).apply {
@@ -214,19 +215,25 @@ class MapViewModel @Inject constructor(
         }
     }
 
-    private var scrollTemp: BottomSheetContent = BottomSheetContent.DEFAULT
-    private var markerItemsTemp = emptyList<NaverItem>()
-    private var locationScrollTemp: BottomSheetContent = BottomSheetContent.DEFAULT
+    private var scrollTemp: com.cmc12th.domain.model.map.model.BottomSheetContent =
+        com.cmc12th.domain.model.map.model.BottomSheetContent.DEFAULT
+    private var markerItemsTemp = emptyList<com.cmc12th.domain.model.map.model.NaverItem>()
+    private var locationScrollTemp: com.cmc12th.domain.model.map.model.BottomSheetContent =
+        com.cmc12th.domain.model.map.model.BottomSheetContent.DEFAULT
 
     /** 마커 클릭했을 때 하단 정보 가져오기 */
     fun mapInfo(storeId: Int) = viewModelScope.launch {
-        updateBottomSheetItem(BottomSheetContent.LOADING)
+        updateBottomSheetItem(com.cmc12th.domain.model.map.model.BottomSheetContent.LOADING)
         mapRepository.mapInfo(storeId).collect { apiState ->
             apiState.onSuccess {
-                updateBottomSheetItem(BottomSheetContent.SINGLE(contents = it.result))
+                updateBottomSheetItem(
+                    com.cmc12th.domain.model.map.model.BottomSheetContent.SINGLE(
+                        contents = it.result
+                    )
+                )
             }
             apiState.onError {
-                updateBottomSheetItem(BottomSheetContent.DEFAULT)
+                updateBottomSheetItem(com.cmc12th.domain.model.map.model.BottomSheetContent.DEFAULT)
             }
         }
     }
@@ -234,7 +241,7 @@ class MapViewModel @Inject constructor(
     /** 맵에 보이는 마커들 정보 가져오기 */
     fun mapFiltering(latLng: LatLng) = viewModelScope.launch {
         mapRepository.mapFiltering(
-            MapFilterRequest(
+            com.cmc12th.domain.model.request.map.MapFilterRequest(
                 category = _categoryItems.value.filter { it.isSelected }.map { it.name },
                 latitude = latLng.latitude,
                 longitude = latLng.longitude
@@ -264,13 +271,13 @@ class MapViewModel @Inject constructor(
         mapRepository.storeSearch(storeId).collect { apiState ->
             apiState.onSuccess {
                 updateBottomSheetItem(
-                    BottomSheetContent.SINGLE(
+                    com.cmc12th.domain.model.map.model.BottomSheetContent.SINGLE(
                         storeName,
                         it.result.storeInfo.toMapInfoItem()
                     )
                 )
                 updateMovingCamera(
-                    MovingCameraWrapper.MOVING(
+                    com.cmc12th.domain.model.map.model.MovingCameraWrapper.MOVING(
                         Location("SelectedMarker").apply {
                             latitude = it.result.mapMarker.latitude
                             longitude = it.result.mapMarker.longitude
@@ -288,7 +295,7 @@ class MapViewModel @Inject constructor(
         mapRepository.locationMarkerSearch(regionId).collect { apiState ->
             apiState.onSuccess { it ->
                 updateMovingCamera(
-                    MovingCameraWrapper.MOVING(
+                    com.cmc12th.domain.model.map.model.MovingCameraWrapper.MOVING(
                         Location("AveragePosition").apply {
                             latitude = it.result.map { it.latitude }.average()
                             longitude = it.result.map { it.longitude }.average()
@@ -308,7 +315,10 @@ class MapViewModel @Inject constructor(
             regionId = regionId,
         ).cachedIn(viewModelScope).collect {
             _bottomsheetItem.value =
-                BottomSheetContent.MULTI(region, MutableStateFlow(PagingData.empty())).apply {
+                com.cmc12th.domain.model.map.model.BottomSheetContent.MULTI(
+                    region,
+                    MutableStateFlow(PagingData.empty())
+                ).apply {
                     this.contents.value = it
                 }
         }
@@ -316,7 +326,7 @@ class MapViewModel @Inject constructor(
 
 
     fun saveTempDatas() {
-        if (_bottomsheetItem.value is BottomSheetContent.MULTI) {
+        if (_bottomsheetItem.value is com.cmc12th.domain.model.map.model.BottomSheetContent.MULTI) {
             scrollTemp = _bottomsheetItem.value
             markerItemsTemp = _markerItems.value
         }
@@ -337,29 +347,29 @@ class MapViewModel @Inject constructor(
 
     fun onMapClick() {
         when (_mapStatus.value) {
-            MapStatus.DEFAULT -> {
+            com.cmc12th.domain.model.map.model.MapStatus.DEFAULT -> {
                 resetSelectedMarkers()
-                _mapStatus.value = MapStatus.ZOOM
+                _mapStatus.value = com.cmc12th.domain.model.map.model.MapStatus.ZOOM
             }
-            MapStatus.ZOOM -> {
-                _mapStatus.value = MapStatus.DEFAULT
+            com.cmc12th.domain.model.map.model.MapStatus.ZOOM -> {
+                _mapStatus.value = com.cmc12th.domain.model.map.model.MapStatus.DEFAULT
             }
-            MapStatus.LOCATION_SEARCH -> {
+            com.cmc12th.domain.model.map.model.MapStatus.LOCATION_SEARCH -> {
             }
-            MapStatus.SHOP_SEARCH -> {
-                _mapStatus.value = MapStatus.SEARCH_ZOOM
+            com.cmc12th.domain.model.map.model.MapStatus.SHOP_SEARCH -> {
+                _mapStatus.value = com.cmc12th.domain.model.map.model.MapStatus.SEARCH_ZOOM
             }
-            MapStatus.SEARCH_ZOOM -> {
-                _mapStatus.value = MapStatus.SHOP_SEARCH
+            com.cmc12th.domain.model.map.model.MapStatus.SEARCH_ZOOM -> {
+                _mapStatus.value = com.cmc12th.domain.model.map.model.MapStatus.SHOP_SEARCH
             }
-            MapStatus.MARKER_CLICKED -> {
-                _mapStatus.value = MapStatus.DEFAULT
+            com.cmc12th.domain.model.map.model.MapStatus.MARKER_CLICKED -> {
+                _mapStatus.value = com.cmc12th.domain.model.map.model.MapStatus.DEFAULT
                 // 단일 항목을 클릭했다가 돌아올 때 복구
                 loadTempDatas()
                 resetSelectedMarkers()
             }
-            MapStatus.LOCATION_SEARCH_MARKER_CLICKED -> {
-                _mapStatus.value = MapStatus.LOCATION_SEARCH
+            com.cmc12th.domain.model.map.model.MapStatus.LOCATION_SEARCH_MARKER_CLICKED -> {
+                _mapStatus.value = com.cmc12th.domain.model.map.model.MapStatus.LOCATION_SEARCH
                 // 단일 항목을 클릭했다가 돌아올 때 복구
                 loadLocationTempDatas()
                 resetSelectedMarkers()
@@ -368,20 +378,32 @@ class MapViewModel @Inject constructor(
         }
     }
 
-    fun addRecentStr(searchStr: String, searchType: SearchType) = viewModelScope.launch {
-        val dateInfo = LocalDateTime.now()
-            .format(DateTimeFormatter.ofPattern("MM.dd"))
-        val dbItem = _recentSearchs.value.find {
-            it.value == searchStr
+    fun addRecentStr(searchStr: String, searchType: com.cmc12th.model.SearchType) =
+        viewModelScope.launch {
+            val dateInfo = LocalDateTime.now()
+                .format(DateTimeFormatter.ofPattern("MM.dd"))
+            val dbItem = _recentSearchs.value.find {
+                it.value == searchStr
+            }
+            if (dbItem == null) {
+                searchRepository.addSearchStr(
+                    com.cmc12th.model.RecentStr(
+                        searchStr,
+                        dateInfo,
+                        searchType
+                    )
+                )
+            } else {
+                searchRepository.addSearchStr(
+                    com.cmc12th.model.RecentStr(
+                        searchStr,
+                        dateInfo,
+                        searchType
+                    ).apply {
+                        id = dbItem.id
+                    })
+            }
         }
-        if (dbItem == null) {
-            searchRepository.addSearchStr(RecentStr(searchStr, dateInfo, searchType))
-        } else {
-            searchRepository.addSearchStr(RecentStr(searchStr, dateInfo, searchType).apply {
-                id = dbItem.id
-            })
-        }
-    }
 
     fun removeRecentStr(id: Int) = viewModelScope.launch {
         _recentSearchs.value.find {
@@ -395,11 +417,11 @@ class MapViewModel @Inject constructor(
         searchRepository.removeAllSearchStr()
     }
 
-    fun updateMovingCamera(movingCameraPosition: MovingCameraWrapper) {
+    fun updateMovingCamera(movingCameraPosition: com.cmc12th.domain.model.map.model.MovingCameraWrapper) {
         _movingCameraPosition.value = movingCameraPosition
     }
 
-    fun updateMapStatus(mapStatus: MapStatus) {
+    fun updateMapStatus(mapStatus: com.cmc12th.domain.model.map.model.MapStatus) {
         _mapStatus.value = mapStatus
     }
 
@@ -413,7 +435,10 @@ class MapViewModel @Inject constructor(
         mapScrollInfoPaging(position)
     }
 
-    fun updateCategoryTags(categoryTag: CategoryTag, position: LatLng) {
+    fun updateCategoryTags(
+        categoryTag: com.cmc12th.domain.model.signin.model.CategoryTag,
+        position: LatLng
+    ) {
         _categoryItems.value = _categoryItems.value.mapIndexed { _, item ->
             if (item.name == categoryTag.name) item.copy(isSelected = !item.isSelected) else item
         }.toMutableList()
@@ -421,13 +446,13 @@ class MapViewModel @Inject constructor(
         mapScrollInfoPaging(position)
     }
 
-    private fun updateMarkerItems(naverItems: List<NaverItem>) {
+    private fun updateMarkerItems(naverItems: List<com.cmc12th.domain.model.map.model.NaverItem>) {
         _markerItems.value = naverItems
     }
 
-    fun updateMarker(copy: NaverItem) {
+    fun updateMarker(copy: com.cmc12th.domain.model.map.model.NaverItem) {
         // TODO 로직 수정 필요
-        val temp = mutableListOf<NaverItem>()
+        val temp = mutableListOf<com.cmc12th.domain.model.map.model.NaverItem>()
         _markerItems.value.forEach {
             if (it.storeId == copy.storeId) {
                 temp.add(it.copy(isClicked = copy.isClicked))
@@ -440,7 +465,7 @@ class MapViewModel @Inject constructor(
 
     fun resetSelectedMarkers() {
         // TODO 로직 수정 필요
-        val temp = mutableListOf<NaverItem>()
+        val temp = mutableListOf<com.cmc12th.domain.model.map.model.NaverItem>()
         _markerItems.value.forEach {
             temp.add(it.copy(isClicked = false))
         }
@@ -448,7 +473,7 @@ class MapViewModel @Inject constructor(
     }
 
 
-    private fun updateBottomSheetItem(bottomsheetItem: BottomSheetContent) {
+    private fun updateBottomSheetItem(bottomsheetItem: com.cmc12th.domain.model.map.model.BottomSheetContent) {
         _bottomsheetItem.value = bottomsheetItem
     }
 
@@ -468,7 +493,8 @@ class MapViewModel @Inject constructor(
                     initialLodingStatus.value = false
                     mapFiltering(LatLng(it.latitude, it.longitude))
                     mapScrollInfoPaging(LatLng(it.latitude, it.longitude))
-                    _movingCameraPosition.value = MovingCameraWrapper.MOVING(it)
+                    _movingCameraPosition.value =
+                        com.cmc12th.domain.model.map.model.MovingCameraWrapper.MOVING(it)
                 }
                 _userPosition.value = LatLng(it.latitude, it.longitude)
             }
@@ -478,7 +504,7 @@ class MapViewModel @Inject constructor(
     companion object {
         var initialMarkerLoadFlag = true
 
-        val DUMMY_NAVER_ITEM = listOf<NaverItem>(
+        val DUMMY_NAVER_ITEM = listOf<com.cmc12th.domain.model.map.model.NaverItem>(
 //            NaverItem(37.540791, 127.096306),
 //            NaverItem(37.550791, 127.076306),
 //            NaverItem(37.560791, 127.066306),

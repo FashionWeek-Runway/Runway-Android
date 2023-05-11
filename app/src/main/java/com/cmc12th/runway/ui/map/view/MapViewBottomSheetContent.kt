@@ -22,7 +22,7 @@ import com.cmc12th.runway.R
 import com.cmc12th.runway.ui.components.HeightSpacer
 import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.map.components.BottomDetailItem
-import com.cmc12th.runway.ui.map.model.BottomSheetContent
+import com.cmc12th.domain.model.map.model.BottomSheetContent
 import com.cmc12th.runway.ui.theme.*
 import com.cmc12th.runway.utils.Constants.BOTTOM_NAVIGATION_HEIGHT
 
@@ -34,7 +34,7 @@ fun MapViewBottomSheetContent(
     isExpandedTagetValue: Boolean,
     setMapStatusOnSearch: () -> Unit,
     setMapStatusDefault: () -> Unit,
-    contents: BottomSheetContent,
+    contents: com.cmc12th.domain.model.map.model.BottomSheetContent,
     navigateToDetail: (id: Int, storeName: String) -> Unit,
     isExpanded: Boolean,
 ) {
@@ -84,9 +84,9 @@ fun MapViewBottomSheetContent(
 
             /** 제목 */
             when (contents) {
-                BottomSheetContent.DEFAULT -> {}
-                BottomSheetContent.LOADING -> {}
-                is BottomSheetContent.MULTI -> {
+                com.cmc12th.domain.model.map.model.BottomSheetContent.DEFAULT -> {}
+                com.cmc12th.domain.model.map.model.BottomSheetContent.LOADING -> {}
+                is com.cmc12th.domain.model.map.model.BottomSheetContent.MULTI -> {
                     if (contents.locationName.isNotBlank()) {
                         Text(
                             text = "[${contents.locationName}] 둘러보기",
@@ -96,17 +96,17 @@ fun MapViewBottomSheetContent(
                         )
                     }
                 }
-                is BottomSheetContent.SINGLE -> {
+                is com.cmc12th.domain.model.map.model.BottomSheetContent.SINGLE -> {
                 }
             }
         }
 
         /** 본문 내용 */
         when (contents) {
-            BottomSheetContent.DEFAULT -> {
+            com.cmc12th.domain.model.map.model.BottomSheetContent.DEFAULT -> {
                 MapBottomSheetEmptyStore()
             }
-            is BottomSheetContent.MULTI -> {
+            is com.cmc12th.domain.model.map.model.BottomSheetContent.MULTI -> {
                 val pagingContents = contents.contents.collectAsLazyPagingItems()
                 LazyColumn(
                     modifier = Modifier
@@ -120,10 +120,10 @@ fun MapViewBottomSheetContent(
                     }
                 }
             }
-            is BottomSheetContent.SINGLE -> {
+            is com.cmc12th.domain.model.map.model.BottomSheetContent.SINGLE -> {
                 BottomDetailItem(navigateToDetail, contents.contents)
             }
-            BottomSheetContent.LOADING -> {
+            com.cmc12th.domain.model.map.model.BottomSheetContent.LOADING -> {
                 MapBottomSheetEmptyStore()
             }
         }

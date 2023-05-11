@@ -33,7 +33,7 @@ import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.cmc12th.runway.R
-import com.cmc12th.runway.data.model.SearchType
+import com.cmc12th.model.SearchType
 import com.cmc12th.runway.ui.components.RunwayIconButton
 import com.cmc12th.runway.ui.detail.view.DetailScreen
 import com.cmc12th.runway.ui.domain.model.ApplicationState
@@ -41,10 +41,10 @@ import com.cmc12th.runway.ui.map.MapUiState
 import com.cmc12th.runway.ui.map.MapViewModel
 import com.cmc12th.runway.ui.map.MapViewModel.Companion.DEFAULT_LATLNG
 import com.cmc12th.runway.ui.map.components.*
-import com.cmc12th.runway.ui.map.model.BottomSheetContent
-import com.cmc12th.runway.ui.map.model.MapStatus
-import com.cmc12th.runway.ui.map.model.MovingCameraWrapper
-import com.cmc12th.runway.ui.map.model.NaverItem
+import com.cmc12th.domain.model.map.model.BottomSheetContent
+import com.cmc12th.domain.model.map.model.MapStatus
+import com.cmc12th.domain.model.map.model.MovingCameraWrapper
+import com.cmc12th.domain.model.map.model.NaverItem
 import com.cmc12th.runway.ui.theme.Body1B
 import com.cmc12th.runway.ui.theme.Primary
 import com.cmc12th.runway.utils.Constants.BOTTOM_NAVIGATION_HEIGHT
@@ -164,20 +164,20 @@ private fun MapViewContents(
         }
     }
 
-    val onMarkerClick: (NaverItem) -> Unit = {
+    val onMarkerClick: (com.cmc12th.domain.model.map.model.NaverItem) -> Unit = {
         if (!mapUiState.mapStatus.onSearch()) {
             mapViewModel.saveTempDatas()
-            mapViewModel.updateMapStatus(MapStatus.MARKER_CLICKED)
+            mapViewModel.updateMapStatus(com.cmc12th.domain.model.map.model.MapStatus.MARKER_CLICKED)
             mapViewModel.updateMarker(it.copy(isClicked = !it.isClicked))
             mapViewModel.mapInfo(it.storeId)
-        } else if (mapUiState.mapStatus == MapStatus.LOCATION_SEARCH) {
+        } else if (mapUiState.mapStatus == com.cmc12th.domain.model.map.model.MapStatus.LOCATION_SEARCH) {
             mapViewModel.saveLocationTempDatas()
-            mapViewModel.updateMapStatus(MapStatus.LOCATION_SEARCH_MARKER_CLICKED)
+            mapViewModel.updateMapStatus(com.cmc12th.domain.model.map.model.MapStatus.LOCATION_SEARCH_MARKER_CLICKED)
             mapViewModel.updateMarker(it.copy(isClicked = !it.isClicked))
             mapViewModel.mapInfo(it.storeId)
         }
         mapViewModel.updateMovingCamera(
-            MovingCameraWrapper.MOVING(
+            com.cmc12th.domain.model.map.model.MovingCameraWrapper.MOVING(
                 Location("SelectedMarker").apply {
                     latitude = it.position.latitude
                     longitude = it.position.longitude
@@ -188,10 +188,10 @@ private fun MapViewContents(
 
     val onMapClick: () -> Unit = {
         when (mapUiState.mapStatus) {
-            MapStatus.MARKER_CLICKED -> {
+            com.cmc12th.domain.model.map.model.MapStatus.MARKER_CLICKED -> {
                 collapsBottomSheet()
             }
-            MapStatus.LOCATION_SEARCH_MARKER_CLICKED -> {
+            com.cmc12th.domain.model.map.model.MapStatus.LOCATION_SEARCH_MARKER_CLICKED -> {
                 collapsBottomSheet()
             }
             else -> {
@@ -207,13 +207,13 @@ private fun MapViewContents(
     }
 
     val setMapStatusDefault: () -> Unit = {
-        mapViewModel.updateMapStatus(MapStatus.DEFAULT)
+        mapViewModel.updateMapStatus(com.cmc12th.domain.model.map.model.MapStatus.DEFAULT)
         mapViewModel.loadTempDatas()
         collapsBottomSheet()
     }
 
     val setMapStatusOnSearch = {
-        mapViewModel.updateMapStatus(MapStatus.SEARCH_TAB)
+        mapViewModel.updateMapStatus(com.cmc12th.domain.model.map.model.MapStatus.SEARCH_TAB)
     }
 
     /** 맵 인터렉션 관리 */
@@ -242,7 +242,7 @@ private fun MapViewContents(
                 appState = appState,
                 contents = mapUiState.bottomSheetContents,
                 screenHeight = screenHeight + BOTTOM_NAVIGATION_HEIGHT - (topBarHeight + paddingValues.calculateBottomPadding()),
-                isLocationSearch = mapUiState.mapStatus == MapStatus.LOCATION_SEARCH,
+                isLocationSearch = mapUiState.mapStatus == com.cmc12th.domain.model.map.model.MapStatus.LOCATION_SEARCH,
                 isExpandedTagetValue = bottomSheetScaffoldState.bottomSheetState.targetValue == BottomSheetValue.Expanded,
                 isExpanded = bottomSheetScaffoldState.bottomSheetState.isExpanded,
                 setMapStatusDefault = setMapStatusDefault,
@@ -285,10 +285,11 @@ private fun MapViewContents(
                                 )
                             )
                             mapViewModel.updateMovingCamera(
-                                MovingCameraWrapper.MOVING(Location("UserPosition").apply {
-                                    latitude = mapUiState.userPosition.latitude
-                                    longitude = mapUiState.userPosition.longitude
-                                })
+                                com.cmc12th.domain.model.map.model.MovingCameraWrapper.MOVING(
+                                    Location("UserPosition").apply {
+                                        latitude = mapUiState.userPosition.latitude
+                                        longitude = mapUiState.userPosition.longitude
+                                    })
                             )
                         }
                     }
@@ -296,7 +297,7 @@ private fun MapViewContents(
             )
 
             RefreshIcon(
-                visibility = mapUiState.mapStatus == MapStatus.DEFAULT && refershIconVisiblity.value,
+                visibility = mapUiState.mapStatus == com.cmc12th.domain.model.map.model.MapStatus.DEFAULT && refershIconVisiblity.value,
                 yOffset = topBarHeight,
                 onClick = {
                     refershIconVisiblity.value = false
@@ -323,7 +324,7 @@ private fun MapViewContents(
 
             /** 검색 및 필터 */
             AnimatedVisibility(
-                visible = mapUiState.mapStatus == MapStatus.DEFAULT,
+                visible = mapUiState.mapStatus == com.cmc12th.domain.model.map.model.MapStatus.DEFAULT,
                 enter = slideInVertically { -it },
                 exit = slideOutVertically { -it }
             ) {
@@ -353,7 +354,7 @@ private fun MapViewContents(
                         },
                         onSearch = {
                             mapViewModel.saveTempDatas()
-                            mapViewModel.updateMapStatus(MapStatus.SEARCH_TAB)
+                            mapViewModel.updateMapStatus(com.cmc12th.domain.model.map.model.MapStatus.SEARCH_TAB)
                         }
                     )
                     BottomGradient(20.dp)
@@ -406,7 +407,7 @@ private fun MapViewContents(
 
 @Composable
 private fun ManageMapStatus(
-    mapStatus: MapStatus,
+    mapStatus: com.cmc12th.domain.model.map.model.MapStatus,
     systemUiController: SystemUiController,
     onSearching: MutableState<Boolean>,
     peekHeight: MutableState<Dp>,
@@ -418,7 +419,7 @@ private fun ManageMapStatus(
         systemUiController.setNavigationBarColor(Color.White)
         when (mapStatus) {
             /** 기본 상태 */
-            MapStatus.DEFAULT -> {
+            com.cmc12th.domain.model.map.model.MapStatus.DEFAULT -> {
                 onSearching.value = false
                 systemUiController.setSystemBarsColor(Color.White)
                 peekHeight.value = BOTTOM_NAVIGATION_HEIGHT + 100.dp
@@ -426,7 +427,7 @@ private fun ManageMapStatus(
                 collapsBottomSheet()
             }
             /** 한번 클릭했을 때 */
-            MapStatus.ZOOM -> {
+            com.cmc12th.domain.model.map.model.MapStatus.ZOOM -> {
                 onSearching.value = false
                 systemUiController.setSystemBarsColor(Color.Transparent)
                 systemUiController.setNavigationBarColor(Color.Transparent)
@@ -435,37 +436,37 @@ private fun ManageMapStatus(
                 collapsBottomSheet()
             }
             /** 검색 탭에 들어갔을 때 */
-            MapStatus.SEARCH_TAB -> {
+            com.cmc12th.domain.model.map.model.MapStatus.SEARCH_TAB -> {
                 onSearching.value = true
                 collapsBottomSheet()
                 changeBottomBarVisibility(false)
                 peekHeight.value = 0.dp
             }
             /** 지역 클릭 */
-            MapStatus.LOCATION_SEARCH -> {
+            com.cmc12th.domain.model.map.model.MapStatus.LOCATION_SEARCH -> {
                 onSearching.value = false
                 changeBottomBarVisibility(false)
                 peekHeight.value = BOTTOM_NAVIGATION_HEIGHT + 100.dp
             }
             /** 매장 클릭 */
-            MapStatus.SHOP_SEARCH -> {
+            com.cmc12th.domain.model.map.model.MapStatus.SHOP_SEARCH -> {
                 onSearching.value = false
                 changeBottomBarVisibility(false)
                 peekHeight.value = BOTTOM_NAVIGATION_HEIGHT + 100.dp
             }
-            MapStatus.SEARCH_ZOOM -> {
+            com.cmc12th.domain.model.map.model.MapStatus.SEARCH_ZOOM -> {
                 systemUiController.setNavigationBarColor(Color.Transparent)
                 peekHeight.value = 0.dp
                 changeBottomBarVisibility(false)
                 collapsBottomSheet()
             }
             /** 장소 검색에서 마커 클릭 */
-            MapStatus.LOCATION_SEARCH_MARKER_CLICKED -> {
+            com.cmc12th.domain.model.map.model.MapStatus.LOCATION_SEARCH_MARKER_CLICKED -> {
                 expandBottomSheet()
                 peekHeight.value = BOTTOM_NAVIGATION_HEIGHT + 100.dp
             }
             /** 마커 클릭 */
-            MapStatus.MARKER_CLICKED -> {
+            com.cmc12th.domain.model.map.model.MapStatus.MARKER_CLICKED -> {
                 expandBottomSheet()
                 peekHeight.value = BOTTOM_NAVIGATION_HEIGHT + 100.dp
             }
@@ -479,7 +480,7 @@ fun SearchResultBar(
     modifier: Modifier = Modifier,
     setMapStatusDefault: () -> Unit,
     setMapStatusOnSearch: () -> Unit,
-    bottomSheetContent: BottomSheetContent,
+    bottomSheetContent: com.cmc12th.domain.model.map.model.BottomSheetContent,
 ) {
     Box(
         modifier = Modifier
@@ -496,8 +497,8 @@ fun SearchResultBar(
             }
             Text(
                 text = when (bottomSheetContent) {
-                    is BottomSheetContent.MULTI -> bottomSheetContent.locationName
-                    is BottomSheetContent.SINGLE -> bottomSheetContent.storeName
+                    is com.cmc12th.domain.model.map.model.BottomSheetContent.MULTI -> bottomSheetContent.locationName
+                    is com.cmc12th.domain.model.map.model.BottomSheetContent.SINGLE -> bottomSheetContent.storeName
                     else -> ""
                 },
                 style = Body1B,
@@ -527,7 +528,7 @@ private fun RunwayNaverMap(
     mapViewModel: MapViewModel,
     uiState: MapUiState,
     cameraPositionState: CameraPositionState,
-    onMarkerClick: (NaverItem) -> Unit,
+    onMarkerClick: (com.cmc12th.domain.model.map.model.NaverItem) -> Unit,
     onSearching: MutableState<Boolean>,
     updateRefershIconVisiblity: (Boolean) -> Unit,
     expandBottomSheet: () -> Unit,
@@ -542,14 +543,14 @@ private fun RunwayNaverMap(
     /** movingCameara에 따라 카메라 포지션 움직이기 */
     LaunchedEffect(key1 = uiState.movingCameraPosition) {
         when (uiState.movingCameraPosition) {
-            MovingCameraWrapper.DEFAULT -> {
+            com.cmc12th.domain.model.map.model.MovingCameraWrapper.DEFAULT -> {
                 // Do Nothing
             }
-            is MovingCameraWrapper.MOVING -> {
+            is com.cmc12th.domain.model.map.model.MovingCameraWrapper.MOVING -> {
                 cameraPositionState.animate(
                     update = CameraUpdate.scrollTo(LatLng(uiState.movingCameraPosition.location))
                 )
-                mapViewModel.updateMovingCamera(MovingCameraWrapper.DEFAULT)
+                mapViewModel.updateMovingCamera(com.cmc12th.domain.model.map.model.MovingCameraWrapper.DEFAULT)
             }
         }
     }
@@ -624,11 +625,14 @@ private fun RunwayNaverMap(
     ) {
         MapSearchScreen(
             onShopSearch = {
-                mapViewModel.updateMapStatus(MapStatus.SHOP_SEARCH)
+                mapViewModel.updateMapStatus(com.cmc12th.domain.model.map.model.MapStatus.SHOP_SEARCH)
                 mapViewModel.searchStoreId(it.storeName, it.storeId)
                 mapViewModel.addRecentStr(
                     it.storeName,
-                    SearchType(it.storeId, SearchType.STORE_TYPE)
+                    com.cmc12th.model.SearchType(
+                        it.storeId,
+                        com.cmc12th.model.SearchType.STORE_TYPE
+                    )
                 )
                 expandBottomSheet()
             },
@@ -636,15 +640,18 @@ private fun RunwayNaverMap(
                 mapViewModel.loadTempDatas()
                 mapViewModel.updateSearchText(TextFieldValue(""))
                 onSearching.value = false
-                mapViewModel.updateMapStatus(MapStatus.DEFAULT)
+                mapViewModel.updateMapStatus(com.cmc12th.domain.model.map.model.MapStatus.DEFAULT)
             },
             onLocationSearch = {
-                mapViewModel.updateMapStatus(MapStatus.LOCATION_SEARCH)
+                mapViewModel.updateMapStatus(com.cmc12th.domain.model.map.model.MapStatus.LOCATION_SEARCH)
                 mapViewModel.searchLocationId(it.regionId)
                 mapViewModel.searchLocationInfoPaging(it.region, it.regionId)
                 mapViewModel.addRecentStr(
                     it.region,
-                    SearchType(it.regionId, SearchType.LOCATION_TYPE)
+                    com.cmc12th.model.SearchType(
+                        it.regionId,
+                        com.cmc12th.model.SearchType.LOCATION_TYPE
+                    )
                 )
             },
             mapViewModel = mapViewModel

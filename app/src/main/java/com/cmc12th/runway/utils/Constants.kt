@@ -21,10 +21,6 @@ object Constants {
     const val MARKETING_INFO_TERMS = "https://www.notion.so/f1bb27670f5848ac8980d0d8e7d45cc3?pvs=4"
 
     const val SNS_INTENT_ACTION = "android.provider.Telephony.SMS_RECEIVED"
-    const val INIT_PAGE_INDEX = 0
-
-    const val RECENT_STR_DATABASE = "recent-str-database"
-    const val RUNWAY_DATASTORE = "runway-dataStore"
 
     /** navigation id */
     const val HOME_ROUTE = "nav-home"

@@ -42,9 +42,9 @@ import com.cmc12th.runway.ui.domain.model.BottomSheetContentItem
 import com.cmc12th.runway.ui.domain.rememberBottomSheet
 import com.cmc12th.runway.ui.login.passwordsearch.PasswordSearchViewModel
 import com.cmc12th.runway.ui.signin.components.OnBoardHeadLine
-import com.cmc12th.runway.ui.signin.model.MobileCarrier
-import com.cmc12th.runway.ui.signin.model.Phone
-import com.cmc12th.runway.ui.signin.model.Phone.Companion.PHONE_NUMBER_LENGTH
+import com.cmc12th.domain.model.signin.model.MobileCarrier
+import com.cmc12th.domain.model.signin.model.Phone
+import com.cmc12th.domain.model.signin.model.Phone.Companion.PHONE_NUMBER_LENGTH
 import com.cmc12th.runway.ui.theme.Body1B
 import com.cmc12th.runway.ui.theme.Gray300
 import com.cmc12th.runway.ui.theme.Gray400
@@ -175,8 +175,8 @@ fun PasswordSearchPhoneContents(
 @Composable
 private fun PhoneContainer(
     showBottomSheet: (BottomSheetContent) -> Unit,
-    phone: Phone,
-    updateMobildeCarrier: (MobileCarrier) -> Unit,
+    phone: com.cmc12th.domain.model.signin.model.Phone,
+    updateMobildeCarrier: (com.cmc12th.domain.model.signin.model.MobileCarrier) -> Unit,
     updatePhoneNumber: (String) -> Unit,
     focusRequest: FocusRequester,
     errorMessage: String,
@@ -201,13 +201,14 @@ private fun PhoneContainer(
                         onClick = {
                             showBottomSheet(BottomSheetContent(
                                 title = "통신사",
-                                itemList = MobileCarrier.values().map {
-                                    BottomSheetContentItem(
-                                        itemName = it.getName(),
-                                        onItemClick = { updateMobildeCarrier(it) },
-                                        isSeleceted = it == phone.mobileCarrier
-                                    )
-                                }
+                                itemList = com.cmc12th.domain.model.signin.model.MobileCarrier.values()
+                                    .map {
+                                        BottomSheetContentItem(
+                                            itemName = it.getName(),
+                                            onItemClick = { updateMobildeCarrier(it) },
+                                            isSeleceted = it == phone.mobileCarrier
+                                        )
+                                    }
                             ))
                         },
                         colors = ButtonDefaults.buttonColors(Color.White)

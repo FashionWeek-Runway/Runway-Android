@@ -1,6 +1,6 @@
 package com.cmc12th.runway.utils
 
-import com.cmc12th.runway.data.response.ErrorResponse
+import com.cmc12th.domain.model.response.ErrorResponse
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
@@ -11,10 +11,11 @@ object GsonHelper {
         return gson.fromJson(json, object : TypeToken<T>() {}.type)
     }
 
-    fun stringToErrorResponse(errorBody: String): ErrorResponse {
-        return gson.fromJson(errorBody, ErrorResponse::class.java).copy(
-            totalResponse = errorBody
-        )
+    fun stringToErrorResponse(errorBody: String): com.cmc12th.domain.model.response.ErrorResponse {
+        return gson.fromJson(errorBody, com.cmc12th.domain.model.response.ErrorResponse::class.java)
+            .copy(
+                totalResponse = errorBody
+            )
     }
 }
 

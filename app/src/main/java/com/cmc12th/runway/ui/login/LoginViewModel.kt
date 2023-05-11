@@ -5,16 +5,16 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cmc12th.runway.data.repository.AuthRepositoryImpl
-import com.cmc12th.runway.data.request.LoginRequest
-import com.cmc12th.runway.data.request.OauthLoginRequest
-import com.cmc12th.runway.data.response.ErrorResponse
-import com.cmc12th.runway.data.response.NotRegisteredResponse
-import com.cmc12th.runway.data.response.ResponseWrapper
-import com.cmc12th.runway.domain.repository.AuthRepository
-import com.cmc12th.runway.domain.repository.SignInRepository
+import com.cmc12th.domain.model.request.LoginRequest
+import com.cmc12th.domain.model.request.OauthLoginRequest
+import com.cmc12th.domain.model.response.ErrorResponse
+import com.cmc12th.domain.model.response.NotRegisteredResponse
+import com.cmc12th.domain.model.response.ResponseWrapper
+import com.cmc12th.domain.repository.AuthRepository
+import com.cmc12th.domain.repository.SignInRepository
 import com.cmc12th.runway.network.model.ServiceInterceptor
-import com.cmc12th.runway.ui.signin.model.Password
-import com.cmc12th.runway.ui.signin.model.Phone
+import com.cmc12th.domain.model.signin.model.Password
+import com.cmc12th.domain.model.signin.model.Phone
 import com.cmc12th.runway.utils.GsonHelper
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.model.ClientError
@@ -27,18 +27,20 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class LoginIdPasswordUiState(
-    val phoneNumber: Phone = Phone.default(),
-    val password: Password = Password.default(),
+    val phoneNumber: com.cmc12th.domain.model.signin.model.Phone = com.cmc12th.domain.model.signin.model.Phone.default(),
+    val password: com.cmc12th.domain.model.signin.model.Password = com.cmc12th.domain.model.signin.model.Password.default(),
 )
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val signInRepository: SignInRepository,
-    private val authRepository: AuthRepository,
+    private val signInRepository: com.cmc12th.domain.repository.SignInRepository,
+    private val authRepository: com.cmc12th.domain.repository.AuthRepository,
 ) : ViewModel() {
-    private val _phoneNumber = MutableStateFlow(Phone.default())
-    private val _password = MutableStateFlow(Password.default())
+    private val _phoneNumber =
+        MutableStateFlow(com.cmc12th.domain.model.signin.model.Phone.default())
+    private val _password =
+        MutableStateFlow(com.cmc12th.domain.model.signin.model.Password.default())
 
     val loginIdPasswordUiState = combine(_phoneNumber, _password) { phoneNumber, password ->
         LoginIdPasswordUiState(phoneNumber, password)
@@ -56,9 +58,12 @@ class LoginViewModel @Inject constructor(
         _password.value = _password.value.copy(value = password)
     }
 
-    fun login(onSuccess: () -> Unit, onError: (ErrorResponse) -> Unit) = viewModelScope.launch {
+    fun login(
+        onSuccess: () -> Unit,
+        onError: (com.cmc12th.domain.model.response.ErrorResponse) -> Unit
+    ) = viewModelScope.launch {
         signInRepository.login(
-            LoginRequest(
+            com.cmc12th.domain.model.request.LoginRequest(
                 password = _password.value.value,
                 phone = _phoneNumber.value.number
             )
@@ -82,7 +87,7 @@ class LoginViewModel @Inject constructor(
     fun getKakaoToken(
         alreadyRegistered: () -> Unit,
         notRegistered: (profileImageUrl: String, kakaoId: String) -> Unit,
-        onError: (ErrorResponse) -> Unit,
+        onError: (com.cmc12th.domain.model.response.ErrorResponse) -> Unit,
         context: Context,
     ) {
         // 카카오계정으로 로그인 공통 callback 구성
@@ -122,9 +127,9 @@ class LoginViewModel @Inject constructor(
         accessToken: String,
         alreadyRegistered: () -> Unit,
         notRegistered: (profileImageUrl: String, kakaoId: String) -> Unit,
-        onError: (ErrorResponse) -> Unit,
+        onError: (com.cmc12th.domain.model.response.ErrorResponse) -> Unit,
     ) = viewModelScope.launch {
-        signInRepository.kakaoLogin(OauthLoginRequest(accessToken = accessToken))
+        signInRepository.kakaoLogin(com.cmc12th.domain.model.request.OauthLoginRequest(accessToken = accessToken))
             .collect { apiWrapper ->
                 apiWrapper.onSuccess {
                     onSignInComplete(it.result.accessToken, it.result.refreshToken)
@@ -135,7 +140,7 @@ class LoginViewModel @Inject constructor(
                     if (errorResponse.code == "U022") {
                         // errorBody로 오는 String은 따로 파싱하여 사용해야 할 듯 도저히 구현이 안됨
                         /** Json을 refied를 사용하여 Generic Obejct로 파싱 */
-                        val notRegisteredResponse: ResponseWrapper<NotRegisteredResponse> =
+                        val notRegisteredResponse: com.cmc12th.domain.model.response.ResponseWrapper<com.cmc12th.domain.model.response.NotRegisteredResponse> =
                             GsonHelper.fromJson(errorResponse.totalResponse)
                         notRegistered(
                             notRegisteredResponse.result.profileImgUrl,
