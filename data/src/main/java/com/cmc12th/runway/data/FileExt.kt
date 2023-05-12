@@ -1,4 +1,4 @@
-package com.cmc12th.runway.utils
+package com.cmc12th.runway.data
 
 import android.content.ClipData
 import android.content.ClipboardManager

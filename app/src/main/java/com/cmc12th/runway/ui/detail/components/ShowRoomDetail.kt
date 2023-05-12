@@ -2,18 +2,16 @@ package com.cmc12th.runway.ui.detail.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import com.cmc12th.domain.model.response.store.StoreDetail
 import com.cmc12th.runway.R
-import com.cmc12th.runway.data.response.store.StoreDetail
 import com.cmc12th.runway.ui.components.RunwayIconButton
 import com.cmc12th.runway.ui.theme.Blue900
 import com.cmc12th.runway.ui.theme.Body2

@@ -1,21 +1,21 @@
 package com.cmc12th.runway.ui.detail.photoreview
 
-import androidx.compose.runtime.*
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.cmc12th.model.ReviewReportType
-import com.cmc12th.domain.model.request.store.ReviewReportRequest
-import com.cmc12th.runway.data.response.store.UserReviewDetail
-import com.cmc12th.domain.repository.AuthRepository
-import com.cmc12th.domain.repository.HomeRepository
-import com.cmc12th.domain.repository.StoreRepository
+import com.cmc12th.domain.model.ReviewReportType
+import com.cmc12th.domain.model.response.store.UserReviewDetail
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class ReviewReportUiState(
-    val reports: List<ReviewReportWrapper> = com.cmc12th.model.ReviewReportType.values().map {
+    val reports: List<ReviewReportWrapper> = ReviewReportType.values().map {
         ReviewReportWrapper(it.id, it.reason)
     },
     val reportContents: String = "",
@@ -39,7 +39,7 @@ class ReviewViewModel @Inject constructor(
     val reviewDetail: State<UserReviewDetail> get() = _reviewDetail
 
     private val _report: MutableStateFlow<List<ReviewReportWrapper>> = MutableStateFlow(
-        com.cmc12th.model.ReviewReportType.values().map {
+        ReviewReportType.values().map {
             ReviewReportWrapper(it.id, it.reason)
         }
     )

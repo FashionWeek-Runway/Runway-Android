@@ -14,13 +14,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavBackStackEntry
-import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import com.cmc12th.runway.ui.*
 import com.cmc12th.runway.ui.components.BottomBar
 import com.cmc12th.runway.ui.domain.model.ApplicationState
-import com.cmc12th.runway.ui.splash.SplashScreen
 import com.cmc12th.runway.utils.Constants
 
 

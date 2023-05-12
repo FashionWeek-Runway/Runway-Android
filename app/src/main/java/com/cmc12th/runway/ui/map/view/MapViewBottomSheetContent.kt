@@ -34,7 +34,7 @@ fun MapViewBottomSheetContent(
     isExpandedTagetValue: Boolean,
     setMapStatusOnSearch: () -> Unit,
     setMapStatusDefault: () -> Unit,
-    contents: com.cmc12th.domain.model.map.model.BottomSheetContent,
+    contents: BottomSheetContent,
     navigateToDetail: (id: Int, storeName: String) -> Unit,
     isExpanded: Boolean,
 ) {
@@ -84,9 +84,7 @@ fun MapViewBottomSheetContent(
 
             /** 제목 */
             when (contents) {
-                com.cmc12th.domain.model.map.model.BottomSheetContent.DEFAULT -> {}
-                com.cmc12th.domain.model.map.model.BottomSheetContent.LOADING -> {}
-                is com.cmc12th.domain.model.map.model.BottomSheetContent.MULTI -> {
+                is BottomSheetContent.MULTI -> {
                     if (contents.locationName.isNotBlank()) {
                         Text(
                             text = "[${contents.locationName}] 둘러보기",
@@ -96,17 +94,16 @@ fun MapViewBottomSheetContent(
                         )
                     }
                 }
-                is com.cmc12th.domain.model.map.model.BottomSheetContent.SINGLE -> {
-                }
+                else -> {}
             }
         }
 
         /** 본문 내용 */
         when (contents) {
-            com.cmc12th.domain.model.map.model.BottomSheetContent.DEFAULT -> {
+            BottomSheetContent.DEFAULT -> {
                 MapBottomSheetEmptyStore()
             }
-            is com.cmc12th.domain.model.map.model.BottomSheetContent.MULTI -> {
+            is BottomSheetContent.MULTI -> {
                 val pagingContents = contents.contents.collectAsLazyPagingItems()
                 LazyColumn(
                     modifier = Modifier
@@ -120,10 +117,10 @@ fun MapViewBottomSheetContent(
                     }
                 }
             }
-            is com.cmc12th.domain.model.map.model.BottomSheetContent.SINGLE -> {
+            is BottomSheetContent.SINGLE -> {
                 BottomDetailItem(navigateToDetail, contents.contents)
             }
-            com.cmc12th.domain.model.map.model.BottomSheetContent.LOADING -> {
+            BottomSheetContent.LOADING -> {
                 MapBottomSheetEmptyStore()
             }
         }

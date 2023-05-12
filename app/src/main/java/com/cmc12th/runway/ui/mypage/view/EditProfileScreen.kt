@@ -41,7 +41,7 @@ import com.cmc12th.runway.ui.domain.model.BottomSheetContentItem
 import com.cmc12th.runway.ui.domain.model.KeyboardStatus
 import com.cmc12th.runway.ui.domain.rememberBottomSheet
 import com.cmc12th.runway.ui.mypage.MypageViewModel
-import com.cmc12th.domain.model.signin.model.ProfileImageType
+import com.cmc12th.domain.model.signin.ProfileImageType
 import com.cmc12th.runway.ui.signin.view.InputNickname
 import com.cmc12th.runway.ui.theme.*
 import com.cmc12th.runway.utils.Constants.MYPAGE_EDIT_PROFILE_COMPLETE_ROUTE
@@ -95,7 +95,7 @@ fun EditProfileScreen(
     }
     val setImageToViewModel: (Uri?) -> Unit = { uri ->
         if (uri != null) {
-            val image = com.cmc12th.domain.model.signin.model.ProfileImageType.LOCAL(uri = uri)
+            val image = ProfileImageType.LOCAL(uri = uri)
             viewModel.updateProfileImage(image)
         }
     }
@@ -174,7 +174,7 @@ fun EditProfileScreen(
                     showBottomSheet = showBottomSheet,
                     setDefaultProfileImage = {
                         viewModel.updateProfileImage(
-                            com.cmc12th.domain.model.signin.model.ProfileImageType.DEFAULT
+                            ProfileImageType.DEFAULT
                         )
                     }
                 )
@@ -225,7 +225,7 @@ fun EditProfileScreen(
 
 @Composable
 fun ProfileImageIcon(
-    profileImageType: com.cmc12th.domain.model.signin.model.ProfileImageType,
+    profileImageType: ProfileImageType,
     profileSize: Float,
     galleryLauncher: ManagedActivityResultLauncher<String, Uri?>,
     takePhotoFromCameraLauncher: ManagedActivityResultLauncher<Uri, Boolean>,
@@ -247,7 +247,7 @@ fun ProfileImageIcon(
             shape = CircleShape
         ) {
             when (profileImageType) {
-                is com.cmc12th.domain.model.signin.model.ProfileImageType.DEFAULT -> {
+                is ProfileImageType.DEFAULT -> {
                     DefaultProfileImage(
                         galleryLauncher = galleryLauncher,
                         takePhotoFromCameraLauncher = takePhotoFromCameraLauncher,
@@ -272,7 +272,7 @@ fun ProfileImageIcon(
 
 @Composable
 private fun SelectedProfileImage(
-    selectedImage: com.cmc12th.domain.model.signin.model.ProfileImageType,
+    selectedImage: ProfileImageType,
     takePhotoFromCameraLauncher: ManagedActivityResultLauncher<Uri, Boolean>,
     galleryLauncher: ManagedActivityResultLauncher<String, Uri?>,
     showBottomSheet: (BottomSheetContent) -> Unit,
@@ -281,7 +281,7 @@ private fun SelectedProfileImage(
 ) {
     val context = LocalContext.current
     Box {
-        if (selectedImage is com.cmc12th.domain.model.signin.model.ProfileImageType.SOCIAL) {
+        if (selectedImage is ProfileImageType.SOCIAL) {
             AsyncImage(
                 modifier = Modifier
                     .background(Gray200)
@@ -295,7 +295,7 @@ private fun SelectedProfileImage(
                 contentScale = ContentScale.Crop,
             )
         }
-        if (selectedImage is com.cmc12th.domain.model.signin.model.ProfileImageType.LOCAL) {
+        if (selectedImage is ProfileImageType.LOCAL) {
             AsyncImage(
                 modifier = Modifier
                     .background(Gray200)

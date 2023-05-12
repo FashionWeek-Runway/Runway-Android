@@ -4,11 +4,10 @@ import android.util.Log
 import androidx.datastore.preferences.core.Preferences
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.cmc12th.domain.model.ServiceInterceptor
+import com.cmc12th.runway.data.di.DispatcherModule
 import com.cmc12th.runway.data.repository.AuthRepositoryImpl.PreferenceKeys.ACCESS_TOKEN
 import com.cmc12th.runway.data.repository.AuthRepositoryImpl.PreferenceKeys.REFRESH_TOKEN
-import com.cmc12th.runway.di.DispatcherModule
-import com.cmc12th.domain.repository.AuthRepository
-import com.cmc12th.runway.network.model.ServiceInterceptor
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.first
@@ -17,23 +16,23 @@ import javax.inject.Inject
 @HiltViewModel
 class SplashViewModel @Inject constructor(
     private val authRepository: com.cmc12th.domain.repository.AuthRepository,
-    @DispatcherModule.IoDispatcher private val IODispatcher: CoroutineDispatcher,
-    @DispatcherModule.MainDispatcher private val MainDispatcher: CoroutineDispatcher,
+    @DispatcherModule.IoDispatcher private val iODispatcher: CoroutineDispatcher,
+    @DispatcherModule.MainDispatcher private val mainDispatcher: CoroutineDispatcher,
 ) : ViewModel() {
 
     fun loginCheck(navigateToMain: () -> Unit, navigateToLogin: () -> Unit) =
         viewModelScope.launch {
-            val accessToken = withContext(IODispatcher) {
+            val accessToken = withContext(iODispatcher) {
                 authRepository.getToken(ACCESS_TOKEN).first()
             }
-            val refreshToken = withContext(IODispatcher) {
+            val refreshToken = withContext(iODispatcher) {
                 authRepository.getToken(REFRESH_TOKEN).first()
             }
             if (accessToken.isNotBlank()) {
                 // 엑세스토큰이 빈 값이 아니라면 (로그인이 되어 있다면) 프레시토큰 검증을한다.
                 validateRefreshToken(navigateToLogin, navigateToMain, refreshToken)
             } else {
-                launch(MainDispatcher) { navigateToLogin() }
+                launch(mainDispatcher) { navigateToLogin() }
             }
         }
 
@@ -52,10 +51,10 @@ class SplashViewModel @Inject constructor(
                 setToken(REFRESH_TOKEN, newRrefreshToken)
                 ServiceInterceptor.accessToken = newAccessToken
                 ServiceInterceptor.refreshToken = newRrefreshToken
-                launch(MainDispatcher) { navigateToMain() }
+                launch(mainDispatcher) { navigateToMain() }
             }
             apiState.onError {
-                launch(MainDispatcher) { navigateToLogin() }
+                launch(mainDispatcher) { navigateToLogin() }
             }
         }
     }

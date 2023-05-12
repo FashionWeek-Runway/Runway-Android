@@ -21,7 +21,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
-import androidx.core.graphics.applyCanvas
 import com.cmc12th.runway.ui.theme.Gray200
 
 

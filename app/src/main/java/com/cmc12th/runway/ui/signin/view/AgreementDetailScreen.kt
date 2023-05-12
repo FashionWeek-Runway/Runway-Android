@@ -9,12 +9,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.cmc12th.runway.ui.components.BackIcon
 import com.cmc12th.runway.ui.components.HeightSpacer
 import com.cmc12th.runway.ui.components.WidthSpacer
 import com.cmc12th.runway.ui.domain.model.ApplicationState
-import com.cmc12th.runway.ui.signin.SignInViewModel
 import com.cmc12th.runway.ui.theme.Body1M
 import com.cmc12th.runway.ui.theme.HeadLine4
 

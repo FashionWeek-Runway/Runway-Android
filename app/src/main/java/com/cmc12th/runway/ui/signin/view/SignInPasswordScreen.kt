@@ -32,7 +32,7 @@ import com.cmc12th.runway.ui.components.LastPasswordVisibleCustomTextField
 import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.signin.SignInViewModel
 import com.cmc12th.runway.ui.signin.components.OnBoardHeadLine
-import com.cmc12th.domain.model.signin.model.Password
+import com.cmc12th.domain.model.signin.Password
 import com.cmc12th.runway.ui.theme.*
 import com.cmc12th.runway.utils.Constants
 
@@ -108,8 +108,8 @@ fun SignInPasswordScreen(
 
 @Composable
 fun CheckPassword(
-    password: com.cmc12th.domain.model.signin.model.Password,
-    updateRetryPassword: (com.cmc12th.domain.model.signin.model.Password) -> Unit,
+    password: Password,
+    updateRetryPassword: (Password) -> Unit,
     isEqual: Boolean,
     focusRequest: FocusRequester,
     onDone: () -> Unit,
@@ -123,7 +123,7 @@ fun CheckPassword(
             value = password.value,
             placeholderText = "비밀번호 확인",
             focusRequest = focusRequest,
-            onvalueChanged = { updateRetryPassword(com.cmc12th.domain.model.signin.model.Password(it)) },
+            onvalueChanged = { updateRetryPassword(Password(it)) },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Password, imeAction = ImeAction.Done
             ),
@@ -143,8 +143,8 @@ fun CheckPassword(
 
 @Composable
 fun InputPassword(
-    password: com.cmc12th.domain.model.signin.model.Password,
-    updatePassword: (com.cmc12th.domain.model.signin.model.Password) -> Unit,
+    password: Password,
+    updatePassword: (Password) -> Unit,
     requestFocus: () -> Unit,
 ) {
 
@@ -164,7 +164,7 @@ fun InputPassword(
             fontSize = 16.sp,
             value = password.value,
             placeholderText = "비밀번호 입력",
-            onvalueChanged = { updatePassword(com.cmc12th.domain.model.signin.model.Password(it)) },
+            onvalueChanged = { updatePassword(Password(it)) },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Password, imeAction = ImeAction.Next
             ),

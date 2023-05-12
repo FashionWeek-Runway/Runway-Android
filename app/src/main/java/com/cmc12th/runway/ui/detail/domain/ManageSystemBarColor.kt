@@ -35,18 +35,6 @@ fun ManageSystemBarColor(
 
     LaunchedEffect(key1 = scrollState.value.dp) {
         if (scrollState.value.dp < 200.dp) {
-//            if (scrollState.value.dp < 50.dp) {
-//                updateTopbarColor(Color.Transparent)
-//            } else {
-//                updateTopbarColor(
-//                    Color.White.copy(
-//                        alpha = Float.min(
-//                            (scrollState.value.dp) / 100.dp,
-//                            100f
-//                        )
-//                    )
-//                )
-//            }
             updateTopbarColor(Color.Transparent)
             updateTopbarIconColor(Color.White)
         } else {

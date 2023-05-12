@@ -11,16 +11,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.signature.ObjectKey
+import com.cmc12th.domain.model.response.map.MapInfoItem
 import com.cmc12th.runway.R
-import com.cmc12th.runway.data.response.map.MapInfoItem
 import com.cmc12th.runway.ui.theme.Gray200
 import com.cmc12th.runway.ui.theme.HeadLine4
 

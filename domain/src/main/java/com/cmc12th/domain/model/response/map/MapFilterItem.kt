@@ -22,7 +22,7 @@ data class MapFilterItem(
     val storeName: String
 )
 
-fun List<com.cmc12th.domain.model.response.map.MapFilterItem>.toNaverMapItem(): List<NaverItem> =
+fun List<MapFilterItem>.toNaverMapItem(): List<NaverItem> =
     this.map {
         NaverItem(
             title = it.storeName,

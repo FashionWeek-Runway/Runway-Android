@@ -4,17 +4,9 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.cmc12th.domain.model.ServiceInterceptor
+import com.cmc12th.domain.model.signin.*
 import com.cmc12th.runway.data.repository.AuthRepositoryImpl
-import com.cmc12th.domain.model.request.LoginRequest
-import com.cmc12th.domain.model.request.OauthLoginRequest
-import com.cmc12th.domain.model.response.ErrorResponse
-import com.cmc12th.domain.model.response.NotRegisteredResponse
-import com.cmc12th.domain.model.response.ResponseWrapper
-import com.cmc12th.domain.repository.AuthRepository
-import com.cmc12th.domain.repository.SignInRepository
-import com.cmc12th.runway.network.model.ServiceInterceptor
-import com.cmc12th.domain.model.signin.model.Password
-import com.cmc12th.domain.model.signin.model.Phone
 import com.cmc12th.runway.utils.GsonHelper
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.model.ClientError
@@ -27,8 +19,8 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class LoginIdPasswordUiState(
-    val phoneNumber: com.cmc12th.domain.model.signin.model.Phone = com.cmc12th.domain.model.signin.model.Phone.default(),
-    val password: com.cmc12th.domain.model.signin.model.Password = com.cmc12th.domain.model.signin.model.Password.default(),
+    val phoneNumber: Phone = Phone.default(),
+    val password: Password = Password.default(),
 )
 
 @HiltViewModel
@@ -38,9 +30,9 @@ class LoginViewModel @Inject constructor(
     private val authRepository: com.cmc12th.domain.repository.AuthRepository,
 ) : ViewModel() {
     private val _phoneNumber =
-        MutableStateFlow(com.cmc12th.domain.model.signin.model.Phone.default())
+        MutableStateFlow(Phone.default())
     private val _password =
-        MutableStateFlow(com.cmc12th.domain.model.signin.model.Password.default())
+        MutableStateFlow(Password.default())
 
     val loginIdPasswordUiState = combine(_phoneNumber, _password) { phoneNumber, password ->
         LoginIdPasswordUiState(phoneNumber, password)

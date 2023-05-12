@@ -19,17 +19,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.cmc12th.domain.model.signin.CategoryTag
 import com.cmc12th.runway.R
 import com.cmc12th.runway.ui.components.HeightSpacer
 import com.cmc12th.runway.ui.components.WidthSpacer
-import com.cmc12th.domain.model.signin.model.CategoryTag
 import com.cmc12th.runway.ui.theme.*
 
 @Composable
 fun SearchBoxAndTagCategory(
     isBookmarked: Boolean,
-    categoryItems: List<com.cmc12th.domain.model.signin.model.CategoryTag>,
-    updateCategoryTags: (com.cmc12th.domain.model.signin.model.CategoryTag) -> Unit,
+    categoryItems: List<CategoryTag>,
+    updateCategoryTags: (CategoryTag) -> Unit,
     updateIsBookmarked: (Boolean) -> Unit,
     onSearch: () -> Unit,
 ) {

@@ -5,10 +5,7 @@ import androidx.paging.PagingState
 import com.cmc12th.domain.repository.AuthRepository
 import com.cmc12th.runway.data.Constants
 import com.cmc12th.domain.model.ApiState
-import com.cmc12th.runway.data.response.user.MyReviewsItem
-import com.cmc12th.runway.domain.repository.AuthRepository
-import com.cmc12th.runway.network.model.ApiState
-import com.cmc12th.runway.utils.Constants
+import com.cmc12th.domain.model.response.user.MyReviewsItem
 import kotlinx.coroutines.flow.first
 
 class BookmarkedReviewPagingSource(

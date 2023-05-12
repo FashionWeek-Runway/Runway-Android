@@ -5,16 +5,11 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.cmc12th.domain.model.ServiceInterceptor
+import com.cmc12th.domain.model.signin.*
 import com.cmc12th.runway.data.repository.AuthRepositoryImpl.PreferenceKeys.ACCESS_TOKEN
 import com.cmc12th.runway.data.repository.AuthRepositoryImpl.PreferenceKeys.REFRESH_TOKEN
-import com.cmc12th.domain.model.request.LoginCheckRequest
-import com.cmc12th.domain.model.request.SendVerifyMessageRequest
-import com.cmc12th.domain.model.response.ErrorResponse
-import com.cmc12th.domain.repository.AuthRepository
-import com.cmc12th.domain.repository.SignInRepository
-import com.cmc12th.runway.network.model.ServiceInterceptor
 import com.cmc12th.runway.ui.domain.model.RunwayCategory
-import com.cmc12th.runway.ui.signin.model.*
 import com.cmc12th.runway.utils.Constants
 import com.cmc12th.runway.utils.fileFromContentUri
 import com.cmc12th.runway.utils.toPlainRequestBody
@@ -37,10 +32,8 @@ class SignInViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
 ) : ViewModel() {
 
-    private val _signInType: MutableStateFlow<com.cmc12th.domain.model.signin.model.SignInType> =
-        MutableStateFlow(
-            com.cmc12th.domain.model.signin.model.SignInType.Phone
-        )
+    private val _signInType: MutableStateFlow<SignInType> =
+        MutableStateFlow(SignInType.Phone)
     private val _kakaoId = mutableStateOf("")
     val kakaoId: State<String> = _kakaoId
 
@@ -48,35 +41,35 @@ class SignInViewModel @Inject constructor(
     val initialDialogVisiblity: State<Boolean> get() = _initialDialogVisiblity
 
     private val _nameAndNationality =
-        MutableStateFlow(com.cmc12th.domain.model.signin.model.NameAndNationality.default())
-    private val _gender = MutableStateFlow(com.cmc12th.domain.model.signin.model.Gender.Unknown)
-    private val _birth = MutableStateFlow(com.cmc12th.domain.model.signin.model.Birth.default())
-    private val _phone = MutableStateFlow(com.cmc12th.domain.model.signin.model.Phone.default())
+        MutableStateFlow(NameAndNationality.default())
+    private val _gender = MutableStateFlow(Gender.Unknown)
+    private val _birth = MutableStateFlow(Birth.default())
+    private val _phone = MutableStateFlow(Phone.default())
     private val _userVerificationStatus = MutableStateFlow(false)
 
     private val _retryTime = MutableStateFlow(DEFAULT_RETRY_TIME)
     private val _verifyCode = MutableStateFlow("")
 
     private val _password =
-        MutableStateFlow(com.cmc12th.domain.model.signin.model.Password.default())
+        MutableStateFlow(Password.default())
     private val _retryPassword =
-        MutableStateFlow(com.cmc12th.domain.model.signin.model.Password.default())
+        MutableStateFlow(Password.default())
 
     private val _agreements = MutableStateFlow(
         mutableListOf(
-            com.cmc12th.domain.model.signin.model.Agreement(
+            Agreement(
                 "이용약관 동의 (필수)", true,
                 link = Constants.SERVICE_TERMS
             ),
-            com.cmc12th.domain.model.signin.model.Agreement(
+            Agreement(
                 "개인정보 처리 방침 동의 (필수)", true,
                 link = Constants.PERSONAL_INFO_USE_TERMS
             ),
-            com.cmc12th.domain.model.signin.model.Agreement(
+            Agreement(
                 "위치정보 이용 약관 동의 (필수)", true,
                 link = Constants.LOCATION_USE_TERMS
             ),
-            com.cmc12th.domain.model.signin.model.Agreement(
+            Agreement(
                 "마케팅 정보 수신 동의 (선택)", false,
                 link = Constants.MARKETING_INFO_TERMS
             ),
@@ -84,10 +77,10 @@ class SignInViewModel @Inject constructor(
     )
 
     private val _nickName =
-        MutableStateFlow(com.cmc12th.domain.model.signin.model.Nickname.default())
+        MutableStateFlow(Nickname.default())
     private val _profileImage =
-        MutableStateFlow<com.cmc12th.domain.model.signin.model.ProfileImageType>(
-            com.cmc12th.domain.model.signin.model.ProfileImageType.DEFAULT
+        MutableStateFlow<ProfileImageType>(
+            ProfileImageType.DEFAULT
         )
 
     private val _categoryTags = MutableStateFlow(RunwayCategory.generateCategoryTags())
@@ -212,7 +205,7 @@ class SignInViewModel @Inject constructor(
         feedPostReqeust["socialId"] = _kakaoId.value.toPlainRequestBody()
         feedPostReqeust["type"] = "KAKAO".toPlainRequestBody()
         feedPostReqeust["profileImgUrl"] = when (val profileImage = _profileImage.value) {
-            is com.cmc12th.domain.model.signin.model.ProfileImageType.SOCIAL -> profileImage.imgUrl
+            is ProfileImageType.SOCIAL -> profileImage.imgUrl
             else -> ""
         }.toPlainRequestBody()
 
@@ -253,9 +246,9 @@ class SignInViewModel @Inject constructor(
 
     private fun convetProfileImageToMultipartFile() =
         when (val profileImage = _profileImage.value) {
-            com.cmc12th.domain.model.signin.model.ProfileImageType.DEFAULT -> null
-            is com.cmc12th.domain.model.signin.model.ProfileImageType.SOCIAL -> null
-            is com.cmc12th.domain.model.signin.model.ProfileImageType.LOCAL -> {
+            ProfileImageType.DEFAULT -> null
+            is ProfileImageType.SOCIAL -> null
+            is ProfileImageType.LOCAL -> {
                 val file = fileFromContentUri(context, profileImage.uri)
                 val requestBody: RequestBody = file.asRequestBody("image/*".toMediaType())
                 MultipartBody.Part.createFormData("multipartFile", file.name, requestBody)
@@ -264,19 +257,19 @@ class SignInViewModel @Inject constructor(
 
 
     fun updateSignIntypeSocial(profileImage: String, kakaoId: String) {
-        _signInType.value = com.cmc12th.domain.model.signin.model.SignInType.SOCIAL
+        _signInType.value = SignInType.SOCIAL
         _profileImage.value =
-            com.cmc12th.domain.model.signin.model.ProfileImageType.SOCIAL(profileImage)
+            ProfileImageType.SOCIAL(profileImage)
         _kakaoId.value = kakaoId
     }
 
-    fun updateCategoryTags(categoryTag: com.cmc12th.domain.model.signin.model.CategoryTag) {
+    fun updateCategoryTags(categoryTag: CategoryTag) {
         _categoryTags.value = _categoryTags.value.mapIndexed { _, item ->
             if (item.name == categoryTag.name) item.copy(isSelected = !item.isSelected) else item
         }.toMutableList()
     }
 
-    fun updateProfileImage(profileImage: com.cmc12th.domain.model.signin.model.ProfileImageType) {
+    fun updateProfileImage(profileImage: ProfileImageType) {
         _profileImage.value = profileImage
     }
 
@@ -284,7 +277,7 @@ class SignInViewModel @Inject constructor(
         _nickName.value = _nickName.value.copy(text = nickname)
     }
 
-    fun updateAgreements(agreement: MutableList<com.cmc12th.domain.model.signin.model.Agreement>) {
+    fun updateAgreements(agreement: MutableList<Agreement>) {
         _agreements.value = agreement
     }
 
@@ -292,11 +285,11 @@ class SignInViewModel @Inject constructor(
         _verifyCode.value = verifyCode
     }
 
-    fun updatePassword(password: com.cmc12th.domain.model.signin.model.Password) {
+    fun updatePassword(password: Password) {
         _password.value = password
     }
 
-    fun updateRetryPassword(password: com.cmc12th.domain.model.signin.model.Password) {
+    fun updateRetryPassword(password: Password) {
         _retryPassword.value = password
     }
 
@@ -309,21 +302,21 @@ class SignInViewModel @Inject constructor(
         checkUserVerificationStatus()
     }
 
-    fun updateNationality(nationality: com.cmc12th.domain.model.signin.model.Nationality) {
+    fun updateNationality(nationality: Nationality) {
         _nameAndNationality.value = _nameAndNationality.value.copy(nationality = nationality)
     }
 
-    fun updateGender(gender: com.cmc12th.domain.model.signin.model.Gender) {
+    fun updateGender(gender: Gender) {
         _gender.value = gender
         checkUserVerificationStatus()
     }
 
-    fun updateBirth(birth: com.cmc12th.domain.model.signin.model.Birth) {
+    fun updateBirth(birth: Birth) {
         _birth.value = birth
         checkUserVerificationStatus()
     }
 
-    fun updateMobileCarrier(mobileCarrier: com.cmc12th.domain.model.signin.model.MobileCarrier) {
+    fun updateMobileCarrier(mobileCarrier: MobileCarrier) {
         _phone.value = _phone.value.copy(mobileCarrier = mobileCarrier)
     }
 

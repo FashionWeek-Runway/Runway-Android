@@ -1,7 +1,6 @@
 package com.cmc12th.runway.ui.map.components
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -18,7 +17,10 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.cmc12th.runway.ui.theme.*
+import com.cmc12th.runway.ui.theme.Body2
+import com.cmc12th.runway.ui.theme.Body2B
+import com.cmc12th.runway.ui.theme.Gray600
+import com.cmc12th.runway.ui.theme.Point
 
 @Composable
 fun StyleCategoryCheckBoxInMapView(

@@ -1,9 +1,8 @@
 package com.cmc12th.runway.data.network.service
 
-import com.cmc12th.runway.data.response.map.*
 import com.cmc12th.domain.NetworkResponse
 import com.cmc12th.domain.PagingNetworkResponse
-import com.cmc12th.domain.model.response.map.MapFilterItem
+import com.cmc12th.domain.model.response.map.*
 import retrofit2.http.*
 
 interface MapService {

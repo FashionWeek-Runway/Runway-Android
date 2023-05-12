@@ -22,16 +22,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.cmc12th.domain.model.signin.Password
 import com.cmc12th.runway.ui.components.BackIcon
 import com.cmc12th.runway.ui.components.HeightSpacer
 import com.cmc12th.runway.ui.components.LastPasswordVisibleCustomTextField
 import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.setting.SettingViewModel
 import com.cmc12th.runway.ui.signin.components.OnBoardHeadLine
-import com.cmc12th.domain.model.signin.model.Password
 import com.cmc12th.runway.ui.theme.Body1B
 import com.cmc12th.runway.ui.theme.Gray300
-import com.cmc12th.runway.utils.Constants
 import com.cmc12th.runway.utils.Constants.SETTING_EDIT_PASSWORD_ROUTE
 
 @Composable
@@ -96,7 +95,7 @@ fun VerifyPasswordScreen(
                     placeholderText = "비밀번호 입력",
                     onvalueChanged = {
                         viewModel.updateVerifyPassword(
-                            com.cmc12th.domain.model.signin.model.Password(
+                            Password(
                                 it
                             )
                         )

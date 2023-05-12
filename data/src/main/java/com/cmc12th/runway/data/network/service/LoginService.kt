@@ -1,6 +1,5 @@
 package com.cmc12th.runway.data.network.service
 
-import com.cmc12th.runway.data.request.*
 import com.cmc12th.domain.model.response.LoginResponse
 import com.cmc12th.domain.model.response.SignUpResponse
 import com.cmc12th.domain.DefaultResponse

@@ -4,20 +4,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import com.cmc12th.domain.model.response.ErrorResponse
-import com.cmc12th.runway.data.response.user.MyReviewsItem
-import com.cmc12th.runway.data.response.user.StoreMetaDataItem
-import com.cmc12th.domain.usecase.EditMyProfileUseCase
-import com.cmc12th.domain.usecase.GetMyProfileDataUseCase
+import com.cmc12th.domain.model.response.user.MyReviewsItem
+import com.cmc12th.domain.model.response.user.StoreMetaDataItem
+import com.cmc12th.domain.model.signin.*
 import com.cmc12th.runway.ui.domain.model.RunwayCategory
 import com.cmc12th.runway.ui.map.components.DetailState
 import com.cmc12th.runway.ui.mypage.model.MypageBookmarkTabInfo
 import com.cmc12th.runway.ui.mypage.model.MypageTabInfo
 import com.cmc12th.runway.ui.signin.SignInCompleteUiState
 import com.cmc12th.runway.ui.signin.SignInProfileImageUiState
-import com.cmc12th.domain.model.signin.model.CategoryTag
-import com.cmc12th.domain.model.signin.model.Nickname
-import com.cmc12th.domain.model.signin.model.ProfileImageType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -51,10 +46,10 @@ class MypageViewModel @Inject constructor(
     private val _selectedBookmarkPage = MutableStateFlow(MypageBookmarkTabInfo.STORE)
 
     private val _nickName =
-        MutableStateFlow(com.cmc12th.domain.model.signin.model.Nickname.default())
+        MutableStateFlow(Nickname.default())
     private val _profileImage =
-        MutableStateFlow<com.cmc12th.domain.model.signin.model.ProfileImageType>(
-            com.cmc12th.domain.model.signin.model.ProfileImageType.DEFAULT
+        MutableStateFlow<ProfileImageType>(
+            ProfileImageType.DEFAULT
         )
     private val _categoryTags = MutableStateFlow(RunwayCategory.generateCategoryTags())
 
@@ -137,7 +132,7 @@ class MypageViewModel @Inject constructor(
         _selectedBookmarkPage.value = mypageBookmarkTabInfo
     }
 
-    fun updateProfileImage(profileImage: com.cmc12th.domain.model.signin.model.ProfileImageType) {
+    fun updateProfileImage(profileImage: ProfileImageType) {
         _profileImage.value = profileImage
     }
 
@@ -150,11 +145,11 @@ class MypageViewModel @Inject constructor(
             apiState.onSuccess {
                 updateNickName(it.result.nickname)
                 if (it.result.imgUrl == null) {
-                    updateProfileImage(com.cmc12th.domain.model.signin.model.ProfileImageType.DEFAULT)
+                    updateProfileImage(ProfileImageType.DEFAULT)
                 } else {
                     updateProfileImage(
-                        com.cmc12th.domain.model.signin.model.ProfileImageType.SOCIAL(
-                            it.result.imgUrl
+                        ProfileImageType.SOCIAL(
+                            it.result.imgUrl!!
                         )
                     )
                 }
@@ -167,7 +162,7 @@ class MypageViewModel @Inject constructor(
         onError: (com.cmc12th.domain.model.response.ErrorResponse) -> Unit,
     ) = viewModelScope.launch {
         val basic = when (_profileImage.value) {
-            com.cmc12th.domain.model.signin.model.ProfileImageType.DEFAULT -> 1
+            ProfileImageType.DEFAULT -> 1
             else -> 0
         }
         val multipartFile =
@@ -187,14 +182,14 @@ class MypageViewModel @Inject constructor(
             apiState.onSuccess {
                 updateNickName(it.result.nickname)
                 _categoryTags.value = it.result.categoryList.mapIndexed { _, categoryName ->
-                    com.cmc12th.domain.model.signin.model.CategoryTag(-1, categoryName, -1)
+                    CategoryTag(-1, categoryName, -1)
                 }.toMutableList()
                 if (it.result.imgUrl == null) {
-                    updateProfileImage(com.cmc12th.domain.model.signin.model.ProfileImageType.DEFAULT)
+                    updateProfileImage(ProfileImageType.DEFAULT)
                 } else {
                     updateProfileImage(
-                        com.cmc12th.domain.model.signin.model.ProfileImageType.SOCIAL(
-                            it.result.imgUrl
+                        ProfileImageType.SOCIAL(
+                            it.result.imgUrl!!
                         )
                     )
                 }

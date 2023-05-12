@@ -24,15 +24,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.cmc12th.domain.model.signin.Agreement
 import com.cmc12th.runway.R
 import com.cmc12th.runway.ui.components.*
-import com.cmc12th.runway.ui.signin.components.OnBoardStep
 import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.signin.SignInViewModel
-import com.cmc12th.domain.model.signin.model.Agreement
+import com.cmc12th.runway.ui.signin.components.OnBoardStep
 import com.cmc12th.runway.ui.theme.*
-import com.cmc12th.runway.utils.Constants
-import com.cmc12th.runway.utils.Constants.SIGNIN_AGREEMENT_DETAIL_ROUTE
 import com.cmc12th.runway.utils.Constants.SIGNIN_PROFILE_IMAGE_ROUTE
 
 @Composable
@@ -142,7 +140,7 @@ fun AgreementComponent(
     onClick: () -> Unit,
     onCheck: () -> Unit,
     isChecked: Boolean,
-    agreement: com.cmc12th.domain.model.signin.model.Agreement,
+    agreement: Agreement,
 ) {
     Row(
         modifier = Modifier

@@ -2,17 +2,10 @@ package com.cmc12th.runway.ui.login.passwordsearch
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.cmc12th.domain.model.request.LoginCheckRequest
-import com.cmc12th.domain.model.request.PasswordAndPhoneNumberRequest
-import com.cmc12th.domain.model.request.SendVerifyMessageRequest
-import com.cmc12th.domain.model.response.ErrorResponse
-import com.cmc12th.domain.repository.SignInRepository
+import com.cmc12th.domain.model.signin.*
 import com.cmc12th.runway.ui.signin.SignInPasswordUiState
 import com.cmc12th.runway.ui.signin.SignInPhoneVerifyUiState
 import com.cmc12th.runway.ui.signin.SignInViewModel
-import com.cmc12th.domain.model.signin.model.MobileCarrier
-import com.cmc12th.domain.model.signin.model.Password
-import com.cmc12th.domain.model.signin.model.Phone
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -21,7 +14,7 @@ import javax.inject.Inject
 
 
 data class SearchPasswordPhoneUiState(
-    val phone: com.cmc12th.domain.model.signin.model.Phone = com.cmc12th.domain.model.signin.model.Phone.default(),
+    val phone: Phone = Phone.default(),
     val userPhoneVerificationStatus: Boolean = false,
 )
 
@@ -31,9 +24,9 @@ class PasswordSearchViewModel @Inject constructor(
 ) : ViewModel() {
 
 
-    private val _phone: MutableStateFlow<com.cmc12th.domain.model.signin.model.Phone> =
+    private val _phone: MutableStateFlow<Phone> =
         MutableStateFlow(
-            com.cmc12th.domain.model.signin.model.Phone.default()
+            Phone.default()
         )
     private val _userPhoneVerificationStatus = MutableStateFlow(false)
 
@@ -41,9 +34,9 @@ class PasswordSearchViewModel @Inject constructor(
     private val _verifyCode = MutableStateFlow("")
 
     private val _password =
-        MutableStateFlow(com.cmc12th.domain.model.signin.model.Password.default())
+        MutableStateFlow(Password.default())
     private val _retryPassword =
-        MutableStateFlow(com.cmc12th.domain.model.signin.model.Password.default())
+        MutableStateFlow(Password.default())
 
     val searchPasswordPhoneUiState =
         combine(_phone, _userPhoneVerificationStatus) { phone, userPhoneVerificationStatus ->
@@ -153,7 +146,7 @@ class PasswordSearchViewModel @Inject constructor(
             }
         }
 
-    fun updateMobileCarrier(mobileCarrier: com.cmc12th.domain.model.signin.model.MobileCarrier) {
+    fun updateMobileCarrier(mobileCarrier: MobileCarrier) {
         _phone.value = _phone.value.copy(mobileCarrier = mobileCarrier)
     }
 
@@ -166,11 +159,11 @@ class PasswordSearchViewModel @Inject constructor(
         _verifyCode.value = verifyCode
     }
 
-    fun updatePassword(password: com.cmc12th.domain.model.signin.model.Password) {
+    fun updatePassword(password: Password) {
         _password.value = password
     }
 
-    fun updateRetryPassword(password: com.cmc12th.domain.model.signin.model.Password) {
+    fun updateRetryPassword(password: Password) {
         _retryPassword.value = password
     }
 

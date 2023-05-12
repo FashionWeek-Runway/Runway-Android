@@ -1,12 +1,12 @@
 package com.cmc12th.runway.data.network.service
 
 import com.cmc12th.domain.model.response.LoginResponse
-import com.cmc12th.runway.data.response.store.ImgUrlAndNicknameAndCategorys
-import com.cmc12th.runway.data.response.store.UserReviewDetail
-import com.cmc12th.runway.data.response.user.*
 import com.cmc12th.domain.DefaultResponse
 import com.cmc12th.domain.NetworkResponse
 import com.cmc12th.domain.PagingNetworkResponse
+import com.cmc12th.domain.model.response.store.ImgUrlAndNicknameAndCategorys
+import com.cmc12th.domain.model.response.store.UserReviewDetail
+import com.cmc12th.domain.model.response.user.*
 import okhttp3.MultipartBody
 import retrofit2.Call
 import retrofit2.http.*

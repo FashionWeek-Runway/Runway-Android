@@ -7,14 +7,14 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.cmc12th.domain.model.response.home.HomeBannerItem
 import com.cmc12th.domain.model.response.home.HomeReviewItem
-import com.cmc12th.runway.data.response.user.PatchCategoryBody
+import com.cmc12th.domain.model.response.user.PatchCategoryBody
+import com.cmc12th.domain.model.signin.CategoryTag
 import com.cmc12th.domain.repository.AuthRepository
 import com.cmc12th.domain.repository.HomeRepository
 import com.cmc12th.domain.repository.StoreRepository
 import com.cmc12th.runway.ui.domain.model.RunwayCategory
 import com.cmc12th.runway.ui.home.model.HomeBannertype
 import com.cmc12th.runway.ui.signin.SignInCategoryUiState
-import com.cmc12th.domain.model.signin.model.CategoryTag
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -27,25 +27,25 @@ data class HomeUiState(
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val homeRepository: com.cmc12th.domain.repository.HomeRepository,
-    private val storeRepository: com.cmc12th.domain.repository.StoreRepository,
-    private val authRepository: com.cmc12th.domain.repository.AuthRepository,
+    private val homeRepository: HomeRepository,
+    private val storeRepository: StoreRepository,
+    private val authRepository: AuthRepository,
 ) : ViewModel() {
 
 
     private val _homeBanners =
-        MutableStateFlow(mutableListOf<com.cmc12th.domain.model.response.home.HomeBannerItem>())
+        MutableStateFlow(mutableListOf<HomeBannerItem>())
     private val _nickName = MutableStateFlow("")
     private val _reviews =
-        MutableStateFlow<PagingData<com.cmc12th.domain.model.response.home.HomeReviewItem>>(
+        MutableStateFlow<PagingData<HomeReviewItem>>(
             PagingData.empty()
         )
     private val _categoryTags = MutableStateFlow(RunwayCategory.generateCategoryTags())
 
-    val reviews: StateFlow<PagingData<com.cmc12th.domain.model.response.home.HomeReviewItem>> =
+    val reviews: StateFlow<PagingData<HomeReviewItem>> =
         _reviews.asStateFlow()
 
-    val allStores = mutableStateListOf<com.cmc12th.domain.model.response.home.HomeBannerItem>()
+    val allStores = mutableStateListOf<HomeBannerItem>()
 
     val uiState = combine(
         _homeBanners, _nickName
@@ -160,7 +160,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun updateCategoryTags(categoryTag: com.cmc12th.domain.model.signin.model.CategoryTag) {
+    fun updateCategoryTags(categoryTag: CategoryTag) {
         _categoryTags.value = _categoryTags.value.mapIndexed { _, item ->
             if (item.name == categoryTag.name) item.copy(isSelected = !item.isSelected) else item
         }.toMutableList()

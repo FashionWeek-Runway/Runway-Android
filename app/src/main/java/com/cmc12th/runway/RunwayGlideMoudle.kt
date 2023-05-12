@@ -1,7 +1,6 @@
 package com.cmc12th.runway
 
 import android.content.Context
-import android.util.Log
 import com.bumptech.glide.Glide
 import com.bumptech.glide.GlideBuilder
 import com.bumptech.glide.Registry

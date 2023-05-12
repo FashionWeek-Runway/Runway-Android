@@ -27,7 +27,6 @@ import com.cmc12th.runway.ui.components.RunwayVerticalDialog
 import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.domain.model.DialogButtonContent
 import com.cmc12th.runway.ui.setting.SettingViewModel
-import com.cmc12th.runway.ui.splash.SplashScreen
 import com.cmc12th.runway.ui.theme.*
 import com.cmc12th.runway.utils.Constants
 import com.cmc12th.runway.utils.Constants.MAIN_GRAPH

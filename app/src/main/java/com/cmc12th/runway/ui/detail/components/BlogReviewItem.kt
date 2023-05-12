@@ -14,7 +14,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.cmc12th.runway.R
-import com.cmc12th.runway.data.response.store.BlogReview
+import com.cmc12th.domain.model.response.store.BlogReview
 import com.cmc12th.runway.ui.components.WidthSpacer
 import com.cmc12th.runway.ui.components.WidthSpacerLine
 import com.cmc12th.runway.ui.theme.*

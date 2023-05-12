@@ -1,5 +1,5 @@
 plugins {
-    id 'com.android.application'
+    id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
@@ -14,15 +14,12 @@ android {
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.cmc12th.runway.data"
-        minSdk 24
+        minSdk 21
         targetSdk 33
-        versionCode 1
-        versionName "1.0"
-        buildConfigField "String", "BASE_URL", "\"https://dev.runwayserver.shop/\""
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-    }
 
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
 
     buildTypes {
         release {

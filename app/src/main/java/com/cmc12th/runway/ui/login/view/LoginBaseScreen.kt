@@ -1,20 +1,15 @@
 package com.cmc12th.runway.ui.login.view
 
-import android.content.Context
-import androidx.compose.foundation.*
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -23,7 +18,10 @@ import com.cmc12th.runway.R
 import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.login.LoginViewModel
 import com.cmc12th.runway.ui.splash.component.BottomLoginButtons
-import com.cmc12th.runway.ui.theme.*
+import com.cmc12th.runway.ui.theme.Body1B
+import com.cmc12th.runway.ui.theme.SplashColor
+import com.cmc12th.runway.ui.theme.SplashColor2
+import com.cmc12th.runway.ui.theme.White
 import com.cmc12th.runway.utils.Constants.LOGIN_GRAPH
 import com.cmc12th.runway.utils.Constants.LOGIN_ID_PW_ROUTE
 import com.cmc12th.runway.utils.Constants.MAIN_GRAPH

@@ -1,11 +1,10 @@
 package com.cmc12th.runway.data.network.service
 
-import com.cmc12th.runway.data.request.*
 import com.cmc12th.domain.model.response.home.HomeBanner
 import com.cmc12th.domain.model.response.home.HomeReviewItem
-import com.cmc12th.runway.data.response.store.UserReviewDetail
 import com.cmc12th.domain.NetworkResponse
 import com.cmc12th.domain.PagingNetworkResponse
+import com.cmc12th.domain.model.response.store.UserReviewDetail
 import retrofit2.http.*
 
 interface HomeService {

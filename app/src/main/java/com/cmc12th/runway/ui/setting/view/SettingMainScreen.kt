@@ -1,11 +1,10 @@
-package com.cmc12th.runway.ui.setting
+package com.cmc12th.runway.ui.setting.view
 
 import android.content.Intent
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
-import androidx.browser.customtabs.CustomTabsClient.getPackageName
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -19,13 +18,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat.startActivity
 import com.cmc12th.runway.ui.components.BackIcon
 import com.cmc12th.runway.ui.components.RunwayHorizontalDialog
-import com.cmc12th.runway.ui.components.RunwaySwitch
 import com.cmc12th.runway.ui.components.WidthSpacerLine
 import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.domain.model.DialogButtonContent
+import com.cmc12th.runway.ui.setting.SettingViewModel
 import com.cmc12th.runway.ui.theme.*
 import com.cmc12th.runway.utils.Constants
 import com.cmc12th.runway.utils.Constants.LOCATION_USE_TERMS

@@ -22,15 +22,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.cmc12th.domain.model.signin.Password
+import com.cmc12th.domain.model.signin.Phone
 import com.cmc12th.runway.ui.components.BackIcon
 import com.cmc12th.runway.ui.components.CustomTextField
 import com.cmc12th.runway.ui.components.HeightSpacer
 import com.cmc12th.runway.ui.components.LastPasswordVisibleCustomTextField
-import com.cmc12th.runway.ui.domain.keyboardAsState
 import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.login.LoginViewModel
-import com.cmc12th.domain.model.signin.model.Password
-import com.cmc12th.domain.model.signin.model.Phone
 import com.cmc12th.runway.ui.signin.view.ErrorMessage
 import com.cmc12th.runway.ui.theme.Body1B
 import com.cmc12th.runway.ui.theme.Body2
@@ -189,7 +188,7 @@ private fun BottomButtons(
 
 @Composable
 private fun PhoneTextField(
-    phone: com.cmc12th.domain.model.signin.model.Phone,
+    phone: Phone,
     updatePhoneNumber: (String) -> Unit,
     phoneErrorMessage: String,
 ) {
@@ -200,7 +199,7 @@ private fun PhoneTextField(
         value = phone.number,
         placeholderText = "전화번호 입력",
         onvalueChanged = {
-            if (it.length <= com.cmc12th.domain.model.signin.model.Phone.PHONE_NUMBER_LENGTH) {
+            if (it.length <= Phone.PHONE_NUMBER_LENGTH) {
                 updatePhoneNumber(it)
             }
         },
@@ -217,7 +216,7 @@ private fun PhoneTextField(
 
 @Composable
 private fun PasswordTextField(
-    password: com.cmc12th.domain.model.signin.model.Password,
+    password: Password,
     updatePassword: (String) -> Unit,
     onDone: () -> Unit,
     errorState: Boolean,

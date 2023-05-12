@@ -5,9 +5,6 @@
 
 package com.cmc12th.runway.ui.detail.photoreview.view
 
-import android.content.Context
-import android.graphics.drawable.Drawable
-import android.widget.ImageView
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.*
 import androidx.compose.foundation.gestures.*
@@ -40,19 +37,9 @@ import coil.compose.AsyncImage
 import coil.compose.SubcomposeAsyncImage
 import coil.request.CachePolicy
 import coil.request.ImageRequest
-import com.bumptech.glide.RequestBuilder
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
-import com.bumptech.glide.integration.compose.GlideImage
-import com.bumptech.glide.load.DataSource
-import com.bumptech.glide.load.engine.GlideException
-import com.bumptech.glide.request.RequestListener
-import com.bumptech.glide.request.RequestOptions
-import com.bumptech.glide.request.target.DrawableImageViewTarget
-import com.bumptech.glide.request.target.Target
-import com.bumptech.glide.request.transition.Transition
-import com.bumptech.glide.signature.ObjectKey
+import com.cmc12th.domain.model.response.store.UserReviewDetail
 import com.cmc12th.runway.R
-import com.cmc12th.runway.data.response.store.UserReviewDetail
 import com.cmc12th.runway.ui.components.CustomBottomSheet
 import com.cmc12th.runway.ui.components.RunwayIconButton
 import com.cmc12th.runway.ui.detail.photoreview.ReviewViewModel
@@ -65,7 +52,6 @@ import com.cmc12th.runway.ui.theme.*
 import com.cmc12th.runway.utils.Constants
 import com.cmc12th.runway.utils.Constants.REVIEW_REPORT_ROUTE
 import com.cmc12th.runway.utils.viewLogEvent
-import com.google.accompanist.drawablepainter.DrawablePainter
 import kotlinx.coroutines.launch
 import kotlin.math.abs
 import kotlin.math.roundToInt

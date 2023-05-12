@@ -1,6 +1,5 @@
 package com.cmc12th.domain.model
 
-import android.util.Log
 import okhttp3.Interceptor
 import okhttp3.Response
 

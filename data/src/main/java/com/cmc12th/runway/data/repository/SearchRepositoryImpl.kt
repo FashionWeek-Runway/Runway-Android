@@ -1,8 +1,8 @@
 package com.cmc12th.runway.data.repository
 
 import com.cmc12th.domain.model.RecentStr
+import com.cmc12th.domain.repository.SearchRepository
 import com.cmc12th.runway.data.roomdb.RecentStrDao
-import com.cmc12th.runway.domain.repository.SearchRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 

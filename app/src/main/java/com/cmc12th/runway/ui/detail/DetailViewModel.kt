@@ -5,10 +5,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import com.cmc12th.runway.data.response.store.BlogReview
-import com.cmc12th.runway.data.response.store.StoreDetail
-import com.cmc12th.runway.data.response.store.UserReview
-import com.cmc12th.domain.repository.StoreRepository
+import com.cmc12th.domain.model.response.store.BlogReview
+import com.cmc12th.domain.model.response.store.StoreDetail
+import com.cmc12th.domain.model.response.store.UserReview
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch

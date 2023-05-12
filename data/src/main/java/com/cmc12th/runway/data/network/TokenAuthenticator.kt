@@ -1,5 +1,6 @@
-package com.cmc12th.domain.model
+package com.cmc12th.runway.data.network
 
+import com.cmc12th.domain.model.ServiceInterceptor
 import com.cmc12th.runway.data.Constants.BASE_URL
 import com.cmc12th.domain.model.ServiceInterceptor.Companion.accessToken
 import com.cmc12th.runway.data.network.service.AuthService

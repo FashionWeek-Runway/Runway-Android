@@ -5,7 +5,7 @@ import androidx.paging.PagingState
 import com.cmc12th.domain.repository.AuthRepository
 import com.cmc12th.runway.data.Constants.INIT_PAGE_INDEX
 import com.cmc12th.domain.model.ApiState
-import com.cmc12th.runway.data.response.user.StoreMetaDataItem
+import com.cmc12th.domain.model.response.user.StoreMetaDataItem
 import kotlinx.coroutines.flow.first
 
 class BookmarkedPagingSource(

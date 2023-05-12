@@ -21,14 +21,12 @@ import androidx.compose.ui.unit.dp
 import androidx.paging.PagingData
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.signature.ObjectKey
+import com.cmc12th.domain.model.response.store.UserReview
 import com.cmc12th.runway.R
 import com.cmc12th.runway.broadcast.ComposeFileProvider
-import com.cmc12th.runway.data.response.store.UserReview
 import com.cmc12th.runway.ui.components.HeightSpacer
 import com.cmc12th.runway.ui.components.RunwayIconButton
 import com.cmc12th.runway.ui.components.WidthSpacer
@@ -151,7 +149,7 @@ fun UserReview(
                         model = it.imgUrl,
                         contentDescription = "IMG_SELECTED_IMG",
                         contentScale = ContentScale.Crop,
-                    ) {requestBuilder ->
+                    ) { requestBuilder ->
                         requestBuilder.signature(ObjectKey(it.imgUrl))
                     }
                 }

@@ -1,8 +1,6 @@
 package com.cmc12th.runway.ui.mypage.components
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -19,7 +17,6 @@ import com.cmc12th.runway.ui.mypage.model.MypageBookmarkTabInfo
 import com.cmc12th.runway.ui.theme.Black
 import com.cmc12th.runway.ui.theme.Body2
 import com.cmc12th.runway.ui.theme.Body2B
-import com.cmc12th.runway.ui.theme.Gray200
 
 @Preview
 @Composable

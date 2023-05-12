@@ -18,7 +18,7 @@ import com.cmc12th.runway.ui.map.view.MapScreen
 import com.cmc12th.runway.ui.mypage.view.EditProfileCompleteScreen
 import com.cmc12th.runway.ui.mypage.view.EditProfileScreen
 import com.cmc12th.runway.ui.mypage.view.MypageScreen
-import com.cmc12th.runway.ui.setting.SettingMainScreen
+import com.cmc12th.runway.ui.setting.view.SettingMainScreen
 import com.cmc12th.runway.ui.setting.view.EditPasswordScreen
 import com.cmc12th.runway.ui.setting.view.SettingPersonalInfoManagementScreen
 import com.cmc12th.runway.ui.setting.view.SettingWithdrawalScreen

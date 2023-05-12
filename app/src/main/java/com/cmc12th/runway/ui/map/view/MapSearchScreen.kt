@@ -26,11 +26,11 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.cmc12th.runway.R
-import com.cmc12th.model.RecentStr
-import com.cmc12th.model.SearchType.Companion.LOCATION_TYPE
-import com.cmc12th.model.SearchType.Companion.STORE_TYPE
-import com.cmc12th.runway.data.response.map.RegionSearch
-import com.cmc12th.runway.data.response.map.StoreSearch
+import com.cmc12th.domain.model.RecentStr
+import com.cmc12th.domain.model.SearchType.Companion.LOCATION_TYPE
+import com.cmc12th.domain.model.SearchType.Companion.STORE_TYPE
+import com.cmc12th.domain.model.response.map.RegionSearch
+import com.cmc12th.domain.model.response.map.StoreSearch
 import com.cmc12th.runway.ui.components.*
 import com.cmc12th.runway.ui.domain.model.DialogButtonContent
 import com.cmc12th.runway.ui.map.MapViewModel
@@ -365,8 +365,8 @@ private fun ResultItems(
 
 @Composable
 private fun RecentSearches(
-    recentSearchs: List<com.cmc12th.model.RecentStr>,
-    onClickRecentStr: (com.cmc12th.model.RecentStr) -> Unit,
+    recentSearchs: List<RecentStr>,
+    onClickRecentStr: (RecentStr) -> Unit,
     removeRecentStr: (Int) -> Unit,
     removeAllRecentStr: () -> Unit,
 ) {

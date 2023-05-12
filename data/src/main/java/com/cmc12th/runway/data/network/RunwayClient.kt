@@ -1,12 +1,8 @@
 package com.cmc12th.runway.data.network
 
-import com.cmc12th.runway.data.network.service.*
-import com.cmc12th.runway.data.request.*
 import com.cmc12th.domain.model.request.auth.PasswordRequest
-import com.cmc12th.domain.model.request.map.MapFilterRequest
-import com.cmc12th.domain.model.request.map.MapSearchRequest
-import com.cmc12th.domain.model.request.store.ReviewReportRequest
-import com.cmc12th.runway.data.response.user.PatchCategoryBody
+import com.cmc12th.domain.model.response.user.PatchCategoryBody
+import com.cmc12th.runway.data.network.service.*
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import javax.inject.Inject
@@ -52,7 +48,7 @@ class RunwayClient @Inject constructor(
     suspend fun verifyPassword(passwordRequest: com.cmc12th.domain.model.request.auth.PasswordRequest) =
         authService.verifyPassword(passwordRequest)
 
-    suspend fun modifyPassword(passwordRequest: com.cmc12th.domain.model.request.auth.PasswordRequest) =
+    suspend fun modifyPassword(passwordRequest: PasswordRequest) =
         authService.modifyPassword(passwordRequest)
 
     /** 마이페이지 */

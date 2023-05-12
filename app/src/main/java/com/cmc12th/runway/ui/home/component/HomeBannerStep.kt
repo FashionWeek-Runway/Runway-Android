@@ -17,7 +17,6 @@ fun HomeBannerStep(modifier: Modifier, step: Int, maxSize: Int) {
     for (i in 0 until step) {
         steps[i] = true
     }
-//    (0 until step).forEach { steps[it] = true }
     Row(
         modifier = modifier
             .fillMaxWidth(1f)

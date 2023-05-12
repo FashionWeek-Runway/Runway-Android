@@ -1,7 +1,7 @@
 package com.cmc12th.domain.model.map.model
 
 import androidx.paging.PagingData
-import com.cmc12th.runway.data.response.map.MapInfoItem
+import com.cmc12th.domain.model.response.map.MapInfoItem
 import kotlinx.coroutines.flow.MutableStateFlow
 
 sealed class BottomSheetContent() {

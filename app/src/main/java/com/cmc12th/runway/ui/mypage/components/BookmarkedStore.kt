@@ -8,8 +8,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.items
-import com.cmc12th.runway.data.response.map.MapInfoItem
-import com.cmc12th.runway.data.response.user.StoreMetaDataItem
+import com.cmc12th.domain.model.response.map.MapInfoItem
+import com.cmc12th.domain.model.response.user.StoreMetaDataItem
 import com.cmc12th.runway.ui.map.components.BottomDetailItem
 
 @Composable

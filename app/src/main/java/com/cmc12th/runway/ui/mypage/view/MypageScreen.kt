@@ -1,23 +1,13 @@
 package com.cmc12th.runway.ui.mypage.view
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -33,7 +23,9 @@ import com.cmc12th.runway.ui.mypage.MypageViewModel
 import com.cmc12th.runway.ui.mypage.components.*
 import com.cmc12th.runway.ui.mypage.model.MypageBookmarkTabInfo
 import com.cmc12th.runway.ui.mypage.model.MypageTabInfo
-import com.cmc12th.runway.ui.theme.*
+import com.cmc12th.runway.ui.theme.Black
+import com.cmc12th.runway.ui.theme.Gray50
+import com.cmc12th.runway.ui.theme.HeadLine4
 import com.cmc12th.runway.utils.Constants.BOTTOM_NAVIGATION_HEIGHT
 import com.cmc12th.runway.utils.Constants.EDIT_PROFILE_IMAGE_ROUTE
 import com.cmc12th.runway.utils.Constants.REVIEW_DETAIL_ROUTE

@@ -4,7 +4,7 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.runtime.Composable
 import androidx.paging.compose.LazyPagingItems
 import com.cmc12th.runway.R
-import com.cmc12th.runway.data.response.user.StoreMetaDataItem
+import com.cmc12th.domain.model.response.user.StoreMetaDataItem
 
 @Composable
 fun ColumnScope.BookmarkStoreContainer(

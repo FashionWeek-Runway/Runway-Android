@@ -2,25 +2,25 @@ package com.cmc12th.runway.data.pagingsource
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
+import com.cmc12th.domain.model.ApiState
 import com.cmc12th.domain.model.response.home.HomeReviewItem
-import com.cmc12th.runway.domain.repository.HomeRepository
-import com.cmc12th.runway.network.model.ApiState
-import com.cmc12th.runway.utils.Constants
+import com.cmc12th.domain.repository.HomeRepository
+import com.cmc12th.runway.data.Constants
 import kotlinx.coroutines.flow.first
 
 
 class HomeReviewItemPagingSource(
     private val homeRepository: HomeRepository
-) : PagingSource<Int, com.cmc12th.domain.model.response.home.HomeReviewItem>() {
+) : PagingSource<Int, HomeReviewItem>() {
 
-    override fun getRefreshKey(state: PagingState<Int, com.cmc12th.domain.model.response.home.HomeReviewItem>): Int? {
+    override fun getRefreshKey(state: PagingState<Int, HomeReviewItem>): Int? {
         return state.anchorPosition?.let { achorPosition ->
             state.closestPageToPosition(achorPosition)?.prevKey?.plus(1)
                 ?: state.closestPageToPosition(achorPosition)?.nextKey?.minus(1)
         }
     }
 
-    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, com.cmc12th.domain.model.response.home.HomeReviewItem> {
+    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, HomeReviewItem> {
         val position = params.key ?: Constants.INIT_PAGE_INDEX
         val loadData =
             homeRepository.getHomeReview(

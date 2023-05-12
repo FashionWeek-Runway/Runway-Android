@@ -5,14 +5,13 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.cmc12th.runway.data.pagingsource.MapInfoItemByFilterPagingSource
 import com.cmc12th.runway.data.pagingsource.MapInfoItemByLocationSearchPagingSource
-import com.cmc12th.runway.data.response.map.*
-import com.cmc12th.runway.domain.repository.MapRepository
-import com.cmc12th.runway.network.RunwayClient
-import com.cmc12th.runway.network.model.safeFlow
-import com.cmc12th.runway.network.model.safePagingFlow
 import com.cmc12th.domain.ApiWrapper
 import com.cmc12th.domain.PagingApiWrapper
-import com.cmc12th.domain.model.response.map.MapFilterItem
+import com.cmc12th.domain.model.response.map.*
+import com.cmc12th.domain.model.safeFlow
+import com.cmc12th.domain.model.safePagingFlow
+import com.cmc12th.domain.repository.MapRepository
+import com.cmc12th.runway.data.network.RunwayClient
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 

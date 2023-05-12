@@ -12,18 +12,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
-import com.bumptech.glide.Glide
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.signature.ObjectKey
+import com.cmc12th.domain.model.response.store.StoreDetail
 import com.cmc12th.runway.R
-import com.cmc12th.runway.data.response.store.StoreDetail
-import com.cmc12th.runway.ui.map.components.BottomGradient
 import com.cmc12th.runway.ui.map.components.TopGradient
 import com.cmc12th.runway.ui.theme.Gray200
 

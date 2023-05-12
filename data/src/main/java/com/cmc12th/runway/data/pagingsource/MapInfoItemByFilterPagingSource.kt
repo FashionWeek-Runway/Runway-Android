@@ -2,11 +2,10 @@ package com.cmc12th.runway.data.pagingsource
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.cmc12th.domain.model.request.map.MapFilterRequest
-import com.cmc12th.runway.data.response.map.MapInfoItem
-import com.cmc12th.runway.domain.repository.MapRepository
-import com.cmc12th.runway.network.model.ApiState
-import com.cmc12th.runway.utils.Constants
+import com.cmc12th.domain.model.ApiState
+import com.cmc12th.domain.model.response.map.MapInfoItem
+import com.cmc12th.domain.repository.MapRepository
+import com.cmc12th.runway.data.Constants
 import kotlinx.coroutines.flow.first
 
 class MapInfoItemByFilterPagingSource(

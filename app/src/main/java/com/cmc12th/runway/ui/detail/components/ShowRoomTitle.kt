@@ -9,7 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.cmc12th.runway.data.response.store.StoreDetail
+import com.cmc12th.domain.model.response.store.StoreDetail
 import com.cmc12th.runway.ui.theme.Gray300
 import com.cmc12th.runway.ui.theme.HeadLine2
 

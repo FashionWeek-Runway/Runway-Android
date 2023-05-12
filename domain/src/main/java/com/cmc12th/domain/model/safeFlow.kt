@@ -1,8 +1,8 @@
 package com.cmc12th.domain.model
 
-import com.cmc12th.runway.data.GsonHelper
-import com.cmc12th.runway.data.response.PagingResponse
-import com.cmc12th.runway.data.response.ResponseWrapper
+import com.cmc12th.domain.GsonHelper
+import com.cmc12th.domain.model.response.PagingResponse
+import com.cmc12th.domain.model.response.ResponseWrapper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
