@@ -5,7 +5,7 @@ def versions = [:]
 versions.glide_compose_version = '1.0.0-alpha.1'
 versions.glide_okhttp_integration_version = '4.11.0'
 versions.glide_compiler = "4.14.2"
-versions.coil_version = '2.3.0'
+versions.coil_version = '2.2.2'
 
 /* Glide */
 def glide = [:]
