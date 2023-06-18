@@ -1,0 +1,22 @@
+def deps = [:]
+
+/* versions */
+def versions = [:]
+versions.glide_compose_version = '1.0.0-alpha.1'
+versions.glide_okhttp_integration_version = '4.11.0'
+versions.glide_compiler = "4.14.2"
+versions.coil_version = '2.3.0'
+
+/* Glide */
+def glide = [:]
+glide.compose = "com.github.bumptech.glide:compose:$versions.glide_compose_version"
+glide.okhttp3_integration = "com.github.bumptech.glide:okhttp3-integration:$versions.glide_okhttp_integration_version"
+glide.compiler = "com.github.bumptech.glide:compiler:$versions.glide_compiler"
+deps.glide = glide
+
+def coil = [:]
+coil.compose = "io.coil-kt:coil-compose:$versions.coil_version"
+coil.base = "io.coil-kt:coil-base:$versions.coil_version"
+deps.coil = coil
+
+ext.deps = deps

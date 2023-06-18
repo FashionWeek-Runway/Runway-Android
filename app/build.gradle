@@ -100,6 +100,7 @@ dependencies {
     implementation project(path: ':domain')
     implementation project(path: ':data')
 
+
     implementation 'androidx.core:core-ktx:1.9.0'
     implementation 'androidx.activity:activity-compose:1.6.1'
     implementation "androidx.compose.ui:ui:$compose_version"
@@ -141,8 +142,9 @@ dependencies {
     implementation 'com.google.android.gms:play-services-location:21.0.1'
 
     // Lifecycles only (without ViewModel or LiveData)
-    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.5.1'
-    implementation "androidx.lifecycle:lifecycle-runtime-compose:2.6.0-alpha05"
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.6.1'
+    implementation "androidx.lifecycle:lifecycle-runtime-compose:2.6.1"
+    implementation "androidx.lifecycle:lifecycle-common-java8:2.6.1"
 
     // Accompanist - Statusbar Color바꾸기
     implementation "com.google.accompanist:accompanist-systemuicontroller:0.28.0"
@@ -151,13 +153,14 @@ dependencies {
     // Accompanist - Webview
     implementation "com.google.accompanist:accompanist-webview:0.29.1-alpha"
 
-    // Coil, Glide
-    implementation "io.coil-kt:coil-compose:2.2.2"
-    implementation "io.coil-kt:coil-base:2.2.2"
-    implementation "com.github.bumptech.glide:compose:1.0.0-alpha.1"
-    implementation "com.github.bumptech.glide:okhttp3-integration:4.11.0"
-    kapt "android.arch.lifecycle:compiler:1.1.1"
-    kapt 'com.github.bumptech.glide:compiler:4.14.2'
+    // Coil
+    implementation deps.coil.compose
+    implementation deps.coil.base
+
+    // Glide
+    implementation deps.glide.compose
+    implementation deps.glide.okhttp3_integration
+    kapt deps.glide.compiler
 
     // Gson
     implementation 'com.google.code.gson:gson:2.10.1'
