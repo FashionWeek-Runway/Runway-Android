@@ -4,16 +4,17 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.cmc12th.domain.GsonHelper
 import com.cmc12th.domain.model.ServiceInterceptor
 import com.cmc12th.domain.model.signin.*
+import com.cmc12th.domain.repository.AuthRepository
+import com.cmc12th.domain.repository.SignInRepository
 import com.cmc12th.runway.data.repository.AuthRepositoryImpl
-import com.cmc12th.runway.utils.GsonHelper
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
 import com.kakao.sdk.user.UserApiClient
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -25,9 +26,8 @@ data class LoginIdPasswordUiState(
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    @ApplicationContext private val context: Context,
-    private val signInRepository: com.cmc12th.domain.repository.SignInRepository,
-    private val authRepository: com.cmc12th.domain.repository.AuthRepository,
+    private val signInRepository: SignInRepository,
+    private val authRepository: AuthRepository,
 ) : ViewModel() {
     private val _phoneNumber =
         MutableStateFlow(Phone.default())
