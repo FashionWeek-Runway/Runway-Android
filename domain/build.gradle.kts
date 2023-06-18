@@ -1,16 +1,16 @@
 plugins {
-    id("com.android.library")
-    id("org.jetbrains.kotlin.android")
-    id("kotlin-kapt")
+    id(Plugins.ANDROID_LIBRARY)
+    id(Plugins.JETBRAINS_KOTLIN_ANDROID)
+    id(Plugins.KOTLIN_KAPT)
 }
 
 android {
-    namespace = "com.cmc12th.runway.domain"
-    compileSdk = 33
+    namespace = DefaultConfig.DOMAIN_NAME_SAPCE
+    compileSdk = DefaultConfig.COMPILE_SDK_VERSION
 
     defaultConfig {
-        minSdk = 21
-        targetSdk = 33
+        minSdk = DefaultConfig.MIN_SDK_VERSION
+        targetSdk = DefaultConfig.TARGET_SDK_VERSION
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
@@ -37,30 +37,25 @@ android {
 dependencies {
 
     // DataStore
-    implementation("androidx.datastore:datastore-preferences:1.0.0")
+    implementation(Dependencies.DATASTORE)
 
     // Gson
-    implementation("com.google.code.gson:gson:2.10.1")
-    implementation("com.squareup.retrofit2:converter-moshi:2.9.0")
+    implementation(Dependencies.GSON)
+    implementation(Dependencies.RETROFIT_CONVERTER_MOSHI)
 
     // Paging Compose
-    implementation("androidx.paging:paging-runtime:3.1.1")
-    implementation("androidx.paging:paging-compose:1.0.0-alpha18")
+    implementation(Dependencies.PAGING_RUNTIME)
+    implementation(Dependencies.PAGING_COMPOSE)
 
     // Room DB
-    implementation("androidx.room:room-runtime:2.5.0")
-    kapt("androidx.room:room-compiler:2.5.0")
-
+    implementation(Dependencies.ROOM_RUNTIME)
+    kapt(Dependencies.ROOM_COMPILER)
     // 코루틴 활용을 위해
-    implementation("androidx.room:room-ktx:2.5.0")
-
-    // MarkerClusting
-    implementation("io.github.ParkSangGwon:tedclustering-naver:1.0.2")
+    implementation(Dependencies.ROOM_KTX)
 
     // Naver Map
-    implementation("io.github.fornewid:naver-map-compose:1.2.3")
-    implementation("androidx.appcompat:appcompat:1.6.1")
-    implementation("com.naver.maps:map-sdk:3.16.1") {
-        exclude(group = "com.android.support")
+    implementation(Dependencies.NAVER_MAP_COMPOSE)
+    implementation(Dependencies.NAVER_SDK) {
+        exclude(group = Dependencies.ANDROID_SUPPORT)
     }
 }

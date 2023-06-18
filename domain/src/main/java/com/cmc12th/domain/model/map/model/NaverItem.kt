@@ -1,8 +1,6 @@
 package com.cmc12th.domain.model.map.model
 
 import com.naver.maps.geometry.LatLng
-import ted.gun0912.clustering.clustering.TedClusterItem
-import ted.gun0912.clustering.geometry.TedLatLng
 
 data class NaverItem(
     var position: LatLng,
@@ -11,10 +9,10 @@ data class NaverItem(
     var description: String = "",
     var bookmark: Boolean = false,
     var isClicked: Boolean = false,
-) : TedClusterItem {
+) {
 
-    override fun getTedLatLng(): TedLatLng {
-        return TedLatLng(position.latitude, position.longitude)
+    fun getTedLatLng(): LatLng {
+        return LatLng(position.latitude, position.longitude)
     }
 
     companion object {

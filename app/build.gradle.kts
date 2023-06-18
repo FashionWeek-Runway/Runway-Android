@@ -1,12 +1,12 @@
 import java.util.Properties
 
 plugins {
-    id("com.android.application")
-    id("org.jetbrains.kotlin.android")
-    id("kotlin-kapt")
-    id("com.google.gms.google-services")
-    id("com.google.firebase.crashlytics")
-    id("dagger.hilt.android.plugin")
+    id(Plugins.ANDROID_APPLICATION)
+    id(Plugins.JETBRAINS_KOTLIN_ANDROID)
+    id(Plugins.KOTLIN_KAPT)
+    id(Plugins.GOOGLE_SERVICES)
+    id(Plugins.FIREBASE_CRASHLYTICS)
+    id(Plugins.DAGGER_HILT_PLUGIN)
 }
 
 val properties = Properties().apply {
@@ -41,15 +41,15 @@ android {
 
     }
 
-    namespace = "com.cmc12th.runway"
-    compileSdk = 33
+    namespace = DefaultConfig.NAME_SAPCE
+    compileSdk = DefaultConfig.COMPILE_SDK_VERSION
 
     defaultConfig {
-        applicationId = "com.cmc12th.runway"
-        minSdk = 21
-        targetSdk = 33
-        versionCode = 7
-        versionName = "1.15"
+        applicationId = DefaultConfig.APPLICATION_ID
+        minSdk = DefaultConfig.MIN_SDK_VERSION
+        targetSdk = DefaultConfig.TARGET_SDK_VERSION
+        versionCode = DefaultConfig.VERSION_CODE
+        versionName = DefaultConfig.VERSION_NAME
 
         buildConfigField(
             "String",
@@ -120,108 +120,87 @@ dependencies {
     implementation(project(":domain"))
     implementation(project(":data"))
 
-    implementation("androidx.core:core-ktx:1.9.0")
-    implementation("androidx.activity:activity-compose:1.6.1")
-    implementation("androidx.compose.ui:ui:1.3.3")
-    implementation("androidx.compose.ui:ui-tooling:1.3.3")
-    implementation("androidx.compose.ui:ui-tooling-preview:1.3.3")
-    implementation("androidx.compose.material3:material3:1.1.0-alpha05")
-    implementation("androidx.compose.material:material:1.3.1")
-    implementation("androidx.navigation:navigation-runtime-ktx:2.5.3")
-    implementation("androidx.compose.ui:ui-util:1.3.3")
-    debugImplementation("androidx.compose.ui:ui-tooling:1.3.3")
-    debugImplementation("androidx.compose.ui:ui-tooling-preview:1.3.3")
-    debugImplementation("androidx.compose.ui:ui-test-manifest:1.3.3")
+    implementation(Dependencies.ANDROID_CORE_KTX)
+    implementation(Dependencies.ACTIVITY_COMPOSE)
+    implementation(Dependencies.COMPOSE_UI)
+    implementation(Dependencies.COMPOSE_UI_TOOLING)
+    implementation(Dependencies.COMPOSE_UI_PREVIEW)
+    implementation(Dependencies.COMPOSE_MATERIAL3)
+    implementation(Dependencies.COMPOSE_MATERIAL)
+    implementation(Dependencies.COMPOSE_UI_UTIL)
+    implementation(Dependencies.APPCOMPAT)
+    debugImplementation(Dependencies.COMPOSE_UI_TOOLING)
+    debugImplementation(Dependencies.COMPOSE_UI_PREVIEW)
+    debugImplementation(Dependencies.COMPOSE_UI_TEST_MANIFEST)
 
     // Test lib
-    testImplementation("org.junit.jupiter:junit-jupiter")
-    testImplementation("org.junit.platform:junit-platform-commons:1.9.2")
-    testImplementation("org.assertj:assertj-core:3.24.2")
-    testImplementation("org.junit.jupiter:junit-jupiter-params:5.9.2")
-    androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.3.3")
-    androidTestImplementation("androidx.test.ext:junit:1.1.5")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+    testImplementation(Testing.JUNIT_JUPITER)
+    testImplementation(Testing.JUNIT_PLATFORM_COMMONS)
+    testImplementation(Testing.ASSERTJ_CORE)
+    testImplementation(Testing.JUNIT_JUPITER_PARAMS)
+    androidTestImplementation(Testing.UI_TEST_JUNIT4)
+    androidTestImplementation(Testing.JUNIT)
+    androidTestImplementation(Testing.ESPRESSO_CORE)
 
     // compose navigate
-    implementation("androidx.navigation:navigation-compose:2.5.3")
-
-    // Coil
-    implementation("io.coil-kt:coil-compose:2.2.2")
+    implementation(Dependencies.NAVIGATION_COMPOSE)
+    implementation(Dependencies.NAVIGATION_RUNTIME_KTX)
 
     // Naver Map
-    implementation("io.github.fornewid:naver-map-compose:1.2.3")
-    implementation("androidx.appcompat:appcompat:1.6.1")
-    implementation("com.naver.maps:map-sdk:3.16.1") {
-        exclude(group = "com.android.support")
+    implementation(Dependencies.NAVER_MAP_COMPOSE)
+    implementation(Dependencies.NAVER_SDK) {
+        exclude(group = Dependencies.ANDROID_SUPPORT)
     }
-    // MarkerClusting
-    implementation("io.github.ParkSangGwon:tedclustering-naver:1.0.2")
 
     // FusedLocation
-    implementation("com.google.android.gms:play-services-location:21.0.1")
+    implementation(Dependencies.PLAY_SERVICES_LOCATION)
 
     // Lifecycles only (without ViewModel or LiveData)
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
-    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.1")
-    implementation("androidx.lifecycle:lifecycle-common-java8:2.6.1")
+    implementation(Dependencies.LIFECYCLE_RUNTIME_KTX)
+    implementation(Dependencies.LIFECYCLE_RUNTIME_COMPOSE)
+    implementation(Dependencies.LIFECYCLE_COMMON_JAVA8)
 
-    // Accompanist - Statusbar Color바꾸기
-    implementation("com.google.accompanist:accompanist-systemuicontroller:0.28.0")
-    // Accompanist - Pager
-    implementation("com.google.accompanist:accompanist-pager:0.29.1-alpha")
-    // Accompanist - Webview
-    implementation("com.google.accompanist:accompanist-webview:0.29.1-alpha")
+    // Accompanist
+    implementation(Dependencies.ACCOMPANIST_SYSTEMUICONTROLLER)
+    implementation(Dependencies.ACCOMPANIST_PAGER)
+    implementation(Dependencies.ACCOMPANIST_WEBVIEW)
 
     // Coil
-    implementation("io.coil-kt:coil-compose:2.2.2")
-    implementation("io.coil-kt:coil-base:2.2.2")
-    implementation("com.github.bumptech.glide:compose:1.0.0-alpha.1")
-    implementation("com.github.bumptech.glide:okhttp3-integration:4.11.0")
-    kapt("android.arch.lifecycle:compiler:1.1.1")
-    kapt("com.github.bumptech.glide:compiler:4.14.2")
-//    implementation(deps.coil.compose)
-//    implementation(deps.coil.base)
-//
-//    // Glide
-//    implementation(deps.glide.compose)
-//    implementation(deps.glide.okhttp3_integration)
-//    kapt(deps.glide.compiler)
-
-    // Gson
-    implementation("com.google.code.gson:gson:2.10.1")
+    implementation(Dependencies.COIL_COMPOSE)
+    implementation(Dependencies.COIL_BASE)
+    implementation(Dependencies.GLIDE_COMPOSE)
+    implementation(Dependencies.GLIDE_OKHTTP3_INTEGRATION)
+    kapt(Dependencies.GLIDE_COMPILER)
 
     // Kakao Login
-    implementation("com.kakao.sdk:v2-user:2.12.1")
-
-    // Firebase
-    implementation(platform("com.google.firebase:firebase-bom:31.2.3"))
+    implementation(Dependencies.KAKAO_LOGIN)
 
 
     // 중첩 Column 스크롤을 위한 커스텀 Toolbar 레이아웃
     // https://blog.onebone.me/post/jetpack-compose-nested-scroll/
     // 후에 직접 구현하는 것으로 수정
-    implementation("me.onebone:toolbar-compose:2.3.5")
+    implementation(Dependencies.TOOLBAR_COMPOSE)
 
     // firebase crashlytics
-    implementation(platform("com.google.firebase:firebase-bom:31.2.3"))
-    implementation("com.google.firebase:firebase-crashlytics-ktx:18.3.5")
-    implementation("com.google.firebase:firebase-analytics-ktx:21.2.0")
+    implementation(platform(Dependencies.FIREBASE_BOM))
+    implementation(Dependencies.FIREBASE_CRASHLYTICS)
+    implementation(Dependencies.FIREBASE_ANALYTICS)
 
     // Lottie
-    implementation("com.airbnb.android:lottie-compose:6.0.0")
+    implementation(Dependencies.LOTTIE)
 
     // Hilt
-    implementation("com.google.dagger:hilt-android:2.43.2")
-    kapt("com.google.dagger:hilt-compiler:2.43.2")
-    implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
-    implementation("com.google.dagger:dagger:2.43.2")
-    kapt("com.google.dagger:dagger-compiler:2.43.2")
+    implementation(Dependencies.HILT_ANDROID)
+    kapt(Dependencies.HILT_COMPILER)
+    implementation(Dependencies.HILT_NAVIGATION_COMPOSE)
+    implementation(Dependencies.DAGGER)
+    kapt(Dependencies.DAGGER_COMPILER)
 
     // DataStore
-    implementation("androidx.datastore:datastore-preferences:1.0.0")
+    implementation(Dependencies.DATASTORE)
 
     // Paging Compose
-    implementation("androidx.paging:paging-runtime:3.1.1")
-    implementation("androidx.paging:paging-compose:1.0.0-alpha18")
+    implementation(Dependencies.PAGING_RUNTIME)
+    implementation(Dependencies.PAGING_COMPOSE)
 
 }

@@ -1,17 +1,17 @@
 plugins {
-    id("com.android.library")
-    id("org.jetbrains.kotlin.android")
-    id("kotlin-kapt")
-    id("dagger.hilt.android.plugin")
+    id(Plugins.ANDROID_LIBRARY)
+    id(Plugins.JETBRAINS_KOTLIN_ANDROID)
+    id(Plugins.KOTLIN_KAPT)
+    id(Plugins.DAGGER_HILT_PLUGIN)
 }
 
 android {
-    namespace = "com.cmc12th.runway"
-    compileSdk = 33
+    namespace = DefaultConfig.DATA_NAME_SAPCE
+    compileSdk = DefaultConfig.COMPILE_SDK_VERSION
 
     defaultConfig {
-        minSdk = 21
-        targetSdk = 33
+        minSdk = DefaultConfig.MIN_SDK_VERSION
+        targetSdk = DefaultConfig.TARGET_SDK_VERSION
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
@@ -40,31 +40,31 @@ dependencies {
     implementation(project(":domain"))
 
     // Hilt
-    implementation("com.google.dagger:hilt-android:2.43.2")
-    kapt("com.google.dagger:hilt-compiler:2.43.2")
-    implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
-    implementation("com.google.dagger:dagger:2.43.2")
-    kapt("com.google.dagger:dagger-compiler:2.43.2")
+    implementation(Dependencies.HILT_ANDROID)
+    kapt(Dependencies.HILT_COMPILER)
+    implementation(Dependencies.HILT_NAVIGATION_COMPOSE)
+    implementation(Dependencies.DAGGER)
+    kapt(Dependencies.DAGGER_COMPILER)
 
 
     // Retrofit2
-    implementation("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation("com.squareup.retrofit2:converter-moshi:2.9.0")
-    implementation("com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.3")
-    implementation("com.squareup.okhttp3:okhttp:5.0.0-alpha.3")
-    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation(Dependencies.RETROFIT)
+    implementation(Dependencies.RETROFIT_CONVERTER_MOSHI)
+    implementation(Dependencies.RETROFIT_CONVERTER_GSON)
+    implementation(Dependencies.OKHTTP3_LOGGING_INTERCEPTOR)
+    implementation(Dependencies.OKHTTP3)
 
     // Room DB
-    implementation("androidx.room:room-runtime:2.5.0")
-    kapt("androidx.room:room-compiler:2.5.0")
+    implementation(Dependencies.ROOM_RUNTIME)
+    kapt(Dependencies.ROOM_COMPILER)
     // 코루틴 활용을 위해
-    implementation("androidx.room:room-ktx:2.5.0")
+    implementation(Dependencies.ROOM_KTX)
 
     // DataStore
-    implementation("androidx.datastore:datastore-preferences:1.0.0")
+    implementation(Dependencies.DATASTORE)
 
     // Paging Compose
-    implementation("androidx.paging:paging-runtime:3.1.1")
-    implementation("androidx.paging:paging-compose:1.0.0-alpha18")
+    implementation(Dependencies.PAGING_RUNTIME)
+    implementation(Dependencies.PAGING_COMPOSE)
 
 }
