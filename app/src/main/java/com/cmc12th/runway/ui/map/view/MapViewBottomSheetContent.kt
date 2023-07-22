@@ -30,7 +30,7 @@ import com.cmc12th.runway.utils.Constants.BOTTOM_NAVIGATION_HEIGHT
 fun MapViewBottomSheetContent(
     appState: ApplicationState,
     screenHeight: Dp,
-    isLocationSearch: Boolean,
+    isFullScreen: Boolean,
     isExpandedTagetValue: Boolean,
     setMapStatusOnSearch: () -> Unit,
     setMapStatusDefault: () -> Unit,
@@ -42,17 +42,17 @@ fun MapViewBottomSheetContent(
         modifier = Modifier
             .navigationBarsPadding()
             .fillMaxWidth()
-            .isFullScreen(isLocationSearch, screenHeight)
+            .isFullScreen(isFullScreen, screenHeight)
             .wrapContentHeight()
             .padding(
                 start = 20.dp,
                 end = 20.dp,
                 bottom = if (appState.bottomBarState.value) BOTTOM_NAVIGATION_HEIGHT * 2 else BOTTOM_NAVIGATION_HEIGHT
-            )
+            ),
     ) {
 
         AnimatedVisibility(
-            visible = isLocationSearch && isExpandedTagetValue,
+            visible = isFullScreen && isExpandedTagetValue,
             enter = fadeIn(),
         ) {
             SearchResultBar(
@@ -65,7 +65,7 @@ fun MapViewBottomSheetContent(
         }
 
         /** 풀스크린이 아니고 확장상태가 아니면 탑바가 보인다. */
-        if (!(isLocationSearch && isExpandedTagetValue)) {
+        if (!(isFullScreen && isExpandedTagetValue)) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -94,6 +94,7 @@ fun MapViewBottomSheetContent(
                         )
                     }
                 }
+
                 else -> {}
             }
         }
@@ -103,6 +104,7 @@ fun MapViewBottomSheetContent(
             BottomSheetContent.DEFAULT -> {
                 MapBottomSheetEmptyStore()
             }
+
             is BottomSheetContent.MULTI -> {
                 val pagingContents = contents.contents.collectAsLazyPagingItems()
                 LazyColumn(
@@ -117,9 +119,11 @@ fun MapViewBottomSheetContent(
                     }
                 }
             }
+
             is BottomSheetContent.SINGLE -> {
                 BottomDetailItem(navigateToDetail, contents.contents)
             }
+
             BottomSheetContent.LOADING -> {
                 MapBottomSheetEmptyStore()
             }

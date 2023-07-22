@@ -5,6 +5,7 @@
 
 package com.cmc12th.runway.ui.detail.photoreview.view
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.*
 import androidx.compose.foundation.gestures.*
@@ -78,6 +79,7 @@ fun ReviewDetailScreen(
             bottomsheetState.modalSheetState.show()
         }
     }
+
     LaunchedEffect(key1 = Unit) {
         viewLogEvent("UserReviewDetailScreen")
         appState.bottomBarState.value = false
@@ -86,12 +88,15 @@ fun ReviewDetailScreen(
             ReviewViwerType.STORE_DETAIL -> {
                 reviewViewModel.getReviewDetailStore(reviewId)
             }
+
             ReviewViwerType.MYPAGE -> {
                 reviewViewModel.getReviewDetailMypage(reviewId)
             }
+
             ReviewViwerType.HOME -> {
                 reviewViewModel.getReviewDetailHome(reviewId)
             }
+
             ReviewViwerType.BOOKMARK -> {
                 reviewViewModel.getReviewDetailBookmark(reviewId)
             }
@@ -129,16 +134,19 @@ fun ReviewDetailScreen(
                             onSuccess()
                         }
                     }
+
                     ReviewViwerType.MYPAGE -> {
                         reviewViewModel.getReviewDetailMypage(idx) {
                             onSuccess()
                         }
                     }
+
                     ReviewViwerType.HOME -> {
                         reviewViewModel.getReviewDetailHome(idx) {
                             onSuccess()
                         }
                     }
+
                     ReviewViwerType.BOOKMARK -> {
                         reviewViewModel.getReviewDetailBookmark(idx) {
                             onSuccess()
@@ -221,10 +229,12 @@ private fun DetailContents(
                 loadPreviousReview()
                 reviewDirection = ReviewMoveDirection.DEFAULT
             }
+
             ReviewMoveDirection.RIGHT -> {
                 loadNextReview()
                 reviewDirection = ReviewMoveDirection.DEFAULT
             }
+
             ReviewMoveDirection.DEFAULT -> {
                 // TO NOTHING
             }
@@ -295,6 +305,7 @@ private fun MainImage(
     offsetX: Float,
     reviewDetail: UserReviewDetail,
 ) {
+
 
     SubcomposeAsyncImage(
         model = ImageRequest.Builder(LocalContext.current)

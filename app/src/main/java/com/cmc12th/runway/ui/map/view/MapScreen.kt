@@ -34,6 +34,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.cmc12th.domain.model.SearchType
 import com.cmc12th.domain.model.map.model.MapStatus
+import com.cmc12th.domain.model.map.model.MovingCameraWrapper
+import com.cmc12th.domain.model.map.model.NaverItem
 import com.cmc12th.runway.R
 import com.cmc12th.runway.ui.components.RunwayIconButton
 import com.cmc12th.runway.ui.detail.view.DetailScreen
@@ -161,7 +163,7 @@ private fun MapViewContents(
         }
     }
 
-    val onMarkerClick: (com.cmc12th.domain.model.map.model.NaverItem) -> Unit = {
+    val onMarkerClick: (NaverItem) -> Unit = {
         if (!mapUiState.mapStatus.onSearch()) {
             mapViewModel.saveTempDatas()
             mapViewModel.updateMapStatus(MapStatus.MARKER_CLICKED)
@@ -174,7 +176,7 @@ private fun MapViewContents(
             mapViewModel.mapInfo(it.storeId)
         }
         mapViewModel.updateMovingCamera(
-            com.cmc12th.domain.model.map.model.MovingCameraWrapper.MOVING(
+            MovingCameraWrapper.MOVING(
                 Location("SelectedMarker").apply {
                     latitude = it.position.latitude
                     longitude = it.position.longitude
@@ -188,9 +190,11 @@ private fun MapViewContents(
             MapStatus.MARKER_CLICKED -> {
                 collapsBottomSheet()
             }
+
             MapStatus.LOCATION_SEARCH_MARKER_CLICKED -> {
                 collapsBottomSheet()
             }
+
             else -> {
                 // Do Nothing
             }
@@ -239,7 +243,7 @@ private fun MapViewContents(
                 appState = appState,
                 contents = mapUiState.bottomSheetContents,
                 screenHeight = screenHeight + BOTTOM_NAVIGATION_HEIGHT - (topBarHeight + paddingValues.calculateBottomPadding()),
-                isLocationSearch = mapUiState.mapStatus == MapStatus.LOCATION_SEARCH,
+                isFullScreen = mapUiState.mapStatus == MapStatus.LOCATION_SEARCH,
                 isExpandedTagetValue = bottomSheetScaffoldState.bottomSheetState.targetValue == BottomSheetValue.Expanded,
                 isExpanded = bottomSheetScaffoldState.bottomSheetState.isExpanded,
                 setMapStatusDefault = setMapStatusDefault,
@@ -282,7 +286,7 @@ private fun MapViewContents(
                                 )
                             )
                             mapViewModel.updateMovingCamera(
-                                com.cmc12th.domain.model.map.model.MovingCameraWrapper.MOVING(
+                                MovingCameraWrapper.MOVING(
                                     Location("UserPosition").apply {
                                         latitude = mapUiState.userPosition.latitude
                                         longitude = mapUiState.userPosition.longitude
@@ -451,6 +455,7 @@ private fun ManageMapStatus(
                 changeBottomBarVisibility(false)
                 peekHeight.value = BOTTOM_NAVIGATION_HEIGHT + 100.dp
             }
+
             MapStatus.SEARCH_ZOOM -> {
                 systemUiController.setNavigationBarColor(Color.Transparent)
                 peekHeight.value = 0.dp
@@ -465,7 +470,7 @@ private fun ManageMapStatus(
             /** 마커 클릭 */
             MapStatus.MARKER_CLICKED -> {
                 expandBottomSheet()
-                peekHeight.value = BOTTOM_NAVIGATION_HEIGHT + 100.dp
+//                peekHeight.value = BOTTOM_NAVIGATION_HEIGHT + 100.dp
             }
         }
     }
@@ -525,7 +530,7 @@ private fun RunwayNaverMap(
     mapViewModel: MapViewModel,
     uiState: MapUiState,
     cameraPositionState: CameraPositionState,
-    onMarkerClick: (com.cmc12th.domain.model.map.model.NaverItem) -> Unit,
+    onMarkerClick: (NaverItem) -> Unit,
     onSearching: MutableState<Boolean>,
     updateRefershIconVisiblity: (Boolean) -> Unit,
     expandBottomSheet: () -> Unit,
@@ -540,14 +545,15 @@ private fun RunwayNaverMap(
     /** movingCameara에 따라 카메라 포지션 움직이기 */
     LaunchedEffect(key1 = uiState.movingCameraPosition) {
         when (uiState.movingCameraPosition) {
-            com.cmc12th.domain.model.map.model.MovingCameraWrapper.DEFAULT -> {
+            MovingCameraWrapper.DEFAULT -> {
                 // Do Nothing
             }
-            is com.cmc12th.domain.model.map.model.MovingCameraWrapper.MOVING -> {
+
+            is MovingCameraWrapper.MOVING -> {
                 cameraPositionState.animate(
                     update = CameraUpdate.scrollTo(LatLng(uiState.movingCameraPosition.location))
                 )
-                mapViewModel.updateMovingCamera(com.cmc12th.domain.model.map.model.MovingCameraWrapper.DEFAULT)
+                mapViewModel.updateMovingCamera(MovingCameraWrapper.DEFAULT)
             }
         }
     }

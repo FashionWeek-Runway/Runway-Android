@@ -32,7 +32,6 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     private var backBtnTime: Long = 0
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         firebaseAnalytics = FirebaseAnalytics.getInstance(this)
@@ -60,16 +59,16 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    override fun onBackPressed() {
-        val curTime = System.currentTimeMillis()
-        val gapTime: Long = curTime - backBtnTime
-        if (gapTime in 0..2000) {
-            onBackPressedDispatcher.onBackPressed()
-        } else {
-            backBtnTime = curTime
-            Toast.makeText(this, "한번 더 누르면 Runway가 종료됩니다.", Toast.LENGTH_SHORT).show()
-        }
-    }
+//    override fun onBackPressed() {
+//        val curTime = System.currentTimeMillis()
+//        val gapTime: Long = curTime - backBtnTime
+//        if (gapTime in 0..2000) {
+//            onBackPressedDispatcher.onBackPressed()
+//        } else {
+//            backBtnTime = curTime
+//            Toast.makeText(this, "한번 더 누르면 Runway가 종료됩니다.", Toast.LENGTH_SHORT).show()
+//        }
+//    }
 
 
     fun requestSMSReceivePermission() {
