@@ -46,7 +46,7 @@ fun MapViewBottomSheetContent(
             .padding(
                 start = 20.dp,
                 end = 20.dp,
-                bottom = if (appState.bottomBarState.value) BOTTOM_NAVIGATION_HEIGHT * 2 else BOTTOM_NAVIGATION_HEIGHT
+                bottom = if (appState.bottomBarState.value) BOTTOM_NAVIGATION_HEIGHT else 0.dp
             ),
     ) {
 
