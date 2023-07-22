@@ -443,13 +443,13 @@ private fun ManageMapStatus(
                 changeBottomBarVisibility(false)
                 peekHeight.value = 0.dp
             }
-            /** 지역 클릭 */
+            /** 지역 검색 */
             MapStatus.LOCATION_SEARCH -> {
                 onSearching.value = false
                 changeBottomBarVisibility(false)
-                peekHeight.value = BOTTOM_NAVIGATION_HEIGHT + 100.dp
+                peekHeight.value = BOTTOM_NAVIGATION_HEIGHT + 50.dp
             }
-            /** 매장 클릭 */
+            /** 매장 검색 */
             MapStatus.SHOP_SEARCH -> {
                 onSearching.value = false
                 changeBottomBarVisibility(false)

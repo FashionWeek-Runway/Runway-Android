@@ -42,7 +42,6 @@ fun MapViewBottomSheetContent(
         modifier = Modifier
             .navigationBarsPadding()
             .fillMaxWidth()
-            .isFullScreen(isFullScreen, screenHeight)
             .wrapContentHeight()
             .padding(
                 start = 20.dp,
