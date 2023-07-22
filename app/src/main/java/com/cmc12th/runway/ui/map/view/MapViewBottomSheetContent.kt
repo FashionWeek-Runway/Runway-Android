@@ -116,6 +116,11 @@ fun MapViewBottomSheetContent(
                             BottomDetailItem(navigateToDetail, it)
                         }
                     }
+                    if (pagingContents.itemCount == 0) {
+                        item {
+                            MapBottomSheetEmptyStore()
+                        }
+                    }
                 }
             }
 
