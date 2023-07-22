@@ -2,6 +2,8 @@
 
 package com.cmc12th.runway.ui.home.view
 
+import android.content.Intent
+import android.net.Uri
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
@@ -16,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
@@ -116,6 +119,8 @@ fun HomeScreen(appState: ApplicationState, viewModel: HomeViewModel) {
 
 @Composable
 private fun ShowNews() {
+
+    val context = LocalContext.current
     Text(
         modifier = Modifier
             .fillMaxWidth()
@@ -125,37 +130,47 @@ private fun ShowNews() {
         color = Color.Black
     )
 
-    EmptyResultView(
-        drawableid = R.mipmap.img_empty_notice,
-        title = "소식은 준비 중이예요",
-    )
+//    EmptyResultView(
+//        drawableid = R.mipmap.img_empty_notice,
+//        title = "소식은 준비 중이예요",
+//    )
 
-//    Column(
-//        modifier = Modifier
-//            .padding(20.dp),
-//        verticalArrangement = Arrangement.spacedBy(20.dp)
-//    ) {
-//        (0..4).toList().forEach {
-//            Column(
-//                verticalArrangement = Arrangement.spacedBy(14.dp)
-//            ) {
-//                Image(
-//                    painter = painterResource(id = R.drawable.img_dummy),
-//                    contentDescription = "IMG_STORE_NEWS",
-//                    modifier = Modifier
-//                        .fillMaxWidth()
-//                        .aspectRatio(1.39f),
-//                    contentScale = ContentScale.Crop
-//                )
-//                Text(text = "'PRESENT' 'FUTURE' 'PAST'", style = Body1B, color = Gray900)
-//            }
-//        }
-//    }
+    Column(
+        modifier = Modifier
+            .padding(20.dp),
+        verticalArrangement = Arrangement.spacedBy(30.dp)
+    ) {
+        (0..4).toList().forEach {
+            Column(
+                modifier = Modifier
+                    .clickable {
+                        context.startActivity(
+                            Intent(
+                                Intent.ACTION_VIEW,
+                                Uri.parse("https://www.instagram.com/p/Cu4W5q3LfIl/?img_index=1")
+                            )
+                        )
+                    }
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.img_dummy),
+                    contentDescription = "IMG_STORE_NEWS",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .aspectRatio(1.39f),
+                    contentScale = ContentScale.Crop
+                )
+                HeightSpacer(height = 10.dp)
+                Text(text = "인스타그램 제목.", style = Body1B, color = Gray900)
+                Text(text = "디자인을 예쁘게 주세요", style = Body2M, color = Gray900)
+            }
+        }
+    }
 }
 
 @Composable
 private fun HomeReviews(
-    reviews: LazyPagingItems<com.cmc12th.domain.model.response.home.HomeReviewItem>,
+    reviews: LazyPagingItems<HomeReviewItem>,
     navigateToUserReviewDetail: (Int) -> Unit,
 ) {
 
@@ -188,12 +203,14 @@ private fun HomeReviews(
                 )
             }
         }
+
         is LoadState.Error -> {
             EmptyResultView(
                 drawableid = R.mipmap.img_empty_home_review,
                 title = "네트워크 연결을 확인해주세요.",
             )
         }
+
         is LoadState.NotLoading -> {
             if (reviews.itemCount == 0) {
                 EmptyResultView(
