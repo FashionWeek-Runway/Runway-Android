@@ -155,7 +155,8 @@ fun DetailScreen(
                         appState.showSnackbar(message)
                     }
                 )
-                WidthSpacerLine(height = 2.dp, color = Black)
+                ShowRoomInfoInCorrect()
+                WidthSpacerLine(height = 8.dp, color = Gray100)
                 UserReview(
                     userReviews = detailViewModel.userReviews,
                     showBottomSheet = showBottomSheet,
