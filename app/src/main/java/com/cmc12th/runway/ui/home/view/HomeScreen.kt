@@ -22,6 +22,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
@@ -119,7 +120,6 @@ fun HomeScreen(appState: ApplicationState, viewModel: HomeViewModel) {
 
 @Composable
 private fun ShowNews() {
-
     val context = LocalContext.current
     Text(
         modifier = Modifier
@@ -138,7 +138,7 @@ private fun ShowNews() {
     Column(
         modifier = Modifier
             .padding(20.dp),
-        verticalArrangement = Arrangement.spacedBy(30.dp)
+        verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         (0..4).toList().forEach {
             Column(
@@ -157,12 +157,19 @@ private fun ShowNews() {
                     contentDescription = "IMG_STORE_NEWS",
                     modifier = Modifier
                         .fillMaxWidth()
-                        .aspectRatio(1.39f),
+                        .aspectRatio(1f),
                     contentScale = ContentScale.Crop
                 )
                 HeightSpacer(height = 10.dp)
                 Text(text = "인스타그램 제목.", style = Body1B, color = Gray900)
-                Text(text = "디자인을 예쁘게 주세요", style = Body2M, color = Gray900)
+                Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_baseline_home_insta_link_16),
+                        contentDescription = "IC_INSTAGRAM",
+                        modifier = Modifier.size(16.dp),
+                    )
+                    Text(text = "인스타그램", style = Body2M, color = Gray500)
+                }
             }
         }
     }
