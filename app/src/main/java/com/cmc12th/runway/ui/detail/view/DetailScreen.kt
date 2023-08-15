@@ -38,7 +38,6 @@ import com.cmc12th.runway.ui.domain.model.ReviewViwerType
 import com.cmc12th.runway.ui.domain.rememberBottomSheet
 import com.cmc12th.runway.ui.theme.Black
 import com.cmc12th.runway.ui.theme.Gray100
-import com.cmc12th.runway.utils.Constants
 import com.cmc12th.runway.utils.Constants.REVIEW_DETAIL_ROUTE
 import com.cmc12th.runway.utils.Constants.REVIEW_WRITE_ROUTE
 import com.cmc12th.runway.utils.Constants.WEB_VIEW_ROUTE
@@ -171,8 +170,13 @@ fun DetailScreen(
                 WidthSpacerLine(height = 8.dp, color = Gray100)
                 BlogReview(
                     blogReview = uiState.blogReview,
+                    isMoreBtnVisible = uiState.isMoreBtnVisible,
+                    isBlogReviewExapnded = uiState.isBlogReviewExapnded,
                     naviagteToWebView = { url, title ->
                         appState.navigate("${WEB_VIEW_ROUTE}?title$title=&url=$url")
+                    },
+                    updateExpandedState = {
+                        detailViewModel.updateExpandedState()
                     }
                 )
 
