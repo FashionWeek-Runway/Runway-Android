@@ -104,7 +104,10 @@ fun BottomDetailItem(
                 .fillMaxWidth()
                 .padding(top = 10.dp, bottom = 6.dp)
         ) {
-            Column(modifier = Modifier.weight(1f)) {
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
                 Text(
                     text = it.storeName,
                     style = HeadLine4,

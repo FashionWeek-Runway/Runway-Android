@@ -22,7 +22,7 @@ import kotlinx.coroutines.launch
 import com.cmc12th.runway.ui.domain.model.BottomSheetState
 
 @Composable
-fun CustomBottomSheet(
+fun BottomSheetUsingItemLists(
     bottomsheetState: BottomSheetState,
     contents: @Composable () -> Unit,
 ) {
@@ -84,6 +84,23 @@ fun CustomBottomSheet(
                 }
                 HeightSpacer(height = 20.dp)
             }
+        }
+    ) {
+        contents()
+    }
+}
+
+@Composable
+fun CustomBottomSheet(
+    bottomsheetState: BottomSheetState,
+    contents: @Composable () -> Unit,
+) {
+
+    ModalBottomSheetLayout(
+        sheetState = bottomsheetState.modalSheetState,
+        sheetShape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
+        sheetContent = {
+            bottomsheetState.contents.value()
         }
     ) {
         contents()

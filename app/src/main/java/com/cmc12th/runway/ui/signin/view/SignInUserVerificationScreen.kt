@@ -67,7 +67,7 @@ fun SignInUserInfoVerifyScreen(
         }
     }
 
-    CustomBottomSheet(
+    BottomSheetUsingItemLists(
         bottomsheetState
     ) {
         UserVerificationContents(

@@ -34,7 +34,7 @@ import com.cmc12th.domain.model.signin.*
 import com.cmc12th.domain.model.signin.Phone.Companion.PHONE_NUMBER_LENGTH
 import com.cmc12th.runway.R
 import com.cmc12th.runway.ui.components.BackIcon
-import com.cmc12th.runway.ui.components.CustomBottomSheet
+import com.cmc12th.runway.ui.components.BottomSheetUsingItemLists
 import com.cmc12th.runway.ui.components.CustomTextField
 import com.cmc12th.runway.ui.components.HeightSpacer
 import com.cmc12th.runway.ui.components.util.bottomBorder
@@ -68,7 +68,7 @@ fun PasswordSearchPhoneScreen(
         }
     }
 
-    CustomBottomSheet(
+    BottomSheetUsingItemLists(
         bottomsheetState
     ) {
         PasswordSearchPhoneContents(

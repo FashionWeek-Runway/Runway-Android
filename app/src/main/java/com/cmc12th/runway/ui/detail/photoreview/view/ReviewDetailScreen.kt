@@ -5,7 +5,6 @@
 
 package com.cmc12th.runway.ui.detail.photoreview.view
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.*
 import androidx.compose.foundation.gestures.*
@@ -41,7 +40,7 @@ import coil.request.ImageRequest
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.cmc12th.domain.model.response.store.UserReviewDetail
 import com.cmc12th.runway.R
-import com.cmc12th.runway.ui.components.CustomBottomSheet
+import com.cmc12th.runway.ui.components.BottomSheetUsingItemLists
 import com.cmc12th.runway.ui.components.RunwayIconButton
 import com.cmc12th.runway.ui.detail.photoreview.ReviewViewModel
 import com.cmc12th.runway.ui.domain.model.ApplicationState
@@ -106,7 +105,7 @@ fun ReviewDetailScreen(
     appState.systmeUiController.setStatusBarColor(Color.Black)
     appState.systmeUiController.setNavigationBarColor(Color.Black)
 
-    CustomBottomSheet(
+    BottomSheetUsingItemLists(
         bottomsheetState
     ) {
         DetailContents(
