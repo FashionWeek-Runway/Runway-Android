@@ -1,4 +1,7 @@
-@file:OptIn(ExperimentalGlideComposeApi::class, ExperimentalGlideComposeApi::class)
+@file:OptIn(
+    ExperimentalGlideComposeApi::class, ExperimentalGlideComposeApi::class,
+    ExperimentalPagerApi::class
+)
 
 package com.cmc12th.runway.ui.home.view
 
@@ -7,7 +10,9 @@ import android.net.Uri
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -22,16 +27,18 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.bumptech.glide.Priority
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.signature.ObjectKey
+import com.cmc12th.domain.model.response.home.HomeInstaResponse
 import com.cmc12th.runway.R
 import com.cmc12th.domain.model.response.home.HomeReviewItem
 import com.cmc12th.runway.ui.components.HeightSpacer
@@ -48,6 +55,8 @@ import com.cmc12th.runway.utils.Constants.EDIT_CATEGORY_ROUTE
 import com.cmc12th.runway.utils.Constants.HOME_ALL_STORE_ROUTE
 import com.cmc12th.runway.utils.Constants.REVIEW_DETAIL_ROUTE
 import com.cmc12th.runway.utils.viewLogEvent
+import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.accompanist.pager.HorizontalPager
 
 
 @Composable
@@ -56,119 +65,133 @@ fun HomeScreen(appState: ApplicationState, viewModel: HomeViewModel) {
     appState.systmeUiController.setStatusBarColor(Color.Transparent)
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val reviews = viewModel.reviews.collectAsLazyPagingItems()
+    val instas = viewModel.instas.collectAsLazyPagingItems()
+    val context = LocalContext.current
 
     LaunchedEffect(key1 = Unit) {
         viewLogEvent("HomeScreen")
         viewModel.getHomeBanner(0)
         viewModel.getProfile()
         viewModel.getHomeReview()
+        viewModel.getInsta()
     }
 
-    Column(
+    LazyColumn(
         modifier = Modifier
             .navigationBarsPadding()
             .padding(bottom = BOTTOM_NAVIGATION_HEIGHT)
             .background(White)
             .fillMaxSize(1f)
-            .verticalScroll(rememberScrollState())
     ) {
 
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(Black10)
-                .aspectRatio(0.67f)
-        ) {
-            HomeBannerComponents(
-                homeBanners = uiState.homeBanners,
-                updateBookmark = { storeId, bookmarked ->
-                    viewModel.updateBookmark(storeId) {
-                        viewModel.updateBookmarkState(storeId, bookmarked)
+        item {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Black10)
+                    .aspectRatio(0.67f)
+            ) {
+                HomeBannerComponents(
+                    homeBanners = uiState.homeBanners,
+                    updateBookmark = { storeId, bookmarked ->
+                        viewModel.updateBookmark(storeId) {
+                            viewModel.updateBookmarkState(storeId, bookmarked)
+                        }
+                    },
+                    navigateToDetail = { storeId, storeName ->
+                        appState.navigate(
+                            "${DETAIL_ROUTE}?storeId=$storeId&storeName=$storeName"
+                        )
+                    },
+                    navigateToShowMoreStore = {
+                        appState.navigate(HOME_ALL_STORE_ROUTE)
                     }
+                )
+
+                /** Banner Top */
+
+                /** Banner Top */
+                HomeBannerTopBar(
+                    nickname = uiState.nickName,
+                    navigateToEditCategory = {
+                        appState.navigate("${EDIT_CATEGORY_ROUTE}?nickName=${uiState.nickName}")
+                    },
+                    navigateToShowMoreStore = {
+                        appState.navigate(HOME_ALL_STORE_ROUTE)
+                    }
+                )
+            }
+
+            HomeReviews(
+                reviews = reviews,
+                navigateToUserReviewDetail = { index ->
+                    appState.navigate("${REVIEW_DETAIL_ROUTE}?reviewId=${index}&viewerType=${ReviewViwerType.HOME.typeToString}")
                 },
-                navigateToDetail = { storeId, storeName ->
-                    appState.navigate(
-                        "${DETAIL_ROUTE}?storeId=$storeId&storeName=$storeName"
-                    )
-                },
-                navigateToShowMoreStore = {
-                    appState.navigate(HOME_ALL_STORE_ROUTE)
-                }
             )
 
-            /** Banner Top */
-            HomeBannerTopBar(
-                nickname = uiState.nickName,
-                navigateToEditCategory = {
-                    appState.navigate("${EDIT_CATEGORY_ROUTE}?nickName=${uiState.nickName}")
-                },
-                navigateToShowMoreStore = {
-                    appState.navigate(HOME_ALL_STORE_ROUTE)
-                }
+            Text(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 20.dp, end = 20.dp, top = 30.dp),
+                text = "흥미로운 가게 소식을 알려드려요",
+                style = HeadLine4,
+                color = Color.Black
             )
         }
 
-        HomeReviews(
-            reviews = reviews,
-            navigateToUserReviewDetail = { index ->
-                appState.navigate("${REVIEW_DETAIL_ROUTE}?reviewId=${index}&viewerType=${ReviewViwerType.HOME.typeToString}")
-            },
-        )
-        ShowNews()
-    }
-}
-
-@Composable
-private fun ShowNews() {
-    val context = LocalContext.current
-    Text(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(start = 20.dp, end = 20.dp, top = 30.dp),
-        text = "흥미로운 가게 소식을 알려드려요",
-        style = HeadLine4,
-        color = Color.Black
-    )
-
-//    EmptyResultView(
-//        drawableid = R.mipmap.img_empty_notice,
-//        title = "소식은 준비 중이예요",
-//    )
-
-    Column(
-        modifier = Modifier
-            .padding(20.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        (0..4).toList().forEach {
+        item {
+            HeightSpacer(height = 8.dp)
+        }
+        items(instas.itemCount) { idx ->
             Column(
                 modifier = Modifier
+                    .padding(20.dp, 8.dp)
+            ) {
+                HorizontalPager(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .aspectRatio(1f)
+                        .background(Gray200),
+                    count = instas[idx]?.imgList?.size ?: 0,
+                ) {
+                    AsyncImage(
+                        modifier = Modifier
+                            .background(Gray200)
+                            .fillMaxSize(),
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .data(instas[idx]?.imgList?.get(it))
+                            .crossfade(true)
+                            .build(),
+                        error = painterResource(id = R.drawable.ic_defailt_profile),
+                        contentDescription = "IMG_SELECTED_IMG",
+                        contentScale = ContentScale.Crop,
+                    )
+                }
+
+                HeightSpacer(height = 10.dp)
+                Column(modifier = Modifier
+                    .fillMaxWidth()
                     .clickable {
                         context.startActivity(
                             Intent(
                                 Intent.ACTION_VIEW,
-                                Uri.parse("https://www.instagram.com/p/Cu4W5q3LfIl/?img_index=1")
+                                Uri.parse(instas[idx]?.instaLink)
                             )
                         )
-                    }
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.img_dummy),
-                    contentDescription = "IMG_STORE_NEWS",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .aspectRatio(1f),
-                    contentScale = ContentScale.Crop
-                )
-                HeightSpacer(height = 10.dp)
-                Text(text = "인스타그램 제목.", style = Body1B, color = Gray900)
-                Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_baseline_home_insta_link_16),
-                        contentDescription = "IC_INSTAGRAM",
-                        modifier = Modifier.size(16.dp),
+                    }) {
+                    Text(
+                        text = instas[idx]?.storeName ?: "",
+                        style = Body1B,
+                        color = Gray900
                     )
-                    Text(text = "인스타그램", style = Body2M, color = Gray500)
+                    Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_baseline_home_insta_link_16),
+                            contentDescription = "IC_INSTAGRAM",
+                            modifier = Modifier.size(16.dp),
+                        )
+                        Text(text = "인스타그램", style = Body2M, color = Gray500)
+                    }
                 }
             }
         }

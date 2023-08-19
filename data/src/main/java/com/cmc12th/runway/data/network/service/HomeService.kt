@@ -4,6 +4,7 @@ import com.cmc12th.domain.model.response.home.HomeBanner
 import com.cmc12th.domain.model.response.home.HomeReviewItem
 import com.cmc12th.domain.NetworkResponse
 import com.cmc12th.domain.PagingNetworkResponse
+import com.cmc12th.domain.model.response.home.HomeInstaResponse
 import com.cmc12th.domain.model.response.store.UserReviewDetail
 import retrofit2.http.*
 
@@ -28,5 +29,11 @@ interface HomeService {
         @Path("reviewId") reviewId: Int,
     ): NetworkResponse<UserReviewDetail>
 
+    /** 인스타 피드 조회 */
+    @GET("/home/insta")
+    suspend fun getHomeInsta(
+        @Query("page") page: Int,
+        @Query("size") size: Int,
+    ): PagingNetworkResponse<HomeInstaResponse>
 }
 

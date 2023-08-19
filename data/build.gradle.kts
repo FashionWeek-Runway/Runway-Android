@@ -12,7 +12,6 @@ android {
     defaultConfig {
         minSdk = DefaultConfig.MIN_SDK_VERSION
         targetSdk = DefaultConfig.TARGET_SDK_VERSION
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
     }
@@ -26,6 +25,24 @@ android {
             )
         }
     }
+    flavorDimensions("1.0")
+
+    productFlavors {
+        create("dev") {
+            // 개발용
+            buildConfigField(
+                "String",
+                "BASE_URL",
+                "\"http://runway-dev-env.eba-h3xrns2m.ap-northeast-2.elasticbeanstalk.com/\""
+            )
+        }
+
+        create("prod") {
+            // 배포용
+            buildConfigField("String", "BASE_URL", "\"https://prod.runwayserver.shop/\"")
+        }
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8

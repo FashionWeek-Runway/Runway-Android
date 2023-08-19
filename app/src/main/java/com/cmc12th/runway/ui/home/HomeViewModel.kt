@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.cmc12th.domain.model.response.home.HomeBannerItem
+import com.cmc12th.domain.model.response.home.HomeInstaResponse
 import com.cmc12th.domain.model.response.home.HomeReviewItem
 import com.cmc12th.domain.model.response.user.PatchCategoryBody
 import com.cmc12th.domain.model.signin.CategoryTag
@@ -41,9 +42,12 @@ class HomeViewModel @Inject constructor(
             PagingData.empty()
         )
     private val _categoryTags = MutableStateFlow(RunwayCategory.generateCategoryTags())
+    private val _instas = MutableStateFlow(PagingData.empty<HomeInstaResponse>())
 
     val reviews: StateFlow<PagingData<HomeReviewItem>> =
         _reviews.asStateFlow()
+    val instas: StateFlow<PagingData<HomeInstaResponse>> =
+        _instas.asStateFlow()
 
     val allStores = mutableStateListOf<HomeBannerItem>()
 
@@ -82,6 +86,15 @@ class HomeViewModel @Inject constructor(
             .cachedIn(viewModelScope)
             .collect {
                 _reviews.value = it
+            }
+    }
+
+    fun getInsta() = viewModelScope.launch {
+        homeRepository
+            .getHomeInstaPaging()
+            .cachedIn(viewModelScope)
+            .collect {
+                _instas.value = it
             }
     }
 
