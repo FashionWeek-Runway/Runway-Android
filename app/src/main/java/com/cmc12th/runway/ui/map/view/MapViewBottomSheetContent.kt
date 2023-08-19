@@ -23,6 +23,7 @@ import com.cmc12th.runway.ui.components.HeightSpacer
 import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.map.components.BottomDetailItem
 import com.cmc12th.domain.model.map.model.BottomSheetContent
+import com.cmc12th.domain.model.map.model.MapStatus
 import com.cmc12th.runway.ui.theme.*
 import com.cmc12th.runway.utils.Constants.BOTTOM_NAVIGATION_HEIGHT
 
@@ -37,6 +38,7 @@ fun MapViewBottomSheetContent(
     contents: BottomSheetContent,
     navigateToDetail: (id: Int, storeName: String) -> Unit,
     isExpanded: Boolean,
+    mapStatus: MapStatus,
 ) {
     Column(
         modifier = Modifier
@@ -125,7 +127,12 @@ fun MapViewBottomSheetContent(
             }
 
             is BottomSheetContent.SINGLE -> {
-                BottomDetailItem(navigateToDetail, contents.contents)
+                // 마커 클릭상태일때만
+                BottomDetailItem(
+                    navigateToDetail = navigateToDetail,
+                    mapInfoItem = contents.contents,
+                    isNavigationButtonEnabled = mapStatus == MapStatus.MARKER_CLICKED
+                )
             }
 
             BottomSheetContent.LOADING -> {

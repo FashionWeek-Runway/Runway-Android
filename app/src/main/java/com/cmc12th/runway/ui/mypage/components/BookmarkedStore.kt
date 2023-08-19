@@ -25,11 +25,13 @@ fun BookmarkedStore(
             it?.let {
                 BottomDetailItem(
                     navigateToDetail = navigateToDetail,
-                    it = MapInfoItem(
+                    mapInfoItem = MapInfoItem(
                         category = it.category,
                         storeId = it.storeId,
                         storeImg = it.storeImg ?: "",
-                        storeName = it.storeName
+                        storeName = it.storeName,
+                        latitude = 37.5665,
+                        longitude = 126.9780,
                     )
                 )
             }

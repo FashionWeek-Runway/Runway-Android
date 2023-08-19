@@ -18,4 +18,8 @@ data class MapInfoItem(
     val storeName: String,
     @Json(name = "bookmark")
     val bookmark: Boolean = false,
+    @Json(name = "latitude")
+    val latitude: Double = 37.5665,
+    @Json(name = "longitude")
+    val longitude: Double = 126.9780,
 )

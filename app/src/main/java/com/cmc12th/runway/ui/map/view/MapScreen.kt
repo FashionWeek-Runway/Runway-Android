@@ -251,6 +251,7 @@ private fun MapViewContents(
                 navigateToDetail = { id, storeName ->
                     mapViewModel.onDetail.value = DetailState(true, id, storeName)
                 },
+                mapStatus = mapUiState.mapStatus,
             )
         }
     ) {

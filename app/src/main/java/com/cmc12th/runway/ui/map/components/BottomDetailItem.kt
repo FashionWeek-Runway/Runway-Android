@@ -3,10 +3,7 @@
 package com.cmc12th.runway.ui.map.components
 
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.content.pm.ResolveInfo
 import android.net.Uri
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -40,19 +37,19 @@ import com.cmc12th.runway.utils.isPackageInstalled
 @Preview
 fun BottomDetailItem(
     navigateToDetail: (id: Int, storeName: String) -> Unit = { _, _ -> },
-    it: MapInfoItem = MapInfoItem(
+    mapInfoItem: MapInfoItem = MapInfoItem(
         storeId = 1,
         storeName = "스타벅스",
         storeImg = "https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885__480.jpg",
-        category = listOf("카페", "커피", "디저트")
+        category = listOf("카페", "커피", "디저트"),
+        latitude = 37.5665,
+        longitude = 126.9780,
     ),
+    isNavigationButtonEnabled: Boolean = false,
 ) {
 
     val context = LocalContext.current
 
-    // 서울 좌표
-    val lat = 37.5665
-    val lng = 126.9780
     // 해당 좌표로 네이버 지도 길찾기 인텐트를 보낸다.
     val moveToNaverMap = {
         val naverMapPackage = "com.nhn.android.nmap"
@@ -64,13 +61,13 @@ fun BottomDetailItem(
         // 카카오 맵 URL 스킴 : https://apis.map.kakao.com/android/guide/#urlscheme
         if (isNaverMapInstalled) {
             val url =
-                "nmap://search?lat=${lat}&lng=${lng}&query=${it.storeName}&appname=com.cmc12th.runway"
+                "nmap://search?lat=${mapInfoItem.latitude}&lng=${mapInfoItem.longitude}&query=${mapInfoItem.storeName}&appname=com.cmc12th.runway"
             val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
             context.startActivity(intent)
         } else {
             if (isKakaoMapInstalled) {
                 val url =
-                    "daummaps://search?q=${it.storeName}&p=${lat},${lng}"
+                    "daummaps://search?q=${mapInfoItem.storeName}&p=${mapInfoItem.latitude},${mapInfoItem.longitude}"
                 val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
                 context.startActivity(intent)
             }
@@ -86,18 +83,18 @@ fun BottomDetailItem(
 
     Column(modifier = Modifier
         .clickable {
-            navigateToDetail(it.storeId, it.storeName)
+            navigateToDetail(mapInfoItem.storeId, mapInfoItem.storeName)
         }) {
         GlideImage(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(Gray200)
                 .aspectRatio(1.6f),
-            model = it.storeImg,
+            model = mapInfoItem.storeImg,
             contentDescription = "IMG_SELECTED_IMG",
             contentScale = ContentScale.Crop,
         ) { requestBuilder ->
-            requestBuilder.placeholder(R.color.gray200).signature(ObjectKey(it.storeImg))
+            requestBuilder.placeholder(R.color.gray200).signature(ObjectKey(mapInfoItem.storeImg))
         }
         Row(
             modifier = Modifier
@@ -109,42 +106,44 @@ fun BottomDetailItem(
                 verticalArrangement = Arrangement.spacedBy(6.dp)
             ) {
                 Text(
-                    text = it.storeName,
+                    text = mapInfoItem.storeName,
                     style = HeadLine4,
                 )
                 LazyRow(modifier = Modifier.fillMaxWidth()) {
-                    items(it.category) {
+                    items(mapInfoItem.category) {
                         BottomDetailTag(it)
                     }
                 }
             }
-            Column(
-                modifier = Modifier
-                    .clickable {
-                        moveToNaverMap()
-                    },
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Box(
+            if (isNavigationButtonEnabled) {
+                Column(
                     modifier = Modifier
-                        .width(30.dp)
-                        .height(30.dp)
-                        .background(color = Primary, shape = RoundedCornerShape(size = 15.dp))
-                        .padding(start = 5.dp, top = 5.dp, end = 5.dp, bottom = 5.dp)
+                        .clickable {
+                            moveToNaverMap()
+                        },
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_baseline_trace_20),
-                        contentDescription = "IC_TRACE",
-                        tint = Color.White,
-                        modifier = Modifier.size(20.dp)
+                    Box(
+                        modifier = Modifier
+                            .width(30.dp)
+                            .height(30.dp)
+                            .background(color = Primary, shape = RoundedCornerShape(size = 15.dp))
+                            .padding(start = 5.dp, top = 5.dp, end = 5.dp, bottom = 5.dp)
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_baseline_trace_20),
+                            contentDescription = "IC_TRACE",
+                            tint = Color.White,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+                    Text(
+                        text = "길찾기",
+                        modifier = Modifier.padding(top = 3.dp),
+                        style = Caption2,
+                        color = Primary
                     )
                 }
-                Text(
-                    text = "길찾기",
-                    modifier = Modifier.padding(top = 3.dp),
-                    style = Caption2,
-                    color = Primary
-                )
             }
         }
     }
