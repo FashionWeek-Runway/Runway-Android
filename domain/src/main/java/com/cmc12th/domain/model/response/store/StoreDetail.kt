@@ -26,4 +26,8 @@ data class StoreDetail(
     val storeTime: String = "",
     @Json(name = "webSite")
     val webSite: String = "",
+    @Json(name = "latitude")
+    val latitude: Double = 0.0,
+    @Json(name = "longitude")
+    val longitude: Double = 0.0,
 )
