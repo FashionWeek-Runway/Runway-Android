@@ -57,6 +57,8 @@ import com.cmc12th.runway.utils.Constants.REVIEW_DETAIL_ROUTE
 import com.cmc12th.runway.utils.viewLogEvent
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
+import com.google.accompanist.pager.HorizontalPagerIndicator
+import com.google.accompanist.pager.rememberPagerState
 
 
 @Composable
@@ -146,31 +148,6 @@ fun HomeScreen(appState: ApplicationState, viewModel: HomeViewModel) {
             Column(
                 modifier = Modifier
                     .padding(20.dp, 8.dp)
-            ) {
-                HorizontalPager(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .aspectRatio(1f)
-                        .background(Gray200),
-                    count = instas[idx]?.imgList?.size ?: 0,
-                ) {
-                    AsyncImage(
-                        modifier = Modifier
-                            .background(Gray200)
-                            .fillMaxSize(),
-                        model = ImageRequest.Builder(LocalContext.current)
-                            .data(instas[idx]?.imgList?.get(it))
-                            .crossfade(true)
-                            .build(),
-                        error = painterResource(id = R.drawable.ic_defailt_profile),
-                        contentDescription = "IMG_SELECTED_IMG",
-                        contentScale = ContentScale.Crop,
-                    )
-                }
-
-                HeightSpacer(height = 10.dp)
-                Column(modifier = Modifier
-                    .fillMaxWidth()
                     .clickable {
                         context.startActivity(
                             Intent(
@@ -178,7 +155,50 @@ fun HomeScreen(appState: ApplicationState, viewModel: HomeViewModel) {
                                 Uri.parse(instas[idx]?.instaLink)
                             )
                         )
-                    }) {
+                    }
+            ) {
+                val pagerState = rememberPagerState()
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .aspectRatio(1f)
+                        .background(Gray200),
+                ) {
+                    HorizontalPager(
+                        modifier = Modifier
+                            .fillMaxSize(),
+                        count = instas[idx]?.imgList?.size ?: 0,
+                        state = pagerState,
+                    ) {
+                        AsyncImage(
+                            modifier = Modifier
+                                .background(Gray200)
+                                .fillMaxSize(),
+                            model = ImageRequest.Builder(LocalContext.current)
+                                .data(instas[idx]?.imgList?.get(it))
+                                .crossfade(true)
+                                .build(),
+                            error = painterResource(id = R.drawable.ic_defailt_profile),
+                            contentDescription = "IMG_SELECTED_IMG",
+                            contentScale = ContentScale.Crop,
+                        )
+                    }
+                    HorizontalPagerIndicator(
+                        pagerState = pagerState,
+                        modifier = Modifier
+                            .align(Alignment.BottomCenter)
+                            .padding(bottom = 10.dp),
+                        activeColor = Primary,
+                        inactiveColor = Gray300,
+                    )
+                }
+
+                HeightSpacer(height = 10.dp)
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                ) {
                     Text(
                         text = instas[idx]?.storeName ?: "",
                         style = Body1B,
