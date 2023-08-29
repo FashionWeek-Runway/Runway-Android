@@ -5,6 +5,7 @@ package com.cmc12th.runway.ui.map.components
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
@@ -26,6 +27,10 @@ import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.signature.ObjectKey
 import com.cmc12th.domain.model.response.map.MapInfoItem
 import com.cmc12th.runway.R
+import com.cmc12th.runway.ui.theme.Blue100
+import com.cmc12th.runway.ui.theme.Blue200
+import com.cmc12th.runway.ui.theme.Blue50
+import com.cmc12th.runway.ui.theme.Blue600
 import com.cmc12th.runway.ui.theme.Caption2
 import com.cmc12th.runway.ui.theme.Gray200
 import com.cmc12th.runway.ui.theme.HeadLine4
@@ -80,7 +85,6 @@ fun BottomDetailItem(
         }
     }
 
-
     Column(modifier = Modifier
         .clickable {
             navigateToDetail(mapInfoItem.storeId, mapInfoItem.storeName)
@@ -127,13 +131,20 @@ fun BottomDetailItem(
                         modifier = Modifier
                             .width(30.dp)
                             .height(30.dp)
-                            .background(color = Primary, shape = RoundedCornerShape(size = 15.dp))
-                            .padding(start = 5.dp, top = 5.dp, end = 5.dp, bottom = 5.dp)
+                            .background(color = Blue50, shape = RoundedCornerShape(size = 15.dp))
+                            .border(
+                                width = 0.5.dp,
+                                color = Blue200,
+                                shape = RoundedCornerShape(size = 15.dp)
+                            )
+                            .padding(
+                                start = 5.dp, top = 5.dp, end = 5.dp, bottom = 5.dp
+                            )
                     ) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_baseline_trace_20),
                             contentDescription = "IC_TRACE",
-                            tint = Color.White,
+                            tint = Blue600,
                             modifier = Modifier.size(20.dp)
                         )
                     }
@@ -141,7 +152,7 @@ fun BottomDetailItem(
                         text = "길찾기",
                         modifier = Modifier.padding(top = 3.dp),
                         style = Caption2,
-                        color = Primary
+                        color = Blue600
                     )
                 }
             }

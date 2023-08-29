@@ -65,22 +65,26 @@ fun MapViewBottomSheetContent(
             )
         }
 
-        /** 풀스크린이 아니고 확장상태가 아니면 탑바가 보인다. */
+        /** 풀스크린이 아니고 확장상태가 아니면 핸들러가 보인다. */
         if (!(isFullScreen && isExpandedTagetValue)) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 10.dp, bottom = 10.dp)
-                    .align(Alignment.CenterHorizontally)
-            ) {
-                Spacer(
+            if ((mapStatus != MapStatus.MARKER_CLICKED && mapStatus != MapStatus.SHOP_SEARCH)) {
+                Box(
                     modifier = Modifier
-                        .clip(RoundedCornerShape(5.dp))
-                        .height(3.dp)
-                        .width(36.dp)
-                        .background(Gray200)
-                        .align(Alignment.Center)
-                )
+                        .fillMaxWidth()
+                        .padding(top = 10.dp, bottom = 10.dp)
+                        .align(Alignment.CenterHorizontally)
+                ) {
+                    Spacer(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(5.dp))
+                            .height(3.dp)
+                            .width(36.dp)
+                            .background(Gray200)
+                            .align(Alignment.Center)
+                    )
+                }
+            } else {
+                HeightSpacer(20.dp)
             }
 
             /** 제목 */
@@ -131,7 +135,7 @@ fun MapViewBottomSheetContent(
                 BottomDetailItem(
                     navigateToDetail = navigateToDetail,
                     mapInfoItem = contents.contents,
-                    isNavigationButtonEnabled = mapStatus == MapStatus.MARKER_CLICKED
+                    isNavigationButtonEnabled = mapStatus == MapStatus.MARKER_CLICKED || mapStatus == MapStatus.SHOP_SEARCH
                 )
             }
 
