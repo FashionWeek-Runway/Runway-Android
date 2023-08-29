@@ -29,7 +29,6 @@ import com.cmc12th.runway.ui.theme.Caption2
 fun NavigateIcon(moveToNaverMap: () -> Unit) {
     Column(
         modifier = Modifier
-            .clip(CircleShape)
             .clickable {
                 moveToNaverMap()
             },
