@@ -141,4 +141,5 @@ class RunwayClient @Inject constructor(
     suspend fun setCategorys(patchCategoryBody: PatchCategoryBody) =
         authService.setCategories(patchCategoryBody)
 
+    suspend fun getHomeInsta(page: Int, size: Int) = homeService.getHomeInsta(page, size)
 }

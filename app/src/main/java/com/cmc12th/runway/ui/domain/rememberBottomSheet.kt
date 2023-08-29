@@ -21,9 +21,13 @@ fun rememberBottomSheet(
         skipHalfExpanded = true,
     ),
     bottomsheetContent: MutableState<BottomSheetContent> = mutableStateOf(BottomSheetContent()),
-) = remember(modalSheetState, bottomsheetContent) {
+    contents: MutableState<@Composable () -> Unit> = mutableStateOf({}),
+): BottomSheetState = remember(modalSheetState, bottomsheetContent) {
     BottomSheetState(
         modalSheetState,
-        bottomsheetContent
+        bottomsheetContent,
+        contents
     )
 }
+
+

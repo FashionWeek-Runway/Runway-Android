@@ -35,6 +35,8 @@ object Dependencies {
     const val ACCOMPANIST_PAGER = "com.google.accompanist:accompanist-pager:${Versions.ACCOMPANIST}"
     const val ACCOMPANIST_WEBVIEW =
         "com.google.accompanist:accompanist-webview:${Versions.ACCOMPANIST}"
+    const val ACCOMPANIST_PAGER_INDICATORS =
+        "com.google.accompanist:accompanist-pager-indicators:${Versions.ACCOMPANIST}"
 
     const val COIL_COMPOSE = "io.coil-kt:coil-compose:${Versions.COIL_COMPOSE}"
     const val COIL_BASE = "io.coil-kt:coil-base:${Versions.COIL_COMPOSE}"

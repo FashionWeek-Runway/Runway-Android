@@ -23,6 +23,7 @@ import com.cmc12th.runway.ui.components.HeightSpacer
 import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.map.components.BottomDetailItem
 import com.cmc12th.domain.model.map.model.BottomSheetContent
+import com.cmc12th.domain.model.map.model.MapStatus
 import com.cmc12th.runway.ui.theme.*
 import com.cmc12th.runway.utils.Constants.BOTTOM_NAVIGATION_HEIGHT
 
@@ -37,17 +38,17 @@ fun MapViewBottomSheetContent(
     contents: BottomSheetContent,
     navigateToDetail: (id: Int, storeName: String) -> Unit,
     isExpanded: Boolean,
+    mapStatus: MapStatus,
 ) {
     Column(
         modifier = Modifier
             .navigationBarsPadding()
             .fillMaxWidth()
-            .isFullScreen(isFullScreen, screenHeight)
             .wrapContentHeight()
             .padding(
                 start = 20.dp,
                 end = 20.dp,
-                bottom = if (appState.bottomBarState.value) BOTTOM_NAVIGATION_HEIGHT * 2 else BOTTOM_NAVIGATION_HEIGHT
+                bottom = if (appState.bottomBarState.value) BOTTOM_NAVIGATION_HEIGHT else 0.dp
             ),
     ) {
 
@@ -64,22 +65,26 @@ fun MapViewBottomSheetContent(
             )
         }
 
-        /** 풀스크린이 아니고 확장상태가 아니면 탑바가 보인다. */
+        /** 풀스크린이 아니고 확장상태가 아니면 핸들러가 보인다. */
         if (!(isFullScreen && isExpandedTagetValue)) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 10.dp, bottom = 10.dp)
-                    .align(Alignment.CenterHorizontally)
-            ) {
-                Spacer(
+            if ((mapStatus != MapStatus.MARKER_CLICKED && mapStatus != MapStatus.SHOP_SEARCH)) {
+                Box(
                     modifier = Modifier
-                        .clip(RoundedCornerShape(5.dp))
-                        .height(3.dp)
-                        .width(36.dp)
-                        .background(Gray200)
-                        .align(Alignment.Center)
-                )
+                        .fillMaxWidth()
+                        .padding(top = 10.dp, bottom = 10.dp)
+                        .align(Alignment.CenterHorizontally)
+                ) {
+                    Spacer(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(5.dp))
+                            .height(3.dp)
+                            .width(36.dp)
+                            .background(Gray200)
+                            .align(Alignment.Center)
+                    )
+                }
+            } else {
+                HeightSpacer(20.dp)
             }
 
             /** 제목 */
@@ -117,11 +122,21 @@ fun MapViewBottomSheetContent(
                             BottomDetailItem(navigateToDetail, it)
                         }
                     }
+                    if (pagingContents.itemCount == 0) {
+                        item {
+                            MapBottomSheetEmptyStore()
+                        }
+                    }
                 }
             }
 
             is BottomSheetContent.SINGLE -> {
-                BottomDetailItem(navigateToDetail, contents.contents)
+                // 마커 클릭상태일때만
+                BottomDetailItem(
+                    navigateToDetail = navigateToDetail,
+                    mapInfoItem = contents.contents,
+                    isNavigationButtonEnabled = mapStatus == MapStatus.MARKER_CLICKED || mapStatus == MapStatus.SHOP_SEARCH
+                )
             }
 
             BottomSheetContent.LOADING -> {

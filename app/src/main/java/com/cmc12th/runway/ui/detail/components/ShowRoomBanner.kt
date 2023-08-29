@@ -1,11 +1,13 @@
-@file:OptIn(ExperimentalFoundationApi::class, ExperimentalGlideComposeApi::class)
+@file:OptIn(
+    ExperimentalFoundationApi::class, ExperimentalGlideComposeApi::class,
+    ExperimentalPagerApi::class, ExperimentalPagerApi::class
+)
 
 package com.cmc12th.runway.ui.detail.components
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,46 +22,70 @@ import com.cmc12th.domain.model.response.store.StoreDetail
 import com.cmc12th.runway.R
 import com.cmc12th.runway.ui.map.components.TopGradient
 import com.cmc12th.runway.ui.theme.Gray200
+import com.cmc12th.runway.ui.theme.Gray300
+import com.cmc12th.runway.ui.theme.Primary
+import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.accompanist.pager.HorizontalPagerIndicator
+import com.google.accompanist.pager.rememberPagerState
 
 @Composable
 fun ShowRoomBanner(storeDetail: StoreDetail) {
+    val pagerState = rememberPagerState()
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .height(IntrinsicSize.Max)
     ) {
-        HorizontalPager(
-            pageCount = storeDetail.imgUrlList.size,
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .align(Alignment.TopCenter)
                 .aspectRatio(1.2f)
         ) {
-            Box {
-                GlideImage(
-                    modifier = Modifier
-                        .background(Gray200)
-                        .fillMaxSize(),
-                    model = storeDetail.imgUrlList[it],
-                    contentDescription = "SHOP_IMAGE",
-                    contentScale = ContentScale.Crop,
-                ) { requestBuilder ->
-                    requestBuilder.placeholder(R.color.gray200)
-                        .signature(ObjectKey(storeDetail.imgUrlList[it]))
+            com.google.accompanist.pager.HorizontalPager(
+                count = storeDetail.imgUrlList.size,
+                modifier = Modifier.fillMaxSize(),
+                state = pagerState
+            ) {
+                Box {
+                    GlideImage(
+                        modifier = Modifier
+                            .background(Gray200)
+                            .fillMaxSize(),
+                        model = storeDetail.imgUrlList[it],
+                        contentDescription = "SHOP_IMAGE",
+                        contentScale = ContentScale.Crop,
+                    ) { requestBuilder ->
+                        requestBuilder.placeholder(R.color.gray200)
+                            .signature(ObjectKey(storeDetail.imgUrlList[it]))
+                    }
+                    Box(
+                        modifier = Modifier
+                            .align(Alignment.TopCenter)
+                            .fillMaxWidth()
+                            .height(90.dp)
+                            .background(
+                                brush = Brush.verticalGradient(
+                                    listOf(
+                                        Color.Black,
+                                        Color.Transparent
+                                    )
+                                ),
+                                alpha = 0.5f
+                            )
+                    )
                 }
-                Box(
-                    modifier = Modifier
-                        .align(Alignment.TopCenter)
-                        .fillMaxWidth()
-                        .height(90.dp)
-                        .background(
-                            brush = Brush.verticalGradient(listOf(Color.Black, Color.Transparent)),
-                            alpha = 0.5f
-                        )
-                )
             }
-
+            HorizontalPagerIndicator(
+                pagerState = pagerState,
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 10.dp),
+                activeColor = Primary,
+                inactiveColor = Gray300,
+            )
         }
+
 
         TopGradient(modifier = Modifier.align(Alignment.BottomCenter), height = 20.dp, alpha = 1f)
     }

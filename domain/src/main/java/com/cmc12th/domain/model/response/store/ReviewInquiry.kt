@@ -9,5 +9,9 @@ data class ReviewInquiry(
     @Json(name = "nextReviewId")
     val nextReviewId: Int?,
     @Json(name = "prevReviewId")
-    val prevReviewId: Int?
+    val prevReviewId: Int?,
+    @Json(name = "nextReviewImgUrl")
+    val nextReviewImgUrl: String?,
+    @Json(name = "prevReviewImgUrl")
+    val prevReviewImgUrl: String?,
 )

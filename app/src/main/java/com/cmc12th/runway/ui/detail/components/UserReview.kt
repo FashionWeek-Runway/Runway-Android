@@ -9,14 +9,17 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.paging.PagingData
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -33,19 +36,23 @@ import com.cmc12th.runway.ui.components.WidthSpacer
 import com.cmc12th.runway.ui.domain.model.BottomSheetContent
 import com.cmc12th.runway.ui.domain.model.BottomSheetContentItem
 import com.cmc12th.runway.ui.theme.*
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
 
 @Composable
 fun UserReview(
     userReviews: Flow<PagingData<UserReview>>,
-    showBottomSheet: (BottomSheetContent) -> Unit,
+    showBottomSheet: (contents: @Composable () -> Unit) -> Unit,
     navigateToUserReviewDetail: (UserReview) -> Unit,
     cameraLauncher: ManagedActivityResultLauncher<Uri, Boolean>,
     galleryLauncher: ManagedActivityResultLauncher<String, Uri?>,
     updateImageUri: (Uri?) -> Unit,
+    hideBottomSheet: () -> Unit,
 ) {
     val userReviewsPaging = userReviews.collectAsLazyPagingItems()
     val context = LocalContext.current
+
     Column {
         Row(
             modifier = Modifier
@@ -57,10 +64,15 @@ fun UserReview(
             Text(text = "사용자 후기", style = HeadLine4, color = Color.Black)
             Row(
                 modifier = Modifier.clickable {
-                    showBottomSheet(
-                        BottomSheetContent(
-                            title = "",
-                            itemList = listOf(
+                    showBottomSheet {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .navigationBarsPadding()
+                                .imePadding()
+                        ) {
+                            HeightSpacer(height = 10.dp)
+                            listOf(
                                 BottomSheetContentItem(
                                     itemName = "사진 찍기",
                                     onItemClick = {
@@ -75,18 +87,54 @@ fun UserReview(
                                         galleryLauncher.launch("image/*")
                                     },
                                 )
-                            )
-                        )
-                    )
+                            ).forEach {
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .background(if (it.isSeleceted) Primary20 else White)
+                                        .clickable {
+                                            it.onItemClick()
+                                            hideBottomSheet()
+                                        },
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    Text(
+                                        modifier = Modifier
+                                            .padding(20.dp, 20.dp),
+                                        text = it.itemName,
+                                        style = Body1,
+                                        textAlign = TextAlign.Start,
+                                        color = it.itemTextColor
+                                    )
+                                    if (it.isSeleceted) {
+                                        Icon(
+                                            painter = painterResource(id = R.drawable.ic_check),
+                                            contentDescription = "IC_CHECK",
+                                            tint = Primary,
+                                            modifier = Modifier
+                                                .size(18.dp)
+                                                .offset(x = (-20).dp)
+                                        )
+                                    }
+                                }
+                                HeightSpacer(height = 20.dp)
+                            }
+                        }
+                    }
                 },
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(6.dp)
             ) {
                 RunwayIconButton(drawable = R.drawable.ic_filled_camera_24, size = 24.dp) {
-                    showBottomSheet(
-                        BottomSheetContent(
-                            title = "",
-                            itemList = listOf(
+                    showBottomSheet {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .navigationBarsPadding()
+                        ) {
+                            HeightSpacer(height = 10.dp)
+                            listOf(
                                 BottomSheetContentItem(
                                     itemName = "사진 찍기",
                                     onItemClick = {
@@ -101,9 +149,30 @@ fun UserReview(
                                         galleryLauncher.launch("image/*")
                                     },
                                 )
-                            )
-                        )
-                    )
+                            ).forEach {
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .background(if (it.isSeleceted) Primary20 else White)
+                                        .clickable {
+                                            it.onItemClick()
+                                            hideBottomSheet()
+                                        },
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    Text(
+                                        modifier = Modifier
+                                            .padding(20.dp, 20.dp),
+                                        text = it.itemName,
+                                        style = Body1,
+                                        textAlign = TextAlign.Start,
+                                        color = it.itemTextColor
+                                    )
+                                }
+                            }
+                        }
+                    }
                 }
                 Text(
                     text = "후기 작성",

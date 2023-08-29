@@ -32,7 +32,7 @@ import coil.request.ImageRequest
 import com.cmc12th.runway.R
 import com.cmc12th.runway.broadcast.ComposeFileProvider
 import com.cmc12th.runway.ui.components.BackIcon
-import com.cmc12th.runway.ui.components.CustomBottomSheet
+import com.cmc12th.runway.ui.components.BottomSheetUsingItemLists
 import com.cmc12th.runway.ui.components.HeightSpacer
 import com.cmc12th.runway.ui.domain.keyboardAsState
 import com.cmc12th.runway.ui.domain.model.ApplicationState
@@ -138,7 +138,7 @@ fun EditProfileScreen(
         }
     }
 
-    CustomBottomSheet(
+    BottomSheetUsingItemLists(
         bottomsheetState
     ) {
         Column(
@@ -255,6 +255,7 @@ fun ProfileImageIcon(
                         showBottomSheet = showBottomSheet
                     )
                 }
+
                 else -> {
                     SelectedProfileImage(
                         selectedImage = profileImageType,

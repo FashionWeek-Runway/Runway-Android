@@ -1,8 +1,8 @@
 package com.cmc12th.runway.data.di
 
-import com.cmc12th.runway.data.Constants.BASE_URL
 import com.cmc12th.runway.data.network.RunwayClient
 import com.cmc12th.domain.model.ServiceInterceptor
+import com.cmc12th.runway.data.BuildConfig
 import com.cmc12th.runway.data.network.TokenAuthenticator
 import com.cmc12th.runway.data.network.service.*
 import dagger.Module
@@ -62,7 +62,7 @@ object NetworkModule {
     ): Retrofit {
         return Retrofit.Builder()
             .client(okHttpClient)
-            .baseUrl(BASE_URL)
+            .baseUrl(BuildConfig.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .addConverterFactory(MoshiConverterFactory.create())
             .build()

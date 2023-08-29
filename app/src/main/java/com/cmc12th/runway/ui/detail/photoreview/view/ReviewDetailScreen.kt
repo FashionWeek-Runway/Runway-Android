@@ -1,15 +1,29 @@
 @file:OptIn(
-    ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class,
-    ExperimentalMaterialApi::class, ExperimentalGlideComposeApi::class
+    ExperimentalMaterialApi::class, ExperimentalMaterialApi::class
 )
 
 package com.cmc12th.runway.ui.detail.photoreview.view
 
-import androidx.activity.compose.BackHandler
+import android.util.Log
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.foundation.*
-import androidx.compose.foundation.gestures.*
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
@@ -17,14 +31,19 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.*
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -34,14 +53,15 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.compose.SubcomposeAsyncImage
+import coil.imageLoader
 import coil.request.CachePolicy
 import coil.request.ImageRequest
-import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.cmc12th.domain.model.response.store.UserReviewDetail
 import com.cmc12th.runway.R
-import com.cmc12th.runway.ui.components.CustomBottomSheet
+import com.cmc12th.runway.ui.components.BottomSheetUsingItemLists
 import com.cmc12th.runway.ui.components.RunwayIconButton
 import com.cmc12th.runway.ui.detail.photoreview.ReviewViewModel
 import com.cmc12th.runway.ui.domain.model.ApplicationState
@@ -49,7 +69,17 @@ import com.cmc12th.runway.ui.domain.model.BottomSheetContent
 import com.cmc12th.runway.ui.domain.model.BottomSheetContentItem
 import com.cmc12th.runway.ui.domain.model.ReviewViwerType
 import com.cmc12th.runway.ui.domain.rememberBottomSheet
-import com.cmc12th.runway.ui.theme.*
+import com.cmc12th.runway.ui.theme.Black
+import com.cmc12th.runway.ui.theme.Body2
+import com.cmc12th.runway.ui.theme.Body2B
+import com.cmc12th.runway.ui.theme.Caption
+import com.cmc12th.runway.ui.theme.Error_Color
+import com.cmc12th.runway.ui.theme.Gray200
+import com.cmc12th.runway.ui.theme.Gray300
+import com.cmc12th.runway.ui.theme.Gray800
+import com.cmc12th.runway.ui.theme.Point
+import com.cmc12th.runway.ui.theme.Primary
+import com.cmc12th.runway.ui.theme.White
 import com.cmc12th.runway.utils.Constants
 import com.cmc12th.runway.utils.Constants.REVIEW_REPORT_ROUTE
 import com.cmc12th.runway.utils.viewLogEvent
@@ -68,10 +98,12 @@ fun ReviewDetailScreen(
     viewerType: ReviewViwerType,
 ) {
 
+    val reviewViewModel: ReviewViewModel = hiltViewModel()
     val bottomsheetState = rememberBottomSheet()
     val coroutineScope = rememberCoroutineScope()
-    val reviewViewModel: ReviewViewModel = hiltViewModel()
+    val context = LocalContext.current
     var reviewId = argReviewId
+    val uiState by reviewViewModel.uiState.collectAsStateWithLifecycle()
 
     val showBottomSheet: (BottomSheetContent) -> Unit = {
         coroutineScope.launch {
@@ -80,10 +112,26 @@ fun ReviewDetailScreen(
         }
     }
 
+    LaunchedEffect(key1 = uiState) {
+        coroutineScope.launch {
+            context.imageLoader.enqueue(
+                ImageRequest.Builder(context)
+                    .diskCachePolicy(CachePolicy.ENABLED)
+                    .diskCacheKey(uiState.reviewDetail.reviewInquiry.nextReviewImgUrl)
+                    .data(uiState.reviewDetail.reviewInquiry.nextReviewImgUrl)
+                    .build()
+            )
+            context.imageLoader.enqueue(
+                ImageRequest.Builder(context)
+                    .diskCachePolicy(CachePolicy.ENABLED)
+                    .diskCacheKey(uiState.reviewDetail.reviewInquiry.prevReviewImgUrl)
+                    .data(uiState.reviewDetail.reviewInquiry.prevReviewImgUrl)
+                    .build()
+            )
+        }
+    }
+
     LaunchedEffect(key1 = Unit) {
-        viewLogEvent("UserReviewDetailScreen")
-        appState.bottomBarState.value = false
-        bottomsheetState.modalSheetState.hide()
         when (viewerType) {
             ReviewViwerType.STORE_DETAIL -> {
                 reviewViewModel.getReviewDetailStore(reviewId)
@@ -94,29 +142,31 @@ fun ReviewDetailScreen(
             }
 
             ReviewViwerType.HOME -> {
-                reviewViewModel.getReviewDetailHome(reviewId)
+                reviewViewModel.getReviewDetailHome(reviewId = reviewId)
             }
 
             ReviewViwerType.BOOKMARK -> {
                 reviewViewModel.getReviewDetailBookmark(reviewId)
             }
         }
+        viewLogEvent("UserReviewDetailScreen")
+        appState.bottomBarState.value = false
+        bottomsheetState.modalSheetState.hide()
     }
-
     appState.systmeUiController.setStatusBarColor(Color.Black)
     appState.systmeUiController.setNavigationBarColor(Color.Black)
 
-    CustomBottomSheet(
+    BottomSheetUsingItemLists(
         bottomsheetState
     ) {
         DetailContents(
             showSnackBar = { appState.showSnackbar(it) },
-            reviewDetail = reviewViewModel.reviewDetail.value,
+            reviewDetail = uiState.reviewDetail,
             showBottomSheet = showBottomSheet,
             updateBookmark = {
                 reviewViewModel.updateBookmark(reviewId) {
                     appState.showSnackbar(
-                        if (reviewViewModel.reviewDetail.value.bookmark) "리뷰가 저장되었습니다." else "리뷰 저장이 취소됬습니다."
+                        if (uiState.reviewDetail.bookmark) "리뷰가 저장되었습니다." else "리뷰 저장이 취소됬습니다."
                     )
                 }
             },
@@ -290,8 +340,6 @@ private fun DetailContents(
                 deleteReview
             )
             Bookmark(reviewDetail, updateBookmark)
-
-
         }
         BottomBar(
             reviewDetail = reviewDetail,
@@ -305,7 +353,6 @@ private fun MainImage(
     offsetX: Float,
     reviewDetail: UserReviewDetail,
 ) {
-
 
     SubcomposeAsyncImage(
         model = ImageRequest.Builder(LocalContext.current)

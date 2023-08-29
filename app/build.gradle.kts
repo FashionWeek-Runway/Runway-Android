@@ -71,7 +71,11 @@ android {
     productFlavors {
         create("dev") {
             // 개발용
-            buildConfigField("String", "BASE_URL", "\"https://dev.runwayserver.shop/\"")
+            buildConfigField(
+                "String",
+                "BASE_URL",
+                "\"http://runway-dev-env.eba-h3xrns2m.ap-northeast-2.elasticbeanstalk.com/\""
+            )
         }
 
         create("prod") {
@@ -163,6 +167,7 @@ dependencies {
     // Accompanist
     implementation(Dependencies.ACCOMPANIST_SYSTEMUICONTROLLER)
     implementation(Dependencies.ACCOMPANIST_PAGER)
+    implementation(Dependencies.ACCOMPANIST_PAGER_INDICATORS)
     implementation(Dependencies.ACCOMPANIST_WEBVIEW)
 
     // Coil

@@ -12,7 +12,7 @@ data class UserReviewDetail(
     val profileImgUrl: String? = "",
     val regionInfo: String = "",
     val reviewId: Int = -1,
-    val reviewInquiry: ReviewInquiry = ReviewInquiry(null, null),
+    val reviewInquiry: ReviewInquiry = ReviewInquiry(null, null, null, null),
     val storeId: Int = -1,
     val storeName: String = "",
 ) {

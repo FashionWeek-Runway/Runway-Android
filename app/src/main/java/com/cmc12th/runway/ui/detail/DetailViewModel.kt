@@ -19,6 +19,8 @@ import javax.inject.Inject
 data class DetailUiState(
     val storeDetail: StoreDetail = StoreDetail(),
     val blogReview: List<BlogReview> = emptyList(),
+    val isMoreBtnVisible: Boolean = false,
+    val isBlogReviewExapnded: Boolean = false,
 )
 
 @HiltViewModel
@@ -28,17 +30,21 @@ class DetailViewModel @Inject constructor(
 
     private val _storeDetail = MutableStateFlow(StoreDetail())
     private val _blogReview = MutableStateFlow(emptyList<BlogReview>())
+    private val _visibleBlogReview = MutableStateFlow(emptyList<BlogReview>())
+    private val _isBlogReviewExapnded = MutableStateFlow(false)
     private val _userReviews =
         MutableStateFlow<PagingData<UserReview>>(PagingData.empty())
     val userReviews: StateFlow<PagingData<UserReview>> =
         _userReviews.asStateFlow()
 
     val uiState = combine(
-        _storeDetail, _blogReview
+        _storeDetail, _visibleBlogReview, _isBlogReviewExapnded
     ) { flowArr ->
         DetailUiState(
             storeDetail = flowArr[0] as StoreDetail,
-            blogReview = flowArr[1] as List<BlogReview>
+            blogReview = flowArr[1] as List<BlogReview>,
+            isMoreBtnVisible = _blogReview.value.size >= 5,
+            isBlogReviewExapnded = flowArr[2] as Boolean,
         )
     }.stateIn(
         scope = viewModelScope,
@@ -93,9 +99,18 @@ class DetailViewModel @Inject constructor(
         storeRepository.getBlogReview(idx, storeName).collect { apiState ->
             apiState.onSuccess {
                 _blogReview.value = it.result
+                _visibleBlogReview.value = it.result.take(5)
             }
         }
     }
 
+    fun updateExpandedState() {
+        if (_isBlogReviewExapnded.value) {
+            _visibleBlogReview.value = _blogReview.value.take(5)
+        } else {
+            _visibleBlogReview.value = _blogReview.value
+        }
+        _isBlogReviewExapnded.value = !_isBlogReviewExapnded.value
+    }
 
 }

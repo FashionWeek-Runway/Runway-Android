@@ -1,5 +1,6 @@
 package com.cmc12th.runway.ui.detail.photoreview
 
+import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -28,6 +29,10 @@ data class ReviewReportWrapper(
     var isSelected: Boolean = false,
 )
 
+data class ReviewUiState(
+    val reviewDetail: UserReviewDetail = UserReviewDetail.default(),
+)
+
 @HiltViewModel
 class ReviewViewModel @Inject constructor(
     private val storeRepository: com.cmc12th.domain.repository.StoreRepository,
@@ -35,8 +40,8 @@ class ReviewViewModel @Inject constructor(
     private val homeRepository: com.cmc12th.domain.repository.HomeRepository,
 ) : ViewModel() {
 
-    private val _reviewDetail = mutableStateOf(UserReviewDetail.default())
-    val reviewDetail: State<UserReviewDetail> get() = _reviewDetail
+    private val _reviewDetail = MutableStateFlow(UserReviewDetail.default())
+//    val reviewDetail: State<UserReviewDetail> get() = _reviewDetail
 
     private val _report: MutableStateFlow<List<ReviewReportWrapper>> = MutableStateFlow(
         ReviewReportType.values().map {
@@ -45,6 +50,18 @@ class ReviewViewModel @Inject constructor(
     )
     private val _reportContents: MutableStateFlow<String> = MutableStateFlow<String>("")
     private var _selectedReportId = MutableStateFlow(-1)
+
+    val uiState = combine(
+        _reviewDetail
+    ) {
+        ReviewUiState(
+            reviewDetail = it[0] as UserReviewDetail
+        )
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = ReviewUiState()
+    )
 
     val reportUiState = combine(
         _report, _reportContents, _selectedReportId

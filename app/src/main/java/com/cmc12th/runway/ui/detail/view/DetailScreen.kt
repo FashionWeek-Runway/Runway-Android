@@ -33,10 +33,8 @@ import com.cmc12th.runway.ui.detail.DetailViewModel
 import com.cmc12th.runway.ui.detail.components.*
 import com.cmc12th.runway.ui.detail.domain.ManageSystemBarColor
 import com.cmc12th.runway.ui.domain.model.ApplicationState
-import com.cmc12th.runway.ui.domain.model.BottomSheetContent
 import com.cmc12th.runway.ui.domain.model.ReviewViwerType
 import com.cmc12th.runway.ui.domain.rememberBottomSheet
-import com.cmc12th.runway.ui.theme.Black
 import com.cmc12th.runway.ui.theme.Gray100
 import com.cmc12th.runway.utils.Constants.REVIEW_DETAIL_ROUTE
 import com.cmc12th.runway.utils.Constants.REVIEW_WRITE_ROUTE
@@ -66,9 +64,9 @@ fun DetailScreen(
     val topbarIconAnimateColor = animateColorAsState(targetValue = topbarIconColor.value)
 
     val bottomsheetState = rememberBottomSheet()
-    val showBottomSheet: (BottomSheetContent) -> Unit = {
+    val showBottomSheet: (@Composable () -> Unit) -> Unit = {
+        bottomsheetState.contents.value = it
         coroutineScope.launch {
-            bottomsheetState.bottomsheetContent.value = it
             bottomsheetState.modalSheetState.show()
         }
     }
@@ -100,7 +98,7 @@ fun DetailScreen(
             navigateToReviewWrite(uri)
         }
 
-    val camearLauncher =
+    val cameraLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) {
             hasImage = it
         }
@@ -155,12 +153,25 @@ fun DetailScreen(
                         appState.showSnackbar(message)
                     }
                 )
-                WidthSpacerLine(height = 2.dp, color = Black)
+                ShowRoomInfoInCorrect(
+                    showBottomSheet = showBottomSheet,
+                    hideBottomSheet = {
+                        coroutineScope.launch {
+                            bottomsheetState.modalSheetState.hide()
+                        }
+                    },
+                )
+                WidthSpacerLine(height = 8.dp, color = Gray100)
                 UserReview(
                     userReviews = detailViewModel.userReviews,
                     showBottomSheet = showBottomSheet,
+                    hideBottomSheet = {
+                        coroutineScope.launch {
+                            bottomsheetState.modalSheetState.hide()
+                        }
+                    },
                     galleryLauncher = galleryLauncher,
-                    cameraLauncher = camearLauncher,
+                    cameraLauncher = cameraLauncher,
                     updateImageUri = { imageUri = it },
                     navigateToUserReviewDetail = {
                         appState.navigate("$REVIEW_DETAIL_ROUTE?reviewId=${it.reviewId}&viewerType=${ReviewViwerType.STORE_DETAIL.typeToString}")
@@ -168,15 +179,18 @@ fun DetailScreen(
                 )
                 HeightSpacer(height = 20.dp)
                 WidthSpacerLine(height = 8.dp, color = Gray100)
-                BlogReview()
-                uiState.blogReview.map {
-                    BlogReviewItem(
-                        blogReview = it,
-                        onClick = { url, title ->
-                            appState.navigate("$WEB_VIEW_ROUTE?title$title=&url=$url")
-                        }
-                    )
-                }
+                BlogReview(
+                    blogReview = uiState.blogReview,
+                    isMoreBtnVisible = uiState.isMoreBtnVisible,
+                    isBlogReviewExapnded = uiState.isBlogReviewExapnded,
+                    naviagteToWebView = { url, title ->
+                        appState.navigate("${WEB_VIEW_ROUTE}?title$title=&url=$url")
+                    },
+                    updateExpandedState = {
+                        detailViewModel.updateExpandedState()
+                    }
+                )
+
             }
 
             DetailTopBar(
