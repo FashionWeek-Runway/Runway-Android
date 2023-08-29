@@ -4,6 +4,7 @@
 
 package com.cmc12th.runway.ui.detail.photoreview.view
 
+import android.util.Log
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -52,6 +53,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.compose.SubcomposeAsyncImage
 import coil.imageLoader
@@ -96,11 +98,12 @@ fun ReviewDetailScreen(
     viewerType: ReviewViwerType,
 ) {
 
+    val reviewViewModel: ReviewViewModel = hiltViewModel()
     val bottomsheetState = rememberBottomSheet()
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
-    val reviewViewModel: ReviewViewModel = hiltViewModel()
     var reviewId = argReviewId
+    val uiState by reviewViewModel.uiState.collectAsStateWithLifecycle()
 
     val showBottomSheet: (BottomSheetContent) -> Unit = {
         coroutineScope.launch {
@@ -109,29 +112,26 @@ fun ReviewDetailScreen(
         }
     }
 
-    LaunchedEffect(key1 = reviewViewModel.reviewDetail.value) {
+    LaunchedEffect(key1 = uiState) {
         coroutineScope.launch {
             context.imageLoader.enqueue(
                 ImageRequest.Builder(context)
                     .diskCachePolicy(CachePolicy.ENABLED)
-                    .diskCacheKey(reviewViewModel.reviewDetail.value.reviewInquiry.nextReviewImgUrl)
-                    .data(reviewViewModel.reviewDetail.value.reviewInquiry.nextReviewImgUrl)
+                    .diskCacheKey(uiState.reviewDetail.reviewInquiry.nextReviewImgUrl)
+                    .data(uiState.reviewDetail.reviewInquiry.nextReviewImgUrl)
                     .build()
             )
             context.imageLoader.enqueue(
                 ImageRequest.Builder(context)
                     .diskCachePolicy(CachePolicy.ENABLED)
-                    .diskCacheKey(reviewViewModel.reviewDetail.value.reviewInquiry.prevReviewImgUrl)
-                    .data(reviewViewModel.reviewDetail.value.reviewInquiry.prevReviewImgUrl)
+                    .diskCacheKey(uiState.reviewDetail.reviewInquiry.prevReviewImgUrl)
+                    .data(uiState.reviewDetail.reviewInquiry.prevReviewImgUrl)
                     .build()
             )
         }
     }
 
     LaunchedEffect(key1 = Unit) {
-        viewLogEvent("UserReviewDetailScreen")
-        appState.bottomBarState.value = false
-        bottomsheetState.modalSheetState.hide()
         when (viewerType) {
             ReviewViwerType.STORE_DETAIL -> {
                 reviewViewModel.getReviewDetailStore(reviewId)
@@ -142,15 +142,17 @@ fun ReviewDetailScreen(
             }
 
             ReviewViwerType.HOME -> {
-                reviewViewModel.getReviewDetailHome(reviewId)
+                reviewViewModel.getReviewDetailHome(reviewId = reviewId)
             }
 
             ReviewViwerType.BOOKMARK -> {
                 reviewViewModel.getReviewDetailBookmark(reviewId)
             }
         }
+        viewLogEvent("UserReviewDetailScreen")
+        appState.bottomBarState.value = false
+        bottomsheetState.modalSheetState.hide()
     }
-
     appState.systmeUiController.setStatusBarColor(Color.Black)
     appState.systmeUiController.setNavigationBarColor(Color.Black)
 
@@ -159,12 +161,12 @@ fun ReviewDetailScreen(
     ) {
         DetailContents(
             showSnackBar = { appState.showSnackbar(it) },
-            reviewDetail = reviewViewModel.reviewDetail.value,
+            reviewDetail = uiState.reviewDetail,
             showBottomSheet = showBottomSheet,
             updateBookmark = {
                 reviewViewModel.updateBookmark(reviewId) {
                     appState.showSnackbar(
-                        if (reviewViewModel.reviewDetail.value.bookmark) "리뷰가 저장되었습니다." else "리뷰 저장이 취소됬습니다."
+                        if (uiState.reviewDetail.bookmark) "리뷰가 저장되었습니다." else "리뷰 저장이 취소됬습니다."
                     )
                 }
             },
