@@ -80,9 +80,9 @@ fun ShowRoomBanner(storeDetail: StoreDetail) {
                 pagerState = pagerState,
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
-                    .padding(bottom = 10.dp),
-                activeColor = Primary,
-                inactiveColor = Gray300,
+                    .padding(bottom = 15.dp),
+                activeColor = Color.White,
+                inactiveColor = Color.White.copy(alpha = 0.6f),
             )
         }
 

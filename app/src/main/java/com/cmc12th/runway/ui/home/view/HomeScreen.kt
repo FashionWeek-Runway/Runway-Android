@@ -1,5 +1,5 @@
 @file:OptIn(
-    ExperimentalGlideComposeApi::class, ExperimentalGlideComposeApi::class,
+    ExperimentalGlideComposeApi::class,
     ExperimentalPagerApi::class
 )
 
@@ -8,11 +8,23 @@ package com.cmc12th.runway.ui.home.view
 import android.content.Intent
 import android.net.Uri
 import androidx.annotation.DrawableRes
-import androidx.compose.foundation.*
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -26,7 +38,10 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
@@ -38,9 +53,8 @@ import com.bumptech.glide.Priority
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.signature.ObjectKey
-import com.cmc12th.domain.model.response.home.HomeInstaResponse
-import com.cmc12th.runway.R
 import com.cmc12th.domain.model.response.home.HomeReviewItem
+import com.cmc12th.runway.R
 import com.cmc12th.runway.ui.components.HeightSpacer
 import com.cmc12th.runway.ui.components.WidthSpacer
 import com.cmc12th.runway.ui.domain.model.ApplicationState
@@ -48,7 +62,21 @@ import com.cmc12th.runway.ui.domain.model.ReviewViwerType
 import com.cmc12th.runway.ui.home.HomeViewModel
 import com.cmc12th.runway.ui.home.component.HomeBannerComponents
 import com.cmc12th.runway.ui.home.component.HomeBannerTopBar
-import com.cmc12th.runway.ui.theme.*
+import com.cmc12th.runway.ui.theme.Black10
+import com.cmc12th.runway.ui.theme.Body1
+import com.cmc12th.runway.ui.theme.Body1B
+import com.cmc12th.runway.ui.theme.Body2
+import com.cmc12th.runway.ui.theme.Body2M
+import com.cmc12th.runway.ui.theme.Button2
+import com.cmc12th.runway.ui.theme.Caption
+import com.cmc12th.runway.ui.theme.Gray100
+import com.cmc12th.runway.ui.theme.Gray200
+import com.cmc12th.runway.ui.theme.Gray300
+import com.cmc12th.runway.ui.theme.Gray500
+import com.cmc12th.runway.ui.theme.Gray900
+import com.cmc12th.runway.ui.theme.HeadLine4
+import com.cmc12th.runway.ui.theme.Primary
+import com.cmc12th.runway.ui.theme.White
 import com.cmc12th.runway.utils.Constants.BOTTOM_NAVIGATION_HEIGHT
 import com.cmc12th.runway.utils.Constants.DETAIL_ROUTE
 import com.cmc12th.runway.utils.Constants.EDIT_CATEGORY_ROUTE
@@ -57,7 +85,6 @@ import com.cmc12th.runway.utils.Constants.REVIEW_DETAIL_ROUTE
 import com.cmc12th.runway.utils.viewLogEvent
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
-import com.google.accompanist.pager.HorizontalPagerIndicator
 import com.google.accompanist.pager.rememberPagerState
 
 
@@ -184,13 +211,30 @@ fun HomeScreen(appState: ApplicationState, viewModel: HomeViewModel) {
                             contentScale = ContentScale.Crop,
                         )
                     }
-                    HorizontalPagerIndicator(
-                        pagerState = pagerState,
+
+                    Text(
                         modifier = Modifier
-                            .align(Alignment.BottomCenter)
-                            .padding(bottom = 10.dp),
-                        activeColor = Primary,
-                        inactiveColor = Gray300,
+                            .align(Alignment.TopEnd)
+                            .padding(15.dp)
+                            .background(Color(0x800A0A0A), RoundedCornerShape(10.dp))
+                            .padding(6.dp, 4.dp),
+                        text = buildAnnotatedString {
+                            withStyle(
+                                SpanStyle(
+                                    color = Color.White
+                                )
+                            ) {
+                                append("${pagerState.currentPage + 1}")
+                            }
+                            withStyle(
+                                SpanStyle(
+                                    color = Gray300
+                                )
+                            ) {
+                                append("/${instas[idx]?.imgList?.size}")
+                            }
+                        },
+                        style = Button2,
                     )
                 }
 
