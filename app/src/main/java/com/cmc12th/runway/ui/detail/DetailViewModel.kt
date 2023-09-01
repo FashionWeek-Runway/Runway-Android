@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import com.cmc12th.domain.model.request.store.StoreReportRequest
 import com.cmc12th.domain.model.response.store.BlogReview
 import com.cmc12th.domain.model.response.store.StoreDetail
 import com.cmc12th.domain.model.response.store.UserReview
@@ -66,6 +67,25 @@ class DetailViewModel @Inject constructor(
             }
         }
     }
+
+    fun reportStore(
+        storeId: Int,
+        reportContents: List<Int>,
+        showSnackBar: (String) -> Unit,
+    ) =
+        viewModelScope.launch {
+            storeRepository.reportStore(
+                storeId = storeId,
+                storeReportRequest = StoreReportRequest(reportContents)
+            ).collect { apiState ->
+                apiState.onSuccess {
+                    showSnackBar("신고가 접수되었습니다.")
+                }
+                apiState.onError {
+                    showSnackBar("이미 신고한 가게입니다.")
+                }
+            }
+        }
 
     fun updateBookmark(storeId: Int, onSuccess: () -> Unit) = viewModelScope.launch {
         storeRepository.storeBookmark(storeId = storeId).collect { apiState ->

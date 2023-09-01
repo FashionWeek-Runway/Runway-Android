@@ -7,6 +7,7 @@ import com.cmc12th.runway.data.pagingsource.UserReviewPagingSource
 import com.cmc12th.domain.ApiWrapper
 import com.cmc12th.domain.DefaultApiWrapper
 import com.cmc12th.domain.PagingApiWrapper
+import com.cmc12th.domain.model.request.store.StoreReportRequest
 import com.cmc12th.domain.model.response.store.BlogReview
 import com.cmc12th.domain.model.response.store.StoreDetail
 import com.cmc12th.domain.model.response.store.UserReview
@@ -84,5 +85,12 @@ class StoreRepositoryImpl @Inject constructor(
         safeFlow {
             runwayClient.reportReview(reviewReportRequest)
         }
+
+    override fun reportStore(
+        storeId: Int,
+        storeReportRequest: StoreReportRequest
+    ): Flow<DefaultApiWrapper> = safeFlow {
+        runwayClient.reportStore(storeId, storeReportRequest)
+    }
 
 }

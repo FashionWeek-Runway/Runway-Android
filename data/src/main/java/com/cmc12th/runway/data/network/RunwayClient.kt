@@ -1,6 +1,7 @@
 package com.cmc12th.runway.data.network
 
 import com.cmc12th.domain.model.request.auth.PasswordRequest
+import com.cmc12th.domain.model.request.store.StoreReportRequest
 import com.cmc12th.domain.model.response.user.PatchCategoryBody
 import com.cmc12th.runway.data.network.service.*
 import okhttp3.MultipartBody
@@ -103,6 +104,9 @@ class RunwayClient @Inject constructor(
 
     suspend fun reportReview(reviewReportRequest: com.cmc12th.domain.model.request.store.ReviewReportRequest) =
         storeService.reportReview(reviewReportRequest)
+
+    suspend fun reportStore(storeId: Int, storeReportRequest: StoreReportRequest) =
+        storeService.reportStore(storeId, storeReportRequest)
 
     /** 맵 */
     suspend fun mapsFiltering(mapFilterRequest: com.cmc12th.domain.model.request.map.MapFilterRequest) =

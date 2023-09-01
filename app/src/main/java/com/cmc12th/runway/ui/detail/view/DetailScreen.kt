@@ -1,5 +1,5 @@
 @file:OptIn(
-    ExperimentalMaterialApi::class, ExperimentalMaterialApi::class
+    ExperimentalMaterialApi::class,
 )
 
 package com.cmc12th.runway.ui.detail.view
@@ -65,8 +65,8 @@ fun DetailScreen(
 
     val bottomsheetState = rememberBottomSheet()
     val showBottomSheet: (@Composable () -> Unit) -> Unit = {
-        bottomsheetState.contents.value = it
         coroutineScope.launch {
+            bottomsheetState.contents.value = it
             bottomsheetState.modalSheetState.show()
         }
     }
@@ -160,6 +160,15 @@ fun DetailScreen(
                             bottomsheetState.modalSheetState.hide()
                         }
                     },
+                    reportStore = { reportContents ->
+                        detailViewModel.reportStore(
+                            storeId = idx,
+                            reportContents = reportContents,
+                            showSnackBar = {
+                                appState.showSnackbar(it)
+                            }
+                        )
+                    }
                 )
                 WidthSpacerLine(height = 8.dp, color = Gray100)
                 UserReview(

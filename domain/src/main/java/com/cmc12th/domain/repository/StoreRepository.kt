@@ -5,6 +5,7 @@ import com.cmc12th.domain.ApiWrapper
 import com.cmc12th.domain.DefaultApiWrapper
 import com.cmc12th.domain.PagingApiWrapper
 import com.cmc12th.domain.model.request.store.ReviewReportRequest
+import com.cmc12th.domain.model.request.store.StoreReportRequest
 import com.cmc12th.domain.model.response.store.BlogReview
 import com.cmc12th.domain.model.response.store.StoreDetail
 import com.cmc12th.domain.model.response.store.UserReview
@@ -38,4 +39,5 @@ interface StoreRepository {
     fun reportReview(reviewReportRequest: ReviewReportRequest): Flow<DefaultApiWrapper>
 
     fun delteReview(reviewId: Int): Flow<DefaultApiWrapper>
+    fun reportStore(storeId: Int, storeReportRequest: StoreReportRequest): Flow<DefaultApiWrapper>
 }

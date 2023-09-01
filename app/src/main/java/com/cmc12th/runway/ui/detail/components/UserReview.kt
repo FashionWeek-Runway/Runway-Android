@@ -2,6 +2,7 @@
 
 package com.cmc12th.runway.ui.detail.components
 
+import android.content.Context
 import android.net.Uri
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.compose.foundation.Image
@@ -12,7 +13,6 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -33,12 +33,9 @@ import com.cmc12th.runway.broadcast.ComposeFileProvider
 import com.cmc12th.runway.ui.components.HeightSpacer
 import com.cmc12th.runway.ui.components.RunwayIconButton
 import com.cmc12th.runway.ui.components.WidthSpacer
-import com.cmc12th.runway.ui.domain.model.BottomSheetContent
 import com.cmc12th.runway.ui.domain.model.BottomSheetContentItem
 import com.cmc12th.runway.ui.theme.*
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.launch
 
 @Composable
 fun UserReview(
@@ -65,62 +62,13 @@ fun UserReview(
             Row(
                 modifier = Modifier.clickable {
                     showBottomSheet {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .navigationBarsPadding()
-                                .imePadding()
-                        ) {
-                            HeightSpacer(height = 10.dp)
-                            listOf(
-                                BottomSheetContentItem(
-                                    itemName = "사진 찍기",
-                                    onItemClick = {
-                                        val uri = ComposeFileProvider.getImageUri(context)
-                                        updateImageUri(uri)
-                                        cameraLauncher.launch(uri)
-                                    },
-                                ),
-                                BottomSheetContentItem(
-                                    itemName = "사진 앨범",
-                                    onItemClick = {
-                                        galleryLauncher.launch("image/*")
-                                    },
-                                )
-                            ).forEach {
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .background(if (it.isSeleceted) Primary20 else White)
-                                        .clickable {
-                                            it.onItemClick()
-                                            hideBottomSheet()
-                                        },
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.SpaceBetween
-                                ) {
-                                    Text(
-                                        modifier = Modifier
-                                            .padding(20.dp, 20.dp),
-                                        text = it.itemName,
-                                        style = Body1,
-                                        textAlign = TextAlign.Start,
-                                        color = it.itemTextColor
-                                    )
-                                    if (it.isSeleceted) {
-                                        Icon(
-                                            painter = painterResource(id = R.drawable.ic_check),
-                                            contentDescription = "IC_CHECK",
-                                            tint = Primary,
-                                            modifier = Modifier
-                                                .size(18.dp)
-                                                .offset(x = (-20).dp)
-                                        )
-                                    }
-                                }
-                                HeightSpacer(height = 20.dp)
-                            }
-                        }
+                        WriteReviewBottomContents(
+                            context,
+                            updateImageUri,
+                            cameraLauncher,
+                            galleryLauncher,
+                            hideBottomSheet
+                        )
                     }
                 },
                 verticalAlignment = Alignment.CenterVertically,
@@ -128,50 +76,13 @@ fun UserReview(
             ) {
                 RunwayIconButton(drawable = R.drawable.ic_filled_camera_24, size = 24.dp) {
                     showBottomSheet {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .navigationBarsPadding()
-                        ) {
-                            HeightSpacer(height = 10.dp)
-                            listOf(
-                                BottomSheetContentItem(
-                                    itemName = "사진 찍기",
-                                    onItemClick = {
-                                        val uri = ComposeFileProvider.getImageUri(context)
-                                        updateImageUri(uri)
-                                        cameraLauncher.launch(uri)
-                                    },
-                                ),
-                                BottomSheetContentItem(
-                                    itemName = "사진 앨범",
-                                    onItemClick = {
-                                        galleryLauncher.launch("image/*")
-                                    },
-                                )
-                            ).forEach {
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .background(if (it.isSeleceted) Primary20 else White)
-                                        .clickable {
-                                            it.onItemClick()
-                                            hideBottomSheet()
-                                        },
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.SpaceBetween
-                                ) {
-                                    Text(
-                                        modifier = Modifier
-                                            .padding(20.dp, 20.dp),
-                                        text = it.itemName,
-                                        style = Body1,
-                                        textAlign = TextAlign.Start,
-                                        color = it.itemTextColor
-                                    )
-                                }
-                            }
-                        }
+                        WriteReviewBottomContents(
+                            context,
+                            updateImageUri,
+                            cameraLauncher,
+                            galleryLauncher,
+                            hideBottomSheet
+                        )
                     }
                 }
                 Text(
@@ -224,6 +135,60 @@ fun UserReview(
                 }
             }
             item { WidthSpacer(width = 15.dp) }
+        }
+    }
+}
+
+@Composable
+private fun WriteReviewBottomContents(
+    context: Context,
+    updateImageUri: (Uri?) -> Unit,
+    cameraLauncher: ManagedActivityResultLauncher<Uri, Boolean>,
+    galleryLauncher: ManagedActivityResultLauncher<String, Uri?>,
+    hideBottomSheet: () -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .navigationBarsPadding()
+    ) {
+        HeightSpacer(height = 10.dp)
+        listOf(
+            BottomSheetContentItem(
+                itemName = "사진 찍기",
+                onItemClick = {
+                    val uri = ComposeFileProvider.getImageUri(context)
+                    updateImageUri(uri)
+                    cameraLauncher.launch(uri)
+                },
+            ),
+            BottomSheetContentItem(
+                itemName = "사진 앨범",
+                onItemClick = {
+                    galleryLauncher.launch("image/*")
+                },
+            )
+        ).forEach {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(if (it.isSeleceted) Primary20 else White)
+                    .clickable {
+                        it.onItemClick()
+                        hideBottomSheet()
+                    },
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    modifier = Modifier
+                        .padding(20.dp, 20.dp),
+                    text = it.itemName,
+                    style = Body1,
+                    textAlign = TextAlign.Start,
+                    color = it.itemTextColor
+                )
+            }
         }
     }
 }

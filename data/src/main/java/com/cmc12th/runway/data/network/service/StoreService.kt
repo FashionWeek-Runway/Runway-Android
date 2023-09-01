@@ -3,6 +3,7 @@ package com.cmc12th.runway.data.network.service
 import com.cmc12th.domain.DefaultResponse
 import com.cmc12th.domain.NetworkResponse
 import com.cmc12th.domain.PagingNetworkResponse
+import com.cmc12th.domain.model.request.store.StoreReportRequest
 import com.cmc12th.domain.model.response.store.BlogReview
 import com.cmc12th.domain.model.response.store.StoreDetail
 import com.cmc12th.domain.model.response.store.UserReview
@@ -72,6 +73,13 @@ interface StoreService {
     @POST("/stores/review/report")
     suspend fun reportReview(
         @Body reviewReportRequest: com.cmc12th.domain.model.request.store.ReviewReportRequest,
+    ): DefaultResponse
+
+    /** 상점 잘못된 정보신고 */
+    @POST("/stores/report/{storeId}")
+    suspend fun reportStore(
+        @Path("storeId") storeId: Int,
+        @Body storeReportRequest: StoreReportRequest,
     ): DefaultResponse
 }
 
