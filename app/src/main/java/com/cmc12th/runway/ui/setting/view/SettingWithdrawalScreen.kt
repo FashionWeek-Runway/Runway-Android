@@ -7,6 +7,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -31,6 +32,7 @@ import com.cmc12th.runway.ui.theme.*
 import com.cmc12th.runway.utils.Constants
 import com.cmc12th.runway.utils.Constants.MAIN_GRAPH
 import com.cmc12th.runway.utils.Constants.SPLASH_ROUTE
+import com.cmc12th.runway.utils.lookupLogEvent
 
 @Composable
 fun SettingWithdrawalScreen(
@@ -53,6 +55,10 @@ fun SettingWithdrawalScreen(
                 inclusive = true
             }
         }
+    }
+
+    LaunchedEffect(key1 = Unit) {
+        lookupLogEvent("my_leave_01")
     }
 
     Column(

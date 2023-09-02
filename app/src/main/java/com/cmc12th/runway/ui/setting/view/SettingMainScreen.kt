@@ -11,6 +11,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -32,6 +33,7 @@ import com.cmc12th.runway.utils.Constants.PERSONAL_INFO_USE_TERMS
 import com.cmc12th.runway.utils.Constants.SERVICE_TERMS
 import com.cmc12th.runway.utils.Constants.SETTING_PERSONAL_INFO_MANAGEMENT_ROUTE
 import com.cmc12th.runway.utils.Constants.WEB_VIEW_ROUTE
+import com.cmc12th.runway.utils.lookupLogEvent
 
 
 data class MypageItemWrapper(
@@ -86,6 +88,10 @@ fun SettingMainScreen(
         mutableStateOf(false)
     }
 
+    LaunchedEffect(key1 = Unit) {
+        lookupLogEvent("my_setting_01")
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -123,10 +129,13 @@ fun SettingMainScreen(
             Text(text = "설정", style = Body1B, color = Color.Black)
         }
 
+            /** Account */
+
         /** Account */
         BaseSettingWrapper(title = "계정", items = account)
 
         WidthSpacerLine(height = 8.dp, color = Gray100)
+            /** 알람 */
         /** 알람 */
 //        Column(
 //            modifier = Modifier
@@ -160,13 +169,19 @@ fun SettingMainScreen(
 //            }
 //        }
 
+            /** 문의 */
+
         /** 문의 */
         BaseSettingWrapper(title = "문의", items = inquiry)
         WidthSpacerLine(height = 8.dp, color = Gray100)
 
+            /** 약관 및 정책 */
+
         /** 약관 및 정책 */
         BaseSettingWrapper(title = "약관 및 정책", items = policies)
         WidthSpacerLine(height = 8.dp, color = Gray100)
+
+            /** 버전 정보 */
 
         /** 버전 정보 */
         Column(
@@ -195,6 +210,8 @@ fun SettingMainScreen(
             }
         }
         WidthSpacerLine(height = 8.dp, color = Gray100)
+
+            /** 로그 아웃 */
 
         /** 로그 아웃 */
         Column(

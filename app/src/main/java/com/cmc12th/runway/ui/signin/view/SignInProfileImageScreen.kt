@@ -54,6 +54,7 @@ import com.cmc12th.domain.model.signin.*
 import com.cmc12th.runway.ui.theme.*
 import com.cmc12th.runway.utils.Constants.MAX_NICKNAME_LENGTH
 import com.cmc12th.runway.utils.Constants.SIGNIN_CATEGORY_ROUTE
+import com.cmc12th.runway.utils.lookupLogEvent
 import kotlinx.coroutines.launch
 
 @Composable
@@ -72,6 +73,7 @@ fun SignInProfileImageScreen(
 
     val initFlag = remember { mutableStateOf(true) }
     LaunchedEffect(Unit) {
+        lookupLogEvent("sign_common_02")
         if (initFlag.value) {
             initFlag.value = false
             if (profileImage.isNotBlank() && kakaoId.isNotBlank()) {

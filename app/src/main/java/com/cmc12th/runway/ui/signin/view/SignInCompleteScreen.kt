@@ -43,6 +43,7 @@ import com.cmc12th.domain.model.signin.ProfileImageType
 import com.cmc12th.runway.ui.theme.*
 import com.cmc12th.runway.utils.Constants.LOGIN_GRAPH
 import com.cmc12th.runway.utils.Constants.MAIN_GRAPH
+import com.cmc12th.runway.utils.lookupLogEvent
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.delay
 
@@ -74,6 +75,8 @@ fun SignInCompleteScreen(
         scale.value = 0.95f
         delay(50)
         scale.value = 1f
+
+        lookupLogEvent("sign_common_04")
     }
 
     /** StatusBar Color 변경 */
@@ -220,6 +223,7 @@ fun ProfileBox(
                                 contentDescription = "PROFILE_IMAGE"
                             )
                         }
+
                         else -> {
                             Image(
                                 modifier = Modifier

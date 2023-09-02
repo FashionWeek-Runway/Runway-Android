@@ -24,6 +24,7 @@ import com.cmc12th.runway.R
 import com.cmc12th.runway.ui.components.HeightSpacer
 import com.cmc12th.runway.ui.components.WidthSpacer
 import com.cmc12th.runway.ui.theme.*
+import com.cmc12th.runway.utils.lookupLogEvent
 
 @Composable
 fun SearchBoxAndTagCategory(
@@ -33,8 +34,7 @@ fun SearchBoxAndTagCategory(
     updateIsBookmarked: (Boolean) -> Unit,
     onSearch: () -> Unit,
 ) {
-
-
+    
     Column(
         modifier = Modifier
             .fillMaxWidth()

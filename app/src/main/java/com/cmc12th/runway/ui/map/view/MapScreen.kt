@@ -47,7 +47,7 @@ import com.cmc12th.runway.ui.map.components.*
 import com.cmc12th.runway.ui.theme.Body1B
 import com.cmc12th.runway.ui.theme.Primary
 import com.cmc12th.runway.utils.Constants.BOTTOM_NAVIGATION_HEIGHT
-import com.cmc12th.runway.utils.viewLogEvent
+import com.cmc12th.runway.utils.lookupLogEvent
 import com.google.accompanist.systemuicontroller.SystemUiController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.naver.maps.geometry.LatLng
@@ -89,13 +89,12 @@ fun MapScreen(appState: ApplicationState) {
         granted = true
     }
     LaunchedEffect(key1 = Unit) {
-        viewLogEvent("MapScreen")
         if (!granted) {
             launcher.launch(ACCESS_FINE_LOCATION)
         }
+        lookupLogEvent("map_01")
     }
     MapViewContents(appState = appState, mapViewModel = mapViewModel)
-//    PermissionGranted(launcher)
 
 }
 
@@ -357,6 +356,7 @@ private fun MapViewContents(
                         onSearch = {
                             mapViewModel.saveTempDatas()
                             mapViewModel.updateMapStatus(MapStatus.SEARCH_TAB)
+                            lookupLogEvent("map_serch_01")
                         }
                     )
                     BottomGradient(20.dp)
@@ -639,6 +639,7 @@ private fun RunwayNaverMap(
                     )
                 )
                 expandBottomSheet()
+                lookupLogEvent("map_02")
             },
             onBackPrseed = {
                 mapViewModel.loadTempDatas()
@@ -657,6 +658,7 @@ private fun RunwayNaverMap(
                         SearchType.LOCATION_TYPE
                     )
                 )
+                lookupLogEvent("map_02")
             },
             mapViewModel = mapViewModel
         )

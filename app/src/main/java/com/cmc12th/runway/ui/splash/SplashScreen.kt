@@ -32,6 +32,7 @@ import com.cmc12th.runway.utils.Constants.LOGIN_ID_PW_ROUTE
 import com.cmc12th.runway.utils.Constants.MAIN_GRAPH
 import com.cmc12th.runway.utils.Constants.SIGNIN_GRAPH
 import com.cmc12th.runway.utils.Constants.SPLASH_ROUTE
+import com.cmc12th.runway.utils.lookupLogEvent
 import kotlinx.coroutines.delay
 
 @Composable
@@ -92,6 +93,7 @@ fun SplashScreen(appState: ApplicationState) {
 
     LaunchedEffect(key1 = Unit) {
         delay(1500L)
+        lookupLogEvent("splash_aos")
         splashViewModel.loginCheck(
             navigateToMain = navigateToMain,
             navigateToLogin = navigateToLogin

@@ -38,6 +38,7 @@ import com.cmc12th.runway.utils.Constants
 import com.cmc12th.runway.utils.Constants.LOGIN_GRAPH
 import com.cmc12th.runway.utils.Constants.MAIN_GRAPH
 import com.cmc12th.runway.utils.Constants.SIGNIN_GRAPH
+import com.cmc12th.runway.utils.lookupLogEvent
 
 @Composable
 fun LoginIdPasswdScreen(
@@ -76,6 +77,10 @@ fun LoginIdPasswdScreen(
                 appState.showSnackbar(it.message)
             }
         )
+    }
+
+    LaunchedEffect(key1 = Unit) {
+        lookupLogEvent("login_selfish_01")
     }
 
     val onSignin = {

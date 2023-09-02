@@ -49,6 +49,7 @@ import com.cmc12th.domain.model.signin.Birth.Companion.BIRTH_LENGTH
 import com.cmc12th.domain.model.signin.Phone.Companion.PHONE_NUMBER_LENGTH
 import com.cmc12th.runway.ui.theme.*
 import com.cmc12th.runway.utils.Constants.SIGNIN_PHONE_VERIFY_ROUTE
+import com.cmc12th.runway.utils.lookupLogEvent
 import kotlinx.coroutines.launch
 
 @Composable
@@ -121,6 +122,10 @@ private fun UserVerificationContents(
                 }
                 appState.showSnackbar(it.message)
             })
+    }
+
+    LaunchedEffect(key1 = Unit) {
+        lookupLogEvent("sign_selfish_02")
     }
 
     Column(

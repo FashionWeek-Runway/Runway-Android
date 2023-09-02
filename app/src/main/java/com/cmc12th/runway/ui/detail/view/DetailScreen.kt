@@ -39,7 +39,7 @@ import com.cmc12th.runway.ui.theme.Gray100
 import com.cmc12th.runway.utils.Constants.REVIEW_DETAIL_ROUTE
 import com.cmc12th.runway.utils.Constants.REVIEW_WRITE_ROUTE
 import com.cmc12th.runway.utils.Constants.WEB_VIEW_ROUTE
-import com.cmc12th.runway.utils.viewLogEvent
+import com.cmc12th.runway.utils.lookupLogEvent
 import kotlinx.coroutines.launch
 
 
@@ -111,11 +111,11 @@ fun DetailScreen(
     )
 
     LaunchedEffect(key1 = Unit) {
-        viewLogEvent("DetailScreen")
         appState.bottomBarState.value = false
         detailViewModel.getUserReviewPaging(idx)
         detailViewModel.getDetailInfo(idx)
         detailViewModel.getBlogReview(idx, storeName)
+        lookupLogEvent("map_detail")
     }
 
     BackHandler {

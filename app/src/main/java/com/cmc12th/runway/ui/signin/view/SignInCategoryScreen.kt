@@ -10,6 +10,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -29,6 +30,7 @@ import com.cmc12th.runway.ui.signin.components.StyleCategoryCheckBox
 import com.cmc12th.runway.ui.theme.*
 import com.cmc12th.runway.utils.Constants.SIGNIN_COMPLETE_ROUTE
 import com.cmc12th.runway.utils.Constants.SIGNIN_GRAPH
+import com.cmc12th.runway.utils.lookupLogEvent
 
 @Composable
 fun SignInCategoryScreen(
@@ -38,6 +40,10 @@ fun SignInCategoryScreen(
 
     val uiState by signInViewModel.categoryUiState.collectAsStateWithLifecycle()
 
+    LaunchedEffect(key1 = Unit) {
+        lookupLogEvent("sign_common_03")
+    }
+    
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -96,6 +102,7 @@ fun SignInCategoryScreen(
                         onSuccess = onSuccess,
                         onError = onError
                     )
+
                     SignInType.SOCIAL -> signInViewModel.kakaoSignUp(
                         onSuccess = onSuccess,
                         onError = onError

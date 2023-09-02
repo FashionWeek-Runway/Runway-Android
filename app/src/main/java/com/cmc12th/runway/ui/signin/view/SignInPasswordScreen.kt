@@ -35,6 +35,7 @@ import com.cmc12th.runway.ui.signin.components.OnBoardHeadLine
 import com.cmc12th.domain.model.signin.Password
 import com.cmc12th.runway.ui.theme.*
 import com.cmc12th.runway.utils.Constants
+import com.cmc12th.runway.utils.lookupLogEvent
 
 @Composable
 fun SignInPasswordScreen(
@@ -44,6 +45,10 @@ fun SignInPasswordScreen(
 
     val uiState by signInViewModel.passwordUiState.collectAsStateWithLifecycle()
     val (retryFocusRequest) = remember { FocusRequester.createRefs() }
+
+    LaunchedEffect(key1 = Unit) {
+        lookupLogEvent("sign_selfish_04")
+    }
 
     Column(
         modifier = Modifier

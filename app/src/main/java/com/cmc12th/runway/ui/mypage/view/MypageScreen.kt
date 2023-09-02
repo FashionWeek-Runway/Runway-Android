@@ -30,7 +30,7 @@ import com.cmc12th.runway.utils.Constants.BOTTOM_NAVIGATION_HEIGHT
 import com.cmc12th.runway.utils.Constants.EDIT_PROFILE_IMAGE_ROUTE
 import com.cmc12th.runway.utils.Constants.REVIEW_DETAIL_ROUTE
 import com.cmc12th.runway.utils.Constants.SETTING_GRAPH
-import com.cmc12th.runway.utils.viewLogEvent
+import com.cmc12th.runway.utils.lookupLogEvent
 import me.onebone.toolbar.CollapsingToolbarScaffold
 import me.onebone.toolbar.CollapsingToolbarScope
 import me.onebone.toolbar.ScrollStrategy
@@ -50,11 +50,11 @@ fun MypageScreen(appState: ApplicationState) {
     appState.systmeUiController.setStatusBarColor(Gray50)
 
     LaunchedEffect(key1 = Unit) {
-        viewLogEvent("MypageScreen")
         viewModel.getBookmarkedStore()
         viewModel.getBookmarkedReview()
         viewModel.getMyReviews()
         viewModel.getMyProfile()
+        lookupLogEvent("my")
     }
 
     CollapsingToolbarScaffold(
@@ -101,6 +101,7 @@ fun MypageScreen(appState: ApplicationState) {
                         }
                     )
                 }
+
                 MypageTabInfo.STORAGE -> {
                     MypageBookmarkRowTab(
                         selectedPage = uiState.selectedBookmarkPage,
@@ -117,6 +118,7 @@ fun MypageScreen(appState: ApplicationState) {
                                 }
                             )
                         }
+
                         MypageBookmarkTabInfo.REVIEW -> {
                             BookmarkReviewContainer(
                                 bookmarkedReview = bookmarkedReview,

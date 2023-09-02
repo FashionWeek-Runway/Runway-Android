@@ -4,7 +4,6 @@
 
 package com.cmc12th.runway.ui.detail.photoreview.view
 
-import android.util.Log
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -82,7 +81,7 @@ import com.cmc12th.runway.ui.theme.Primary
 import com.cmc12th.runway.ui.theme.White
 import com.cmc12th.runway.utils.Constants
 import com.cmc12th.runway.utils.Constants.REVIEW_REPORT_ROUTE
-import com.cmc12th.runway.utils.viewLogEvent
+import com.cmc12th.runway.utils.lookupLogEvent
 import kotlinx.coroutines.launch
 import kotlin.math.abs
 import kotlin.math.roundToInt
@@ -149,9 +148,9 @@ fun ReviewDetailScreen(
                 reviewViewModel.getReviewDetailBookmark(reviewId)
             }
         }
-        viewLogEvent("UserReviewDetailScreen")
         appState.bottomBarState.value = false
         bottomsheetState.modalSheetState.hide()
+        lookupLogEvent("review_01")
     }
     appState.systmeUiController.setStatusBarColor(Color.Black)
     appState.systmeUiController.setNavigationBarColor(Color.Black)

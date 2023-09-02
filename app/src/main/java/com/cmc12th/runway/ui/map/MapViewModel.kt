@@ -346,34 +346,40 @@ class MapViewModel @Inject constructor(
                 resetSelectedMarkers()
                 _mapStatus.value = MapStatus.ZOOM
             }
+
             MapStatus.ZOOM -> {
                 _mapStatus.value = MapStatus.DEFAULT
             }
+
             MapStatus.LOCATION_SEARCH -> {
             }
+
             MapStatus.SHOP_SEARCH -> {
                 _mapStatus.value = MapStatus.SEARCH_ZOOM
             }
+
             MapStatus.SEARCH_ZOOM -> {
                 _mapStatus.value = MapStatus.SHOP_SEARCH
             }
+
             MapStatus.MARKER_CLICKED -> {
                 _mapStatus.value = MapStatus.DEFAULT
                 // 단일 항목을 클릭했다가 돌아올 때 복구
                 loadTempDatas()
                 resetSelectedMarkers()
             }
+
             MapStatus.LOCATION_SEARCH_MARKER_CLICKED -> {
                 _mapStatus.value = MapStatus.LOCATION_SEARCH
                 // 단일 항목을 클릭했다가 돌아올 때 복구
                 loadLocationTempDatas()
                 resetSelectedMarkers()
             }
+
             else -> {}
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     fun addRecentStr(searchStr: String, searchType: SearchType) =
         viewModelScope.launch {
             val dateInfo = LocalDateTime.now()

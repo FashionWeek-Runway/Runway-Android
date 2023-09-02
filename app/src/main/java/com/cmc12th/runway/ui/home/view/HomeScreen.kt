@@ -82,7 +82,7 @@ import com.cmc12th.runway.utils.Constants.DETAIL_ROUTE
 import com.cmc12th.runway.utils.Constants.EDIT_CATEGORY_ROUTE
 import com.cmc12th.runway.utils.Constants.HOME_ALL_STORE_ROUTE
 import com.cmc12th.runway.utils.Constants.REVIEW_DETAIL_ROUTE
-import com.cmc12th.runway.utils.viewLogEvent
+import com.cmc12th.runway.utils.lookupLogEvent
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
@@ -98,11 +98,11 @@ fun HomeScreen(appState: ApplicationState, viewModel: HomeViewModel) {
     val context = LocalContext.current
 
     LaunchedEffect(key1 = Unit) {
-        viewLogEvent("HomeScreen")
         viewModel.getHomeBanner(0)
         viewModel.getProfile()
         viewModel.getHomeReview()
         viewModel.getInsta()
+        lookupLogEvent("home")
     }
 
     LazyColumn(
@@ -138,14 +138,14 @@ fun HomeScreen(appState: ApplicationState, viewModel: HomeViewModel) {
                 )
 
                 /** Banner Top */
-
-                /** Banner Top */
                 HomeBannerTopBar(
                     nickname = uiState.nickName,
                     navigateToEditCategory = {
+                        lookupLogEvent("category_01")
                         appState.navigate("${EDIT_CATEGORY_ROUTE}?nickName=${uiState.nickName}")
                     },
                     navigateToShowMoreStore = {
+                        lookupLogEvent("home_total")
                         appState.navigate(HOME_ALL_STORE_ROUTE)
                     }
                 )
@@ -217,7 +217,7 @@ fun HomeScreen(appState: ApplicationState, viewModel: HomeViewModel) {
                             .align(Alignment.TopEnd)
                             .padding(15.dp)
                             .background(Color(0x800A0A0A), RoundedCornerShape(10.dp))
-                            .padding(6.dp, 4.dp),
+                            .padding(8.dp, 4.dp),
                         text = buildAnnotatedString {
                             withStyle(
                                 SpanStyle(

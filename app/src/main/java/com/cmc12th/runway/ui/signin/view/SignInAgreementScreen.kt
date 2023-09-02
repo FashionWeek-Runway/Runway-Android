@@ -12,6 +12,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,6 +33,7 @@ import com.cmc12th.runway.ui.signin.SignInViewModel
 import com.cmc12th.runway.ui.signin.components.OnBoardStep
 import com.cmc12th.runway.ui.theme.*
 import com.cmc12th.runway.utils.Constants.SIGNIN_PROFILE_IMAGE_ROUTE
+import com.cmc12th.runway.utils.lookupLogEvent
 
 @Composable
 fun SignInAgreementScreen(
@@ -40,6 +42,10 @@ fun SignInAgreementScreen(
 ) {
 
     val uiState by signInViewModel.agreementUiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(key1 = Unit) {
+        lookupLogEvent("sign_common_01")
+    }
 
     Column(
         modifier = Modifier

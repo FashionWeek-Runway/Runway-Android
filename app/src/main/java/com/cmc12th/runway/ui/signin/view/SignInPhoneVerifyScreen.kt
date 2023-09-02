@@ -35,6 +35,7 @@ import com.cmc12th.runway.ui.signin.components.RetryContainer
 import com.cmc12th.runway.ui.theme.*
 import com.cmc12th.runway.utils.Constants
 import com.cmc12th.runway.utils.Constants.SIGNIN_PASSWORD_ROUTE
+import com.cmc12th.runway.utils.lookupLogEvent
 
 @Composable
 fun SignInPhoneVerifyScreen(
@@ -56,6 +57,10 @@ fun SignInPhoneVerifyScreen(
                 verifyErrorMessage.value = it.message
             }
         )
+    }
+
+    LaunchedEffect(key1 = Unit) {
+        lookupLogEvent("sign_selfish_03")
     }
 
     SystemBroadcastReceiver(Constants.SNS_INTENT_ACTION) { intent ->

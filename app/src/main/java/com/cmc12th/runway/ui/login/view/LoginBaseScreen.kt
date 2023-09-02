@@ -27,6 +27,7 @@ import com.cmc12th.runway.utils.Constants.LOGIN_ID_PW_ROUTE
 import com.cmc12th.runway.utils.Constants.MAIN_GRAPH
 import com.cmc12th.runway.utils.Constants.SIGNIN_GRAPH
 import com.cmc12th.runway.utils.Constants.SIGNIN_PROFILE_IMAGE_ROUTE
+import com.cmc12th.runway.utils.lookupLogEvent
 
 @Composable
 fun LoginBaseScreen(
@@ -127,6 +128,7 @@ fun LoginBaseScreen(
                         appState.showSnackbar(it.message)
                     }
                 )
+                lookupLogEvent("login_social_01")
             },
             navigateToSignIn = navigateToSignIn, navigateToLoginIdPasswd = navigateToLogin
         )
