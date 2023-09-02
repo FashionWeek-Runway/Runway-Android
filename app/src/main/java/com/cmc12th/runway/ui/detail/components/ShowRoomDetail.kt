@@ -16,6 +16,8 @@ import com.cmc12th.runway.ui.components.RunwayIconButton
 import com.cmc12th.runway.ui.theme.Blue900
 import com.cmc12th.runway.ui.theme.Body2
 import com.cmc12th.runway.ui.theme.Button2
+import com.cmc12th.runway.utils.DETAIL_TOUCH_EVENT
+import com.cmc12th.runway.utils.clickLogEvent
 import com.cmc12th.runway.utils.copyToClipboard
 import com.cmc12th.runway.utils.skeletonUI
 
@@ -45,11 +47,13 @@ fun ShowRoomDetail(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.clickable {
                         // 클립보드 객체 얻기
+                        clickLogEvent(DETAIL_TOUCH_EVENT, "mapdetail_area_02")
                         context.copyToClipboard(storeDetail.address)
                         showSnackbar("주소가 복사되었습니다.")
                     }
                 ) {
                     RunwayIconButton(drawable = R.drawable.ic_border_copy_14, size = 14.dp) {
+                        clickLogEvent(DETAIL_TOUCH_EVENT, "mapdetail_area_02")
                         context.copyToClipboard(storeDetail.address)
                         showSnackbar("주소가 복사되었습니다.")
                     }

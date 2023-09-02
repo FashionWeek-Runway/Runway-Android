@@ -82,6 +82,8 @@ import com.cmc12th.runway.utils.Constants.DETAIL_ROUTE
 import com.cmc12th.runway.utils.Constants.EDIT_CATEGORY_ROUTE
 import com.cmc12th.runway.utils.Constants.HOME_ALL_STORE_ROUTE
 import com.cmc12th.runway.utils.Constants.REVIEW_DETAIL_ROUTE
+import com.cmc12th.runway.utils.HOME_TOUCH_EVENT
+import com.cmc12th.runway.utils.clickLogEvent
 import com.cmc12th.runway.utils.lookupLogEvent
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
@@ -128,9 +130,8 @@ fun HomeScreen(appState: ApplicationState, viewModel: HomeViewModel) {
                         }
                     },
                     navigateToDetail = { storeId, storeName ->
-                        appState.navigate(
-                            "${DETAIL_ROUTE}?storeId=$storeId&storeName=$storeName"
-                        )
+                        clickLogEvent(HOME_TOUCH_EVENT, "home_area_top")
+                        appState.navigate("${DETAIL_ROUTE}?storeId=$storeId&storeName=$storeName")
                     },
                     navigateToShowMoreStore = {
                         appState.navigate(HOME_ALL_STORE_ROUTE)
@@ -154,6 +155,7 @@ fun HomeScreen(appState: ApplicationState, viewModel: HomeViewModel) {
             HomeReviews(
                 reviews = reviews,
                 navigateToUserReviewDetail = { index ->
+                    clickLogEvent(HOME_TOUCH_EVENT, "home_area_mid")
                     appState.navigate("${REVIEW_DETAIL_ROUTE}?reviewId=${index}&viewerType=${ReviewViwerType.HOME.typeToString}")
                 },
             )
@@ -176,6 +178,7 @@ fun HomeScreen(appState: ApplicationState, viewModel: HomeViewModel) {
                 modifier = Modifier
                     .padding(20.dp, 8.dp)
                     .clickable {
+                        clickLogEvent(HOME_TOUCH_EVENT, "home_area_bot")
                         context.startActivity(
                             Intent(
                                 Intent.ACTION_VIEW,

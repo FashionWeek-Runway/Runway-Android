@@ -31,6 +31,7 @@ import com.google.accompanist.pager.rememberPagerState
 @Composable
 fun ShowRoomBanner(storeDetail: StoreDetail) {
     val pagerState = rememberPagerState()
+
     Box(
         modifier = Modifier
             .fillMaxWidth()

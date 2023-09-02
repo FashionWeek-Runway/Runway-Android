@@ -1,7 +1,6 @@
 package com.cmc12th.runway.utils
 
 import com.cmc12th.runway.MainActivity
-import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.logEvent
 
 
@@ -9,6 +8,7 @@ const val LOOKUP_EVENT = "lookup_event"
 const val SCREEN_NAME = "screen_name"
 const val TOUCH_NAME = "touch_name"
 const val HOME_TOUCH_EVENT = "home_touch_event"
+const val DETAIL_TOUCH_EVENT = "detail_touch_event"
 const val MAP_TOUCH_EVENT = "map_touch_event"
 const val MYPAGE_TOUCH_EVENT = "mypage_touch_event"
 

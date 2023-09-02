@@ -39,6 +39,8 @@ import com.cmc12th.runway.ui.theme.Gray100
 import com.cmc12th.runway.utils.Constants.REVIEW_DETAIL_ROUTE
 import com.cmc12th.runway.utils.Constants.REVIEW_WRITE_ROUTE
 import com.cmc12th.runway.utils.Constants.WEB_VIEW_ROUTE
+import com.cmc12th.runway.utils.DETAIL_TOUCH_EVENT
+import com.cmc12th.runway.utils.clickLogEvent
 import com.cmc12th.runway.utils.lookupLogEvent
 import kotlinx.coroutines.launch
 
@@ -141,9 +143,11 @@ fun DetailScreen(
                 ShowRoomDetail(
                     storeDetail = uiState.storeDetail,
                     navigateToWeb = { storeUrl ->
+                        clickLogEvent(DETAIL_TOUCH_EVENT, "mapdetail_area_04")
                         appState.navigate("$WEB_VIEW_ROUTE?title=${""}&url=${storeUrl}")
                     },
                     navigateToInstgram = { instagramUrl ->
+                        clickLogEvent(DETAIL_TOUCH_EVENT, "mapdetail_area_03")
                         intentToInstagram(
                             instagramUrl = instagramUrl,
                             context = context
@@ -183,6 +187,7 @@ fun DetailScreen(
                     cameraLauncher = cameraLauncher,
                     updateImageUri = { imageUri = it },
                     navigateToUserReviewDetail = {
+                        clickLogEvent(DETAIL_TOUCH_EVENT, "mapdetail_area_05")
                         appState.navigate("$REVIEW_DETAIL_ROUTE?reviewId=${it.reviewId}&viewerType=${ReviewViwerType.STORE_DETAIL.typeToString}")
                     }
                 )
@@ -194,6 +199,7 @@ fun DetailScreen(
                     isBlogReviewExapnded = uiState.isBlogReviewExapnded,
                     naviagteToWebView = { url, title ->
                         appState.navigate("${WEB_VIEW_ROUTE}?title$title=&url=$url")
+                        clickLogEvent(DETAIL_TOUCH_EVENT, "mapdetail_area_06")
                     },
                     updateExpandedState = {
                         detailViewModel.updateExpandedState()
