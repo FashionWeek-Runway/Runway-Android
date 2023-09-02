@@ -251,14 +251,7 @@ fun HomeScreen(appState: ApplicationState, viewModel: HomeViewModel) {
                         style = Body1B,
                         color = Gray900
                     )
-                    Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_baseline_home_insta_link_16),
-                            contentDescription = "IC_INSTAGRAM",
-                            modifier = Modifier.size(16.dp),
-                        )
-                        Text(text = "인스타그램", style = Body2M, color = Gray500)
-                    }
+                    Text(text = instas[idx]?.description ?: "", style = Body2M, color = Gray500)
                 }
             }
         }
