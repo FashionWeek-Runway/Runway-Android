@@ -33,13 +33,16 @@ android {
             buildConfigField(
                 "String",
                 "BASE_URL",
-                "\"http://runway-dev-env.eba-h3xrns2m.ap-northeast-2.elasticbeanstalk.com/\""
+                "\"https://dev.runway-api.link/\""
             )
         }
 
         create("prod") {
             // 배포용
-            buildConfigField("String", "BASE_URL", "\"https://prod.runwayserver.shop/\"")
+            buildConfigField(
+                "String", "BASE_URL",
+                "\"https://prod.runway-api.link/\""
+            )
         }
     }
 
