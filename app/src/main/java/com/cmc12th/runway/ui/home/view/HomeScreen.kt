@@ -33,6 +33,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -43,6 +44,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
@@ -53,12 +55,14 @@ import com.bumptech.glide.Priority
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.signature.ObjectKey
+import com.cmc12th.domain.model.response.home.HomePopUpItem
 import com.cmc12th.domain.model.response.home.HomeReviewItem
 import com.cmc12th.runway.R
 import com.cmc12th.runway.ui.components.HeightSpacer
 import com.cmc12th.runway.ui.components.WidthSpacer
 import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.domain.model.ReviewViwerType
+import com.cmc12th.runway.ui.home.HomeUiState
 import com.cmc12th.runway.ui.home.HomeViewModel
 import com.cmc12th.runway.ui.home.component.HomeBannerComponents
 import com.cmc12th.runway.ui.home.component.HomeBannerTopBar
@@ -103,156 +107,205 @@ fun HomeScreen(appState: ApplicationState, viewModel: HomeViewModel) {
         viewModel.getHomeBanner(0)
         viewModel.getProfile()
         viewModel.getHomeReview()
+        viewModel.getHomePopUp()
         viewModel.getInsta()
         lookupLogEvent("home")
     }
 
-    LazyColumn(
+    Box(
         modifier = Modifier
             .navigationBarsPadding()
-            .padding(bottom = BOTTOM_NAVIGATION_HEIGHT)
-            .background(White)
-            .fillMaxSize(1f)
+            .fillMaxSize()
     ) {
+        LazyColumn(
+            modifier = Modifier
+                .navigationBarsPadding()
+                .padding(bottom = BOTTOM_NAVIGATION_HEIGHT)
+                .background(White)
+                .fillMaxSize()
+        ) {
 
-        item {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(Black10)
-                    .aspectRatio(0.67f)
-            ) {
-                HomeBannerComponents(
-                    homeBanners = uiState.homeBanners,
-                    updateBookmark = { storeId, bookmarked ->
-                        viewModel.updateBookmark(storeId) {
-                            viewModel.updateBookmarkState(storeId, bookmarked)
-                        }
-                    },
-                    navigateToDetail = { storeId, storeName ->
-                        clickLogEvent(HOME_TOUCH_EVENT, "home_area_top")
-                        appState.navigate("${DETAIL_ROUTE}?storeId=$storeId&storeName=$storeName")
-                    },
-                    navigateToShowMoreStore = {
-                        appState.navigate(HOME_ALL_STORE_ROUTE)
-                    }
-                )
-
-                /** Banner Top */
-                HomeBannerTopBar(
-                    nickname = uiState.nickName,
-                    navigateToEditCategory = {
-                        lookupLogEvent("category_01")
-                        appState.navigate("${EDIT_CATEGORY_ROUTE}?nickName=${uiState.nickName}")
-                    },
-                    navigateToShowMoreStore = {
-                        lookupLogEvent("home_total")
-                        appState.navigate(HOME_ALL_STORE_ROUTE)
-                    }
-                )
-            }
-
-            HomeReviews(
-                reviews = reviews,
-                navigateToUserReviewDetail = { index ->
-                    clickLogEvent(HOME_TOUCH_EVENT, "home_area_mid")
-                    appState.navigate("${REVIEW_DETAIL_ROUTE}?reviewId=${index}&viewerType=${ReviewViwerType.HOME.typeToString}")
-                },
-            )
-
-            Text(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 20.dp, end = 20.dp, top = 30.dp),
-                text = "흥미로운 가게 소식을 알려드려요",
-                style = HeadLine4,
-                color = Color.Black
-            )
-        }
-
-        item {
-            HeightSpacer(height = 8.dp)
-        }
-        items(instas.itemCount) { idx ->
-            Column(
-                modifier = Modifier
-                    .padding(20.dp, 8.dp)
-                    .clickable {
-                        clickLogEvent(HOME_TOUCH_EVENT, "home_area_bot")
-                        context.startActivity(
-                            Intent(
-                                Intent.ACTION_VIEW,
-                                Uri.parse(instas[idx]?.instaLink)
-                            )
-                        )
-                    }
-            ) {
-                val pagerState = rememberPagerState()
-
+            item {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .aspectRatio(1f)
-                        .background(Gray200),
+                        .background(Black10)
+                        .aspectRatio(0.67f)
                 ) {
-                    HorizontalPager(
+                    HomeBannerComponents(
+                        homeBanners = uiState.homeBanners,
+                        updateBookmark = { storeId, bookmarked ->
+                            viewModel.updateBookmark(storeId) {
+                                viewModel.updateBookmarkState(storeId, bookmarked)
+                            }
+                        },
+                        navigateToDetail = { storeId, storeName ->
+                            clickLogEvent(HOME_TOUCH_EVENT, "home_area_top")
+                            appState.navigate("${DETAIL_ROUTE}?storeId=$storeId&storeName=$storeName")
+                        },
+                        navigateToShowMoreStore = {
+                            appState.navigate(HOME_ALL_STORE_ROUTE)
+                        }
+                    )
+
+                    /** Banner Top */
+                    HomeBannerTopBar(
+                        nickname = uiState.nickName,
+                        navigateToEditCategory = {
+                            lookupLogEvent("category_01")
+                            appState.navigate("${EDIT_CATEGORY_ROUTE}?nickName=${uiState.nickName}")
+                        },
+                        navigateToShowMoreStore = {
+                            lookupLogEvent("home_total")
+                            appState.navigate(HOME_ALL_STORE_ROUTE)
+                        }
+                    )
+                }
+
+                HomeReviews(
+                    reviews = reviews,
+                    navigateToUserReviewDetail = { index ->
+                        clickLogEvent(HOME_TOUCH_EVENT, "home_area_mid")
+                        appState.navigate("${REVIEW_DETAIL_ROUTE}?reviewId=${index}&viewerType=${ReviewViwerType.HOME.typeToString}")
+                    },
+                )
+
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 20.dp, end = 20.dp, top = 30.dp),
+                    text = "흥미로운 가게 소식을 알려드려요",
+                    style = HeadLine4,
+                    color = Color.Black
+                )
+            }
+
+            item {
+                HeightSpacer(height = 8.dp)
+            }
+            items(instas.itemCount) { idx ->
+                Column(
+                    modifier = Modifier
+                        .padding(20.dp, 8.dp)
+                        .clickable {
+                            clickLogEvent(HOME_TOUCH_EVENT, "home_area_bot")
+                            context.startActivity(
+                                Intent(
+                                    Intent.ACTION_VIEW,
+                                    Uri.parse(instas[idx]?.instaLink)
+                                )
+                            )
+                        }
+                ) {
+                    val pagerState = rememberPagerState()
+
+                    Box(
                         modifier = Modifier
-                            .fillMaxSize(),
-                        count = instas[idx]?.imgList?.size ?: 0,
-                        state = pagerState,
+                            .fillMaxWidth()
+                            .aspectRatio(1f)
+                            .background(Gray200),
                     ) {
-                        AsyncImage(
+                        HorizontalPager(
                             modifier = Modifier
-                                .background(Gray200)
                                 .fillMaxSize(),
-                            model = ImageRequest.Builder(LocalContext.current)
-                                .data(instas[idx]?.imgList?.get(it))
-                                .crossfade(true)
-                                .build(),
-                            error = painterResource(id = R.drawable.ic_defailt_profile),
-                            contentDescription = "IMG_SELECTED_IMG",
-                            contentScale = ContentScale.Crop,
+                            count = instas[idx]?.imgList?.size ?: 0,
+                            state = pagerState,
+                        ) {
+                            AsyncImage(
+                                modifier = Modifier
+                                    .background(Gray200)
+                                    .fillMaxSize(),
+                                model = ImageRequest.Builder(LocalContext.current)
+                                    .data(instas[idx]?.imgList?.get(it))
+                                    .crossfade(true)
+                                    .build(),
+                                error = painterResource(id = R.drawable.ic_defailt_profile),
+                                contentDescription = "IMG_SELECTED_IMG",
+                                contentScale = ContentScale.Crop,
+                            )
+                        }
+
+                        Text(
+                            modifier = Modifier
+                                .align(Alignment.TopEnd)
+                                .padding(15.dp)
+                                .background(Color(0x800A0A0A), RoundedCornerShape(10.dp))
+                                .padding(8.dp, 4.dp),
+                            text = buildAnnotatedString {
+                                withStyle(
+                                    SpanStyle(
+                                        color = Color.White
+                                    )
+                                ) {
+                                    append("${pagerState.currentPage + 1}")
+                                }
+                                withStyle(
+                                    SpanStyle(
+                                        color = Gray300
+                                    )
+                                ) {
+                                    append("/${instas[idx]?.imgList?.size}")
+                                }
+                            },
+                            style = Button2,
                         )
                     }
 
-                    Text(
+                    HeightSpacer(height = 10.dp)
+                    Column(
                         modifier = Modifier
-                            .align(Alignment.TopEnd)
-                            .padding(15.dp)
-                            .background(Color(0x800A0A0A), RoundedCornerShape(10.dp))
-                            .padding(8.dp, 4.dp),
-                        text = buildAnnotatedString {
-                            withStyle(
-                                SpanStyle(
-                                    color = Color.White
-                                )
-                            ) {
-                                append("${pagerState.currentPage + 1}")
-                            }
-                            withStyle(
-                                SpanStyle(
-                                    color = Gray300
-                                )
-                            ) {
-                                append("/${instas[idx]?.imgList?.size}")
-                            }
-                        },
-                        style = Button2,
-                    )
+                            .fillMaxWidth()
+                    ) {
+                        Text(
+                            text = instas[idx]?.storeName ?: "",
+                            style = Body1B,
+                            color = Gray900
+                        )
+                        Text(text = instas[idx]?.description ?: "", style = Body2M, color = Gray500)
+                    }
                 }
+            }
+        }
 
-                HeightSpacer(height = 10.dp)
-                Column(
+        HomePopUp(
+            homePopUp = uiState.homePopUp,
+            updateHomePopUp = { viewModel.updateHomePopUp(it) },
+        )
+    }
+}
+
+@Composable
+private fun HomePopUp(
+    homePopUp: HomePopUpItem?,
+    updateHomePopUp: (HomePopUpItem?) -> Unit,
+) {
+    if (homePopUp != null) {
+        Dialog(onDismissRequest = { updateHomePopUp(null) }) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(0.89f)
+                    .clip(RoundedCornerShape(10.dp))
+            ) {
+                GlideImage(
                     modifier = Modifier
-                        .fillMaxWidth()
-                ) {
-                    Text(
-                        text = instas[idx]?.storeName ?: "",
-                        style = Body1B,
-                        color = Gray900
-                    )
-                    Text(text = instas[idx]?.description ?: "", style = Body2M, color = Gray500)
-                }
+                        .fillMaxSize()
+                        .background(Gray200),
+                    model = homePopUp?.imgUrl,
+                    contentDescription = "POPUP_IMG",
+                    contentScale = ContentScale.Crop,
+                )
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_baseline_close_24),
+                    contentDescription = "POPUP_CLOSE",
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(20.dp)
+                        .clickable {
+                            updateHomePopUp(null)
+                        },
+                    tint = Color.White
+                )
             }
         }
     }

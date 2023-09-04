@@ -133,7 +133,6 @@ class MapViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             searchRepository.getRecentSearchAll().collectLatest { recentList ->
-                Log.i("dlgocks1-recentSearch", recentList.toString())
                 _recentSearchs.value = recentList
             }
         }

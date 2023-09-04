@@ -10,6 +10,7 @@ import com.cmc12th.domain.ApiWrapper
 import com.cmc12th.domain.DefaultApiWrapper
 import com.cmc12th.domain.PagingApiWrapper
 import com.cmc12th.domain.model.response.home.HomeInstaResponse
+import com.cmc12th.domain.model.response.home.HomePopup
 import com.cmc12th.domain.model.response.store.UserReviewDetail
 import com.cmc12th.domain.model.response.user.PatchCategoryBody
 import com.cmc12th.domain.model.safeFlow
@@ -64,6 +65,10 @@ class HomeRepositoryImpl @Inject constructor(
         safePagingFlow {
             runwayClient.getHomeInsta(page, size)
         }
+
+    override fun getHomePopUp(): Flow<ApiWrapper<HomePopup>> = safeFlow {
+        runwayClient.getHomePopUp()
+    }
 
     override fun getHomeInstaPaging(): Flow<PagingData<HomeInstaResponse>> {
         return Pager(

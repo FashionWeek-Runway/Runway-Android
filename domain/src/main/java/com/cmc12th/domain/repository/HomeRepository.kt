@@ -6,6 +6,7 @@ import com.cmc12th.domain.DefaultApiWrapper
 import com.cmc12th.domain.PagingApiWrapper
 import com.cmc12th.domain.model.response.home.HomeBanner
 import com.cmc12th.domain.model.response.home.HomeInstaResponse
+import com.cmc12th.domain.model.response.home.HomePopup
 import com.cmc12th.domain.model.response.home.HomeReviewItem
 import com.cmc12th.domain.model.response.store.UserReviewDetail
 import com.cmc12th.domain.model.response.user.PatchCategoryBody
@@ -26,4 +27,5 @@ interface HomeRepository {
 
     fun getHomeInstaPaging(): Flow<PagingData<HomeInstaResponse>>
     fun getHomeInsta(page: Int, size: Int): Flow<PagingApiWrapper<HomeInstaResponse>>
+    fun getHomePopUp(): Flow<ApiWrapper<HomePopup>>
 }

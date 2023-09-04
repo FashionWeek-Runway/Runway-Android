@@ -120,6 +120,7 @@ class AuthRepositoryImpl @Inject constructor(
     companion object PreferenceKeys {
         val ACCESS_TOKEN = stringPreferencesKey("access_token")
         val REFRESH_TOKEN = stringPreferencesKey("refresh_token")
+        val HOME_POP_UP_CHECK = stringPreferencesKey("home_pop_up_check")
         val LOGIN_TYPE = stringPreferencesKey("login_type")
         val LOGIN_CHECK = booleanPreferencesKey("login_check")
     }

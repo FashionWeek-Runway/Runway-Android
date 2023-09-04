@@ -18,7 +18,6 @@ import com.google.accompanist.web.rememberWebViewState
 @Composable
 fun WebviewScreen(appState: ApplicationState, title: String, url: String) {
     val state = rememberWebViewState(url)
-    Log.i("dlgocks1", url)
     Column(
         modifier = Modifier
             .fillMaxSize()

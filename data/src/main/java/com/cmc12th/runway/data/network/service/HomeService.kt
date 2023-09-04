@@ -5,6 +5,7 @@ import com.cmc12th.domain.model.response.home.HomeReviewItem
 import com.cmc12th.domain.NetworkResponse
 import com.cmc12th.domain.PagingNetworkResponse
 import com.cmc12th.domain.model.response.home.HomeInstaResponse
+import com.cmc12th.domain.model.response.home.HomePopup
 import com.cmc12th.domain.model.response.store.UserReviewDetail
 import retrofit2.http.*
 
@@ -35,5 +36,9 @@ interface HomeService {
         @Query("page") page: Int,
         @Query("size") size: Int,
     ): PagingNetworkResponse<HomeInstaResponse>
+
+    /** 홈화면 홈 광고 조회 */
+    @GET("/home/pop-up")
+    suspend fun getHomePopUp(): NetworkResponse<HomePopup>
 }
 

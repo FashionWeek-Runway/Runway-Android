@@ -1,5 +1,6 @@
 package com.cmc12th.runway.ui.home
 
+import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -7,23 +8,28 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.cmc12th.domain.model.response.home.HomeBannerItem
 import com.cmc12th.domain.model.response.home.HomeInstaResponse
+import com.cmc12th.domain.model.response.home.HomePopUpItem
+import com.cmc12th.domain.model.response.home.HomePopup
 import com.cmc12th.domain.model.response.home.HomeReviewItem
 import com.cmc12th.domain.model.response.user.PatchCategoryBody
 import com.cmc12th.domain.model.signin.CategoryTag
 import com.cmc12th.domain.repository.AuthRepository
 import com.cmc12th.domain.repository.HomeRepository
 import com.cmc12th.domain.repository.StoreRepository
+import com.cmc12th.runway.data.repository.AuthRepositoryImpl.PreferenceKeys.HOME_POP_UP_CHECK
 import com.cmc12th.runway.ui.domain.model.RunwayCategory
 import com.cmc12th.runway.ui.home.model.HomeBannertype
 import com.cmc12th.runway.ui.signin.SignInCategoryUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 data class HomeUiState(
     val homeBanners: MutableList<HomeBannertype> = mutableListOf(),
     val nickName: String = "",
+    val homePopUp: HomePopUpItem? = null,
 )
 
 @HiltViewModel
@@ -32,7 +38,6 @@ class HomeViewModel @Inject constructor(
     private val storeRepository: StoreRepository,
     private val authRepository: AuthRepository,
 ) : ViewModel() {
-
 
     private val _homeBanners =
         MutableStateFlow(mutableListOf<HomeBannerItem>())
@@ -43,6 +48,7 @@ class HomeViewModel @Inject constructor(
         )
     private val _categoryTags = MutableStateFlow(RunwayCategory.generateCategoryTags())
     private val _instas = MutableStateFlow(PagingData.empty<HomeInstaResponse>())
+    private val _homePopUp = MutableStateFlow<HomePopUpItem?>(null)
 
     val reviews: StateFlow<PagingData<HomeReviewItem>> =
         _reviews.asStateFlow()
@@ -52,8 +58,8 @@ class HomeViewModel @Inject constructor(
     val allStores = mutableStateListOf<HomeBannerItem>()
 
     val uiState = combine(
-        _homeBanners, _nickName
-    ) { homeBannerItems, nickName ->
+        _homeBanners, _nickName, _homePopUp
+    ) { homeBannerItems, nickName, homePopUp ->
         val homeBanners: MutableList<HomeBannertype> = homeBannerItems.map {
             HomeBannertype.toStoreBanner(it)
         }.toMutableList()
@@ -61,7 +67,8 @@ class HomeViewModel @Inject constructor(
 
         HomeUiState(
             homeBanners = homeBanners,
-            nickName = nickName
+            nickName = nickName,
+            homePopUp = homePopUp,
         )
     }.stateIn(
         scope = viewModelScope,
@@ -79,6 +86,27 @@ class HomeViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = SignInCategoryUiState()
         )
+
+    fun getHomePopUp() = viewModelScope.launch {
+        val latestViewPopup =
+            withContext(this.coroutineContext) {
+                authRepository.getToken(HOME_POP_UP_CHECK).first()
+            }
+        homeRepository.getHomePopUp().collect { apiState ->
+            apiState.onSuccess {
+                val homePopUp = it.result.firstOrNull()
+                val homePopUpId = homePopUp?.popUpId ?: -1
+                if (homePopUpId.toString() != latestViewPopup) {
+                    viewModelScope.launch {
+                        authRepository.setToken(HOME_POP_UP_CHECK, homePopUpId.toString())
+                        _homePopUp.value = homePopUp
+                    }
+                } else {
+                    _homePopUp.value = null
+                }
+            }
+        }
+    }
 
     fun getHomeReview() = viewModelScope.launch {
         homeRepository
@@ -155,6 +183,10 @@ class HomeViewModel @Inject constructor(
                 onSuccess()
             }
         }
+    }
+
+    fun updateHomePopUp(homePopUp: HomePopUpItem?) = viewModelScope.launch {
+        _homePopUp.value = homePopUp
     }
 
     fun updateBookmarkState(storedId: Int, bookmarked: Boolean) {

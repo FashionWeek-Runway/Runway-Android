@@ -2,6 +2,7 @@ package com.cmc12th.runway.data.network
 
 import com.cmc12th.domain.model.request.auth.PasswordRequest
 import com.cmc12th.domain.model.request.store.StoreReportRequest
+import com.cmc12th.domain.model.response.home.HomePopup
 import com.cmc12th.domain.model.response.user.PatchCategoryBody
 import com.cmc12th.runway.data.network.service.*
 import okhttp3.MultipartBody
@@ -146,4 +147,5 @@ class RunwayClient @Inject constructor(
         authService.setCategories(patchCategoryBody)
 
     suspend fun getHomeInsta(page: Int, size: Int) = homeService.getHomeInsta(page, size)
+    suspend fun getHomePopUp() = homeService.getHomePopUp()
 }
