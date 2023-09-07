@@ -35,11 +35,8 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         firebaseAnalytics = FirebaseAnalytics.getInstance(this)
-        if (InstantApps.isInstantApp(this)) {
-            firebaseAnalytics?.setUserProperty(ANALYTICS_USER_PROP, STATUS_INSTANT)
-        } else {
-            firebaseAnalytics?.setUserProperty(ANALYTICS_USER_PROP, STATUS_INSTALLED)
-        }
+        firebaseAnalytics?.setAnalyticsCollectionEnabled(true)
+        firebaseAnalytics?.setUserProperty(ANALYTICS_USER_PROP, STATUS_INSTALLED)
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
         setContent {

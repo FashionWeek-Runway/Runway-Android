@@ -7,6 +7,7 @@ package com.cmc12th.runway.ui.home.view
 
 import android.content.Intent
 import android.net.Uri
+import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -92,6 +93,7 @@ import com.cmc12th.runway.utils.lookupLogEvent
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
+import kotlinx.coroutines.delay
 
 
 @Composable
