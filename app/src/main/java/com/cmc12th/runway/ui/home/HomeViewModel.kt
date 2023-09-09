@@ -104,6 +104,7 @@ class HomeViewModel @Inject constructor(
                 } else {
                     _homePopUp.value = null
                 }
+                isHomePopUpShow = true
             }
         }
     }
@@ -211,5 +212,8 @@ class HomeViewModel @Inject constructor(
         }.toMutableList()
     }
 
+    companion object {
+        var isHomePopUpShow = false
+    }
 
 }

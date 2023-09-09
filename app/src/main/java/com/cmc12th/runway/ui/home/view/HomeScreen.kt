@@ -65,6 +65,7 @@ import com.cmc12th.runway.ui.domain.model.ApplicationState
 import com.cmc12th.runway.ui.domain.model.ReviewViwerType
 import com.cmc12th.runway.ui.home.HomeUiState
 import com.cmc12th.runway.ui.home.HomeViewModel
+import com.cmc12th.runway.ui.home.HomeViewModel.Companion.isHomePopUpShow
 import com.cmc12th.runway.ui.home.component.HomeBannerComponents
 import com.cmc12th.runway.ui.home.component.HomeBannerTopBar
 import com.cmc12th.runway.ui.theme.Black10
@@ -109,7 +110,9 @@ fun HomeScreen(appState: ApplicationState, viewModel: HomeViewModel) {
         viewModel.getHomeBanner(0)
         viewModel.getProfile()
         viewModel.getHomeReview()
-        viewModel.getHomePopUp()
+        if (!isHomePopUpShow) {
+            viewModel.getHomePopUp()
+        }
         viewModel.getInsta()
         lookupLogEvent("home")
     }
