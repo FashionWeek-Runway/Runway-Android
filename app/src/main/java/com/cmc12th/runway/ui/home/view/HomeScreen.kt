@@ -175,14 +175,26 @@ fun HomeScreen(appState: ApplicationState, viewModel: HomeViewModel) {
                     },
                 )
 
-                Text(
+                Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(start = 20.dp, end = 20.dp, top = 30.dp),
-                    text = "흥미로운 가게 소식을 알려드려요",
-                    style = HeadLine4,
-                    color = Color.Black
-                )
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_filled_insta_20),
+                        contentDescription = "IC_INSTA",
+                        tint = Color.Black,
+                        modifier = Modifier.size(24.dp)
+                    )
+                    Text(
+                        text = "흥미로운 가게 소식을 알려드려요",
+                        style = HeadLine4,
+                        color = Color.Black
+                    )
+                }
+
             }
 
             item {
