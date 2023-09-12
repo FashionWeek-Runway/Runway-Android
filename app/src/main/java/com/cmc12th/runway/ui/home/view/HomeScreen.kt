@@ -116,6 +116,11 @@ fun HomeScreen(appState: ApplicationState, viewModel: HomeViewModel) {
         viewModel.getInsta()
         lookupLogEvent("home")
     }
+    val pagerState = rememberPagerState()
+
+    LaunchedEffect(pagerState.currentPage) {
+        clickLogEvent(HOME_TOUCH_EVENT, "home_area_top")
+    }
 
     Box(
         modifier = Modifier
@@ -214,7 +219,6 @@ fun HomeScreen(appState: ApplicationState, viewModel: HomeViewModel) {
                             )
                         }
                 ) {
-                    val pagerState = rememberPagerState()
 
                     Box(
                         modifier = Modifier
