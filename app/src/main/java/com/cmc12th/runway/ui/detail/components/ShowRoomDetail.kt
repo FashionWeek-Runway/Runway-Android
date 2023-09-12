@@ -37,7 +37,7 @@ fun ShowRoomDetail(
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
+            verticalAlignment = Alignment.Top,
             horizontalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             storeDetail.address.skeletonUI(size = 230.dp to 18.dp) {
@@ -63,7 +63,7 @@ fun ShowRoomDetail(
         }
         Row(
             modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
+            verticalAlignment = Alignment.Top,
             horizontalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             storeDetail.address.skeletonUI(size = 155.dp to 18.dp) {
@@ -73,7 +73,7 @@ fun ShowRoomDetail(
         }
         Row(
             modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
+            verticalAlignment = Alignment.Top,
             horizontalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             storeDetail.storePhone.skeletonUI(size = 142.dp to 18.dp) {
@@ -88,7 +88,7 @@ fun ShowRoomDetail(
                     .clickable {
                         navigateToInstgram(storeDetail.instagram)
                     },
-                verticalAlignment = Alignment.CenterVertically,
+                verticalAlignment = Alignment.Top,
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
             ) {
                 RunwayIconButton(size = 18.dp, drawable = R.drawable.ic_border_instagram_18)
@@ -107,7 +107,7 @@ fun ShowRoomDetail(
                     .clickable {
                         navigateToWeb(storeDetail.webSite)
                     },
-                verticalAlignment = Alignment.CenterVertically,
+                verticalAlignment = Alignment.Top,
                 horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 storeDetail.webSite.skeletonUI(size = 118.dp to 18.dp) {
