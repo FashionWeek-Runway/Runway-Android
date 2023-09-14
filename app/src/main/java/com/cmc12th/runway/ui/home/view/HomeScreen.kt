@@ -206,6 +206,8 @@ fun HomeScreen(appState: ApplicationState, viewModel: HomeViewModel) {
                 HeightSpacer(height = 8.dp)
             }
             items(instas.itemCount) { idx ->
+
+                val instaPagerState = rememberPagerState()
                 Column(
                     modifier = Modifier
                         .padding(20.dp, 8.dp)
@@ -230,7 +232,7 @@ fun HomeScreen(appState: ApplicationState, viewModel: HomeViewModel) {
                             modifier = Modifier
                                 .fillMaxSize(),
                             count = instas[idx]?.imgList?.size ?: 0,
-                            state = pagerState,
+                            state = instaPagerState,
                         ) {
                             AsyncImage(
                                 modifier = Modifier
@@ -258,7 +260,7 @@ fun HomeScreen(appState: ApplicationState, viewModel: HomeViewModel) {
                                         color = Color.White
                                     )
                                 ) {
-                                    append("${pagerState.currentPage + 1}")
+                                    append("${instaPagerState.currentPage + 1}")
                                 }
                                 withStyle(
                                     SpanStyle(
